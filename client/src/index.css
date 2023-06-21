@@ -5,9 +5,22 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  color: var(--copa-white);
+  background: var(--copa-purple);
+}
+
+h1, h2, h3, h4, h5, h6 {
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+:root {
+  --copa-purple: #43347A;
+  --copa-pink: #E12B69;
+  --copa-aqua: #4398B8;
+  --copa-white: #FDFDFD;
 }

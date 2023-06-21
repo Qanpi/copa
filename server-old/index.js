@@ -16,10 +16,8 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 const cosmosEndpoint = "https://localhost:8081";
-const databaseName = "databaseName";
-const containerName = "containerName";
 
-console.log(process.env.COSMOS_ENDPOINT);
+
 const cosmosClient = new CosmosClient({
   endpoint: process.env.COSMOS_ENDPOINT,
   key: process.env.COSMOS_KEY,

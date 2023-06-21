@@ -1,0 +1,44 @@
+header {
+    position: sticky;
+    top: 0;
+    width: 100vw;
+}
+
+header .settings-bar {
+    text-align: right;
+    background: var(--copa-purple);
+    padding-right: 10px;
+    font-size: 0.8em;
+    height: 2em; 
+    line-height: 2em; /* centers the text */
+}
+
+header .logo {
+    width: 100px;
+    height: 100px;
+    background: var(--copa-pink);
+    position: absolute;
+    left: 10px;
+    transform: rotateZ(30deg);
+}
+
+header .bottom-bar {
+    display: flex;
+    background: var(--copa-pink);
+    height: 50px;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 200px;
+    padding-right: 100px;
+}
+
+header .links {
+    display: inline-flex;
+    width: 50vw;
+    justify-content: space-between;
+
+}
+
+header .sign-in {
+
+}

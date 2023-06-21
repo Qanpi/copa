@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server/index.js",
     "build": "cd client && npm install && npm run build",
-    "dev": "npm run build && npm start",
+    "dev": "cd client && npm install && npm run build && npm dev-server",
+    "dev-server": "npm start",
+    "dev-client": "cd client && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,9 +23,13 @@
     "@azure/identity": "^3.2.2",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "babel": "^6.23.0",
-    "dotenv": "^16.1.4",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "graphql": "^16.6.0",
     "graphql-http": "^1.19.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.43.0",
+    "eslint-plugin-react": "^7.32.2"
   }
 }

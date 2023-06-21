@@ -1,3 +1,6 @@
+import GameBoard from '../../components/GameBoard/gameboard';
+import Header from '../../components/Header/header';
+import InstagramBoard from '../../components/InstagramBoard/instagramboard';
 import './App.css';
 import {useState, useEffect} from 'react'
 
@@ -24,11 +27,11 @@ function App() {
 
   const [data, setData] = useState(null);
 
-  useEffect(() => {
-    fetch("/api")
-      .then((res) => res.json())
-      .then((data) => setData(data.message));
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api")
+  //     .then((res) => res.json())
+  //     .then((data) => setData(data.message));
+  // }, []);
 
   // useEffect(() => {
   //   fetchGreeting();
@@ -36,9 +39,16 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>{!data ? "Loading..." : data}</p>
-      </header>
+      <Header></Header>
+      <div className="primary">
+        <div className="dashboard">
+          <GameBoard></GameBoard>
+          <InstagramBoard></InstagramBoard>
+        </div>
+        <div className="group-stage">
+          <GameBoard></GameBoard>
+        </div>
+      </div>
     </div>
   );
 }
