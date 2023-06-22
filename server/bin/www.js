@@ -5,12 +5,9 @@
  */
 
 import app from "../app.js"
-import debugWrapper from "debug"
-const debug = debugWrapper("server")
+import _debugger from "debug"
+const debug = _debugger("server")
 import http from "http"
-
-import { initializeDatabase } from "../db.js"
-initializeDatabase(); //when/how often to call this?
 
 /**
  * Get port from environment and store in Express.

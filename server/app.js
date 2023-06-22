@@ -3,7 +3,9 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
 
-import apiRouter from "./routes/api.js"
+
+import controller from "./controller.js"
+import { query } from "express-validator";
 
 const app = express();
 
@@ -12,7 +14,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use("/api", apiRouter)
+// api 
+app.get("/api/games",
+
+  [
+    query("startDate").isDate(),
+    query("endDate").isDate()
+  ],
+
+  controller.showMatches
+);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
