@@ -5,11 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node server/index.js",
+    "start": "node server/bin/www.js",
     "build": "cd client && npm install && npm run build",
-    "dev": "cd client && npm install && npm run build && npm dev-server",
-    "dev-server": "npm start",
+    "dev-server": "nodemon server/bin/www.js",
     "dev-client": "cd client && npm start",
+    "dev": "npm-run-all --parallel dev-server dev-client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,13 +23,20 @@
     "@azure/identity": "^3.2.2",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "babel": "^6.23.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "graphql": "^16.6.0",
-    "graphql-http": "^1.19.0"
+    "express-validator": "^7.0.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "pug": "^3.0.2",
+    "qs": "^6.11.2"
   },
   "devDependencies": {
     "eslint": "^8.43.0",
-    "eslint-plugin-react": "^7.32.2"
+    "eslint-plugin-react": "^7.32.2",
+    "nodemon": "^2.0.22",
+    "npm-run-all": "^4.1.5"
   }
 }

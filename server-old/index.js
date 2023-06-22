@@ -3,7 +3,7 @@ import https from "https";
 import { fileURLToPath } from "url";
 import express from "express";
 import "dotenv/config";
-import config from "./config.js";
+import config from "../server/config.js";
 
 //azure cosmos db
 import { DefaultAzureCredential } from "@azure/identity";
@@ -16,7 +16,6 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 const cosmosEndpoint = "https://localhost:8081";
-
 
 const cosmosClient = new CosmosClient({
   endpoint: process.env.COSMOS_ENDPOINT,
