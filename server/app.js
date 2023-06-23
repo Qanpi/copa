@@ -2,7 +2,12 @@ import createError from "http-errors"
 import express from "express"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
+import { fileURLToPath } from "url"
+import path from "path"
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename);
+const reactPath = path.resolve(__dirname, "../client/build");
 
 import controller from "./controller.js"
 import { query } from "express-validator";
@@ -14,6 +19,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+//static react
+app.use(express.static(reactPath));
+
+app.get("/", (req, res) => {
+  res.sendFile(reactPath);
+})
+
 // api 
 app.get("/api/games",
 
@@ -24,6 +36,7 @@ app.get("/api/games",
 
   controller.showMatches
 );
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
