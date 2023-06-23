@@ -18,13 +18,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+console.log("test");
 
 //static react
 app.use(express.static(reactPath));
-
-app.get("/", (req, res) => {
-  res.sendFile(reactPath);
-})
 
 // api 
 app.get("/api/games",
@@ -36,6 +33,10 @@ app.get("/api/games",
 
   controller.showMatches
 );
+
+app.get("/", (req, res) => {
+  res.sendFile(reactPath + "/index.html");
+})
 
 
 // catch 404 and forward to error handler
