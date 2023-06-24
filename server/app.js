@@ -31,7 +31,7 @@ app.get("/api/games",
     query("endDate").isDate()
   ],
 
-  controller.showMatches
+  controller.getMatches
 );
 
 app.get("/", (req, res) => {

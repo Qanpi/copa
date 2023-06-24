@@ -20,7 +20,7 @@ const dbModel = new DatabaseModel(
 
 const controller = {};
 
-controller.showMatches = async (req, res, next) => {
+controller.getMatches = async (req, res, next) => {
   const result = validationResult(req);
 
   if (!result.isEmpty()) return res.send({ errors: result.array() });
