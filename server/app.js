@@ -9,8 +9,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename);
 const reactPath = path.resolve(__dirname, "../client/build");
 
-import controller from "./controller.js"
-import { query } from "express-validator";
+
+import apiRouter from "./routes/api.js"
 
 const app = express();
 
@@ -18,26 +18,17 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-console.log("test");
 
 //static react
 app.use(express.static(reactPath));
 
-// api 
-app.get("/api/games",
+// api request flow: route -> controller -> db service
+app.use("/api", apiRouter)
 
-  [
-    query("startDate").isDate(),
-    query("endDate").isDate()
-  ],
-
-  controller.getMatches
-);
-
+//home page
 app.get("/", (req, res) => {
   res.sendFile(reactPath + "/index.html");
 })
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

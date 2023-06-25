@@ -1,9 +1,12 @@
 import "dotenv/config"
-import _debugger from "debug"
+import { CosmosClient } from "@azure/cosmos";
+import https from "https"
+import config from "../configs/db.config.js"
 
-const debug = _debugger("model:")
+import _debugger from "debug";
+const debug = _debugger("db:")
 
-class DatabaseModel  {
+class Database  {
     constructor (cosmosClient, databaseId, containers) {
         this.client = cosmosClient;
         this.id = databaseId;
@@ -40,5 +43,19 @@ class DatabaseModel  {
 
 }
 
-export default DatabaseModel;
+const cosmosClient = new CosmosClient({
+  endpoint: process.env.COSMOS_ENDPOINT,
+  key: process.env.COSMOS_KEY,
+  agent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
+});
+
+const database = new Database(
+  cosmosClient,
+  config.database.id,
+  config.containers
+);
+
+export default database;
 

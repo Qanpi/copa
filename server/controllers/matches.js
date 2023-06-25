@@ -1,0 +1,26 @@
+import { validationResult } from "express-validator";
+import database from "../services/db.js";
+
+const matches = {}
+
+matches.getMultiple = async (req, res, next) => {
+  const result = validationResult(req);
+
+  if (!result.isEmpty()) return res.send({ errors: result.array() });
+
+  const { startDate, endDate } = req.query;
+  const start = Date.parse(startDate);
+  const end = Date.parse(endDate);
+
+  if (end < start)
+    return next(new Error("The specified end date predates the start date."));
+
+  const querySpec = {
+    query: "SELECT * FROM MATCHES m",
+  };
+
+  const resources = await database.query("matches", querySpec);
+  res.send({ resources });
+};
+
+export default matches;
