@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { fileURLToPath } from "url";
 import path from "path";
+import _debugger from "debug"
+const debug = _debugger("app:")
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,6 +15,14 @@ import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
+import "dotenv/config.js"
+
+import mongoose from "mongoose"
+
+await mongoose
+  .connect(process.env["MONGODB_CONNECTION_STRING"])
+  .then(() => debug("Connection to CosmosDB succesful."))
+  .catch(console.error);
 
 const app = express();
 
@@ -44,8 +54,6 @@ app.use(function (request, response, next) {
   }
   next();
 });
-
-
 
 app.use(passport.initialize());
 app.use(passport.session());

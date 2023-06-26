@@ -1,6 +1,8 @@
 import express from "express";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
+import config from "../configs/db.config.js"
+import "dotenv/config.js"
 
 passport.use(
   new GoogleStrategy(
@@ -11,9 +13,10 @@ passport.use(
       scope: ["profile"],
     },
     function verify(accessToken, refreshToken, profile, cb) {
-      console.log(accessToken, refreshToken, profile);
-      profile["accessToken"] = accessToken;
-      return cb(null, profile);
+        console.log(profile)
+
+        //check i ndb
+        return cb(null, profile);
     }
   )
 );

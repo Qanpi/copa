@@ -6,15 +6,16 @@ import config from "../configs/db.config.js"
 import _debugger from "debug";
 const debug = _debugger("db:")
 
-class Database  {
+class SQLDatabaseService  {
     constructor (cosmosClient, databaseId, containers) {
         this.client = cosmosClient;
         this.id = databaseId;
 
         this.init();
-        containers.forEach(c => {
-            this.createContainer(c);
-        });
+
+        for (const key in containers) {
+            this.createContainer(containers[key]);
+        }
     }
 
     async init() {
@@ -51,11 +52,11 @@ const cosmosClient = new CosmosClient({
   }),
 });
 
-const database = new Database(
+const sqlDatabase = new SQLDatabaseService(
   cosmosClient,
   config.database.id,
   config.containers
 );
 
-export default database;
+export default sqlDatabase;
 

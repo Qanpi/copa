@@ -1,5 +1,4 @@
 import { validationResult } from "express-validator";
-import database from "../services/db.js";
 
 const matches = {}
 
@@ -20,7 +19,7 @@ matches.getMultiple = async (req, res, next) => {
     query: "SELECT * FROM MATCHES m",
   };
 
-  const resources = await database.query("matches", querySpec);
+  const resources = await sqlDatabase.query("matches", querySpec);
   res.send({ resources });
 };
 
