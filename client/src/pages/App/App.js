@@ -1,5 +1,5 @@
-import GameBoard from '../../components/GameBoard/gameboard';
 import Header from '../../components/Header/header';
+import GameBoard from '../../components/GameBoard/gameboard';
 import InstagramBoard from '../../components/InstagramBoard/instagramboard';
 import './App.css';
 import {useState, useEffect} from 'react'
@@ -38,7 +38,7 @@ function App() {
   // }, [data]);
 
   return (
-    <div className="App">
+      <>
       <Header></Header>
       <div className="primary">
         <div className="dashboard">
@@ -49,7 +49,7 @@ function App() {
           <GameBoard></GameBoard>
         </div>
       </div>
-    </div>
+      </>
   );
 }
 

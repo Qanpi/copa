@@ -14,8 +14,7 @@ function Header() {
                 </div>
                 <div class="links">
                     <span>Home</span>
-                    <span>Men's</span>
-                    <span>Women's</span>
+                    <span>Statistics</span>
                     <span>All-time</span>
                     <span>Fantasy</span>
                     <span>About</span>
