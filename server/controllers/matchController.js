@@ -1,13 +1,15 @@
 import { validationResult } from "express-validator";
+import asyncHandler from "express-async-handler";
 
-const matches = {}
+const matches = {};
 
-matches.getMultiple = async (req, res, next) => {
+matches.getMultiple = asyncHandler(async (req, res, next) => {
   const result = validationResult(req);
-  console.log(req.session)
+  console.log(req.session);
 
   if (!result.isEmpty()) return res.send({ errors: result.array() });
 
+  console.log(req.params)
   const { startDate, endDate } = req.query;
   const start = Date.parse(startDate);
   const end = Date.parse(endDate);
@@ -19,8 +21,7 @@ matches.getMultiple = async (req, res, next) => {
     query: "SELECT * FROM MATCHES m",
   };
 
-  const resources = await sqlDatabase.query("matches", querySpec);
-  res.send({ resources });
-};
+  res.send({ querySpec });
+});
 
 export default matches;

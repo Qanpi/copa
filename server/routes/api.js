@@ -1,5 +1,5 @@
 import express from "express"
-import matches from "../controllers/matches.js"
+import matches from "../controllers/matchController.js"
 import { query } from "express-validator";
 
 const router = express.Router()

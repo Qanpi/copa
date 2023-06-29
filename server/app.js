@@ -16,13 +16,7 @@ import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
 import "dotenv/config.js"
-
-import mongoose from "mongoose"
-
-await mongoose
-  .connect(process.env["MONGODB_CONNECTION_STRING"])
-  .then(() => debug("Connection to CosmosDB succesful."))
-  .catch(console.error);
+import "./services/mongo.db.js"
 
 const app = express();
 

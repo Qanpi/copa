@@ -1,12 +1,17 @@
 const database = {
   id: "copa-autumn-2023",
-  collections: {
-    matches: {
-      id: "Match"
-    }
+}
+
+export const collections = {
+  teams: {
+    id: "Team"
+  },
+  matches: {
+    id: "Match" 
+  },
+  players: {
+    id: "Player"
   }
 }
 
-
-
-export default config;
+export default database;
