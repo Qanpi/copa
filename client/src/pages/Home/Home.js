@@ -1,7 +1,7 @@
 import Header from '../../components/Header/header';
 import GameBoard from '../../components/GameBoard/gameboard';
 import InstagramBoard from '../../components/InstagramBoard/instagramboard';
-import './App.css';
+import './Home.css';
 import {useState, useEffect} from 'react'
 
 async function fetchGreeting() {
@@ -23,7 +23,7 @@ async function fetchGreeting() {
   console.log(responseBody);
 }
 
-function App() {
+function Home() {
 
   const [data, setData] = useState(null);
 
@@ -53,4 +53,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
