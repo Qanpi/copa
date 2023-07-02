@@ -10,7 +10,6 @@ body {
   background: var(--copa-purple);
 }
 
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -21,4 +20,14 @@ code {
   --copa-pink: #E12B69;
   --copa-aqua: #4398B8;
   --copa-white: #FDFDFD;
+}
+
+.primary {
+  width: 100vw;
+  background: yellow;
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 100px;
 }

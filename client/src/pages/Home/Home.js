@@ -1,5 +1,5 @@
-import Header from '../../components/Header/header';
 import GameBoard from '../../components/GameBoard/gameboard';
+import Header from '../../components/Header/header';
 import InstagramBoard from '../../components/InstagramBoard/instagramboard';
 import './Home.css';
 import {useState, useEffect} from 'react'
@@ -23,7 +23,7 @@ async function fetchGreeting() {
   console.log(responseBody);
 }
 
-function Home() {
+function App() {
 
   const [data, setData] = useState(null);
 
@@ -38,19 +38,17 @@ function Home() {
   // }, [data]);
 
   return (
-      <>
-      <Header></Header>
-      <div className="primary">
-        <div className="dashboard">
-          <GameBoard></GameBoard>
-          <InstagramBoard></InstagramBoard>
-        </div>
-        <div className="group-stage">
-          <GameBoard></GameBoard>
-        </div>
+    <>
+      <div className="dashboard">
+        <GameBoard></GameBoard>
+        <InstagramBoard></InstagramBoard>
       </div>
-      </>
+
+      <div className="group-stage">
+        <GameBoard></GameBoard>
+      </div>
+    </>
   );
 }
 
-export default Home;
+export default App;
