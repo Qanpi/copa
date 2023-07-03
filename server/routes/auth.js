@@ -22,12 +22,10 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
-  console.log("serializing user: ", user.accessToken);
   done(null, user.accessToken);
 });
 
 passport.deserializeUser(function (accessToken, done) {
-  console.log("deserializing user: "+ accessToken)
   done(null, accessToken);
 });
 

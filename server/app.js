@@ -1,3 +1,4 @@
+import "./services/mongo.js"
 import createError from "http-errors";
 import express from "express";
 import cookieParser from "cookie-parser";
@@ -16,7 +17,6 @@ import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
 import "dotenv/config.js"
-import "./services/mongo.db.js"
 
 const app = express();
 

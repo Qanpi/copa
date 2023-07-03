@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { collections } from "../configs/db.config"
+import { collections } from "../configs/db.config.js"
 
 const TeamSchema = new mongoose.Schema({
     name: {
@@ -13,7 +13,7 @@ const TeamSchema = new mongoose.Schema({
     ],
     matches: [
         {
-            type: mongoose.SchemaType.ObjectId,
+            type: mongoose.SchemaTypes.ObjectId,
             ref: collections.matches.id,
         }
     ],
@@ -23,4 +23,5 @@ const TeamSchema = new mongoose.Schema({
     }
 })
 
-mongoose.model(collections.teams.id, TeamSchema)
+
+export default mongoose.model(collections.teams.id, TeamSchema);
