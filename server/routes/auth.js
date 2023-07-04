@@ -13,8 +13,6 @@ passport.use(
       scope: ["profile"],
     },
     function verify(accessToken, refreshToken, profile, cb) {
-        console.log(profile)
-
         //check i ndb
         return cb(null, profile);
     }
@@ -22,22 +20,45 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
-  done(null, user.accessToken);
+  //maybe add encryption later on
+  process.nextTick(() => {
+    return done(null, {
+      id: user.id,
+      name: user.displayName,
+    })
+  })
 });
 
-passport.deserializeUser(function (accessToken, done) {
-  done(null, accessToken);
+passport.deserializeUser(function (user, done) {
+  process.nextTick(() => {
+    console.log(user)
+    return done(null, user);
+  })
 });
 
 const router = express.Router();
+
+const LOCALHOST_SERVER_URL = "http://localhost:3000"
 
 router.get("/login/federated/google", passport.authenticate("google"));
 router.get(
   "/oauth2/redirect/google",
   passport.authenticate(
     "google",
-    { failureRedirect: "/login", failureMessage: true, successReturnToOrRedirect: "/" },
+    { failureRedirect: "/login", failureMessage: true, successRedirect: LOCALHOST_SERVER_URL },
   )
 );
+
+
+router.post("/logout", (req, res) => {
+  req.logout(err => {
+    if (err) return next(err);
+    res.redirect(LOCALHOST_SERVER_URL);
+  }); //use post request
+})
+
+router.get("/me", (req, res) => {
+  res.send(req.user);
+})
 
 export default router;

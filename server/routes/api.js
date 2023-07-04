@@ -9,7 +9,7 @@ const router = express.Router()
 router.get("/matches",
 
   [
-    query("startDate").isDate(),
+    query("startDate").isDate().optional(),
     query("endDate").isDate().optional()
   ],
 

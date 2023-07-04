@@ -1,6 +1,7 @@
 import "./services/mongo.js"
 import createError from "http-errors";
 import express from "express";
+import cors from "cors"
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { fileURLToPath } from "url";
@@ -29,20 +30,20 @@ app.use(
   cookieSession({
     name: "session",
     secret: process.env["GOOGLE_CLIENT_SECRET"],
-    maxAge: 24 * 60 * 60 * 1000, //24 hours
+    maxAge: 24 * 60 * 60 * 1000 * 30, // 1 month
   })
 );
 
 // register regenerate & save after the cookieSession middleware initialization
 // workound to issue: https://github.com/jaredhanson/passport/issues/904
-app.use(function (request, response, next) {
-  if (request.session && !request.session.regenerate) {
-    request.session.regenerate = (cb) => {
+app.use(function (req, res, next) {
+  if (req.session && !req.session.regenerate) {
+    req.session.regenerate = (cb) => {
       cb();
     };
   }
-  if (request.session && !request.session.save) {
-    request.session.save = (cb) => {
+  if (req.session && !req.session.save) {
+    req.session.save = (cb) => {
       cb();
     };
   }
@@ -51,6 +52,11 @@ app.use(function (request, response, next) {
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// app.use(cors({
+//   origin: "http://127.0.0.1:3000",
+//   credentials: true,
+// }))
 
 //static react
 app.use(express.static(reactPath));
