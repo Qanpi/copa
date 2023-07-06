@@ -1,4 +1,4 @@
-const database = {
+export const database = {
   id: "copa-autumn-2023",
 }
 
@@ -11,7 +11,8 @@ export const collections = {
   },
   players: {
     id: "Player"
+  },
+  tournaments: {
+    id: "Tournament"
   }
 }
-
-export default database;

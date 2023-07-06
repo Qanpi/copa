@@ -9,6 +9,5 @@ export const createOne = expressAsyncHandler(async (req, res) => {
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
     const results = await Team.find({});
-    console.log(results);
     res.send(results);
 })

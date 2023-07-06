@@ -1,12 +1,9 @@
 import { validationResult } from "express-validator";
 import expressAsyncHandler from "express-async-handler";
+import { validate } from "../middleware/validation.js";
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
-  const result = validationResult(req);
-
-  if (!result.isEmpty()) {
-    return res.send({ errors: result.array() });
-  }
+  validate(req, res);
 
   const { startDate, endDate } = req.query;
   const start = Date.parse(startDate);

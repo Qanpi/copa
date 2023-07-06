@@ -1,7 +1,6 @@
 import express from "express";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
-import config from "../configs/db.config.js"
 import "dotenv/config.js"
 
 passport.use(
@@ -25,6 +24,7 @@ passport.serializeUser(function (user, done) {
     return done(null, {
       id: user.id,
       name: user.displayName,
+      image: user.photos[0].value, //TODO: error handling
     })
   })
 });
