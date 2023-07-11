@@ -1,54 +1,56 @@
-import GameBoard from '../../components/GameBoard/gameboard';
-import Header from '../../components/Header/header';
-import InstagramBoard from '../../components/InstagramBoard/instagramboard';
-import './Home.css';
-import {useState, useEffect} from 'react'
+import { TournamentContext } from "../..";
+import GameBoard from "../../components/GameBoard/gameboard";
+import Header from "../../components/Header/header";
+import InstagramBoard from "../../components/InstagramBoard/instagramboard";
+import "./Home.css";
+import { useState, useEffect, useContext } from "react";
 
-async function fetchGreeting() {
-  const response = await fetch("/graphql", {
-    method: "POST",
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-        query {
-          hello
-        }
-      `,
-    }),
-  })
+function Home() {
+  const tournament = useContext(TournamentContext);
 
-  const responseBody = await response.json();
-  console.log(responseBody);
-}
+  if (!tournament) return <div className="banner">Winner page.</div>;
 
-function App() {
+  switch (tournament.stageId) {
+    case "Tournament":
+      break;
 
-  const [data, setData] = useState(null);
+    case "finished":
+      break;
 
-  // useEffect(() => {
-  //   fetch("/api")
-  //     .then((res) => res.json())
-  //     .then((data) => setData(data.message));
-  // }, []);
+    default:
+      return (
+        <div className="banner">
+          <div className="title-wrapper">
+            <h1>{tournament.displayName}</h1>
+            <h3>is just around the corner!</h3>
+          </div>
 
-  // useEffect(() => {
-  //   fetchGreeting();
-  // }, [data]);
+          <p>{tournament.countdown}</p>
+        </div>
+      );
+  }
 
-  return (
+  return tournament ? ( //TODO: invert
     <>
       <div className="dashboard">
         <GameBoard></GameBoard>
         <InstagramBoard></InstagramBoard>
       </div>
 
-      <div className="group-stage">
+      <div className="group-stage" id="test">
         <GameBoard></GameBoard>
       </div>
     </>
+  ) : (
+    <div className="banner">
+      <div className="title-wrapper">
+        <h1>{tournament.displayName}</h1>
+        <h3>is just around the corner!</h3>
+      </div>
+
+      <p>Registration begins in 9 days.</p>
+    </div>
   );
 }
 
-export default App;
+export default Home;

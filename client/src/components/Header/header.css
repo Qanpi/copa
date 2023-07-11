@@ -13,32 +13,39 @@ header .settings-bar {
     line-height: 2em; /* centers the text */
 }
 
-header .logo {
-    width: 100px;
-    height: 100px;
-    background: var(--copa-pink);
-    position: absolute;
-    left: 10px;
-    transform: rotateZ(30deg);
+header .weird-triangle {
+    width: 140px;
+    background: none;
+    border-top: 50px solid var(--copa-pink);
+    border-right: 40px solid transparent;
 }
 
-header .bottom-bar {
+header .top-bar {
     display: flex;
     background: var(--copa-pink);
     height: 50px;
     justify-content: space-between;
     align-items: center;
-    padding-left: 200px;
+    padding-left: 250px;
     padding-right: 100px;
 }
 
 header .links {
-    display: inline-flex;
+    display: flex;
     width: 50vw;
     justify-content: space-between;
-
 }
 
-header .sign-in {
+header .bottom-bar {
+    display: flex;
+    width: 100vw;
+    background: var(--copa-purple);
+    height: 50px;
+    align-items: center;
+}
 
+header .sublinks {
+    display: flex;
+    width: 30vw;
+    justify-content: space-around;
 }

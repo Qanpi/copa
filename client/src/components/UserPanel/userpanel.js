@@ -1,28 +1,22 @@
 import "./userpanel.css"
 import axios from "axios"
 import {useQueryClient, useQuery, useMutation} from "@tanstack/react-query"
+import { useContext } from "react"
+import { AuthContext } from "../.."
+import { Link } from "react-router-dom"
 
-function UserPanel({userData}) { 
+function UserPanel() { 
+    const user = useContext(AuthContext);
+
     const queryClient = useQueryClient();
-
-    const {status, data: user, error, isFetching} = useQuery({
-        queryKey: ["me"],
-        queryFn: async () => {
-            const res = await axios.get("/me");
-            return res.data;
-        },
-    });
-
     const logout = useMutation({
         mutationFn: () => {
-            return axios.post("/logout");
+        return axios.post("/logout");
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["me"]});
-        }
-    }); 
-
-    if (status === "loading") return <span>Loading...</span>
+        queryClient.invalidateQueries({ queryKey: ["me"] });
+        },
+    });
 
     return user ? (
         <div className="user-panel">
@@ -31,7 +25,7 @@ function UserPanel({userData}) {
                 <p>{user.name}</p>
             </div>
             <div className="dropdown">
-                <p>Profile</p>
+                <Link to="/profile">Profile</Link>
                 <p>My team</p>
                 <p>Settings</p>
                 <p onClick={logout.mutate}>Log out</p>

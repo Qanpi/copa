@@ -1,5 +1,20 @@
-.tables {
-    background: pink;
-    height: 1000px;
-    width: 1500px;
+table {
+    width: 70vw;
+    border-spacing: 0;
+    border: 1px solid var(--copa-white);
 }
+
+thead tr {
+    height: 40px;
+}
+
+tbody tr {
+    height: 50px;
+    background: var(--copa-pink);
+    text-align:center;
+}
+
+tr:nth-child(even) {
+    opacity: 0.9;
+}
+

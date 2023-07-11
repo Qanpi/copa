@@ -15,8 +15,13 @@ code {
     monospace;
 }
 
+/* temporary override */
+span, label, input, button {
+  color: white !important;
+}
+
 :root {
-  --copa-purple: #43347A;
+  --copa-purple: #242753;
   --copa-pink: #E12B69;
   --copa-aqua: #4398B8;
   --copa-white: #FDFDFD;
@@ -24,10 +29,30 @@ code {
 
 .primary {
   width: 100vw;
-  background: yellow;
   padding-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 100px;
+}
+
+* {
+  scroll-margin-top: 100px;
+}
+
+
+
+button {
+    font: inherit;
+    height: 40px;
+}
+
+button.light {
+    border: 1px solid white;
+    background: none;
+    color: white;
+}
+
+.no-margin * {
+  margin: 0;
 }
