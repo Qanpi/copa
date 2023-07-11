@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import "./Admin.css";
+import "./AdminPanel.css";
 import {
   Form,
   Formik,
@@ -11,7 +11,7 @@ import {
 import * as Yup from "yup";
 import { HashLink } from "react-router-hash-link";
 import { useContext, useState } from "react";
-import { TournamentContext } from "../..";
+import { TournamentContext } from "../../..";
 import {
   TextField,
   RadioGroup,
@@ -33,71 +33,36 @@ import {
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import AdminCalendar from "../../components/AdminCalendar/admincalendar";
-import MyChecklist from "../../components/MyChecklist/mychecklist";
+import AdminCalendar from "../../../components/AdminCalendar/admincalendar";
+import MyChecklist from "../../../components/MyChecklist/mychecklist";
 import { createContext } from "react";
-import MyStepper from "../../components/MyStepper/mystepper";
+import MyStepper from "../../../components/MyStepper/mystepper";
 import AdminRegistrationPage from "./Registration/Registration";
 import KickstartPage from "./Kickstart/Kickstart";
-import GroupStagePage from "./GroupStage/GroupStage";
+import GroupStagePage from "./GroupStage/GroupStage"
 
-// const Stage = Object.freeze({
-//   Kickstart: 0,
-//   Registration: 1,
-//   "Group stage": 2,
-//   "Play-offs": 3,
-//   Finished: 4,
-// });
+const Stage = Object.freeze({
+  Kickstart: 0,
+  Registration: 1,
+  "Group stage": 2,
+  "Play-offs": 3,
+  Finished: 4,
+});
 
-const stages = [
-  {
-    name: "Kickstart",
-    tasks: [
-      {
-        name: "Fill in tournament details.",
-        description:
-          "Head over to the 'settings' tab to provide information about the tournament, rules and your contact info.",
-        isDone: false,
-      },
-    ],
-  },
-  {
-    name: "Registration",
-    tasks: [
-      {
-        name: "Configure registration dates.",
-        description: "test",
-        isDone: false,
-      },
-    ],
-  },
-  {
-    name: "Group stage",
-    tasks: [
-      {
-        name: "Draw groups",
-        description: "test",
-        isDone: false,
-      },
-      {
-        name: "Schedule group matches",
-        description: "test",
-        isDone: false,
-      },
-    ],
-  },
-];
 
-function AdminPage() {
+
+function AdminPanelPage() {
   const {stageId} = useContext(TournamentContext);
   //const { tasks } = stages[stageId];
 
   const renderCurrentStage = () => {
     switch (stageId) {
-      case 0:
+      case Stage.Kickstart:
         return <KickstartPage id={stageId}></KickstartPage>;
-      case 1:
+      case Stage.Registration:
         return <AdminRegistrationPage id={stageId}></AdminRegistrationPage>;
+      case Stage["Group stage"]:
+        return <GroupStagePage id={stageId}></GroupStagePage>
     }
   };
 
@@ -109,7 +74,7 @@ function AdminPage() {
       </div>
       <div>
         <MyStepper
-          steps={stages.map((s) => s.name)}
+          steps={Object.keys(Stage)}
           activeStep={stageId}
         ></MyStepper>
         {renderCurrentStage()}
@@ -130,4 +95,4 @@ const MyRadioGroup = ({ children, ...props }) => {
   );
 };
 
-export default AdminPage;
+export default AdminPanelPage;

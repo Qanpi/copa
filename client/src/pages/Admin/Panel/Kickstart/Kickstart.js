@@ -2,8 +2,8 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
-import MyNumberSlider from "../../../components/MyNumberSlider/mynumberslider";
-import MyTextField from "../../../components/MyTextField/mytextfield";
+import MyNumberSlider from "../../../../components/MyNumberSlider/mynumberslider";
+import MyTextField from "../../../../components/MyTextField/mytextfield";
 import { Button, Input, InputLabel } from "@mui/material";
 import { useField } from "formik";
 

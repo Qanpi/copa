@@ -16,9 +16,9 @@ code {
 }
 
 /* temporary override */
-span, label, input, button {
+/* span, label, input, button {
   color: white !important;
-}
+} */
 
 :root {
   --copa-purple: #242753;

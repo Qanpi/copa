@@ -4,7 +4,7 @@ import "./index.css";
 import Home from "./pages/Home/Home.js";
 import reportWebVitals from "./services/reportWebVitals";
 import Header from "./components/Header/header";
-import AdminPage from "./pages/Admin/Admin";
+import AdminPanelPage from "./pages/Admin/Panel/AdminPanel";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TeamsTable, MatchesTable } from "./pages/Tables/Tables";
 import {
@@ -40,7 +40,6 @@ function App() {
       return response.data;
     },
   });
-  console.log(tournamentData)
 
   return isUserLoading || isTournamentLoading ? (
     <div>Loading...</div>
@@ -67,7 +66,7 @@ function App() {
                     </Route>
                     <Route
                       path="/admin"
-                      element={<AdminPage></AdminPage>}
+                      element={<AdminPanelPage></AdminPanelPage>}
                     ></Route>
                     <Route
                       path="/profile"

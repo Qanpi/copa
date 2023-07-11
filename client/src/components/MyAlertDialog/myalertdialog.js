@@ -8,11 +8,11 @@ function MyAlertDialog({open, handleBoolConfirm}) {
         </DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Moving to the group stages before registration is over will abruptly close the registration process. 
+                Moving to the group stages before registration is over will abruptly end the registration process. 
             </DialogContentText>
         </DialogContent>
         <DialogActions>
-            <Button autofocus onClick={() => handleBoolConfirm(false)}>No</Button>
+            <Button autoFocus onClick={() => handleBoolConfirm(false)}>No</Button>
             <Button onClick={() => handleBoolConfirm(true)}>Yes</Button>
         </DialogActions>
     </Dialog>
