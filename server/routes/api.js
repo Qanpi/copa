@@ -23,11 +23,12 @@ router.get("/teams", teams.getMultiple);
 
 router.post("/teams", teams.createOne);
 
+router.get("/teams/:id", teams.getOne);
+
 router.post(
   "/tournaments",
   [
-    body("season").isIn(["autumn", "spring"]),
-    body("regStart").isDate(),
+    body("regStart").isDate().optional(),
     body("regEnd").isDate().optional(),
   ],
   tournaments.createOne
@@ -35,5 +36,11 @@ router.post(
 
 router.get("/tournaments",
 tournaments.getMultiple)
+
+router.get("/tournaments/current", tournaments.getCurrent);
+
+router.get("/tournaments/:id", tournaments.getOne)
+
+router.put("/tournaments/:id", tournaments.updateOne)
 
 export default router;

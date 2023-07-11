@@ -6,6 +6,7 @@ export const validate = (req, res) => {
         return true;
     } else {
         res.send({errors: result.array()})
+        return false;
     }
 }
 
