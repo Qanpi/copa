@@ -9,10 +9,10 @@ export const collections = {
   matches: {
     id: "Match" 
   },
-  players: {
-    id: "Player"
-  },
   tournaments: {
     id: "Tournament"
+  },
+  users: {
+    id: "User"
   }
 }

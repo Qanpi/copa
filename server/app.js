@@ -59,6 +59,7 @@ app.use(passport.session());
 // }))
 
 //static react
+//TODO: move up to avoid user deserialization?
 app.use(express.static(reactPath));
 
 app.use("/api", apiRouter); // api request flow: route -> controller -> db service

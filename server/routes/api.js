@@ -4,7 +4,7 @@ import { query, body } from "express-validator";
 import * as teams from "../controllers/teams.js";
 import * as matches from "../controllers/matches.js";
 import * as tournaments from "../controllers/tournaments.js";
-import { isGoodName } from "../middleware/validation.js";
+import * as users from "../controllers/users.js"
 
 const router = express.Router();
 
@@ -41,6 +41,8 @@ router.get("/tournaments/current", tournaments.getCurrent);
 
 router.get("/tournaments/:id", tournaments.getOne)
 
-router.put("/tournaments/:id", tournaments.updateOne)
+router.patch("/tournaments/:id", tournaments.updateOne)
+
+router.get("/users", users.getMultiple)
 
 export default router;

@@ -83,7 +83,7 @@ TournamentSchema.virtual("location").get(function () {
 })
 
 TournamentSchema.virtual("isRegistrationOver").get(function () {
-  return new Date() > this.registration.to;
+  return this.registration.to && new Date() > this.registration.to;
 })
 
 // if (this.end) {
