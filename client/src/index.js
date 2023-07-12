@@ -18,6 +18,8 @@ import axios from "axios";
 import ProfilePage from "./pages/Profile/Profile";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import TeamPage from "./pages/Team/Team";
+import CreateTeamPage from "./pages/CreateTeam/CreateTeam";
 
 export const AuthContext = createContext(null);
 export const TournamentContext = createContext(null);
@@ -26,9 +28,10 @@ function App() {
   const queryClient = useQueryClient();
 
   const { isLoading: isUserLoading, data: userData } = useQuery({
-    queryKey: ["me"],
+    queryKey: ["user", "me"],
     queryFn: async () => {
       const res = await axios.get("/me");
+      console.log(res.data);
       return res.data;
     },
   });
@@ -68,10 +71,18 @@ function App() {
                       path="/admin"
                       element={<AdminPanelPage></AdminPanelPage>}
                     ></Route>
-                    <Route
-                      path="/profile"
-                      element={<ProfilePage></ProfilePage>}
-                    ></Route>
+                    <Route path="/users">
+                      <Route
+                        path="/users/me"
+                        element={<ProfilePage></ProfilePage>}
+                      ></Route>
+                    </Route>
+                    <Route path="/teams">
+                      <Route path="/teams" element={<TeamPage></TeamPage>}></Route>
+                      <Route path="/teams/new" element={<CreateTeamPage></CreateTeamPage>}></Route>
+                      <Route path="/teams/join" element={<TeamPage></TeamPage>}></Route>
+                      {/* <Route path="/teams/mine" element={<TeamPage></TeamPage>}></Route> */}
+                    </Route>
                   </Routes>
                 </div>
               </LocalizationProvider>

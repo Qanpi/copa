@@ -14,18 +14,18 @@ function UserPanel() {
         return axios.post("/logout");
         },
         onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["me"] });
+        queryClient.invalidateQueries({ queryKey: ["user", "me"] });
         },
     });
 
     return user ? (
         <div className="user-panel">
             <div className="profile">
-                <img src={user.image} referrerPolicy="no-referrer" alt="user avatar"/>
+                <img src={user.avatar} referrerPolicy="no-referrer" alt="user avatar"/>
                 <p>{user.name}</p>
             </div>
             <div className="dropdown">
-                <Link to="/profile">Profile</Link>
+                <Link to="/users/me">Profile</Link>
                 <p>My team</p>
                 <p>Settings</p>
                 <p onClick={logout.mutate}>Log out</p>

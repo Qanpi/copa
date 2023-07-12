@@ -1,14 +1,16 @@
 import { Button, DialogActions, DialogContent, DialogContentText, Dialog, DialogTitle } from "@mui/material";
 
-function MyAlertDialog({open, handleBoolConfirm}) {
+function MyConfirmDialog({title, alert, open, handleBoolConfirm}) {
    return(
     <Dialog open={open}>
         <DialogTitle>
-            {"Proceed to group stages prematurely?"}
+            {title}
+            {/* {"Proceed to group stages prematurely?"} */}
         </DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Moving to the group stages before registration is over will abruptly end the registration process. 
+                {/* Moving to the group stages before registration is over will abruptly end the registration process.  */}
+                {alert}
             </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -19,4 +21,4 @@ function MyAlertDialog({open, handleBoolConfirm}) {
    ) 
 }
 
-export default MyAlertDialog;
+export default MyConfirmDialog;

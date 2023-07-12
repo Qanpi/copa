@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
-import MyAlertDialog from "../../../../components/MyAlertDialog/myalertdialog";
+import MyConfirmDialog from "../../../../components/MyConfirmDialog/myconfirmdialog";
 import MyDatePicker from "../../../../components/MyDatePicker/mydatepicker";
 
 function AdminRegistrationPage({ id }) {
@@ -18,7 +18,7 @@ function AdminRegistrationPage({ id }) {
 
   const updateTournament = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.put(`/api/tournaments/${tournament.id}`, values);
+      const res = await axios.patch(`/api/tournaments/${tournament.id}`, values);
       return res.data;
     },
     onSuccess: () => {
@@ -102,10 +102,10 @@ function AdminRegistrationPage({ id }) {
               </Button>
             </div>
           </Form>
-          <MyAlertDialog
+          <MyConfirmDialog
             open={openDialog}
             handleBoolConfirm={handleDialogResponse}
-          ></MyAlertDialog>
+          ></MyConfirmDialog>
         </>
       )}
     </Formik>
