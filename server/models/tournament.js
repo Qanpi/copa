@@ -21,7 +21,6 @@ const TournamentSchema = mongoose.Schema(
     settings: {
       matchLength: Number,
       playerCount: Number,
-      locationId: Number,
     },
     rules: {
       type: String,
@@ -34,9 +33,16 @@ const TournamentSchema = mongoose.Schema(
       from: Date,
       to: Date,
     },
-    stageId: {
-      type: Number,
-      default: 1
+    stage: {
+      type: String,
+      enum: [
+        "Kickstart", //meaningless?
+        "Registration",
+        "Group stage",
+        "Play-offs",
+        "Finished",
+      ],
+      default: "Registration",
     },
     end: Date,
   },
@@ -54,37 +60,26 @@ TournamentSchema.pre("save", async function (next) {
   next();
 });
 
-//const stages = ["Announced", "Registration", "Limbo", "Tournament", "Finished"];
-// // TournamentSchema.virtual("currentStage").get(function () {
-// //   const stageId = this.getCurrentStageId();
-// //   return this.stages[stageId];
-// // });
-
-// TournamentSchema.method("getCurrentStageId", function() {
-//   if (this.end) return this.stages.length; //FIXME: potential error
-
-//   for (let i=0; i<this.stages.length; i++) {
-//     const {start, end} = stage[i];
-//     const now = new Date();
-
-//     if (end && now <= end) {
-//       return i;
-//     }
-//   }
-// })
+TournamentSchema.virtual("stages").get(function () {
+  return this.schema.path("stage").enumValues;
+})
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
 });
 
-TournamentSchema.virtual("location").get(function () {
-  const locations = ["indoors", "outdoors", "hybrid"]
-  return locations[this.locationId];
-})
+TournamentSchema.virtual("registration.status").get(function () {
+  if (!this.registration) return "indefinite";
 
-TournamentSchema.virtual("isRegistrationOver").get(function () {
-  return this.registration.to && new Date() > this.registration.to;
-})
+  const now = new Date();
+  const {from, to} = this.registration;
+
+  if (now < from) {
+    return "awaiting";
+  } else if (now <= to) { 
+    return "in progress";
+  } else return "over";
+});
 
 // if (this.end) {
 //     return ;

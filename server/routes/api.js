@@ -1,10 +1,10 @@
 import express from "express";
 import { query, body } from "express-validator";
 
-import * as teams from "../controllers/teams.js";
-import * as matches from "../controllers/matches.js";
-import * as tournaments from "../controllers/tournaments.js";
-import * as users from "../controllers/users.js"
+import * as teams from "../controllers/teamsController.js";
+import * as matches from "../controllers/matchesController.js";
+import * as tournaments from "../controllers/tournamentsController.js";
+import * as users from "../controllers/usersController.js"
 
 const router = express.Router();
 
@@ -24,6 +24,16 @@ router.get("/teams", teams.getMultiple);
 router.post("/teams", teams.createOne);
 
 router.get("/teams/:id", teams.getOne);
+
+router.get("/teams/:id/players", teams.getPlayersInTeam)
+
+router.delete("/teams/:teamId/players/:playerId", teams.removePlayerFromTeam)
+
+router.delete("/teams/:id", teams.removeById)
+
+router.get("/teams/:id/invite", teams.generateInviteToken)
+
+router.post("/teams/:id/join", teams.joinTeam)
 
 router.post(
   "/tournaments",
@@ -45,4 +55,5 @@ router.patch("/tournaments/:id", tournaments.updateOne)
 
 router.get("/users", users.getMultiple)
 
+router.patch("/users/:id", users.updateOne)
 export default router;

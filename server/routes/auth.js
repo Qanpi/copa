@@ -41,6 +41,7 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(function (user, done) {
   //TODO: maybe add common info to cookie
+  console.log(user);
   process.nextTick(() => {
     return done(null, user);
   });
@@ -60,6 +61,7 @@ router.get(
   })
 );
 
+//TODO: refactor to controllers?
 router.post("/logout", (req, res, next) => {
   req.logOut((err) => {
     if (err) return next(err);
@@ -69,7 +71,7 @@ router.post("/logout", (req, res, next) => {
 
 router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
-    const updatedUser = await User.findById(req.user.id).populate("team");
+    const updatedUser = await User.findById(req.user.id);
 
     //skips serialization and assigns directly to req.user
     req.login(updatedUser, function(err) {

@@ -5,8 +5,7 @@ import { validate } from "../middleware/validation.js";
 export const createOne = expressAsyncHandler(async (req, res) => {
     if (!validate(req, res)) return; //FIXME: change other requests too
 
-    const newTournament = new Tournament(req.body);
-    await newTournament.save();
+    const newTournament = await new Tournament(req.body).save();
     res.send(newTournament);
 })
 
@@ -28,7 +27,7 @@ export const getCurrent = expressAsyncHandler(async (req, res) => {
     validate(req, res);
 
     const result = await Tournament.findOne({ //TODO: verify that only one not over is possible
-        status: {$ne: "over"}
+        stage: {$ne: "Finished"}
     })
     res.send(result);
 })
