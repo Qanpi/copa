@@ -6,6 +6,10 @@ const TeamSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      unique: true,
+      index: true,
+      set: encodeURIComponent,
+      get: decodeURIComponent
     },
     about: {
       type: String,
@@ -48,7 +52,7 @@ const TeamSchema = new mongoose.Schema(
       conceded: { type: Number },
     },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { toJSON: { virtuals: true, getters: true }, toObject: { virtuals: true } }
 );
 
 TeamSchema.virtual("players", {

@@ -28,8 +28,4 @@ const UserSchema = mongoose.Schema(
 //member, manager
 //admin
 
-UserSchema.virtual("isMember").get(function () {
-  return this.team !== undefined; //and registered!
-})
-
 export default mongoose.model(collections.users.id, UserSchema);

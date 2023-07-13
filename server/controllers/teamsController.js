@@ -16,16 +16,23 @@ export const createOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
-  const teams = await Team.find({});
+  const teams = await Team.find(req.query);
   res.send(teams);
 });
 
-export const getOne = expressAsyncHandler(async (req, res) => {
+export const getById = expressAsyncHandler(async (req, res) => {
   validate(req, res);
 
   const team = await Team.findById(req.params.id);
   res.send(team);
 });
+
+export const getByName = expressAsyncHandler(async (req, res) => {
+    const encoded = encodeURIComponent(req.query.name);
+    console.log(encoded)
+    const team = await Team.findOne({name: encoded});
+    res.send(team);
+})
 
 //is this necessary?
 export const getPlayersInTeam = expressAsyncHandler(async (req, res) => {

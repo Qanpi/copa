@@ -23,7 +23,7 @@ router.get("/teams", teams.getMultiple);
 
 router.post("/teams", teams.createOne);
 
-router.get("/teams/:id", teams.getOne);
+router.get("/teams/:id", teams.getById);
 
 router.get("/teams/:id/players", teams.getPlayersInTeam)
 
