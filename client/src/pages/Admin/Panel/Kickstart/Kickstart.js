@@ -24,32 +24,30 @@ function KickstartPage() {
     <Formik
       initialValues={{
         settings: {
-            playerCount: 4,
+          playerCount: 4,
           matchLength: 6,
-          location: 0,
         },
         organizer: {
-            name: "",
-            phoneNumber: ""
+          name: "",
+          phoneNumber: "",
         },
-        rules: ""
+        rules: "",
       }}
       validationSchema={Yup.object({
         settings: Yup.object({
-            playerCount: Yup.number().min(1).max(11).required(),
-            matchLength: Yup.number().min(1).max(20).required(),
-          location: Yup.number().min(0).max(2).notRequired(),
+          playerCount: Yup.number().min(1).max(11).required(),
+          matchLength: Yup.number().min(1).max(20).required(),
         }),
         organizer: Yup.object({
-            name: Yup.string().required(),
-            phoneNumber: Yup.string().notRequired(),
+          name: Yup.string().required(),
+          phoneNumber: Yup.string().notRequired(),
         }),
-        rules: Yup.string().required()
+        rules: Yup.string().required(),
       })}
       onSubmit={(values) => createTournament.mutate(values)}
     >
       <Form>
-        
+        <h1>Kickstart a new coap tournametn</h1>
         <div className="settings-wrapper">
           <MyNumberSlider
             label="Match length"
@@ -63,7 +61,7 @@ function KickstartPage() {
               { value: 6, label: "6 min" },
               { value: 20, label: "20 min" },
             ]}
-          /> 
+          />
           <MyNumberSlider
             label="Player count"
             name="settings.playerCount"
@@ -91,22 +89,35 @@ function KickstartPage() {
           <li>What about not showing up on time?</li>
         </ol>
         <h2>CONTACTS</h2>
-        <MyTextField type="text" name="organizer.name" label="Organizer's name"></MyTextField>
-        <MyTextField type="tel" name="organizer.phoneNumber" label="Phone number"></MyTextField>
+        <MyTextField
+          type="text"
+          name="organizer.name"
+          label="Organizer's name"
+        ></MyTextField>
+        <MyTextField
+          type="tel"
+          name="organizer.phoneNumber"
+          label="Phone number"
+        ></MyTextField>
         <Button type="submit">Submit</Button>
       </Form>
     </Formik>
   );
 }
 
-const MyFileInput = ({label, ...props}) => {
-        const [field, meta] = useField(props);
-    return (
-        <>
-        <InputLabel>{label}</InputLabel>
-        <Input type="file" {...props} {...field} error={meta.error && meta.touched}></Input>
-        </>
-    )
-}
+const MyFileInput = ({ label, ...props }) => {
+  const [field, meta] = useField(props);
+  return (
+    <>
+      <InputLabel>{label}</InputLabel>
+      <Input
+        type="file"
+        {...props}
+        {...field}
+        error={meta.error && meta.touched}
+      ></Input>
+    </>
+  );
+};
 
 export default KickstartPage;

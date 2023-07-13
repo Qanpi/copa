@@ -20,18 +20,20 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import TeamPage from "./pages/Team/Team";
 import CreateTeamPage from "./pages/CreateTeam/CreateTeam";
+import JoinTeamPage from "./pages/JoinTeam/JoinTeam";
+import RegistrationPage from "./pages/Registration/Registration";
 
 export const AuthContext = createContext(null);
 export const TournamentContext = createContext(null);
+export const TeamContext = createContext(null);
 
 function App() {
   const queryClient = useQueryClient();
 
-  const { isLoading: isUserLoading, data: userData } = useQuery({
+  const { isLoading: isUserLoading, data: userData, isSuccess: isUserLoaded } = useQuery({
     queryKey: ["user", "me"],
     queryFn: async () => {
       const res = await axios.get("/me");
-      console.log(res.data);
       return res.data;
     },
   });
@@ -44,6 +46,19 @@ function App() {
     },
   });
 
+  const { data: teamData, isLoading: isTeamLoading } = useQuery({
+    queryKey: ["team", "current"],
+    queryFn: async () => {
+      if (userData.team) {
+        const response = await axios.get(`/api/teams/${userData.team}`);
+        return response.data;
+      } else {
+        return null;
+      }
+    },
+    enabled: isUserLoaded
+  });
+
   return isUserLoading || isTournamentLoading ? (
     <div>Loading...</div>
   ) : (
@@ -52,40 +67,51 @@ function App() {
         <Router>
           <AuthContext.Provider value={userData}>
             <TournamentContext.Provider value={tournamentData}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Header></Header>
-                <div className="primary">
-                  <Routes>
-                    <Route path="/" element={<Home></Home>}></Route>
-                    <Route path="/tables">
+              <TeamContext.Provider value={teamData}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <Header></Header>
+                  <div className="primary">
+                    <Routes>
+                      <Route path="/" element={<Home></Home>}></Route>
+                      <Route path="/register" element={<RegistrationPage></RegistrationPage>}></Route>
+                      <Route path="/tables">
+                        <Route
+                          path="/tables/matches"
+                          element={<MatchesTable></MatchesTable>}
+                        ></Route>
+                        <Route
+                          path="/tables/teams"
+                          element={<TeamsTable></TeamsTable>}
+                        ></Route>
+                      </Route>
                       <Route
-                        path="/tables/matches"
-                        element={<MatchesTable></MatchesTable>}
+                        path="/admin"
+                        element={<AdminPanelPage></AdminPanelPage>}
                       ></Route>
-                      <Route
-                        path="/tables/teams"
-                        element={<TeamsTable></TeamsTable>}
-                      ></Route>
-                    </Route>
-                    <Route
-                      path="/admin"
-                      element={<AdminPanelPage></AdminPanelPage>}
-                    ></Route>
-                    <Route path="/users">
-                      <Route
-                        path="/users/me"
-                        element={<ProfilePage></ProfilePage>}
-                      ></Route>
-                    </Route>
-                    <Route path="/teams">
-                      <Route path="/teams" element={<TeamPage></TeamPage>}></Route>
-                      <Route path="/teams/new" element={<CreateTeamPage></CreateTeamPage>}></Route>
-                      <Route path="/teams/join" element={<TeamPage></TeamPage>}></Route>
-                      {/* <Route path="/teams/mine" element={<TeamPage></TeamPage>}></Route> */}
-                    </Route>
-                  </Routes>
-                </div>
-              </LocalizationProvider>
+                      <Route path="/users">
+                        <Route
+                          path="/users/:id"
+                          element={<ProfilePage></ProfilePage>}
+                        ></Route>
+                      </Route>
+                      <Route path="/teams">
+                        <Route
+                          path="/teams/join"
+                          element={<JoinTeamPage></JoinTeamPage>}
+                        ></Route>
+                        <Route
+                          path="/teams/new"
+                          element={<CreateTeamPage></CreateTeamPage>}
+                        ></Route>
+                        <Route
+                          path="/teams/:id"
+                          element={<TeamPage></TeamPage>}
+                        ></Route>
+                      </Route>
+                    </Routes>
+                  </div>
+                </LocalizationProvider>
+              </TeamContext.Provider>
             </TournamentContext.Provider>
           </AuthContext.Provider>
         </Router>

@@ -9,12 +9,13 @@ const MyDatePicker = ({ ...props }) => {
       <DatePicker
         {...props}
         {...field}
-        slotProps={meta.touched ? {
+        slotProps={{
           textField: {
-            helperText: meta.error,
+            helperText: meta.touched && meta.error,
+            error: meta.error && meta.touched
           },
-        } : null}
-        
+        }}
+
         onChange={(value) => {
             setFieldValue(field.name, value)
         }}
