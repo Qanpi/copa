@@ -5,6 +5,8 @@ import { Form, Formik } from "formik";
 import MyTextField from "../../components/MyTextField/mytextfield";
 import MyStepper from "../../components/MyStepper/mystepper";
 import MySelect from "../../components/MySelect/mySelect";
+import { phoneValidationSchema, teamValidationSchema } from "../CreateTeam/CreateTeam";
+import { Link } from "react-router-dom";
 
 function RegistrationPage() {
   const user = useContext(AuthContext);
@@ -28,7 +30,8 @@ function RegistrationPage() {
         <>
             <Typography variant="h6">Please verify the information below</Typography>
             <Formik 
-            initialValues={team}>
+            initialValues={team}
+            validationSchema={teamValidationSchema}>
                 <Form>
                     <MyTextField name="name" label="name"></MyTextField>
                     <MyTextField name="phoneNumber"></MyTextField>
@@ -59,6 +62,8 @@ function RegistrationPage() {
       <>
         <div>You are not currently in a team.</div>
         <p>Please join or create a team in order to participate.</p>
+        <Link to="/teams/join">Join a team</Link>
+        <Link to="/teams/new">Create a team</Link>
       </>
     );
   }

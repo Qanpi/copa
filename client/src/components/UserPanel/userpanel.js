@@ -2,11 +2,12 @@ import "./userpanel.css"
 import axios from "axios"
 import {useQueryClient, useQuery, useMutation} from "@tanstack/react-query"
 import { useContext } from "react"
-import { AuthContext } from "../.."
+import { AuthContext, TeamContext } from "../.."
 import { Link } from "react-router-dom"
 
 function UserPanel() { 
     const user = useContext(AuthContext);
+    const team = useContext(TeamContext);
 
     const queryClient = useQueryClient();
     const logout = useMutation({
@@ -26,7 +27,7 @@ function UserPanel() {
             </div>
             <div className="dropdown">
                 <Link to="/users/me">Profile</Link>
-                <p>My team</p>
+                <Link to={team ? `/teams/${team.id}` : "/teams/join"}>My team</Link>
                 <p>Settings</p>
                 <p onClick={logout.mutate}>Log out</p>
             </div>

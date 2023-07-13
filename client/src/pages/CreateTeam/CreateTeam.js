@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AuthContext } from "../..";
+import { AuthContext, TeamContext } from "../..";
 import {
   Dialog,
   DialogTitle,
@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   Button,
+  MenuItem,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,9 +15,28 @@ import axios from "axios";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import MyTextField from "../../components/MyTextField/mytextfield";
+import MySelect from "../../components/MySelect/mySelect";
+import MyFileInput from "../../components/MyFileInput/myFileInput";
+
+export const teamValidationSchema = Yup.object({
+  name: Yup.string().max(20).trim().required(),
+  about: Yup.string().max(100).optional(),
+  phoneNumber: Yup.string()
+    .matches(
+      /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/
+    )
+    .required(),
+  instagramPage: Yup.string()
+    .url()
+    .matches(/https:\/\/www\.instagram\.com\/\S+\/?/), //TODO: maybe be even stricter than \S
+  division: Yup.string().oneOf(["Men's", "Women's"]).required(),
+  banner: Yup.string().optional(),
+  picture: Yup.string().optional(),
+});
 
 function CreateTeamPage() {
   const user = useContext(AuthContext);
+  const team = useContext(TeamContext);
 
   const navigate = useNavigate();
 
@@ -36,10 +56,10 @@ function CreateTeamPage() {
 
   const leaveTeam = useMutation({
     mutationFn: () => {
-      return axios.delete(`/api/teams/${user.team.id}/players/${user.id}`);
+      return axios.delete(`/api/teams/${team.id}/players/${user.id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teams", user.team.id] });
+      queryClient.invalidateQueries({ queryKey: ["teams", team.id] });
     },
   });
 
@@ -48,14 +68,14 @@ function CreateTeamPage() {
       leaveTeam.mutate();
     } else {
       //or maybbe just show error again for submitting but allow to view creation form
-      return navigate(`/teams/${user.team.id}`);
+      return navigate(`/teams/${team.id}`);
       //return
     }
   };
 
   return (
     <>
-      <Dialog open={user.isMember}>
+      <Dialog open={Boolean(team)}>
         <DialogTitle>{"Leave current team?"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -82,19 +102,7 @@ function CreateTeamPage() {
           banner: "",
           picture: "",
         }}
-        validationSchema={Yup.object({
-          name: Yup.string().max(20),
-          about: Yup.string().max(100),
-          contacts: Yup.object({
-            phoneNumber: Yup.string().required(), //TODO: phone validation
-            instagramPage: Yup.string()
-              .url()
-              .matches(/https:\/\/www\.instagram\.com\/\S+\/?/), //TODO: maybe be even stricter than \S
-          }),
-          division: Yup.string(), 
-          banner: Yup.string(),
-          picture: Yup.string(),
-        })}
+        validationSchema={teamValidationSchema}
         onSubmit={(values) => {
           createTeam.mutate(values);
         }}
@@ -105,11 +113,18 @@ function CreateTeamPage() {
           <MyTextField
             label="Phone number"
             name="phoneNumber"
+            type="tel"
           ></MyTextField>
           <MyTextField
             label="Instagram page"
             name="instagramPage"
           ></MyTextField>
+          <MySelect name="division" label="Division">
+            <MenuItem value="Men's">Men's</MenuItem>
+            <MenuItem value="Women's">Women's</MenuItem>
+          </MySelect>
+          <MyFileInput name="banner" label="Team banner"></MyFileInput>
+          <MyFileInput name="picture" label="Team picture"></MyFileInput>
           <Button type="submit">Submit</Button>
         </Form>
       </Formik>

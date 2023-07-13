@@ -1,14 +1,18 @@
-import { Select } from "@mui/material";
-import { useField } from "formik"
+import { FormControl, FormHelperText, InputLabel, Select } from "@mui/material";
+import { useField } from "formik";
 
-const MySelect = ({children, ...props}) => {
-    const [field, meta] = useField(props);
+const MySelect = ({ children, label, ...props }) => {
+  const [field, meta] = useField(props);
 
-    return (
-        <Select {...field} {...meta}>
-            {children}
-        </Select>
-    )
-}
+  return (
+    <FormControl>
+      <InputLabel>{label}</InputLabel>
+      <Select error={meta.error && meta.touched} label={label} {...field} {...props}>
+        {children}
+      </Select>
+      <FormHelperText>{meta.touched && meta.error}</FormHelperText>
+    </FormControl>
+  );
+};
 
 export default MySelect;

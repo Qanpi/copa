@@ -104,7 +104,7 @@ function App() {
                           element={<CreateTeamPage></CreateTeamPage>}
                         ></Route>
                         <Route
-                          path="/teams/:id"
+                          path="/teams/:name"
                           element={<TeamPage></TeamPage>}
                         ></Route>
                       </Route>

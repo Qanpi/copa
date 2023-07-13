@@ -19,12 +19,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 function TeamPage() {
-  const { id } = useParams();
+  const { name } = useParams();
 
-  const { status: teamStatus, data: team } = useQuery({
-    queryKey: ["team", id],
+  const { status: teamStatus, data: team, refetch: refetchTeam} = useQuery({
+    queryKey: ["team", name],
     queryFn: async () => {
-      const team = await axios.get(`/api/teams/${id}`);
+      const team = await axios.get(`/api/teams?name=${name}`);
       return team.data;
     },
   });
@@ -36,10 +36,10 @@ function TeamPage() {
   } = useQuery({
     queryKey: ["invite"],
     queryFn: async () => {
-      const invite = await axios.get(`/api/teams/${id}/invite`);
+      const invite = await axios.get(`/api/teams/${team.id}/invite`);
 
       return {
-        link: `/api/teams/${id}/join/${invite.data.token}`,
+        link: `/api/teams/${team.id}/join/${invite.data.token}`,
         countdown: dayjs().to(invite.data.expiresAt),
       };
     },
@@ -60,7 +60,7 @@ function TeamPage() {
     <>
       <h1>{team.name}</h1>
       <h2>{team.manager}</h2>
-      <Button onClick={fetchInvite}>Invite</Button>
+      <Button onClick={() => team ? fetchInvite() : refetchTeam()}>Invite</Button>
       {inviteStatus === "success" ? (
         <Alert>
           <AlertTitle>Generated invite link!</AlertTitle>

@@ -6,6 +6,7 @@ import MyNumberSlider from "../../../../components/MyNumberSlider/mynumberslider
 import MyTextField from "../../../../components/MyTextField/mytextfield";
 import { Button, Input, InputLabel } from "@mui/material";
 import { useField } from "formik";
+import MyFileInput from "../../../../components/MyFileInput/myFileInput";
 
 function KickstartPage() {
   const queryClient = useQueryClient();
@@ -105,19 +106,5 @@ function KickstartPage() {
   );
 }
 
-const MyFileInput = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
-  return (
-    <>
-      <InputLabel>{label}</InputLabel>
-      <Input
-        type="file"
-        {...props}
-        {...field}
-        error={meta.error && meta.touched}
-      ></Input>
-    </>
-  );
-};
 
 export default KickstartPage;
