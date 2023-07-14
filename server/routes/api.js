@@ -64,14 +64,6 @@ router.delete("/tournaments/:tournamentId/teams/:teamId", tournaments.unregister
 
 router.get("/teams/:id/tournaments", teams.getTournaments);
 
-// router.get("/participations", participations.getMultiple)
-
-// router.post("/participations", participations.createOne);
-
-// router.get("/participations/:id", participations.getMultiple);
-
-// router.delete("/participations/:id", participations.deleteOne);
-
 router.get("/users", users.getMultiple)
 
 router.patch("/users/:id", users.updateOne)
