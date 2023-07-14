@@ -6,6 +6,18 @@ import dayjs from "dayjs";
 import Increment from "./increment.js";
 dayjs.extend(relativeTime);
 
+const TeamSubSchema = mongoose.Schema(
+  {
+    id: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: collections.teams.id,
+    },
+    name: String,
+    division: String,
+  },
+  { _id: false }
+);
+//TODO: split into user and admin models
 const TournamentSchema = mongoose.Schema(
   {
     count: {
@@ -33,6 +45,7 @@ const TournamentSchema = mongoose.Schema(
       from: Date,
       to: Date,
     },
+    teams: [TeamSubSchema],
     stage: {
       type: String,
       enum: [
@@ -62,7 +75,7 @@ TournamentSchema.pre("save", async function (next) {
 
 TournamentSchema.virtual("stages").get(function () {
   return this.schema.path("stage").enumValues;
-})
+});
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
@@ -72,11 +85,11 @@ TournamentSchema.virtual("registration.status").get(function () {
   if (!this.registration) return "indefinite";
 
   const now = new Date();
-  const {from, to} = this.registration;
+  const { from, to } = this.registration;
 
   if (now < from) {
     return "awaiting";
-  } else if (now <= to) { 
+  } else if (now <= to) {
     return "in progress";
   } else return "over";
 });

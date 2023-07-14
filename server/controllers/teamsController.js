@@ -29,9 +29,14 @@ export const getById = expressAsyncHandler(async (req, res) => {
 
 export const getByName = expressAsyncHandler(async (req, res) => {
     const encoded = encodeURIComponent(req.query.name);
-    console.log(encoded)
+
     const team = await Team.findOne({name: encoded});
     res.send(team);
+})
+
+export const updateOne = expressAsyncHandler(async (req, res) => {
+  const team = await Team.findByIdAndUpdate(req.params.id, req.body, {new: true});
+  res.send(team);
 })
 
 //is this necessary?
@@ -51,7 +56,7 @@ export const removePlayerFromTeam = expressAsyncHandler(async (req, res) => {
   user.team = undefined;
   await user.save();
 
-  res.status(204).send();
+  res.status(204).send({});
 });
 
 export const joinTeam = expressAsyncHandler(async (req, res) => {
@@ -89,3 +94,7 @@ export const removeById = expressAsyncHandler(async (req, res) => {
   await Team.findByIdAndRemove(req.params.id);
   res.status(204).send();
 });
+
+export const getTournaments = expressAsyncHandler(async (req, res) => {
+  
+})

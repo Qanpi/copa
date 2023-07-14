@@ -9,9 +9,7 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
 })
 
 export const updateOne = expressAsyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id);
-    console.log(user)
-    user.team = undefined;
-    await user.save()
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true});
+
     res.send(user);
 })

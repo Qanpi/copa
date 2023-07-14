@@ -5,6 +5,7 @@ import * as teams from "../controllers/teamsController.js";
 import * as matches from "../controllers/matchesController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js"
+import * as participations from "../controllers/participationsController.js"
 
 const router = express.Router();
 
@@ -22,6 +23,8 @@ router.get(
 router.get("/teams", teams.getMultiple);
 
 router.post("/teams", teams.createOne);
+
+router.patch("/teams/:id", teams.updateOne)
 
 router.get("/teams/:id", teams.getById);
 
@@ -52,6 +55,22 @@ router.get("/tournaments/current", tournaments.getCurrent);
 router.get("/tournaments/:id", tournaments.getOne)
 
 router.patch("/tournaments/:id", tournaments.updateOne)
+
+router.get("/tournaments/:id/teams", tournaments.getRegisteredTeams);
+
+router.post("/tournaments/:id/teams", tournaments.registerTeam);
+
+router.delete("/tournaments/:tournamentId/teams/:teamId", tournaments.unregisterTeam);
+
+router.get("/teams/:id/tournaments", teams.getTournaments);
+
+// router.get("/participations", participations.getMultiple)
+
+// router.post("/participations", participations.createOne);
+
+// router.get("/participations/:id", participations.getMultiple);
+
+// router.delete("/participations/:id", participations.deleteOne);
 
 router.get("/users", users.getMultiple)
 

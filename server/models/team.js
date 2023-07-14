@@ -1,6 +1,16 @@
 import mongoose from "mongoose";
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
+import Tournament from "./tournament.js"
+
+const TournamentSubSchema = mongoose.Schema({
+  id: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: collections.tournaments.id,
+  },
+  name: String,
+  result: String,
+}, {_id: false});
 
 const TeamSchema = new mongoose.Schema(
   {
@@ -9,7 +19,7 @@ const TeamSchema = new mongoose.Schema(
       unique: true,
       index: true,
       set: encodeURIComponent,
-      get: decodeURIComponent
+      get: decodeURIComponent,
     },
     about: {
       type: String,
@@ -40,7 +50,9 @@ const TeamSchema = new mongoose.Schema(
       type: String,
       enum: ["Men's", "Women's"],
     },
-    isRegistered: Boolean,
+
+    tournaments: [TournamentSubSchema],
+
     matches: [
       {
         type: mongoose.SchemaTypes.ObjectId,
