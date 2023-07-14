@@ -10,7 +10,7 @@ import {
   teamValidationSchema,
 } from "../CreateTeam/CreateTeam";
 import { Link } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 function RegistrationPage() {
@@ -34,31 +34,47 @@ function RegistrationPage() {
   });
 
   const registerTeam = useMutation({
-    mutationFn: async (register) => {
-      let res;
-      if (register) {
-        res = await axios.post(`/api/tournaments/${tournament.id}/teams`, {
-          teamId: team.id,
-        });
-      } else {
-        console.log("delete");
-        res = await axios.delete(
-          `/api/tournaments/${tournament.id}/teams/${team.id}`
-        );
-      }
+    mutationFn: async (bool) => {
+      const res = await axios.post(`/api/participations`, {
+        teamId: team.id,
+        tournamentId: tournament.id,
+      });
+
       return res.data;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["teams", team.id], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries(["participation"]);
+    },
+  });
+
+  const { data: participation } = useQuery({
+    queryKey: ["participation"],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/api/participations?team=${team.id}&tournament=${tournament.id}`
+      );
+      return res.data[0] || null; //assumed it's a singular value
+    },
+    //potentailly needs enabeld 
+  });
+
+  const unregisterTeam = useMutation({
+    mutationFn: async () => {
+      const res = await axios.delete(`/api/participations/${participation.id}`);
+
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["participation"]);
     },
   });
 
   if (team) {
-    if (team.tournaments.find(t => t.id == tournament.id)) {
+    if (participation) {
       return (
         <>
           <div>Congratulations! Your team is already registered.</div>
-          <Button onClick={() => registerTeam.mutate(false)}>Unregister</Button>
+          <Button onClick={unregisterTeam.mutate}>Unregister</Button>
         </>
       );
     } else if (team.manager == user.id) {
@@ -86,7 +102,7 @@ function RegistrationPage() {
                 <Button
                   onClick={async () => {
                     if (dirty) await submitForm();
-                    if (isValid) registerTeam.mutate(true);
+                    if (isValid) registerTeam.mutate();
                   }}
                 >
                   Register

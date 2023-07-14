@@ -23,6 +23,7 @@ import JoinTeamPage from "./pages/JoinTeam/JoinTeam";
 import RegistrationPage from "./pages/Registration/Registration";
 import TeamsTable from "./pages/Tables/TeamsTable/TeamsTable";
 
+//FIXME: refactor away from contexts
 export const AuthContext = createContext(null);
 export const TournamentContext = createContext(null);
 export const TeamContext = createContext(null);
@@ -63,7 +64,7 @@ function App() {
     enabled: isUserLoaded,
   });
 
-  return isUserLoading || isTournamentLoading ? (
+  return isUserLoading || isTournamentLoading || isTeamLoading ? (
     <div>Loading...</div>
   ) : (
     <React.StrictMode>
