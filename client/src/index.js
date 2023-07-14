@@ -6,7 +6,6 @@ import reportWebVitals from "./services/reportWebVitals";
 import Header from "./components/Header/header";
 import AdminPanelPage from "./pages/Admin/Panel/AdminPanel";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { TeamsTable, MatchesTable } from "./pages/Tables/Tables";
 import {
   QueryClient,
   QueryClientProvider,
@@ -22,7 +21,7 @@ import TeamPage from "./pages/Team/Team";
 import CreateTeamPage from "./pages/CreateTeam/CreateTeam";
 import JoinTeamPage from "./pages/JoinTeam/JoinTeam";
 import RegistrationPage from "./pages/Registration/Registration";
-import RegisteredPage from "./pages/Admin/Panel/Registration/Registered/Registered";
+import TeamsTable from "./pages/Tables/TeamsTable/TeamsTable";
 
 export const AuthContext = createContext(null);
 export const TournamentContext = createContext(null);
@@ -83,10 +82,10 @@ function App() {
                         element={<RegistrationPage></RegistrationPage>}
                       ></Route>
                       <Route path="/tables">
-                        <Route
+                        {/* <Route
                           path="/tables/matches"
                           element={<MatchesTable></MatchesTable>}
-                        ></Route>
+                        ></Route> */}
                         <Route
                           path="/tables/teams"
                           element={<TeamsTable></TeamsTable>}
@@ -97,12 +96,6 @@ function App() {
                           path="/admin/dashboard"
                           element={<AdminPanelPage></AdminPanelPage>}
                         ></Route>
-                        <Route path="/admin/registration">
-                          <Route
-                            path="/admin/registration"
-                            element={<RegisteredPage></RegisteredPage>}
-                          ></Route>
-                        </Route>
                       </Route>
                       <Route path="/users">
                         <Route
