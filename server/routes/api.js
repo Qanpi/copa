@@ -5,7 +5,6 @@ import * as teams from "../controllers/teamsController.js";
 import * as matches from "../controllers/matchesController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js"
-import * as participations from "../controllers/participationsController.js"
 
 const router = express.Router();
 
