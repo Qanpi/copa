@@ -1,5 +1,18 @@
 import { useContext } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, ButtonGroup, InputLabel, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  ButtonGroup,
+  InputLabel,
+  Typography,
+  Card,
+  CardActionArea,
+  CardContent,
+} from "@mui/material";
 import { TournamentContext } from "../../../..";
 import { Formik, Form, yupToFormErrors, validateYupSchema } from "formik";
 import dayjs from "dayjs";
@@ -12,7 +25,7 @@ import MyDatePicker from "../../../../components/MyDatePicker/mydatepicker";
 function AdminRegistrationPage({ moveToNextStage }) {
   const [openDialog, setOpenDialog] = useState(false);
   const tournament = useContext(TournamentContext);
-  
+
   const queryClient = useQueryClient();
   const updateTournament = useMutation({
     mutationFn: async (values) => {
@@ -82,15 +95,20 @@ function AdminRegistrationPage({ moveToNextStage }) {
               />
             </div>
             <Button type="submit">Confirm</Button>
-            <div>Registration stats</div>
+            <Card sx={{width: 1/2, height: 1}}>
+              <CardActionArea>
+                <CardContent>
+            <Typography variant="h3">21</Typography>
+            <Typography>currently registered</Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
             <div>
               <Button disabled>Back</Button>
               <Button
-                onClick={() => {
-                  //ugly code cuz of fucking formik bithc ass shit
-                  // can't even fix their submitForm promise
-                  formik.submitForm();
-                  if (formik.isValid) handleMoveToNextStage()
+                onClick={async () => {
+                  await formik.submitForm();
+                  if (formik.isValid) handleMoveToNextStage();
                 }}
               >
                 Next stage

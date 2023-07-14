@@ -1,46 +1,99 @@
 import { useContext } from "react";
-import { AuthContext, TeamContext } from "../..";
-import { MenuItem, Typography } from "@mui/material";
+import { AuthContext, TeamContext, TournamentContext } from "../..";
+import { Button, MenuItem, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import MyTextField from "../../components/MyTextField/mytextfield";
 import MyStepper from "../../components/MyStepper/mystepper";
 import MySelect from "../../components/MySelect/mySelect";
-import { phoneValidationSchema, teamValidationSchema } from "../CreateTeam/CreateTeam";
+import {
+  phoneValidationSchema,
+  teamValidationSchema,
+} from "../CreateTeam/CreateTeam";
 import { Link } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 function RegistrationPage() {
   const user = useContext(AuthContext);
   const team = useContext(TeamContext);
+  const tournament = useContext(TournamentContext);
 
   //team member -> ask manager
   //team manager -> register
   //teamless -> join/create team
   //registered -> alr registered
+  const queryClient = useQueryClient();
+  const updateTeamInfo = useMutation({
+    mutationFn: async (values) => {
+      const res = await axios.patch(`/api/teams/${team.id}`, values);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["teams", team.id], data);
+    },
+  });
+
+  const registerTeam = useMutation({
+    mutationFn: async (register) => {
+      let res;
+      if (register) {
+        res = await axios.post(`/api/tournaments/${tournament.id}/teams`, {
+          teamId: team.id,
+        });
+      } else {
+        console.log("delete");
+        res = await axios.delete(
+          `/api/tournaments/${tournament.id}/teams/${team.id}`
+        );
+      }
+      return res.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["teams", team.id], data);
+    },
+  });
 
   if (team) {
-    if (team.isRegistered) {
-        return (
-            <div>
-                Your team is already registered.
-            </div>
-        )
-    }
-    else if (team.manager == user.id) {
+    if (team.tournaments.find(t => t.id == tournament.id)) {
       return (
         <>
-            <Typography variant="h6">Please verify the information below</Typography>
-            <Formik 
+          <div>Congratulations! Your team is already registered.</div>
+          <Button onClick={() => registerTeam.mutate(false)}>Unregister</Button>
+        </>
+      );
+    } else if (team.manager == user.id) {
+      return (
+        <>
+          <Typography variant="h6">
+            Please verify the information below
+          </Typography>
+          <Formik
             initialValues={team}
-            validationSchema={teamValidationSchema}>
-                <Form>
-                    <MyTextField name="name" label="name"></MyTextField>
-                    <MyTextField name="phoneNumber"></MyTextField>
-                    <MySelect name="division">
-                        <MenuItem value="Men's">Men's</MenuItem>
-                        <MenuItem value="Women's">Women's</MenuItem>
-                    </MySelect>
-                </Form>
-            </Formik>
+            validationSchema={teamValidationSchema}
+            onSubmit={(values) => updateTeamInfo.mutate(values)}
+          >
+            {({ dirty, submitForm, isValid }) => (
+              <Form>
+                <MyTextField name="name" label="name"></MyTextField>
+                <MyTextField name="phoneNumber"></MyTextField>
+                <MySelect name="division">
+                  <MenuItem value="Men's">Men's</MenuItem>
+                  <MenuItem value="Women's">Women's</MenuItem>
+                </MySelect>
+                <Typography>
+                  To update more info, head over to your team profile.
+                </Typography>
+                <Button
+                  onClick={async () => {
+                    if (dirty) await submitForm();
+                    if (isValid) registerTeam.mutate(true);
+                  }}
+                >
+                  Register
+                </Button>
+              </Form>
+            )}
+          </Formik>
         </>
       );
     } else {

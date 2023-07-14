@@ -22,6 +22,7 @@ import TeamPage from "./pages/Team/Team";
 import CreateTeamPage from "./pages/CreateTeam/CreateTeam";
 import JoinTeamPage from "./pages/JoinTeam/JoinTeam";
 import RegistrationPage from "./pages/Registration/Registration";
+import RegisteredPage from "./pages/Admin/Panel/Registration/Registered/Registered";
 
 export const AuthContext = createContext(null);
 export const TournamentContext = createContext(null);
@@ -30,7 +31,11 @@ export const TeamContext = createContext(null);
 function App() {
   const queryClient = useQueryClient();
 
-  const { isLoading: isUserLoading, data: userData, isSuccess: isUserLoaded } = useQuery({
+  const {
+    isLoading: isUserLoading,
+    data: userData,
+    isSuccess: isUserLoaded,
+  } = useQuery({
     queryKey: ["user", "me"],
     queryFn: async () => {
       const res = await axios.get("/me");
@@ -47,7 +52,7 @@ function App() {
   });
 
   const { data: teamData, isLoading: isTeamLoading } = useQuery({
-    queryKey: ["team", "current"],
+    queryKey: ["teams", userData?.team], //TODO: verify this key works
     queryFn: async () => {
       if (userData.team) {
         const response = await axios.get(`/api/teams/${userData.team}`);
@@ -56,7 +61,7 @@ function App() {
         return null;
       }
     },
-    enabled: isUserLoaded
+    enabled: isUserLoaded,
   });
 
   return isUserLoading || isTournamentLoading ? (
@@ -73,7 +78,10 @@ function App() {
                   <div className="primary">
                     <Routes>
                       <Route path="/" element={<Home></Home>}></Route>
-                      <Route path="/register" element={<RegistrationPage></RegistrationPage>}></Route>
+                      <Route
+                        path="/register"
+                        element={<RegistrationPage></RegistrationPage>}
+                      ></Route>
                       <Route path="/tables">
                         <Route
                           path="/tables/matches"
@@ -84,10 +92,18 @@ function App() {
                           element={<TeamsTable></TeamsTable>}
                         ></Route>
                       </Route>
-                      <Route
-                        path="/admin"
-                        element={<AdminPanelPage></AdminPanelPage>}
-                      ></Route>
+                      <Route path="/admin">
+                        <Route
+                          path="/admin/dashboard"
+                          element={<AdminPanelPage></AdminPanelPage>}
+                        ></Route>
+                        <Route path="/admin/registration">
+                          <Route
+                            path="/admin/registration"
+                            element={<RegisteredPage></RegisteredPage>}
+                          ></Route>
+                        </Route>
+                      </Route>
                       <Route path="/users">
                         <Route
                           path="/users/:id"

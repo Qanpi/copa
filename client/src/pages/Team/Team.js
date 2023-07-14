@@ -22,7 +22,7 @@ function TeamPage() {
   const { name } = useParams();
 
   const { status: teamStatus, data: team, refetch: refetchTeam} = useQuery({
-    queryKey: ["team", name],
+    queryKey: ["teams", name],
     queryFn: async () => {
       const team = await axios.get(`/api/teams?name=${name}`);
       return team.data;
