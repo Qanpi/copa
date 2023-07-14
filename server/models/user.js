@@ -10,6 +10,10 @@ const UserSchema = mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: collections.teams.id,
     },
+    role: {
+      type: String,
+      enum: ["manager", "admin"]
+    }
   },
   {
     toObject: { virtuals: true },
@@ -27,5 +31,9 @@ const UserSchema = mongoose.Schema(
 //registered? 
 //member, manager
 //admin
+
+UserSchema.virtual("isAdmin").get(function () {
+  return this.role === "admin";
+})
 
 export default mongoose.model(collections.users.id, UserSchema);
