@@ -23,19 +23,8 @@ import JoinTeamPage from "./pages/JoinTeam/JoinTeam";
 import RegistrationPage from "./pages/Registration/Registration";
 import TeamsTable from "./pages/Tables/TeamsTable/TeamsTable";
 
-//FIXME: refactor away from contexts
-export const AuthContext = createContext(null);
-export const TournamentContext = createContext(null);
-export const TeamContext = createContext(null);
-
-function App() {
-  const queryClient = useQueryClient();
-
-  const {
-    isLoading: isUserLoading,
-    data: userData,
-    isSuccess: isUserLoaded,
-  } = useQuery({
+export const useCurrentUser = () => {
+  const { status, data } = useQuery({
     queryKey: ["user", "me"],
     queryFn: async () => {
       const res = await axios.get("/me");
@@ -43,36 +32,56 @@ function App() {
     },
   });
 
-  const { data: tournamentData, isLoading: isTournamentLoading } = useQuery({
-    queryKey: ["tournament", "current"],
+  return [status, data];
+};
+
+export const useCurrentTournament = () => {
+  const { data, status } = useQuery({
+    queryKey: ["tournaments", "current"],
     queryFn: async () => {
       const response = await axios.get("/api/tournaments/current");
       return response.data;
     },
   });
 
-  const { data: teamData, isLoading: isTeamLoading } = useQuery({
-    queryKey: ["teams", userData?.team], //TODO: verify this key works
+  return [status, data];
+};
+
+export const useTeam = (teamId, enabledFn) => {
+  const { data, status } = useQuery({
+    queryKey: ["teams", teamId],
     queryFn: async () => {
-      if (userData.team) {
-        const response = await axios.get(`/api/teams/${userData.team}`);
-        return response.data;
-      } else {
-        return null;
-      }
+      const response = await axios.get(`/api/teams/${teamId}`);
+      return response.data;
     },
-    enabled: isUserLoaded,
+    enabled: enabledFn ? enabledFn() : true,
   });
 
-  return isUserLoading || isTournamentLoading || isTeamLoading ? (
-    <div>Loading...</div>
-  ) : (
+  return [status, data];
+};
+
+function App() {
+  const queryClient = useQueryClient();
+
+  const [tournamentStatus, tournamentData] = useCurrentTournament();
+  const [userStatus, userData] = useCurrentUser();
+  const [teamStatus, teamData] = useTeam(
+    userData?.team,
+    () => userData?.team !== undefined && userStatus === "success"
+  );
+
+  //TODO: refactor below to skeleton objects
+  if (
+    tournamentStatus !== "success" ||
+    userStatus !== "success" ||
+    teamStatus !== "success"
+  )
+    return <div>Loading..</div>;
+
+  return (
     <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
         <Router>
-          <AuthContext.Provider value={userData}>
-            <TournamentContext.Provider value={tournamentData}>
-              <TeamContext.Provider value={teamData}>
+
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <Header></Header>
                   <div className="primary">
@@ -121,17 +130,15 @@ function App() {
                     </Routes>
                   </div>
                 </LocalizationProvider>
-              </TeamContext.Provider>
-            </TournamentContext.Provider>
-          </AuthContext.Provider>
+
         </Router>
-      </QueryClientProvider>
     </React.StrictMode>
   );
 }
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <QueryClientProvider client={queryClient}>
     <App></App>

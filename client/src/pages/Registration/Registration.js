@@ -14,9 +14,9 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 function RegistrationPage() {
-  const user = useContext(AuthContext);
-  const team = useContext(TeamContext);
-  const tournament = useContext(TournamentContext);
+  const [userStatus, user] = useCurrentUser();
+  const [teamStatus, team] = useTeam(user?.team);;
+  const [tournamentStatus, tournament] = useCurrentTournament();;
 
   //team member -> ask manager
   //team manager -> register

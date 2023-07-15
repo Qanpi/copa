@@ -9,7 +9,7 @@ import "./Home.css";
 import { useState, useEffect, useContext } from "react";
 
 function Home() {
-  const tournament = useContext(TournamentContext);
+  const [tournamentStatus, tournament] = useCurrentTournament();;
 
   //tournament?
   //registration -> register screen + countdown

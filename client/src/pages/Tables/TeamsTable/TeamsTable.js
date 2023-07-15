@@ -21,7 +21,7 @@ const useTableQuery = (queryKey) => {
 };
 
 function TeamsTable() {
-  const tournament = useContext(TournamentContext);
+  const [tournamentStatus, tournament] = useCurrentTournament();;
   const queryClient = useQueryClient();
 
   const { status, data: participations } = useQuery({
@@ -120,8 +120,8 @@ function TeamsTable() {
 }
 
 const Table = ({ rows, userCols, adminCols }) => {
-  const user = useContext(AuthContext);
-  const tournament = useContext(TournamentContext);
+  const [userStatus, user] = useCurrentUser();
+  const [tournamentStatus, tournament] = useCurrentTournament();
 
   const cols = user.role === "admin" ? adminCols : userCols;
   const props = user.role === "admin" ? {} : {};

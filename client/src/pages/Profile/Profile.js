@@ -10,7 +10,7 @@ import TimelineConnector from "@mui/lab/TimelineConnector/TimelineConnector"
 import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator"
 
 function ProfilePage() {
-  const user = useContext(AuthContext);
+  const [userStatus, user] = useCurrentUser();
 
   return (
     <>

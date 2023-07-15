@@ -25,7 +25,7 @@ import { DateRangeIcon } from "@mui/x-date-pickers";
 
 function AdminRegistrationPage({ moveToNextStage }) {
   const [openDialog, setOpenDialog] = useState(false);
-  const tournament = useContext(TournamentContext);
+  const [tournamentStatus, tournament] = useCurrentTournament();tTournament();tTournament();tTournament();tTournament();tTournament();;
 
   const queryClient = useQueryClient();
   const updateTournament = useMutation({

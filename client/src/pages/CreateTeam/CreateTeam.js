@@ -35,8 +35,8 @@ export const teamValidationSchema = Yup.object({
 });
 
 function CreateTeamPage() {
-  const user = useContext(AuthContext);
-  const team = useContext(TeamContext);
+  const [userStatus, user] = useCurrentUser();
+  const [teamStatus, team] = useTeam(user?.team);
 
   const navigate = useNavigate();
 

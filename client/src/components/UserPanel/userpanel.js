@@ -6,8 +6,8 @@ import { AuthContext, TeamContext } from "../.."
 import { Link } from "react-router-dom"
 
 function UserPanel() { 
-    const user = useContext(AuthContext);
-    const team = useContext(TeamContext);
+    const [userStatus, user] = useCurrentUser();;
+    const [teamStatus, team] = useTeam(user?.team);;
 
     const queryClient = useQueryClient();
     const logout = useMutation({

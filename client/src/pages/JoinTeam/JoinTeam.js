@@ -5,7 +5,7 @@ import { AuthContext } from "../..";
 import { Link } from "react-router-dom";
 
 function JoinTeamPage() {
-  const user = useContext(AuthContext);
+  const [userStatus, user] = useCurrentUser();
 
   return (
     <>

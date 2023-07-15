@@ -43,7 +43,7 @@ function Header() {
     const {pathname} = useLocation();
     const nest = pathname.slice(1).split("/")[0];
 
-    const user = useContext(AuthContext);
+    const [userStatus, user] = useCurrentUser();;
 
     return (
         <header>
