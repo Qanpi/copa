@@ -37,11 +37,6 @@ const TeamSchema = new mongoose.Schema(
         select: false,
       },
     },
-    //TODO: support for more divisions
-    division: {
-      type: String,
-      enum: ["Men's", "Women's"],
-    },
 
     matches: [
       {

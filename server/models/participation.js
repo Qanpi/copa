@@ -10,7 +10,14 @@ const ParticipationSchema = new mongoose.Schema({
             index: true
         },
         name: String,
-        division: String,
+        division: {
+            type: String,
+            validate: {
+                validator: v => {
+                    return this.tournament.divisions && this.tournament.divisions.includes(v);
+                }
+            }
+        },
     },
     //potentially remove this info in favor of using
     //the tournaments model

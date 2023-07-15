@@ -47,3 +47,7 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
 
   res.status(204).send({});
 });
+
+export const updateOne = expressAsyncHandler(async (req, res) => {
+  const participation = await Participation.findByIdAndUpdate(req.params.id, req.body);
+})

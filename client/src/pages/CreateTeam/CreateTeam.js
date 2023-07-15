@@ -98,7 +98,6 @@ function CreateTeamPage() {
           about: "",
           phoneNumber: "",
           instagramPage: "",
-          division: "",
           banner: "",
           picture: "",
         }}
@@ -119,10 +118,10 @@ function CreateTeamPage() {
             label="Instagram page"
             name="instagramPage"
           ></MyTextField>
-          <MySelect name="division" label="Division">
+          {/* <MySelect name="division" label="Division">
             <MenuItem value="Men's">Men's</MenuItem>
             <MenuItem value="Women's">Women's</MenuItem>
-          </MySelect>
+          </MySelect> */}
           <MyFileInput name="banner" label="Team banner"></MyFileInput>
           <MyFileInput name="picture" label="Team picture"></MyFileInput>
           <Button type="submit">Submit</Button>

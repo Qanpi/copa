@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext, TeamContext, TournamentContext } from "../../..";
@@ -102,6 +102,14 @@ const Table = ({ rows, userCols, adminCols }) => {
       }
     : {};
 
+    //FIXME: repeated code
+  const updateParticipation = useMutation({
+    mutationFn: async (values) => {
+      const res = await axios.patch(`/api/teams/${values.id}`, values);
+      return res.data;
+    },
+  }); 
+
   return (
     <div style={{ width: "80%" }}>
       <DataGrid
@@ -111,6 +119,9 @@ const Table = ({ rows, userCols, adminCols }) => {
         rows={rows}
         columns={cols}
         {...props}
+        processRowUpdate={(newRow, orig) => {
+          console.log(newRow, orig)
+        }}
       ></DataGrid>
     </div>
   );
