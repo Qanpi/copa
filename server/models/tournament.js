@@ -6,17 +6,6 @@ import dayjs from "dayjs";
 import Increment from "./increment.js";
 dayjs.extend(relativeTime);
 
-const TeamSubSchema = mongoose.Schema(
-  {
-    id: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: collections.teams.id,
-    },
-    name: String,
-    division: String,
-  },
-  { _id: false }
-);
 //TODO: split into user and admin models
 const TournamentSchema = mongoose.Schema(
   {
@@ -45,7 +34,6 @@ const TournamentSchema = mongoose.Schema(
       from: Date,
       to: Date,
     },
-    teams: [TeamSubSchema],
     stage: {
       type: String,
       enum: [
