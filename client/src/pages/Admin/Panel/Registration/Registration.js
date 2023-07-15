@@ -17,10 +17,11 @@ import { TournamentContext } from "../../../..";
 import { Formik, Form, yupToFormErrors, validateYupSchema } from "formik";
 import dayjs from "dayjs";
 import * as Yup from "yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import MyDatePicker from "../../../../components/MyDatePicker/mydatepicker";
+import { DateRangeIcon } from "@mui/x-date-pickers";
 
 function AdminRegistrationPage({ moveToNextStage }) {
   const [openDialog, setOpenDialog] = useState(false);
@@ -40,6 +41,15 @@ function AdminRegistrationPage({ moveToNextStage }) {
     },
   });
 
+  //FIXME: custom hook extract needed
+  const { status, data: participations } = useQuery({
+    queryKey: ["participations"],
+    queryFn: async () => {
+      const res = await axios.get(`/api/participations`);
+      return res.data; 
+    },
+  });
+
   const handleMoveToNextStage = () => {
     if (tournament.registration?.to <= new Date()) {
       moveToNextStage.mutate();
@@ -55,7 +65,6 @@ function AdminRegistrationPage({ moveToNextStage }) {
       setOpenDialog((b) => false);
     }
   };
-
   return (
     <Formik
       initialValues={{
@@ -70,7 +79,7 @@ function AdminRegistrationPage({ moveToNextStage }) {
       }}
       validationSchema={Yup.object({
         registration: Yup.object({
-          from: Yup.date().required(),
+          from: Yup.date().min(dayjs()).required(),
           to: Yup.date()
             .required()
             .when(["from"], ([from], schema) => {
@@ -86,7 +95,13 @@ function AdminRegistrationPage({ moveToNextStage }) {
             <Typography>Settings?</Typography>
             <div className="registration">
               <InputLabel>Open registration</InputLabel>
-              <MyDatePicker disablePast label="from" name="registration.from" />
+              {/* questionable logic below */}
+              <MyDatePicker
+                disabled={dayjs(tournament.registration.from) < dayjs()}
+                minDate={dayjs()}
+                label="from"
+                name="registration.from"
+              />
               <MyDatePicker
                 disablePast
                 label="to"
@@ -94,14 +109,13 @@ function AdminRegistrationPage({ moveToNextStage }) {
                 minDate={formik.values.registration.from}
               />
             </div>
+
             <Button type="submit">Confirm</Button>
-            <Card sx={{width: 1/2, height: 1}}>
-              <CardActionArea>
+            <Card sx={{ width: 1 / 2, height: 200 }}>
                 <CardContent>
-            <Typography variant="h3">21</Typography>
-            <Typography>currently registered</Typography>
+                  <Typography variant="h3">{participations?.length}</Typography>
+                  <Typography>currently registered</Typography>
                 </CardContent>
-              </CardActionArea>
             </Card>
             <div>
               <Button disabled>Back</Button>

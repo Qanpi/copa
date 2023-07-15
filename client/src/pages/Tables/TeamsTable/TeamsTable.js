@@ -1,9 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext, TeamContext, TournamentContext } from "../../..";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import { StepIcon } from "@mui/material";
+import { StepIcon, Tooltip } from "@mui/material";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { Link } from "react-router-dom";
 
@@ -21,12 +22,25 @@ const useTableQuery = (queryKey) => {
 
 function TeamsTable() {
   const tournament = useContext(TournamentContext);
+  const queryClient = useQueryClient();
 
   const { status, data: participations } = useQuery({
     queryKey: ["participations"],
     queryFn: async () => {
       const res = await axios.get(`/api/participations`);
-      return res.data; //assumed it's a singular value
+      return res.data; 
+    },
+  });
+
+  //FIXME: repetitive code -> extract to hook
+  const unregisterTeam = useMutation({
+    mutationFn: async (values) => {
+      console.log(values);
+      const res = await axios.delete(`/api/participations/${values.row.id}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["participations"]);
     },
   });
 
@@ -56,11 +70,9 @@ function TeamsTable() {
       width: 200,
       valueGetter: (p) => teamValueGetter(p, "name"),
       //is encoding fine?
-      renderCell: params => (
-        <Link to={`/teams/${params.row.team.name}`}> 
-          {params.value}
-        </Link>
-      )
+      renderCell: (params) => (
+        <Link to={`/teams/${params.row.team.name}`}>{params.value}</Link>
+      ),
     },
     {
       field: "division",
@@ -72,15 +84,31 @@ function TeamsTable() {
       valueSetter: teamValueSetter("division"),
     },
     {
+      field: "phoneNumber",
+      headerName: "Contact number",
+      width: 150,
+      valueGetter: (params) => teamValueGetter(params, "phoneNumber"),
+    },
+    {
+      field: "createdAt",
+      headerName: "Registered",
+      type: "dateTime",
+      width: 200,
+      valueGetter: (params) => dayjs(params.row.createdAt).toDate(),
+    },
+    {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      getActions: () => {
+      getActions: (params) => {
         return [
-          <GridActionsCellItem
-            icon={<CalendarIcon></CalendarIcon>}
-            label="Edit"
-          ></GridActionsCellItem>,
+          <Tooltip title="Unregister">
+            <GridActionsCellItem
+              onClick={() => unregisterTeam.mutate(params)}
+              icon={<CalendarIcon></CalendarIcon>}
+              label="Revoke registration"
+            ></GridActionsCellItem>
+          </Tooltip>,
         ];
       },
     },
@@ -95,20 +123,15 @@ const Table = ({ rows, userCols, adminCols }) => {
   const user = useContext(AuthContext);
   const tournament = useContext(TournamentContext);
 
-  const cols = !user.isAdmin ? adminCols : userCols;
-  const props = !user.isAdmin
-    ? {
-        checkboxSelection: true,
-      }
-    : {};
+  const cols = user.role === "admin" ? adminCols : userCols;
+  const props = user.role === "admin" ? {} : {};
 
-    //FIXME: repeated code
   const updateParticipation = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.patch(`/api/teams/${values.id}`, values);
+      const res = await axios.put(`/api/participations/${values.id}`, values);
       return res.data;
     },
-  }); 
+  });
 
   return (
     <div style={{ width: "80%" }}>
@@ -119,9 +142,11 @@ const Table = ({ rows, userCols, adminCols }) => {
         rows={rows}
         columns={cols}
         {...props}
-        processRowUpdate={(newRow, orig) => {
-          console.log(newRow, orig)
+        processRowUpdate={async (newRow, orig) => {
+          const res = await updateParticipation.mutateAsync(newRow);
+          return res;
         }}
+        onProcessRowUpdateError={(err) => console.log(err)}
       ></DataGrid>
     </div>
   );

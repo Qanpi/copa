@@ -26,7 +26,7 @@ export const teamValidationSchema = Yup.object({
       /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/
     )
     .required(),
-  instagramPage: Yup.string()
+  instagramUrl: Yup.string()
     .url()
     .matches(/https:\/\/www\.instagram\.com\/\S+\/?/), //TODO: maybe be even stricter than \S
   division: Yup.string().oneOf(["Men's", "Women's"]).required(),
@@ -97,7 +97,7 @@ function CreateTeamPage() {
           manager: user.id,
           about: "",
           phoneNumber: "",
-          instagramPage: "",
+          instagramUrl: "",
           banner: "",
           picture: "",
         }}
@@ -109,14 +109,10 @@ function CreateTeamPage() {
         <Form>
           <MyTextField label="Team name" name="name"></MyTextField>
           <MyTextField label="About" name="about"></MyTextField>
-          <MyTextField
-            label="Phone number"
-            name="phoneNumber"
-            type="tel"
-          ></MyTextField>
+
           <MyTextField
             label="Instagram page"
-            name="instagramPage"
+            name="instagramUrl"
           ></MyTextField>
           {/* <MySelect name="division" label="Division">
             <MenuItem value="Men's">Men's</MenuItem>

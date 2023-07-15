@@ -14,7 +14,8 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
         "tournament.id": data?.tournament
     }
 
-    const participations = await Participation.find(filters);
+    //TODO: refactor all other uses to checking role
+    const participations = req.user.role === "admin" ? await Participation.find(filters).select(["+team.phoneNumber"]) : await Participation.find(filters);
     return res.send(participations);
   }
 
@@ -30,7 +31,6 @@ export const createOne = expressAsyncHandler(async (req, res) => {
     team: {
       id: team.id,
       name: team.name,
-      division: team.division,
     },
     tournament: {
       id: tournament.id,
@@ -49,5 +49,7 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const updateOne = expressAsyncHandler(async (req, res) => {
-  const participation = await Participation.findByIdAndUpdate(req.params.id, req.body);
+  //potentially use upsert for better correspondence to http PUT
+  const participation = await Participation.findByIdAndUpdate(req.params.id, req.body, {new: true});
+  res.send(participation);
 })

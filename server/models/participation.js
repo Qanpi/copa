@@ -18,6 +18,11 @@ const ParticipationSchema = new mongoose.Schema({
                 }
             }
         },
+        //TODO: make this more secure
+        phoneNumber: {
+            type: String,
+            select: false,
+        }
     },
     //potentially remove this info in favor of using
     //the tournaments model
@@ -35,6 +40,10 @@ const ParticipationSchema = new mongoose.Schema({
 }, {
     toJSON: {virtuals: true},
     toObject: {virtuals: true}
+})
+
+ParticipationSchema.virtual("createdAt").get(function() {
+    return this._id.getTimestamp();
 })
 
 export default mongoose.model("Participation", ParticipationSchema);

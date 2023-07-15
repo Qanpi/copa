@@ -35,6 +35,8 @@ passport.serializeUser(function (user, done) {
   process.nextTick(() => {
     return done(null, {
       id: user.id,
+      name: user.name,
+      role: user.role
     });
   });
 });

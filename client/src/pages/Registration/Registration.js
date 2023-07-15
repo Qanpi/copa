@@ -55,7 +55,7 @@ function RegistrationPage() {
       );
       return res.data[0] || null; //assumed it's a singular value
     },
-    enabled: !!team && !!tournament 
+    enabled: !!team && !!tournament,
   });
 
   const unregisterTeam = useMutation({
@@ -91,7 +91,11 @@ function RegistrationPage() {
             {({ dirty, submitForm, isValid }) => (
               <Form>
                 <MyTextField name="name" label="name"></MyTextField>
-                <MyTextField name="phoneNumber"></MyTextField>
+                <MyTextField
+                  label="Phone number"
+                  name="phoneNumber"
+                  type="tel"
+                ></MyTextField>
                 <MySelect name="division">
                   <MenuItem value="Men's">Men's</MenuItem>
                   <MenuItem value="Women's">Women's</MenuItem>

@@ -16,8 +16,7 @@ const TeamSchema = new mongoose.Schema(
     about: {
       type: String,
     },
-    //refactor to contacts and some separately
-    phoneNumber: String,
+    //FIXME: different name on frontend
     instagramUrl: String,
     //one to many, store on the many side
     manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id },

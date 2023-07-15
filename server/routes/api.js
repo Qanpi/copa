@@ -66,7 +66,9 @@ router.get("/participations",
 
 router.post("/participations", participations.createOne);
 
-router.delete("/participations/:id", participations.deleteOne)
+router.delete("/participations/:id", participations.deleteOne);
+
+router.put("/participations/:id", participations.updateOne);
 
 // router.get("/tournaments/:id/teams", tournaments.getRegisteredTeams);
 
