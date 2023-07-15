@@ -36,7 +36,7 @@ export const getCurrent = expressAsyncHandler(async (req, res) => {
 export const updateOne = expressAsyncHandler(async (req, res) => {
     if (!validate(req, req)) return;
 
-    const result = await Tournament.findByIdAndUpdate(req.params.id, req.body);
+    const result = await Tournament.findByIdAndUpdate(req.params.id, req.body, {new: true});
     res.send(result)
 })
 

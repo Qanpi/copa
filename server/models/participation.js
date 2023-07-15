@@ -12,6 +12,8 @@ const ParticipationSchema = new mongoose.Schema({
         name: String,
         division: String,
     },
+    //potentially remove this info in favor of using
+    //the tournaments model
     tournament: {
         id: {
             type: mongoose.SchemaTypes.ObjectId,
@@ -20,6 +22,7 @@ const ParticipationSchema = new mongoose.Schema({
             index: true
         },
         name: String,
+        divisions: String,
         result: String,
     },
 }, {

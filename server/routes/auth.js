@@ -41,7 +41,6 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(function (user, done) {
   //TODO: maybe add common info to cookie
-  console.log(user);
   process.nextTick(() => {
     return done(null, user);
   });

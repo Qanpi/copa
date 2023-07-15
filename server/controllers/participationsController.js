@@ -36,7 +36,6 @@ export const createOne = expressAsyncHandler(async (req, res) => {
       id: tournament.id,
       name: tournament.name,
       start: tournament.start,
-      end: tournament.end,
     },
   }).save();
 

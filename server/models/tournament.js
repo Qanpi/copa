@@ -34,6 +34,10 @@ const TournamentSchema = mongoose.Schema(
       from: Date,
       to: Date,
     },
+    divisions: {
+      type: [String],
+      default: ["Men's", "Women's"]
+    },
     stage: {
       type: String,
       enum: [

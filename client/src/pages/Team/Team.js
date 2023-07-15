@@ -25,7 +25,7 @@ function TeamPage() {
     queryKey: ["teams", name],
     queryFn: async () => {
       const team = await axios.get(`/api/teams?name=${name}`);
-      return team.data;
+      return team.data[0] || null;
     },
   });
 
@@ -56,6 +56,7 @@ function TeamPage() {
     return <div>loadgi team profiel</div>;
   }
 
+  console.log(team);
   return (
     <>
       <h1>{team.name}</h1>

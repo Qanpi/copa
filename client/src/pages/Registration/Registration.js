@@ -55,7 +55,7 @@ function RegistrationPage() {
       );
       return res.data[0] || null; //assumed it's a singular value
     },
-    //potentailly needs enabeld 
+    enabled: !!team && !!tournament 
   });
 
   const unregisterTeam = useMutation({

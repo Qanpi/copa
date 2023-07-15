@@ -9,8 +9,9 @@ const TeamSchema = new mongoose.Schema(
       type: String,
       unique: true,
       index: true,
+      //do i even need the below? how would an attack vector look?
       set: encodeURIComponent,
-      get: decodeURIComponent,
+      get: decodeURIComponent
     },
     about: {
       type: String,
