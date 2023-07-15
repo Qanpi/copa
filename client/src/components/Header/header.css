@@ -2,6 +2,7 @@ header {
     position: sticky;
     top: 0;
     width: 100vw;
+    z-index: 1; /*to avoid conflict with mui*/
 }
 
 header .settings-bar {
