@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "../../..";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import { StepIcon } from "@mui/material";
+import { CalendarIcon } from "@mui/x-date-pickers";
 
 const useTableQuery = (queryKey) => {
   const { status, data } = useQuery({
@@ -17,46 +19,51 @@ const useTableQuery = (queryKey) => {
 };
 
 function TeamsTable() {
-  const user = useContext(AuthContext);
-
   const [status, data] = useTableQuery("teams"); // is this rly necesary?
 
   const userCols = [
-    { field: "name", headerName: "Team name",  width: 200 },
-    { field: "division", headerName: "Division" },
+    { field: "name", headerName: "Team name", width: 200 },
+    { field: "division", headerName: "Division", editable: true, valueOptions: [], type: "singleSelect" },
+  ];
+
+  const adminCols = [
+    { field: "id", headerName: "ID" },
+    ...userCols,
+    { field: "registered", headerName: "Registered" },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      getActions: () => {
+        return [
+          <GridActionsCellItem icon={<CalendarIcon></CalendarIcon>} label="Edit">
+
+          </GridActionsCellItem>
+        ]
+      },
+    },
   ];
 
   if (status === "loading") return <p>Loading...</p>;
 
-  return !user.isAdmin ? (
-    <AdminTable
-      rows={data}
-      cols={[{field: "id"}, ...userCols, ]}
-    ></AdminTable>
-  ) : (
-    <UserTable rows={data} cols={userCols}></UserTable>
-  );
+  return <Table rows={data} userCols={userCols} adminCols={adminCols}></Table>;
 }
 
-export default TeamsTable;
+const Table = ({ rows, userCols, adminCols }) => {
+  const user = useContext(AuthContext);
 
-const UserTable = ({ rows, cols }) => {
+  const cols = !user.isAdmin ? adminCols : userCols;
+  const props = !user.isAdmin
+    ? {
+        checkboxSelection: true,
+      }
+    : {};
+
   return (
     <div style={{ width: "80%" }}>
-      <DataGrid
-        autoHeight
-        rows={rows}
-        columns={cols}
-        checkboxSelection
-      ></DataGrid>
+      <DataGrid autoheight rows={rows} columns={cols} {...props}></DataGrid>
     </div>
   );
 };
 
-const AdminTable = ({ rows, cols }) => {
-  return (
-    <div style={{ height: 300, width: "80%" }}>
-      <DataGrid rows={rows} columns={cols} checkboxSelection></DataGrid>
-    </div>
-  );
-};
+export default TeamsTable;
