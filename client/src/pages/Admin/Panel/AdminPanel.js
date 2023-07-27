@@ -11,7 +11,6 @@ import {
 import * as Yup from "yup";
 import { HashLink } from "react-router-hash-link";
 import { useContext, useState } from "react";
-import { TournamentContext } from "../../..";
 import {
   TextField,
   RadioGroup,
@@ -35,22 +34,20 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import AdminCalendar from "../../../components/AdminCalendar/admincalendar";
 import MyChecklist from "../../../components/MyChecklist/mychecklist";
-import { createContext } from "react";
 import MyStepper from "../../../components/MyStepper/mystepper";
 import AdminRegistrationPage from "./Registration/Registration";
 import KickstartPage from "./Kickstart/Kickstart";
 import GroupStagePage from "./GroupStage/GroupStage";
+import { useTournament } from "../../..";
 
 function AdminPanelPage() {
-  const { stage, stages, id } = useContext(TournamentContext);
-  const stageId = stages.indexOf(stage);
-
+  const {status: tournamentsStatus, data: tournament} = useTournament("current");
   const queryClient = useQueryClient();
 
   const moveToNextStage = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch(`/api/tournaments/${id}`, {
-        stage: stages[stageId + 1],
+      const res = await axios.patch(`/api/tournaments/${tournament?.id}`, {
+        //stage: stages[stageId + 1],
       });
       return res.data;
     },
@@ -59,12 +56,12 @@ function AdminPanelPage() {
     },
   });
 
-  if (!stage) {
+  if (!tournament?.stage) {
     return <KickstartPage></KickstartPage>;
   }
 
   const renderCurrentStage = () => {
-    switch (stage) {
+    switch (tournament.stage) {
       case "Registration":
         return (
           <AdminRegistrationPage
@@ -85,7 +82,7 @@ function AdminPanelPage() {
         <h3>Autumn 2023</h3>
       </div>
       <div>
-        <MyStepper steps={stages} activeStep={stageId}></MyStepper>
+        <MyStepper steps={tournament.stages}></MyStepper>
         {renderCurrentStage()}
         {/* <MyChecklist items={tasks} heading="Checklist"></MyChecklist> */}
       </div>

@@ -22,10 +22,12 @@ import axios from "axios";
 import { useState } from "react";
 import MyDatePicker from "../../../../components/MyDatePicker/mydatepicker";
 import { DateRangeIcon } from "@mui/x-date-pickers";
+import { useTournament } from "../../../..";
 
 function AdminRegistrationPage({ moveToNextStage }) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [tournamentStatus, tournament] = useCurrentTournament();tTournament();tTournament();tTournament();tTournament();tTournament();;
+  const { status: tournamentStatus, data: tournament } =
+    useTournament("current");
 
   const queryClient = useQueryClient();
   const updateTournament = useMutation({
@@ -46,7 +48,7 @@ function AdminRegistrationPage({ moveToNextStage }) {
     queryKey: ["participations"],
     queryFn: async () => {
       const res = await axios.get(`/api/participations`);
-      return res.data; 
+      return res.data;
     },
   });
 
@@ -65,16 +67,19 @@ function AdminRegistrationPage({ moveToNextStage }) {
       setOpenDialog((b) => false);
     }
   };
+
+  if (tournamentStatus !== "success") return "bruh";
+
   return (
     <Formik
       initialValues={{
         registration: {
-          from: tournament.registration
+          from: tournament.registration.from
             ? dayjs(tournament.registration.from)
-            : null,
-          to: tournament.registration
+            : dayjs().endOf("day"),
+          to: tournament.registration.to
             ? dayjs(tournament.registration.to)
-            : null,
+            : dayjs().add(7, "day").endOf("day"),
         },
       }}
       validationSchema={Yup.object({
@@ -83,7 +88,7 @@ function AdminRegistrationPage({ moveToNextStage }) {
           to: Yup.date()
             .required()
             .when(["from"], ([from], schema) => {
-              if (from) return schema.min(from);
+              if (from) return schema.min(dayjs(from).add(1, "day")); //can't be on the same day
             }),
         }),
       })}
@@ -95,27 +100,21 @@ function AdminRegistrationPage({ moveToNextStage }) {
             <Typography>Settings?</Typography>
             <div className="registration">
               <InputLabel>Open registration</InputLabel>
-              {/* questionable logic below */}
-              <MyDatePicker
-                disabled={dayjs(tournament.registration.from) < dayjs()}
-                minDate={dayjs()}
-                label="from"
-                name="registration.from"
-              />
+              <MyDatePicker disablePast label="from" name="registration.from" />
               <MyDatePicker
                 disablePast
                 label="to"
                 name="registration.to"
-                minDate={formik.values.registration.from}
+                minDate={formik.values.registration.from.add(1, "day")}
               />
             </div>
 
             <Button type="submit">Confirm</Button>
             <Card sx={{ width: 1 / 2, height: 200 }}>
-                <CardContent>
-                  <Typography variant="h3">{participations?.length}</Typography>
-                  <Typography>currently registered</Typography>
-                </CardContent>
+              <CardContent>
+                <Typography variant="h3">{participations?.length}</Typography>
+                <Typography>currently registered</Typography>
+              </CardContent>
             </Card>
             <div>
               <Button disabled>Back</Button>

@@ -60,7 +60,7 @@ export const removePlayerFromTeam = expressAsyncHandler(async (req, res) => {
 });
 
 export const joinTeam = expressAsyncHandler(async (req, res) => {
-    const token = req.query.token;
+    const token = req.body.token;
     const team = await Team.findById(req.params.id).select(["+invite.token", "+invite.expiresAt"]);
 
     if (team.invite.token === token && team.invite.expiresAt >= new Date()) {
@@ -68,7 +68,7 @@ export const joinTeam = expressAsyncHandler(async (req, res) => {
       user.team = team;
       await user.save();
 
-      res.send(user);
+      res.send(team);
     } else {
       res.status(403).send({});
     }

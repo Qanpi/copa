@@ -80,7 +80,7 @@ router.get("/me", async (req, res, next) => {
       res.send(req.user);
     })
   } else {
-  res.send(req.user);
+    res.send(req.user);
   }
 });
 

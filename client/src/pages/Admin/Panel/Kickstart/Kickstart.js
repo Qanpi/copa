@@ -13,7 +13,7 @@ function KickstartPage() {
 
   const createTournament = useMutation({
     mutationFn: async (tournamentData) => {
-      const res = await axios.post("api/tournaments", tournamentData);
+      const res = await axios.post("/api/tournaments", tournamentData);
       return res.data;
     },
     onSuccess: () => {

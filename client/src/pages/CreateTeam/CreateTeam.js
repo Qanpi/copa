@@ -17,6 +17,7 @@ import { Formik, Form } from "formik";
 import MyTextField from "../../components/MyTextField/mytextfield";
 import MySelect from "../../components/MySelect/mySelect";
 import MyFileInput from "../../components/MyFileInput/myFileInput";
+import { useUser, useTeam } from "../..";
 
 export const teamValidationSchema = Yup.object({
   name: Yup.string().max(20).trim().required(),
@@ -28,15 +29,14 @@ export const teamValidationSchema = Yup.object({
     .required(),
   instagramUrl: Yup.string()
     .url()
-    .matches(/https:\/\/www\.instagram\.com\/\S+\/?/), //TODO: maybe be even stricter than \S
-  division: Yup.string().oneOf(["Men's", "Women's"]).required(),
+    .matches(/https:\/\/www\.instagram\.com\/\S+\/?/).optional(), //TODO: maybe be even stricter than \S
   banner: Yup.string().optional(),
   picture: Yup.string().optional(),
 });
 
 function CreateTeamPage() {
-  const [userStatus, user] = useCurrentUser();
-  const [teamStatus, team] = useTeam(user?.team);
+  const {status: userStatus, data: user} = useUser("me");
+
 
   const navigate = useNavigate();
 
@@ -50,16 +50,16 @@ function CreateTeamPage() {
     onSuccess: (newTeam) => {
       queryClient.invalidateQueries(["teams"]);
       queryClient.invalidateQueries(["user", "me"]);
-      navigate(`/teams/${newTeam.id}`);
+      navigate(`/teams/${newTeam.name}`);
     },
   });
 
   const leaveTeam = useMutation({
     mutationFn: () => {
-      return axios.delete(`/api/teams/${team.id}/players/${user.id}`);
+      return axios.delete(`/api/teams/${user.team.id}/players/${user.id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teams", team.id] });
+      queryClient.invalidateQueries({ queryKey: ["teams", user.team.id] });
     },
   });
 
@@ -68,14 +68,16 @@ function CreateTeamPage() {
       leaveTeam.mutate();
     } else {
       //or maybbe just show error again for submitting but allow to view creation form
-      return navigate(`/teams/${team.id}`);
+      return navigate(`/teams/${user.team.id}`);
       //return
     }
   };
 
+  if (userStatus !== "success") return <div>User loading.</div>
+
   return (
     <>
-      <Dialog open={Boolean(team)}>
+      <Dialog open={!!user.team}>
         <DialogTitle>{"Leave current team?"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -109,6 +111,11 @@ function CreateTeamPage() {
         <Form>
           <MyTextField label="Team name" name="name"></MyTextField>
           <MyTextField label="About" name="about"></MyTextField>
+
+          <MyTextField
+            label="PHone number"
+            name="phoneNumber"
+          ></MyTextField>
 
           <MyTextField
             label="Instagram page"

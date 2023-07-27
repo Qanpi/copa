@@ -15,7 +15,7 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
     }
 
     //TODO: refactor all other uses to checking role
-    const participations = req.user.role === "admin" ? await Participation.find(filters).select(["+team.phoneNumber"]) : await Participation.find(filters);
+    const participations = req.user?.role === "admin" ? await Participation.find(filters).select(["+team.phoneNumber"]) : await Participation.find(filters);
     return res.send(participations);
   }
 

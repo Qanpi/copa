@@ -4,8 +4,7 @@ import "./header.css"
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query"
 import axios from "axios"
 import UserPanel from "../UserPanel/userpanel";
-import { useContext } from "react";
-import { AuthContext } from "../..";
+import { useUser } from "../..";
 
 //TODO:
 //move route names to a config file
@@ -41,9 +40,19 @@ const sublinks = {
 
 function Header() {
     const {pathname} = useLocation();
-    const nest = pathname.slice(1).split("/")[0];
+    const parentPath = pathname.split("/")[1];
 
-    const [userStatus, user] = useCurrentUser();;
+    const {status: userStatus, data: user} = useUser("me");
+
+    if (userStatus !== "success") return <div>Loading...</div>
+
+    const generateSublinks = (path) => {
+        switch(path) {
+            case "": return ["1"]
+            case "tables": return ["Teams"]
+            default: return []
+        }
+    }
 
     return (
         <header>
@@ -54,7 +63,7 @@ function Header() {
                         <span>All-time</span>
                         <span>Fantasy</span>
                         <span>About</span>
-                        {user ? <Link to="/admin">Admin</Link> : null}
+                        {user ? <Link to="/admin/dashboard">Admin</Link> : null}
                     </div>
                     <UserPanel></UserPanel>
                 </div>
@@ -63,9 +72,7 @@ function Header() {
                     <div className="weird-triangle">
                     </div>
                     <div className="sublinks">
-                        {sublinks.hasOwnProperty(nest) ? sublinks[nest].map(link => { //FIXME: looks janky, at the very least explain with comment
-                            return <Link smooth to={link.to} key={link.name}>{link.name}</Link> //FIXME: repalce hash link with simple scrolling 
-                        }) : null }
+                        {generateSublinks(parentPath).map(p => <Link to={`${parentPath}/${p.toLowerCase()}`} key={p}>{p}</Link>)}
                     </div>
                 </div>
 

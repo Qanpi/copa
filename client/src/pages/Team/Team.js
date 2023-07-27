@@ -1,5 +1,3 @@
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../..";
 import {
   Alert,
   AlertTitle,
@@ -15,19 +13,13 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useTeam } from "../..";
 
 dayjs.extend(relativeTime);
 
 function TeamPage() {
   const { name } = useParams();
-
-  const { status: teamStatus, data: team, refetch: refetchTeam} = useQuery({
-    queryKey: ["teams", name],
-    queryFn: async () => {
-      const team = await axios.get(`/api/teams?name=${name}`);
-      return team.data[0] || null;
-    },
-  });
+  const {data: team, status: teamStatus, refetch: refetchTeam} = useTeam(name);
 
   const {
     status: inviteStatus,
@@ -37,10 +29,11 @@ function TeamPage() {
     queryKey: ["invite"],
     queryFn: async () => {
       const invite = await axios.get(`/api/teams/${team.id}/invite`);
+      const {token, expiresAt} = invite.data;
 
       return {
-        link: `/api/teams/${team.id}/join/${invite.data.token}`,
-        countdown: dayjs().to(invite.data.expiresAt),
+        link: `localhost:3000/teams/join?id=${team.id}&token=${token}`,
+        countdown: dayjs().to(expiresAt),
       };
     },
 
@@ -52,11 +45,10 @@ function TeamPage() {
     navigator.clipboard.writeText(invite.link);
   };
 
-  if (teamStatus === "loading") {
+  if (teamStatus !== "success") {
     return <div>loadgi team profiel</div>;
   }
 
-  console.log(team);
   return (
     <>
       <h1>{team.name}</h1>

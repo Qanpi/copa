@@ -12,11 +12,12 @@ import {
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useUser, useTournament, useTeam } from "../..";
 
 function RegistrationPage() {
-  const [userStatus, user] = useCurrentUser();
-  const [teamStatus, team] = useTeam(user?.team);;
-  const [tournamentStatus, tournament] = useCurrentTournament();;
+  const {status: userStatus, data: user} = useUser("me");
+  const [teamStatus, team] = useTeam(user?.team);
+  const {status: tournamentStatus, data: tournament} = useTournament();
 
   //team member -> ask manager
   //team manager -> register

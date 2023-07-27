@@ -13,3 +13,8 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
 
     res.send(user);
 })
+
+export const getOneById = expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    res.send(user);
+})

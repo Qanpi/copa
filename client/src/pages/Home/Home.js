@@ -7,9 +7,10 @@ import CreateTeamPage from "../CreateTeam/CreateTeam";
 import RegistrationPage from "../Registration/Registration";
 import "./Home.css";
 import { useState, useEffect, useContext } from "react";
+import { useTournament } from "../..";
 
 function Home() {
-  const [tournamentStatus, tournament] = useCurrentTournament();;
+  const { data: tournament } = useTournament("current");
 
   //tournament?
   //registration -> register screen + countdown
@@ -17,20 +18,27 @@ function Home() {
   //group stage/bracket -> dashboard
   //previous winner page
   if (tournament) {
-    return tournament.registration.status === "over" ? (
-      <>
-        <div className="dashboard">
-          <GameBoard></GameBoard>
-          <InstagramBoard></InstagramBoard>
-        </div>
+    switch (tournament.registration.status) {
+      case "indefinite":
+        return <div>Registrtion will start soon.</div>;
+      case "awaiting":
+        return <div>Registration will begin in x days.</div>;
+      case "in progress":
+        return <Link to="/register">Register</Link>;
+      case "over":
+        return (
+          <>
+            <div className="dashboard">
+              <GameBoard></GameBoard>
+              <InstagramBoard></InstagramBoard>
+            </div>
 
-        <div className="group-stage" id="test">
-          <GameBoard></GameBoard>
-        </div>
-      </>
-    ) : (
-      <Link to="/register">Register</Link>
-    );
+            <div className="group-stage" id="test">
+              <GameBoard></GameBoard>
+            </div>
+          </>
+        );
+    }
   }
 
   return <div className="banner">Winner page.</div>;

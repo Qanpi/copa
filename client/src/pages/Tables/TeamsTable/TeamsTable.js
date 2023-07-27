@@ -7,30 +7,29 @@ import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { StepIcon, Tooltip } from "@mui/material";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { Link } from "react-router-dom";
+import { useTournament, useUser } from "../../..";
 
-const useTableQuery = (queryKey) => {
-  const { status, data } = useQuery({
-    queryKey: [queryKey],
+const participationKeys = {
+  all: ["participations"],
+  lists: () => [participationKeys.all, "list"],
+  list: (filter) => [participationKeys.lists(), filter]
+}
+
+const useParticipations = () => {
+  return useQuery({
+    queryKey: [participationKeys.all],
     queryFn: async () => {
-      const res = await axios.get(`/api/${queryKey}`);
-      return res.data;
-    },
-  });
-
-  return [status, data];
-};
-
-function TeamsTable() {
-  const [tournamentStatus, tournament] = useCurrentTournament();;
-  const queryClient = useQueryClient();
-
-  const { status, data: participations } = useQuery({
-    queryKey: ["participations"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/participations`);
+      const res = await axios.get(`/api/${participationKeys.all}`);
       return res.data; 
     },
   });
+}
+
+function TeamsTable() {
+  const queryClient = useQueryClient();
+
+  const {data: participations, status: participationsStatus} = useParticipations();
+  const {data: tournament} = useTournament("current");
 
   //FIXME: repetitive code -> extract to hook
   const unregisterTeam = useMutation({
@@ -58,7 +57,7 @@ function TeamsTable() {
     };
   };
 
-  const adminCols = [
+  const cols = [
     {
       field: "id",
       headerName: "ID",
@@ -78,7 +77,7 @@ function TeamsTable() {
       field: "division",
       headerName: "Division",
       editable: true,
-      valueOptions: tournament.divisions,
+      valueOptions: tournament?.divisions,
       type: "singleSelect",
       valueGetter: (p) => teamValueGetter(p, "division"),
       valueSetter: teamValueSetter("division"),
@@ -114,17 +113,12 @@ function TeamsTable() {
     },
   ];
 
-  if (status === "loading") return <p>Loading...</p>;
-
-  return <Table rows={participations} adminCols={adminCols}></Table>;
+  if (participationsStatus !== "success") return <p>Loading...</p>
+  return <Table rows={participations} cols={cols}></Table>;
 }
 
-const Table = ({ rows, userCols, adminCols }) => {
-  const [userStatus, user] = useCurrentUser();
-  const [tournamentStatus, tournament] = useCurrentTournament();
-
-  const cols = user.role === "admin" ? adminCols : userCols;
-  const props = user.role === "admin" ? {} : {};
+const Table = ({ rows, cols }) => {
+  const {status: tournamentStatus, data: tournament} = useTournament("current");
 
   const updateParticipation = useMutation({
     mutationFn: async (values) => {
@@ -133,15 +127,16 @@ const Table = ({ rows, userCols, adminCols }) => {
     },
   });
 
+  if (tournamentStatus !== "success") return <p>Loading...</p>
+
   return (
     <div style={{ width: "80%" }}>
       <DataGrid
         editMode="row"
-        isCellEditable={(params) => params.row.tournament.id === tournament.id}
+        isCellEditable={(params) => params.row.tournament.id === tournament?.id}
         autoheight
         rows={rows}
         columns={cols}
-        {...props}
         processRowUpdate={async (newRow, orig) => {
           const res = await updateParticipation.mutateAsync(newRow);
           return res;

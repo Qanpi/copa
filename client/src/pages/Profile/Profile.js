@@ -8,11 +8,14 @@ import Timeline from "@mui/lab/Timeline/Timeline"
 import TimelineDot from "@mui/lab/TimelineDot/TimelineDot"
 import TimelineConnector from "@mui/lab/TimelineConnector/TimelineConnector"
 import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator"
+import { useUser } from "../..";
+import { useParams } from "react-router";
 
 function ProfilePage() {
-  const [userStatus, user] = useCurrentUser();
+  const {id} = useParams();
+  const {status: userStatus, data: user} = useUser(id);
 
-  return (
+  return user ? (
     <>
       <div className="profile">
         <Avatar
@@ -38,7 +41,7 @@ function ProfilePage() {
         </Timeline>
       </div>
     </>
-  );
+  ) : <div>Loading..</div>;
 }
 
 export default ProfilePage;

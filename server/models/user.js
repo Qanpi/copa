@@ -7,8 +7,13 @@ const UserSchema = mongoose.Schema(
     googleId: String,
     avatar: String,
     team: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: collections.teams.id,
+      id: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: collections.teams.id,
+      },
+      name: {
+        type: String
+      }
     },
     role: {
       type: String,

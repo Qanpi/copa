@@ -80,5 +80,7 @@ router.put("/participations/:id", participations.updateOne);
 
 router.get("/users", users.getMultiple)
 
+router.get("/users/:id", users.getOneById)
+
 router.patch("/users/:id", users.updateOne)
 export default router;

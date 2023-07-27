@@ -74,7 +74,7 @@ TournamentSchema.virtual("start").get(function () {
 });
 
 TournamentSchema.virtual("registration.status").get(function () {
-  if (!this.registration) return "indefinite";
+  if (!this.registration.to || !this.registration.from) return "indefinite";
 
   const now = new Date();
   const { from, to } = this.registration;
