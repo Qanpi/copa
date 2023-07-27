@@ -1,13 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import dayjs from "dayjs";
-import axios from "axios";
-import { useContext } from "react";
-import { AuthContext, TeamContext, TournamentContext } from "../../..";
+import { Tooltip } from "@mui/material";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import { StepIcon, Tooltip } from "@mui/material";
 import { CalendarIcon } from "@mui/x-date-pickers";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import { useTournament, useUser } from "../../..";
+import { useTournament } from "../../..";
 
 const participationKeys = {
   all: ["participations"],

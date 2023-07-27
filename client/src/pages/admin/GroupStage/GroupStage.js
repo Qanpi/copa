@@ -1,4 +1,4 @@
-import MyChecklist from "../../../../components/MyChecklist/mychecklist";
+import MyChecklist from "../../../components/inputs/MyChecklist/mychecklist";
 
 const tasks = [
     {name: "Draw teams",

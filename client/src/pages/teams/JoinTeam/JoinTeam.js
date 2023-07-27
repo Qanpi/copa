@@ -1,22 +1,13 @@
-import { useEffect, useContext, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { AuthContext } from "../..";
-import { Link } from "react-router-dom";
-import { useCurrentUser } from "../..";
-import { useSearchParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import {
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Button,
-  MenuItem,
   Alert,
   AlertTitle,
+  Button
 } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { Link, useSearchParams } from "react-router-dom";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();

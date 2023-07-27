@@ -1,17 +1,12 @@
 import {
+  Checkbox,
   Collapse,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   List,
   ListItem,
-  ListItemSecondaryAction,
-  IconButton,
-  Typography,
-  Checkbox,
-  CardHeader,
+  ListItemButton,
+  ListItemText,
+  Typography
 } from "@mui/material";
-import { ClockIcon, TimeIcon } from "@mui/x-date-pickers";
 import { useState } from "react";
 
 function MyChecklist({ items, heading }) {

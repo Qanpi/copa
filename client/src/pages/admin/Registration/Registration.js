@@ -1,28 +1,23 @@
-import { useContext } from "react";
 import {
+  Button,
+  Card,
+  CardContent,
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
-  Button,
-  ButtonGroup,
+  DialogTitle,
   InputLabel,
-  Typography,
-  Card,
-  CardActionArea,
-  CardContent,
+  Typography
 } from "@mui/material";
-import { TournamentContext } from "../../../..";
-import { Formik, Form, yupToFormErrors, validateYupSchema } from "formik";
-import dayjs from "dayjs";
-import * as Yup from "yup";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import dayjs from "dayjs";
+import { Form, Formik } from "formik";
 import { useState } from "react";
-import MyDatePicker from "../../../../components/MyDatePicker/mydatepicker";
-import { DateRangeIcon } from "@mui/x-date-pickers";
-import { useTournament } from "../../../..";
+import * as Yup from "yup";
+import { useTournament } from "../../..";
+import MyDatePicker from "../../../components/inputs/MyDatePicker/mydatepicker";
 
 function AdminRegistrationPage({ moveToNextStage }) {
   const [openDialog, setOpenDialog] = useState(false);

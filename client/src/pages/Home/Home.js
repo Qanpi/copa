@@ -1,13 +1,8 @@
 import { Link } from "react-router-dom";
-import { AuthContext, TournamentContext } from "../..";
-import GameBoard from "../../components/GameBoard/gameboard";
-import Header from "../../components/Header/header";
-import InstagramBoard from "../../components/InstagramBoard/instagramboard";
-import CreateTeamPage from "../CreateTeam/CreateTeam";
-import RegistrationPage from "../Registration/Registration";
-import "./Home.css";
-import { useState, useEffect, useContext } from "react";
 import { useTournament } from "../..";
+import GameBoard from "./GameBoard/gameboard";
+import "./Home.css";
+import InstagramBoard from "./InstagramBoard/instagramboard";
 
 function Home() {
   const { data: tournament } = useTournament("current");

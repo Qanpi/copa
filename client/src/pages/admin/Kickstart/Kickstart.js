@@ -2,11 +2,11 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
-import MyNumberSlider from "../../../../components/MyNumberSlider/mynumberslider";
-import MyTextField from "../../../../components/MyTextField/mytextfield";
+import MyNumberSlider from "../../../components/inputs/MyNumberSlider/mynumberslider";
+import MyTextField from "../../../components/inputs/MyTextField/mytextfield";
 import { Button, Input, InputLabel } from "@mui/material";
 import { useField } from "formik";
-import MyFileInput from "../../../../components/MyFileInput/myFileInput";
+import MyFileInput from "../../../components/inputs/MyFileInput/myFileInput";
 
 function KickstartPage() {
   const queryClient = useQueryClient();

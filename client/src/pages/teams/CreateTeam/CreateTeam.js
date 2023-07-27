@@ -1,23 +1,19 @@
-import { useContext } from "react";
-import { AuthContext, TeamContext } from "../..";
 import {
+  Button,
   Dialog,
-  DialogTitle,
   DialogActions,
   DialogContent,
   DialogContentText,
-  Button,
-  MenuItem,
+  DialogTitle
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { Form, Formik } from "formik";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { Formik, Form } from "formik";
-import MyTextField from "../../components/MyTextField/mytextfield";
-import MySelect from "../../components/MySelect/mySelect";
-import MyFileInput from "../../components/MyFileInput/myFileInput";
-import { useUser, useTeam } from "../..";
+import { useUser } from "../../..";
+import MyTextField from "../../../components/inputs/MyTextField/mytextfield";
+import MyFileInput from "../../../components/inputs/MyFileInput/myFileInput";
 
 export const teamValidationSchema = Yup.object({
   name: Yup.string().max(20).trim().required(),

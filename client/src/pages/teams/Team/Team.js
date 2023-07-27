@@ -8,12 +8,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useTeam } from "../..";
+import { useParams } from "react-router-dom";
+import { useTeam } from "../../..";
 
 dayjs.extend(relativeTime);
 

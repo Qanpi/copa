@@ -1,27 +1,25 @@
-import React, { createContext, useState } from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import Home from "./pages/Home/Home.js";
-import reportWebVitals from "./services/reportWebVitals";
-import Header from "./components/Header/header";
-import AdminPanelPage from "./pages/Admin/Panel/AdminPanel";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
-  useMutation,
-  useQueryClient,
+  useQuery
 } from "@tanstack/react-query";
 import axios from "axios";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Header from "./components/header/header";
+import "./index.css";
+import AdminPanelPage from "./pages/admin/dashboard/dashboard";
+import CreateTeamPage from "./pages/teams/CreateTeam/CreateTeam";
+import Home from "./pages/Home/Home.js";
 import ProfilePage from "./pages/Profile/Profile";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import TeamPage from "./pages/Team/Team";
-import CreateTeamPage from "./pages/CreateTeam/CreateTeam";
-import JoinTeamPage from "./pages/JoinTeam/JoinTeam";
-import RegistrationPage from "./pages/Registration/Registration";
+import RegistrationPage from "./pages/registration/Registration";
 import TeamsTable from "./pages/Tables/TeamsTable/TeamsTable";
+import TeamPage from "./pages/teams/Team/Team";
+import JoinTeamPage from "./pages/teams/JoinTeam/JoinTeam";
+import reportWebVitals from "./services/reportWebVitals";
 
 const userKeys = {
   all: ["users"],
@@ -74,14 +72,14 @@ export const teamKeys = {
   detail: () => [teamKeys.details(), "default"],
 };
 
-export const useTeam = (name) => {
+export const useTeam = (name, props) => {
   return useQuery({
     queryKey: teamKeys.detail(name),
     queryFn: async () => {
       const response = await axios.get(`/api/teams/?name=${name}`);
       return response.data[0] || null; //assuming the response is array
     },
-    enabled: !!name,
+    ...props
   });
 };
 

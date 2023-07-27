@@ -1,23 +1,20 @@
-import { useContext } from "react";
-import { AuthContext, TeamContext, TournamentContext } from "../..";
 import { Button, MenuItem, Typography } from "@mui/material";
-import { Form, Formik } from "formik";
-import MyTextField from "../../components/MyTextField/mytextfield";
-import MyStepper from "../../components/MyStepper/mystepper";
-import MySelect from "../../components/MySelect/mySelect";
-import {
-  phoneValidationSchema,
-  teamValidationSchema,
-} from "../CreateTeam/CreateTeam";
-import { Link } from "react-router-dom";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useUser, useTournament, useTeam } from "../..";
+import { Form, Formik } from "formik";
+import { Link } from "react-router-dom";
+import { useTeam, useTournament, useUser } from "../..";
+import MySelect from "../../components/inputs/MySelect/mySelect";
+import MyTextField from "../../components/inputs/MyTextField/mytextfield";
+import * as Yup from "yup"
 
 function RegistrationPage() {
-  const {status: userStatus, data: user} = useUser("me");
-  const [teamStatus, team] = useTeam(user?.team);
-  const {status: tournamentStatus, data: tournament} = useTournament();
+  const { status: userStatus, data: user } = useUser("me");
+  const { status: teamStatus, data: team } = useTeam(user?.team?.name, {
+    enabled: userStatus === "success",
+  });
+  const { status: tournamentStatus, data: tournament } =
+    useTournament("current");
 
   //team member -> ask manager
   //team manager -> register
@@ -85,8 +82,20 @@ function RegistrationPage() {
             Please verify the information below
           </Typography>
           <Formik
-            initialValues={team}
-            validationSchema={teamValidationSchema}
+            initialValues={{
+              name: team.name,
+              phoneNumber: "",
+              division: "",
+            }}
+            validationSchema={Yup.object({
+              name: Yup.string().max(20).trim().required(),
+              phoneNumber: Yup.string()
+                .matches(
+                  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/
+                )
+                .required(),
+              division: Yup.string().required(),
+            })}
             onSubmit={(values) => updateTeamInfo.mutate(values)}
           >
             {({ dirty, submitForm, isValid }) => (
