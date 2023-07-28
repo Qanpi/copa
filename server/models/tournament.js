@@ -20,8 +20,14 @@ const TournamentSchema = mongoose.Schema(
       },
     },
     settings: {
-      matchLength: Number,
-      playerCount: Number,
+      matchLength: {
+        type: Number,
+        default: 6,
+      },
+      playerCount: {
+        type: Number,
+        default: 4,
+      },
     },
     rules: {
       type: String,
@@ -36,18 +42,18 @@ const TournamentSchema = mongoose.Schema(
     },
     divisions: {
       type: [String],
-      default: ["Men's", "Women's"]
+      default: ["Men's", "Women's"],
     },
     stage: {
       type: String,
       enum: [
-        "Kickstart", //meaningless?
+        "Settings", //meaningless?
         "Registration",
         "Group stage",
         "Play-offs",
         "Finished",
       ],
-      default: "Registration",
+      default: "Settings",
     },
     end: Date,
   },

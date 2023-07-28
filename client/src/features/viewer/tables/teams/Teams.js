@@ -6,40 +6,14 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useTournament } from "../../../..";
-
-const participationKeys = {
-  all: ["participations"],
-  lists: () => [participationKeys.all, "list"],
-  list: (filter) => [participationKeys.lists(), filter]
-}
-
-const useParticipations = () => {
-  return useQuery({
-    queryKey: [participationKeys.all],
-    queryFn: async () => {
-      const res = await axios.get(`/api/${participationKeys.all}`);
-      return res.data; 
-    },
-  });
-}
+import { useParticipations } from "../MyTable";
+import { useUnregisterTeam } from "../../../team/registration/registration";
+import MyTable from "../MyTable";
 
 function TeamsTable() {
-  const queryClient = useQueryClient();
-
   const {data: participations, status: participationsStatus} = useParticipations();
+  const unregisterTeam = useUnregisterTeam();
   const {data: tournament} = useTournament("current");
-
-  //FIXME: repetitive code -> extract to hook
-  const unregisterTeam = useMutation({
-    mutationFn: async (values) => {
-      console.log(values);
-      const res = await axios.delete(`/api/participations/${values.row.id}`);
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["participations"]);
-    },
-  });
 
   const teamValueGetter = (params, fieldName) => {
     return params.row.team[fieldName];
@@ -101,7 +75,7 @@ function TeamsTable() {
         return [
           <Tooltip title="Unregister">
             <GridActionsCellItem
-              onClick={() => unregisterTeam.mutate(params)}
+              onClick={() => unregisterTeam.mutate({id: params.row.id})}
               icon={<CalendarIcon></CalendarIcon>}
               label="Revoke registration"
             ></GridActionsCellItem>
@@ -112,37 +86,7 @@ function TeamsTable() {
   ];
 
   if (participationsStatus !== "success") return <p>Loading...</p>
-  return <Table rows={participations} cols={cols}></Table>;
+  return <MyTable rows={participations} cols={cols}></MyTable>;
 }
-
-const Table = ({ rows, cols }) => {
-  const {status: tournamentStatus, data: tournament} = useTournament("current");
-
-  const updateParticipation = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.put(`/api/participations/${values.id}`, values);
-      return res.data;
-    },
-  });
-
-  if (tournamentStatus !== "success") return <p>Loading...</p>
-
-  return (
-    <div style={{ width: "80%" }}>
-      <DataGrid
-        editMode="row"
-        isCellEditable={(params) => params.row.tournament.id === tournament?.id}
-        autoheight
-        rows={rows}
-        columns={cols}
-        processRowUpdate={async (newRow, orig) => {
-          const res = await updateParticipation.mutateAsync(newRow);
-          return res;
-        }}
-        onProcessRowUpdateError={(err) => console.log(err)}
-      ></DataGrid>
-    </div>
-  );
-};
 
 export default TeamsTable;

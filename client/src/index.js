@@ -11,15 +11,16 @@ import ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Header from "./features/viewer/header/header";
 import "./index.css";
-import AdminDashboard from "./features/admin/dashboard/Dashboard";
+import AdminDashboard from "./features/admin/tournament/dashboard/Dashboard";
 import CreateTeamPage from "./features/team/create/CreateTeam";
 import Home from "./features/viewer/home/Home.js";
 import ProfilePage from "./features/user/profile/Profile";
 import RegistrationPage from "./features/team/registration/registration";
-import TeamsTable from "./features/viewer/tables/TeamsTable/TeamsTable";
+import TeamsTable from "./features/viewer/tables/teams/Teams";
 import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
+import Draw from "./features/admin/teams/draw/Draw";
 
 const userKeys = {
   all: ["users"],
@@ -118,9 +119,13 @@ function App() {
               </Route>
               <Route path="/admin">
                 <Route
-                  path="/admin/dashboard"
+                  path="/admin/tournament"
                   element={<AdminDashboard></AdminDashboard>}
                 ></Route>
+                <Route 
+                path="/admin/teams/">
+                  <Route path="/admin/teams/draw" element={<Draw></Draw>}></Route>
+                </Route>
               </Route>
               <Route path="/users">
                 <Route

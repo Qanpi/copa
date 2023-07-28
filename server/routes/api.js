@@ -52,10 +52,9 @@ tournaments.getMultiple)
 
 router.get("/tournaments/current", tournaments.getCurrent);
 
-router.get("/tournaments/:id", tournaments.getOne)
+router.get("/tournaments/:id", tournaments.getOne);
 
-router.patch("/tournaments/:id", tournaments.updateOne)
-
+router.patch("/tournaments/:id", tournaments.updateOne);
 
 router.get("/participations",
   [

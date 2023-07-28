@@ -1,39 +1,19 @@
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import * as Yup from "yup";
+import { Button } from "@mui/material";
 import { Form, Formik } from "formik";
-import MyNumberSlider from "../../inputs/numberSlider/myNumberSlider";
-import MyTextField from "../../inputs/textField/mytextfield";
-import MyFileInput from "../../inputs/fileInput/MyFileInput";
-import { Button, Input, InputLabel } from "@mui/material";
-import { useField } from "formik";
+import * as Yup from "yup";
+import { useTournament } from "../../../..";
+import MyFileInput from "../../../inputs/fileInput/MyFileInput";
+import MyNumberSlider from "../../../inputs/numberSlider/myNumberSlider";
+import MyTextField from "../../../inputs/textField/mytextfield";
+import { useUpdateTournament } from "../dashboard/Dashboard";
 
-function KickstartStage() {
-  const queryClient = useQueryClient();
-
-  const createTournament = useMutation({
-    mutationFn: async (tournamentData) => {
-      const res = await axios.post("/api/tournaments", tournamentData);
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["tournament", "current"]);
-    },
-  });
+function SettingsStage() {
+  const { data: tournament } = useTournament("current");
+  const updateTournament = useUpdateTournament(tournament?.id);
 
   return (
     <Formik
-      initialValues={{
-        settings: {
-          playerCount: 4,
-          matchLength: 6,
-        },
-        organizer: {
-          name: "",
-          phoneNumber: "",
-        },
-        rules: "",
-      }}
+      initialValues={tournament}
       validationSchema={Yup.object({
         settings: Yup.object({
           playerCount: Yup.number().min(1).max(11).required(),
@@ -43,9 +23,11 @@ function KickstartStage() {
           name: Yup.string().required(),
           phoneNumber: Yup.string().notRequired(),
         }),
-        rules: Yup.string().required(),
+        rules: Yup.string().optional(), //TODO: at lfor time being
       })}
-      onSubmit={(values) => createTournament.mutate(values)}
+      onSubmit={(values) => {
+        updateTournament.mutate(values);
+      }}
     >
       <Form>
         <h1>Kickstart a new coap tournametn</h1>
@@ -79,7 +61,7 @@ function KickstartStage() {
           />
         </div>
         <h2>RULES</h2>
-        <MyFileInput label="please enter rules" name="rules"></MyFileInput>
+        <MyFileInput label="please enter rules" name="rrules"></MyFileInput>
         <p>
           TIP: The rules should answer questions including but{" "}
           <b>not limited</b> to,
@@ -100,11 +82,10 @@ function KickstartStage() {
           name="organizer.phoneNumber"
           label="Phone number"
         ></MyTextField>
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Save</Button>
       </Form>
     </Formik>
   );
 }
 
-
-export default KickstartStage;
+export default SettingsStage;

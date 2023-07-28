@@ -2,41 +2,22 @@ import {
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   InputLabel,
   Typography
 } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Form, Formik } from "formik";
-import { useState } from "react";
 import * as Yup from "yup";
-import { useTournament } from "../../..";
-import MyDatePicker from "../../inputs/datePicker/MyDatePicker";
+import { useTournament } from "../../../..";
+import MyDatePicker from "../../../inputs/datePicker/MyDatePicker";
+import { useUpdateTournament } from "../dashboard/Dashboard";
 
-function RegistrationStage({ next, previous }) {
-  const [openDialog, setOpenDialog] = useState(false);
+function RegistrationStage() {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
-
-  const queryClient = useQueryClient();
-  const updateTournament = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.patch(
-        `/api/tournaments/${tournament.id}`,
-        values
-      );
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["tournament", "current"]);
-    },
-  });
+  const updateTournament = useUpdateTournament(tournament?.id);
 
   //FIXME: custom hook extract needed
   const { status, data: participations } = useQuery({
@@ -46,22 +27,6 @@ function RegistrationStage({ next, previous }) {
       return res.data;
     },
   });
-
-  const handleMoveToNextStage = () => {
-    if (tournament.registration?.to <= new Date()) {
-      next();
-    } else {
-      setOpenDialog((b) => true);
-    }
-  };
-
-  const handleDialogResponse = (userConfirmed) => {
-    if (userConfirmed) {
-      next();
-    } else {
-      setOpenDialog((b) => false);
-    }
-  };
 
   if (tournamentStatus !== "success") return "bruh";
 
@@ -87,7 +52,9 @@ function RegistrationStage({ next, previous }) {
             }),
         }),
       })}
-      onSubmit={(values) => {updateTournament.mutate(values); next()}}
+      onSubmit={(values) => {
+        updateTournament.mutate(values);
+      }}
     >
       {(formik) => (
         <>
@@ -111,19 +78,8 @@ function RegistrationStage({ next, previous }) {
                 <Typography>currently registered</Typography>
               </CardContent>
             </Card>
-            <div>
-              <Button onClick={previous}>Back</Button>
-              <Button
-                onClick={async () => {
-                  await formik.submitForm();
-                  if (formik.isValid) handleMoveToNextStage();
-                }}
-              >
-                Next stage
-              </Button>
-            </div>
           </Form>
-          <Dialog open={openDialog}>
+          {/* <Dialog open={openDialog}>
             <DialogTitle>{"Proceed to group stages prematurely?"}</DialogTitle>
             <DialogContent>
               <DialogContentText>
@@ -137,7 +93,7 @@ function RegistrationStage({ next, previous }) {
               </Button>
               <Button onClick={() => handleDialogResponse(true)}>Yes</Button>
             </DialogActions>
-          </Dialog>
+          </Dialog> */}
         </>
       )}
     </Formik>

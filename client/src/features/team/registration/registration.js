@@ -6,7 +6,21 @@ import { Link } from "react-router-dom";
 import { useTeam, useTournament, useUser } from "../../..";
 import MyTextField from "../../inputs/textField/mytextfield";
 import MySelect from "../../inputs/select/mySelect";
-import * as Yup from "yup"
+import * as Yup from "yup";
+
+export const useUnregisterTeam = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (values) => {
+      const res = await axios.delete(`/api/participations/${values.id}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["participations"]);
+    },
+  });
+};
 
 function RegistrationPage() {
   const { status: userStatus, data: user } = useUser("me");
@@ -56,23 +70,14 @@ function RegistrationPage() {
     enabled: !!team && !!tournament,
   });
 
-  const unregisterTeam = useMutation({
-    mutationFn: async () => {
-      const res = await axios.delete(`/api/participations/${participation.id}`);
-
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["participation"]);
-    },
-  });
+  const unregisterTeam = useUnregisterTeam(); 
 
   if (team) {
     if (participation) {
       return (
         <>
           <div>Congratulations! Your team is already registered.</div>
-          <Button onClick={unregisterTeam.mutate}>Unregister</Button>
+          <Button onClick={() => unregisterTeam.mutate({id: team.id})}>Unregister</Button>
         </>
       );
     } else if (team.manager == user.id) {
