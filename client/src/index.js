@@ -9,16 +9,16 @@ import axios from "axios";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Header from "./components/header/header";
+import Header from "./features/viewer/header/header";
 import "./index.css";
-import AdminPanelPage from "./pages/admin/dashboard/dashboard";
-import CreateTeamPage from "./pages/teams/CreateTeam/CreateTeam";
-import Home from "./pages/Home/Home.js";
-import ProfilePage from "./pages/Profile/Profile";
-import RegistrationPage from "./pages/registration/Registration";
-import TeamsTable from "./pages/Tables/TeamsTable/TeamsTable";
-import TeamPage from "./pages/teams/Team/Team";
-import JoinTeamPage from "./pages/teams/JoinTeam/JoinTeam";
+import AdminDashboard from "./features/admin/dashboard/Dashboard";
+import CreateTeamPage from "./features/team/create/CreateTeam";
+import Home from "./features/viewer/home/Home.js";
+import ProfilePage from "./features/user/profile/Profile";
+import RegistrationPage from "./features/team/registration/registration";
+import TeamsTable from "./features/viewer/tables/TeamsTable/TeamsTable";
+import TeamPage from "./features/team/profile/Team";
+import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
 
 const userKeys = {
@@ -119,7 +119,7 @@ function App() {
               <Route path="/admin">
                 <Route
                   path="/admin/dashboard"
-                  element={<AdminPanelPage></AdminPanelPage>}
+                  element={<AdminDashboard></AdminDashboard>}
                 ></Route>
               </Route>
               <Route path="/users">
