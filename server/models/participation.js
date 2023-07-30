@@ -2,6 +2,8 @@ import mongoose from "mongoose"
 import { collections } from "../configs/db.config.js"
 
 const ParticipationSchema = new mongoose.Schema({
+    group: String,
+
     team: {
         id: {
             type: mongoose.SchemaTypes.ObjectId,

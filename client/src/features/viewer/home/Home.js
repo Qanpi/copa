@@ -3,6 +3,10 @@ import { useTournament } from "../../..";
 import GameBoard from "./GameBoard/gameboard";
 import "./Home.css";
 import InstagramBoard from "./InstagramBoard/instagramboard";
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
+
+dayjs.extend(relativeTime);
 
 function Home() {
   const { data: tournament } = useTournament("current");
@@ -17,9 +21,12 @@ function Home() {
       case "indefinite":
         return <div>Registrtion will start soon.</div>;
       case "awaiting":
-        return <div>Registration will begin in x days.</div>;
+        return <div>Registration will begin {dayjs().to(tournament.registration.from)}</div>;
       case "in progress":
-        return <Link to="/register">Register</Link>;
+        return <>
+        <div>Registration closes {dayjs().to(tournament.registration.to)}</div>
+        <Link to="/register">Register</Link>
+        </>
       case "over":
         return (
           <>
