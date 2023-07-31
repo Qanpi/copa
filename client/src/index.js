@@ -3,7 +3,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery
+  useQuery,
 } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
@@ -11,7 +11,7 @@ import ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Header from "./features/viewer/header/header";
 import "./index.css";
-import AdminDashboard from "./features/admin/tournament/dashboard/Dashboard";
+import AdminDashboard from "./features/tournament/admin/dashboard/Dashboard";
 import CreateTeamPage from "./features/team/create/CreateTeam";
 import Home from "./features/viewer/home/Home.js";
 import ProfilePage from "./features/user/profile/Profile";
@@ -21,6 +21,7 @@ import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
 import Draw from "./features/team/admin/draw/Draw";
+import TournamentStructure from "./features/tournament/admin/structure/structure";
 
 const userKeys = {
   all: ["users"],
@@ -80,7 +81,7 @@ export const useTeam = (name, props) => {
       const response = await axios.get(`/api/teams/?name=${name}`);
       return response.data[0] || null; //assuming the response is array
     },
-    ...props
+    ...props,
   });
 };
 
@@ -118,13 +119,21 @@ function App() {
                 ></Route>
               </Route>
               <Route path="/admin">
-                <Route
-                  path="/admin/tournament"
-                  element={<AdminDashboard></AdminDashboard>}
-                ></Route>
-                <Route 
-                path="/admin/teams/">
-                  <Route path="/admin/teams/draw" element={<Draw></Draw>}></Route>
+                <Route path="/admin/tournament">
+                  <Route
+                    path="/admin/tournament/dashboard"
+                    element={<AdminDashboard></AdminDashboard>}
+                  ></Route>
+                  <Route
+                    path="/admin/tournament/structure"
+                    element={<TournamentStructure></TournamentStructure>}
+                  ></Route>
+                </Route>
+                <Route path="/admin/teams/">
+                  <Route
+                    path="/admin/teams/draw"
+                    element={<Draw></Draw>}
+                  ></Route>
                 </Route>
               </Route>
               <Route path="/users">

@@ -7,7 +7,7 @@ import "./Dashboard.css";
 import GroupStages from "../groupStage/GroupStage";
 import RegistrationStage from "../registration/Registration";
 import { Button } from "@mui/material";
-import CreateTournament from "../create/CreateTournament";
+import CreateTournament from "../../../tournament/admin/create/CreateTournament";
 
 export const useUpdateTournament = (id) => {
   const queryClient = useQueryClient();
