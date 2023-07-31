@@ -7,6 +7,7 @@ import { useTeam, useTournament, useUser } from "../../..";
 import MyTextField from "../../inputs/textField/mytextfield";
 import MySelect from "../../inputs/select/mySelect";
 import * as Yup from "yup";
+import { useUpdateTeam } from "../hooks";
 
 export const useUnregisterTeam = () => {
   const queryClient = useQueryClient();
@@ -35,15 +36,7 @@ function RegistrationPage() {
   //teamless -> join/create team
   //registered -> alr registered
   const queryClient = useQueryClient();
-  const updateTeamInfo = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.patch(`/api/teams/${team.id}`, values);
-      return res.data;
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["teams", team.id], data);
-    },
-  });
+  const updateTeam = useUpdateTeam();
 
   const registerTeam = useMutation({
     mutationFn: async (bool) => {
@@ -88,6 +81,7 @@ function RegistrationPage() {
           </Typography>
           <Formik
             initialValues={{
+              id: team.id,
               name: team.name,
               phoneNumber: "",
               division: "",
@@ -101,7 +95,7 @@ function RegistrationPage() {
                 .required(),
               division: Yup.string().required(),
             })}
-            onSubmit={(values) => updateTeamInfo.mutate(values)}
+            onSubmit={(values) => updateTeam.mutate(values)}
           >
             {({ dirty, submitForm, isValid }) => (
               <Form>

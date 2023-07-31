@@ -2,7 +2,10 @@ import mongoose from "mongoose"
 import { collections } from "../configs/db.config.js"
 
 const ParticipationSchema = new mongoose.Schema({
-    group: String,
+    group: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: collections.groups.id
+    },
 
     team: {
         id: {
@@ -48,4 +51,4 @@ ParticipationSchema.virtual("createdAt").get(function() {
     return this._id.getTimestamp();
 })
 
-export default mongoose.model("Participation", ParticipationSchema);
+export default mongoose.model(collections.participations.id, ParticipationSchema);

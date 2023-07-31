@@ -14,5 +14,11 @@ export const collections = {
   },
   users: {
     id: "User"
+  },
+  participations: {
+    id: "Participation"
+  },
+  groups: {
+    id: "Group"
   }
 }

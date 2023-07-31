@@ -20,7 +20,7 @@ import TeamsTable from "./features/viewer/tables/teams/Teams";
 import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
-import Draw from "./features/admin/teams/draw/Draw";
+import Draw from "./features/team/admin/draw/Draw";
 
 const userKeys = {
   all: ["users"],

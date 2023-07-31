@@ -1,26 +1,35 @@
 import { useTournament } from "../../..";
-import axios from "axios"
+import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 export const participationKeys = {
-  all: ["participations"],
-  lists: () => [participationKeys.all, "list"],
-  list: (filter) => [participationKeys.lists(), filter]
-}
+  all: "participations",
+  query: (query) => [participationKeys.all, "query", query],
+};
 
-export const useParticipations = () => {
+// query: {sort: "group"}
+export const useParticipations = (query) => {
   return useQuery({
-    queryKey: [participationKeys.all],
+    queryKey: [participationKeys.query(query)],
+
     queryFn: async () => {
-      const res = await axios.get(`/api/${participationKeys.all}`);
-      return res.data; 
+      let queryString = `/api/${participationKeys.all}`;
+
+      if (query) {
+        queryString += "?";
+        Object.entries(query).forEach(([k, v]) => (queryString += `${k}=${v}`));
+      }
+
+      const res = await axios.get(queryString);
+      return res.data;
     },
   });
-}
+};
 
 const MyTable = ({ rows, cols }) => {
-  const {status: tournamentStatus, data: tournament} = useTournament("current");
+  const { status: tournamentStatus, data: tournament } =
+    useTournament("current");
 
   const updateParticipation = useMutation({
     mutationFn: async (values) => {
@@ -29,7 +38,7 @@ const MyTable = ({ rows, cols }) => {
     },
   });
 
-  if (tournamentStatus !== "success") return <p>Loading...</p>
+  if (tournamentStatus !== "success") return <p>Loading...</p>;
 
   return (
     <div style={{ width: "80%" }}>

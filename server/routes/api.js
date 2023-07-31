@@ -6,6 +6,7 @@ import * as matches from "../controllers/matchesController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js"
 import * as participations from "../controllers/participationsController.js"
+import * as groups from "../controllers/groupsController.js"
 
 const router = express.Router();
 
@@ -59,7 +60,8 @@ router.patch("/tournaments/:id", tournaments.updateOne);
 router.get("/participations",
   [
     query("team").optional(),
-    query("tournament").optional()
+    query("tournament").optional(),
+    query("group").isString().optional()
   ]
 , participations.getMultiple);
 
@@ -68,6 +70,8 @@ router.post("/participations", participations.createOne);
 router.delete("/participations/:id", participations.deleteOne);
 
 router.put("/participations/:id", participations.updateOne);
+
+router.patch("/participations/:id", participations.updateOne);
 
 // router.get("/tournaments/:id/teams", tournaments.getRegisteredTeams);
 
@@ -82,4 +86,11 @@ router.get("/users", users.getMultiple)
 router.get("/users/:id", users.getOneById)
 
 router.patch("/users/:id", users.updateOne)
+
+router.get("/tournaments/:id/groups", groups.getMultiple)
+
+router.post("/tournaments/:id/groups", groups.createOne);
+
+router.patch("/tournaments/:tournamentId/groups/:groupId", groups.updateOne)
+
 export default router;

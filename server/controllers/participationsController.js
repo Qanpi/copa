@@ -6,12 +6,14 @@ import { matchedData, validationResult } from "express-validator";
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
   const result = validationResult(req);
+
   if (result.isEmpty()) {
     const data = matchedData(req);
 
     const filters = {
         "team.id": data?.team,
-        "tournament.id": data?.tournament
+        "tournament.id": data?.tournament,
+        group: data?.group || null
     }
 
     //TODO: refactor all other uses to checking role

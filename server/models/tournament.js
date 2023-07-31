@@ -6,6 +6,28 @@ import dayjs from "dayjs";
 import Increment from "./increment.js";
 dayjs.extend(relativeTime);
 
+const GroupSchema = mongoose.Schema(
+  {
+    name: String,
+    division: String,
+    options: {
+      breakingCount: Number,
+    },
+  },
+  {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+  }
+);
+
+GroupSchema.virtual("participants", {
+  ref: collections.participations.id,
+  localField: "_id",
+  foreignField: "group",
+});
+
+export const Group = mongoose.model(collections.groups.id, GroupSchema);
+
 //TODO: split into user and admin models
 const TournamentSchema = mongoose.Schema(
   {
@@ -40,6 +62,7 @@ const TournamentSchema = mongoose.Schema(
       from: Date,
       to: Date,
     },
+    groups: [GroupSchema],
     divisions: {
       type: [String],
       default: ["Men's", "Women's"],
