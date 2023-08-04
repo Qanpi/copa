@@ -15,10 +15,16 @@ export const collections = {
   users: {
     id: "User"
   },
-  participations: {
-    id: "Participation"
+  participants: {
+    id: "Participant"
   },
   groups: {
     id: "Group"
+  },
+  rounds: {
+    id: "Round"
+  },
+  stages: {
+    id: "Stage"
   }
 }

@@ -1,4 +1,4 @@
-import "./services/mongo.js"
+import { connectMongoose } from "./services/mongo.js";
 import createError from "http-errors";
 import express from "express";
 import cors from "cors"
@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import _debugger from "debug"
 const debug = _debugger("app:")
+await connectMongoose();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import Tournament, { Group } from "../models/tournament.js";
+import Tournament from "../models/tournament.js";
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
   const tournament = await Tournament.findById(req.params.id)

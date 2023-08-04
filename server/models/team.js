@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
-import Tournament from "./tournament.js"
 
 const TeamSchema = new mongoose.Schema(
   {

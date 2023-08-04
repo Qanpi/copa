@@ -3,12 +3,87 @@ import { collections } from "../configs/db.config.js";
 import { romanize } from "../services/helpers.js";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import dayjs from "dayjs";
-import Increment from "./increment.js";
+import Metadata from "./metadata.js";
+import { ObjectId } from "mongodb";
 dayjs.extend(relativeTime);
 
-const GroupSchema = mongoose.Schema(
+const RoundSchema = new mongoose.Schema(
+  {
+    group: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: collections.groups.id,
+      alias: "group_id",
+    },
+    number: Number,
+    stage: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: collections.stages.id,
+      alias: "stage_id",
+    },
+  },
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
+
+export const Round = mongoose.model(collections.rounds.id, RoundSchema);
+
+const StageSchema = new mongoose.Schema(
   {
     name: String,
+    number: Number,
+    settings: {
+      size: Number,
+      seedOrdering: {
+        type: String,
+        enum: [
+          "natural",
+          "reverse",
+          "half_shift",
+          "reverse_half_shift",
+          "pair_flip",
+          "inner_outer",
+          "groups.effort_balanced",
+          "groups.seed_optimized",
+          "groups.bracket_optimized",
+        ],
+      },
+      balanceByes: Boolean,
+      consolationFinal: Boolean,
+      grandFinal: {
+        type: String,
+        enum: ["none", "simple", "double"],
+      },
+      groupCount: Number,
+      manualGrouping: [[Number]],
+      matchesChildCount: Number,
+      roundRobinMode: {
+        type: String,
+        enum: ["simple", "double"],
+      },
+      skipFirstRound: Boolean,
+    },
+    type: {
+      type: String,
+      enum: ["round_robin", "single_elimination", "double_elimination"],
+    },
+  },
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
+
+StageSchema.virtual("tournament_id").get(function () {
+  return this.parent()._id;
+});
+
+//FIXME: remove superfluous model creation
+export const Stage = mongoose.model(collections.stages.id, StageSchema);
+
+export const GroupSchema = new mongoose.Schema(
+  {
+    name: String,
+    number: Number,
+    stage: {
+      type: mongoose.SchemaTypes.ObjectId,
+      alias: "stage_id",
+    },
     division: String,
     options: {
       breakingCount: Number,
@@ -21,15 +96,15 @@ const GroupSchema = mongoose.Schema(
 );
 
 GroupSchema.virtual("participants", {
-  ref: collections.participations.id,
+  ref: collections.participants.id,
   localField: "_id",
   foreignField: "group",
 });
 
-export const Group = mongoose.model(collections.groups.id, GroupSchema);
+// export const Group = mongoose.model(collections.groups.id, GroupSchema);
 
 //TODO: split into user and admin models
-const TournamentSchema = mongoose.Schema(
+const TournamentSchema = new mongoose.Schema(
   {
     count: {
       type: Number,
@@ -67,10 +142,14 @@ const TournamentSchema = mongoose.Schema(
       type: [String],
       default: ["Men's", "Women's"],
     },
+    stages: [StageSchema],
+    rounds: [RoundSchema],
+
     stage: {
+      //FIXME: rename to avoid confusion with brackets stages
       type: String,
       enum: [
-        "Settings", //meaningless?
+        "Settings",
         "Registration",
         "Group stage",
         "Play-offs",
@@ -83,18 +162,54 @@ const TournamentSchema = mongoose.Schema(
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
+    statics: {
+      async findCurrent() {
+        const meta = await Metadata.findOne({
+          model: collections.tournaments.id,
+        });
+        const tournament = await this.findById(meta.latest);
+        return tournament;
+      },
+      translateSubAliases(subdoc, obj) {
+        switch (subdoc) {
+          case "group":
+            obj.stage = obj.stage || new ObjectId(obj.stage_id);
+            delete obj.stage_id;
+            break;
+          case "stage":
+            break;
+          case "round":
+            obj.group = obj.group || obj.group_id;
+            delete obj.group_id;
+            obj.stage = obj.stage || obj.stage_id;
+            delete obj.stage_id;
+            break;
+        }
+        return obj;
+      },
+    },
   }
 );
 
 TournamentSchema.pre("save", async function (next) {
   if (this.isNew) {
-    let count = await Increment.getNextId(collections.tournaments.id);
-    this.count = count;
+    let metadata = await Metadata.findOne({
+      model: collections.tournaments.id,
+    });
+    if (!metadata)
+      metadata = new Metadata({ model: collections.tournaments.id });
+
+    this.count = metadata.count;
+    metadata.idx++;
+    metadata.latest = this._id;
+
+    await metadata.save();
   }
   next();
 });
 
-TournamentSchema.virtual("stages").get(function () {
+//FIXME: renamed var
+TournamentSchema.virtual("statuses").get(function () {
   return this.schema.path("stage").enumValues;
 });
 

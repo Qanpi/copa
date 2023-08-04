@@ -4,6 +4,10 @@
             "id": 0,
             "tournament_id": 0,
             "name": "Team 1"
+        },  {
+            "id": "tinpot",
+            "tournament_id": 0,
+            "name": "Tinpot"
         },
         {
             "id": 1,
@@ -81,7 +85,7 @@
             "id": 0,
             "tournament_id": 0,
             "name": "Example",
-            "type": "single_elimination",
+            "type": "double_elimination",
             "number": 1,
             "settings": {
                 "size": 16,
@@ -197,7 +201,7 @@
             "child_count": 0,
             "status": 4,
             "opponent1": {
-                "id": 0,
+                "id": "tinpot",
                 "position": 1,
                 "score": 16,
                 "result": "win"

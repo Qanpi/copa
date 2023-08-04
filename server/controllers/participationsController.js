@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import Participation from "../models/participation.js";
+import Participation from "../models/participant.js";
 import Tournament from "../models/tournament.js";
 import Team from "../models/team.js";
 import { matchedData, validationResult } from "express-validator";
@@ -11,13 +11,16 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
     const data = matchedData(req);
 
     const filters = {
-        "team.id": data?.team,
-        "tournament.id": data?.tournament,
-        group: data?.group || null
-    }
+      "team.id": data?.team,
+      "tournament.id": data?.tournament,
+      group: data?.group || null,
+    };
 
     //TODO: refactor all other uses to checking role
-    const participations = req.user?.role === "admin" ? await Participation.find(filters).select(["+team.phoneNumber"]) : await Participation.find(filters);
+    const participations =
+      req.user?.role === "admin"
+        ? await Participation.find(filters).select(["+team.phoneNumber"])
+        : await Participation.find(filters);
     return res.send(participations);
   }
 
@@ -27,18 +30,11 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
 export const createOne = expressAsyncHandler(async (req, res) => {
   //TODO: remove unnecessary calls
   const team = await Team.findById(req.body.teamId);
-  const tournament = await Tournament.findById(req.body.tournamentId);
 
   const participation = await new Participation({
-    team: {
-      id: team.id,
-      name: team.name,
-    },
-    tournament: {
-      id: tournament.id,
-      name: tournament.name,
-      start: tournament.start,
-    },
+    id: team.id,
+    name: team.name,
+    tournament_id: req.body.tournamentId
   }).save();
 
   res.send(participation);
@@ -52,6 +48,10 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
 
 export const updateOne = expressAsyncHandler(async (req, res) => {
   //potentially use upsert for better correspondence to http PUT
-  const participation = await Participation.findByIdAndUpdate(req.params.id, req.body, {new: true});
+  const participation = await Participation.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
   res.send(participation);
-})
+});
