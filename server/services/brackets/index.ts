@@ -13,8 +13,9 @@ import { handleInsert } from "./insert";
 import { handleSelect } from "./select";
 import { handleUpdate } from "./update";
 import { handleDelete } from "./delete";
+import { connectMongoose } from "../mongo";
 
-export class MongooseForBrackets implements CrudInterface {
+export default class MongooseForBrackets implements CrudInterface {
   insert<T extends keyof DataTypes>(
     table: T,
     value: OmitId<DataTypes[T]>

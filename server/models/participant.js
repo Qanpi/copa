@@ -33,7 +33,8 @@ const ParticipantSchema = new mongoose.Schema(
     tournament: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: collections.tournaments.id,
-      alias: "tournament_id"
+      alias: "tournament_id",
+      index: true
     },
   },
   {

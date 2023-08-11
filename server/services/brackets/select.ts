@@ -32,7 +32,7 @@ export async function handleSelect<T extends keyof DataTypes>(
         >;
       }
 
-      return Participant.find(
+      return await Participant.find(
         Participant.translateAliases(filter)
       ).exec() as unknown as Promise<DataTypes[T][]>;
 

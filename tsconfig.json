@@ -2,6 +2,9 @@
   "extends": "@tsconfig/create-react-app/tsconfig.json",
   "ts-node": {
     "esm": true,
-    "experimentalSpecifierResolution": "node"
-  }
+    "experimentalSpecifierResolution": "node",
+  },
+  "compilerOptions": {
+      "target": "ESNext"
+  },
 }

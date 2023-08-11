@@ -27,14 +27,14 @@ export async function handleUpdate<T extends keyof DataTypes>(
         return Participant.findByIdAndUpdate(filter, d)
           .exec()
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       }
 
       const f = Participant.translateAliases(filter);
       return Participant.updateMany(f, d)
         .exec()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "stage":
       const stage = tournament!.stages.id(filter);
       stage?.set(data);
@@ -42,7 +42,7 @@ export async function handleUpdate<T extends keyof DataTypes>(
       return tournament!
         .save()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "group":
       if (typeof filter === "string") {
         const group = tournament!.groups.id(filter);
@@ -58,7 +58,7 @@ export async function handleUpdate<T extends keyof DataTypes>(
       return tournament!
         .save()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "round":
       if (typeof filter === "number") {
         throw TypeError("IDs can't be numbers.");
@@ -78,13 +78,13 @@ export async function handleUpdate<T extends keyof DataTypes>(
       return tournament!
         .save()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "match":
       if (typeof filter === "string") {
         return Match.findByIdAndUpdate(filter, Match.translateAliases(data))
           .exec()
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       }
 
       return Match.updateMany(
@@ -93,7 +93,7 @@ export async function handleUpdate<T extends keyof DataTypes>(
       )
         .exec()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "match_game":
       if (typeof filter === "string") {
         const match = await Match.findOne({ "games.id": filter }); //FIXME: probablay a one-lienr way to do this
@@ -103,7 +103,7 @@ export async function handleUpdate<T extends keyof DataTypes>(
         return match!
           .save()
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       }
 
       //FIXME: doesn't rly work for stage or round id's cuz virtuals
@@ -126,7 +126,7 @@ export async function handleUpdate<T extends keyof DataTypes>(
       )
         .exec()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
 
     default:
       return false;

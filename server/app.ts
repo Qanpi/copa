@@ -1,14 +1,13 @@
 import { connectMongoose } from "./services/mongo.js";
 import createError from "http-errors";
-import express from "express";
-import cors from "cors"
+import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { fileURLToPath } from "url";
 import path from "path";
 import _debugger from "debug"
 const debug = _debugger("app:")
-await connectMongoose();
+connectMongoose(); //FIXME: await 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,12 +38,12 @@ app.use(
 // workound to issue: https://github.com/jaredhanson/passport/issues/904
 app.use(function (req, res, next) {
   if (req.session && !req.session.regenerate) {
-    req.session.regenerate = (cb) => {
+    req.session.regenerate = (cb: any) => {
       cb();
     };
   }
   if (req.session && !req.session.save) {
-    req.session.save = (cb) => {
+    req.session.save = (cb: any) => {
       cb();
     };
   }
@@ -77,10 +76,10 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  console.log(err);
+  console.error(err);
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page

@@ -9,8 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import MyTable from "../../viewer/tables/MyTable";
+import { memo } from "react";
+import { differenceWith, isEqual } from "lodash";
 
-function Group({ name, participations, disableHead }) {
+function Group({ name, participants, disableHead }) {
   const teamValueGetter = (params, fieldName) => {
     return params.row.team[fieldName];
   };
@@ -19,14 +21,15 @@ function Group({ name, participations, disableHead }) {
     {
       field: "name",
       headerName: "Team",
-      valueGetter: (p) => teamValueGetter(p, "name"),
     },
     {
       field: "wins",
-    }
+    },
   ];
 
-  return <MyTable rows={participations} cols={cols}></MyTable>;
+  const rows = participants || [];
+
+  return <MyTable title={name} rows={rows} cols={cols} hideFooter></MyTable>;
 
   return (
     <div>
@@ -49,7 +52,7 @@ function Group({ name, participations, disableHead }) {
             ) : null}
           </TableHead>
           <TableBody>
-            {participations.map((p, i) => (
+            {participants.map((p, i) => (
               <TableRow key={i}>
                 <TableCell>{i + 1}.</TableCell>
                 <TableCell>{p.team.name}</TableCell>
@@ -65,4 +68,7 @@ function Group({ name, participations, disableHead }) {
   );
 }
 
-export default Group;
+export default memo(Group, (prev, next) => {
+  // const diff = differenceWith(prev.participants, next.participants, isEqual);
+  return isEqual(prev, next);
+});

@@ -27,11 +27,11 @@ export async function handleInsert<T extends keyof DataTypes>(
       if (Array.isArray(participantData)) {
         return Participant.insertMany(participantData)
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       } else {
         return Participant.create(participantData)
           .then((result) => result.id)
-          .catch(() => -1);
+          .catch(err => {console.error(err); return -1});
       }
 
     case "stage":
@@ -45,7 +45,7 @@ export async function handleInsert<T extends keyof DataTypes>(
         return await tournament
           .save()
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       } else {
         const stage = tournament.stages.create(data);
         tournament.stages.push(stage);
@@ -53,7 +53,7 @@ export async function handleInsert<T extends keyof DataTypes>(
         return tournament
           .save()
           .then(() => stage.id)
-          .catch(() => -1);
+          .catch(err => {console.error(err); return -1});
       }
 
     case "group":
@@ -65,7 +65,7 @@ export async function handleInsert<T extends keyof DataTypes>(
         return tournament
           .save()
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       } else {
         const group = tournament.groups.create(groupData);
         tournament.groups.push(group);
@@ -73,7 +73,7 @@ export async function handleInsert<T extends keyof DataTypes>(
         return tournament
           .save()
           .then(() => group.id)
-          .catch(() => -1);
+          .catch(err => {console.error(err); return -1});
       }
 
     case "round":
@@ -85,14 +85,14 @@ export async function handleInsert<T extends keyof DataTypes>(
         return tournament
           .save()
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       } else {
-        const round = tournament.groups.create(roundData);
-        tournament.groups.push(round);
+        const round = tournament.rounds.create(roundData);
+        tournament.rounds.push(round);
         return tournament
           .save()
           .then(() => round.id)
-          .catch(() => -1);
+          .catch(err => {console.error(err); return -1});
       }
 
     case "match":
@@ -103,11 +103,11 @@ export async function handleInsert<T extends keyof DataTypes>(
       if (Array.isArray(matchData)) {
         return Match.insertMany(matchData)
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       } else {
         return Match.create(matchData)
           .then((result) => result.id)
-          .catch(() => -1);
+          .catch(err => {console.error(err); return -1});
       }
 
     case "match_game":
@@ -129,7 +129,7 @@ export async function handleInsert<T extends keyof DataTypes>(
 
         return Promise.all(promises)
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       } else {
         const match = await Match.findById(matchGameData.parent_id);
 
@@ -138,7 +138,7 @@ export async function handleInsert<T extends keyof DataTypes>(
         return match!
           .save()
           .then(() => matchGame.id)
-          .catch(() => -1);
+          .catch(err => {console.error(err); return -1});
       }
 
     default:

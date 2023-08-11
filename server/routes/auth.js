@@ -31,12 +31,11 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   //TODO: maybe add encryption later on
-  //FIXME: maybe bad to serialize everything
   process.nextTick(() => {
     return done(null, {
-      id: user.id,
-      name: user.name,
-      role: user.role
+      id: user?.id,
+      name: user?.name,
+      role: user?.role
     });
   });
 });

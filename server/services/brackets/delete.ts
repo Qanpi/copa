@@ -21,7 +21,7 @@ export async function handleDelete<T extends keyof DataTypes>(
       if (!filter) {
         return Participant.deleteMany({})
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       }
 
       return Participant.deleteMany({
@@ -30,7 +30,7 @@ export async function handleDelete<T extends keyof DataTypes>(
         id: undefined,
       })
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "group":
       if (!filter) {
         tournament!.set({ groups: undefined });
@@ -45,7 +45,7 @@ export async function handleDelete<T extends keyof DataTypes>(
       return tournament!
         .save()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "stage":
       if (!filter) {
         tournament!.set({ stages: undefined });
@@ -60,7 +60,7 @@ export async function handleDelete<T extends keyof DataTypes>(
       return tournament!
         .save()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "round":
       if (!filter) {
         tournament!.set({ rounds: undefined });
@@ -75,12 +75,12 @@ export async function handleDelete<T extends keyof DataTypes>(
       return tournament!
         .save()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "match":
       if (!filter) {
         return Match.deleteMany({})
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       }
       return Match.deleteMany({
         ...Match.translateAliases(filter),
@@ -88,13 +88,13 @@ export async function handleDelete<T extends keyof DataTypes>(
         id: undefined,
       })
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
     case "match_game":
       if (!filter) {
         return Match.updateMany({}, { $set: { games: undefined } })
           .exec()
           .then(() => true)
-          .catch(() => false);
+          .catch(err => {console.error(err); return false});
       }
 
       return Match.updateMany(
@@ -112,7 +112,7 @@ export async function handleDelete<T extends keyof DataTypes>(
       )
         .exec()
         .then(() => true)
-        .catch(() => false);
+        .catch(err => {console.error(err); return false});
 
     default:
       return false;

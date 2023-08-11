@@ -5,6 +5,7 @@ import relativeTime from "dayjs/plugin/relativeTime.js";
 import dayjs from "dayjs";
 import Metadata from "./metadata.js";
 import { ObjectId } from "mongodb";
+import Participant from "./participant.js";
 dayjs.extend(relativeTime);
 
 const RoundSchema = new mongoose.Schema(
@@ -33,7 +34,7 @@ const StageSchema = new mongoose.Schema(
     settings: {
       size: Number,
       seedOrdering: {
-        type: String,
+        type: [String],
         enum: [
           "natural",
           "reverse",
@@ -78,7 +79,6 @@ export const Stage = mongoose.model(collections.stages.id, StageSchema);
 
 export const GroupSchema = new mongoose.Schema(
   {
-    name: String,
     number: Number,
     stage: {
       type: mongoose.SchemaTypes.ObjectId,
@@ -94,6 +94,12 @@ export const GroupSchema = new mongoose.Schema(
     toJSON: { virtuals: true },
   }
 );
+
+GroupSchema.virtual("name").get(function() {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+
+  return `Group ${alphabet[this.number - 1]}`;
+})
 
 GroupSchema.virtual("participants", {
   ref: collections.participants.id,
@@ -173,16 +179,25 @@ const TournamentSchema = new mongoose.Schema(
       translateSubAliases(subdoc, obj) {
         switch (subdoc) {
           case "group":
-            obj.stage = obj.stage || new ObjectId(obj.stage_id);
-            delete obj.stage_id;
+            if (obj.stage_id) {
+              obj.stage = new ObjectId(obj.stage_id);
+              delete obj.stage_id;
+            }
             break;
           case "stage":
+            if (obj.tournament_id) {
+              obj.tournament_id = new ObjectId(obj.tournament_id);
+            }
             break;
           case "round":
-            obj.group = obj.group || obj.group_id;
-            delete obj.group_id;
-            obj.stage = obj.stage || obj.stage_id;
-            delete obj.stage_id;
+            if (obj.group_id) {
+              obj.group = new ObjectId(obj.group_id);
+              delete obj.group_id;
+            }
+            if (obj.stage_id) {
+              obj.stage = new ObjectId(obj.stage_id);
+              delete obj.stage_id;
+            }
             break;
         }
         return obj;
@@ -229,6 +244,14 @@ TournamentSchema.virtual("registration.status").get(function () {
     return "in progress";
   } else return "over";
 });
+
+TournamentSchema.virtual("groupStage").get(function() {
+    return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
+})
+
+// TournamentSchema.pre("findOneAndDelete", async function () {
+//   await Participant.deleteMany({tournament: this.id});
+// })
 
 // if (this.end) {
 //     return ;

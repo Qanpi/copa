@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
-import { useState } from "react";
+import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
 import * as Yup from "yup";
 import MyTextField from "../../../inputs/textField/mytextfield";
@@ -9,122 +9,153 @@ import Group from "../../group/Group";
 import { useUpdateTeam } from "../../hooks";
 import { useTournament } from "../../../..";
 import axios from "axios";
-import {
-  useQuery,
-  useMutation,
-  QueryClient,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const useGroups = () => {
   const { data: tournament, isSuccess } = useTournament("current");
 
-  return useQuery({
-    queryKey: ["groups"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/tournaments/${tournament.id}/groups`);
-      return res.data;
-    },
-    enabled: isSuccess,
-  });
+  if (isSuccess)
+    return tournament.groups.filter(
+      (g) => g.stage === tournament.groupStage.id
+    );
 };
 
 function Draw() {
-  const [isSpinning, setIsSpinning] = useState(false);
+  const [mustSpin, setMustSpin] = useState(false);
   const [randomN, setRandomN] = useState(0);
 
-  const { data: groupless, status: participationsStatus } = useParticipations({
-    group: "",
+  const { status: participationsStatus, refetch } = useParticipations(
+    {
+      group: "",
+    },
+    false
+  );
+  const [groupless, setGroupless] = useState([]);
+
+  const wheelOptions = groupless.map((p) => {
+    const l = 10;
+    const trimmed =
+      p.name.length > l ? p.name.substring(0, l - 3) + "..." : p.name;
+    return { option: trimmed, ...p };
   });
 
-  const groupN = 1; //TODO: control max n
+  useEffect(() => {
+    const firstLoad = async () => {
+      const participants = await refetch();
+      setGroupless(participants.data);
+    };
 
-  //TODO: separate page for defining tournament structure (groups -> bracket etc.)
-  const queryClient = useQueryClient();
-  const assignToGroup = useMutation({
+    firstLoad();
+  }, []);
+
+  // console.log(groupless);
+
+  // const queryClient = useQueryClient();
+  // const assignToGroup = useMutation({
+  //   mutationFn: async (values) => {
+  //     const res = await axios.patch(`/api/participations/${values.id}`, values);
+  //     return res.data;
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries("groups");
+  //   },
+  // });
+
+  const { data: tournament } = useTournament("current");
+
+  const groups = useGroups();
+  const [seeding, setSeeding] = useState([]);
+
+  const updateSeeding = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.patch(`/api/participations/${values.id}`, values);
+      const res = await axios.patch(
+        `/api/tournaments/${tournament.id}/stages/${tournament.groupStage.id}`,
+        values
+      );
       return res.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries("groups");
-    },
   });
 
-  const { data: groups, status: groupsStatus } = useGroups();
+  const handleClickSaveSeeding = (e) => {
+    updateSeeding.mutate({seeding: seeding});
+  }
 
   //TODO: skipping the whole process if desired
-  const [currentGroup, setCurrentGroup] = useState(0);
-
-  if (participationsStatus !== "success" || groupsStatus !== "success")
-    return <div>Loading...</div>;
+  // const [currentGroup, setCurrentGroup] = useState(0);
 
   const isAllDrawn = groupless.length === 0;
 
-  const wheelOptions = groupless.map((p) => {
-    return { option: p.team.name, ...p };
-  });
-
   const handleSpinOver = () => {
-    const chosenParticipant = wheelOptions[randomN];
-    setIsSpinning(false);
+    setMustSpin(false);
 
-    assignToGroup.mutate({
-      id: chosenParticipant.id,
-      group: groups[currentGroup].id,
-    });
-    setCurrentGroup((currentGroup + 1) % groups.length);
+    const chosen = wheelOptions[randomN];
+    setGroupless(groupless.filter((p) => p.id !== chosen.id));
+    setSeeding([...seeding, chosen]);
   };
 
   const handleSpinClick = () => {
-    if (isAllDrawn) return;
-
+    if (isAllDrawn || mustSpin) return;
     const n = Math.floor(Math.random() * groupless.length);
     setRandomN(n);
-
-    if (!isSpinning) {
-      setIsSpinning(true);
-    }
+    setMustSpin(true);
   };
+
+  const handleClickSkipWheel = () => {
+    const newGroupless = [...groupless];
+    const newSeeding = [...seeding];
+
+    while (newGroupless.length) {
+      const n = Math.floor(Math.random() * newGroupless.length);
+
+      newSeeding.push(newGroupless[n]);
+      newGroupless.splice(n, 1);
+    }
+
+    setSeeding(newSeeding);
+    setGroupless(newGroupless);
+  }
+
+  if (!groups) return <div>Loading...</div>;
+
+  const groupTables = groups.map((g, i) => {
+    const participants = seeding.filter((_, j) => j % groups.length === i);
+
+    return (
+      <Group
+        name={g.name}
+        participants={participants}
+        disableHead
+        key={g.name}
+      ></Group>
+    );
+  });
 
   return (
     <>
-      <Formik
-        initialValues={{
-          groupCount: Math.ceil(wheelOptions.length / 4), //kinda dumb algo, maybe make smarter
-        }}
-        validationSchema={Yup.object({
-          groupCount: Yup.number().min(1).max(20),
-        })}
-      >
-        <Form>
-          <Typography>
-            There is a total of {wheelOptions.length} team(s).
-          </Typography>
-          <Typography>How many groups do you want there to be?</Typography>
-          <MyTextField type="number" name="groupCount"></MyTextField>
-        </Form>
-      </Formik>
-      {groups.map((g) => (
-        <Group
-          name={g.name}
-          participations={g.participants}
-          disableHead
-          key={g.name}
-        ></Group>
-      ))}
+      {groupTables}
+
       {!isAllDrawn ? (
         <Wheel
           data={wheelOptions}
           prizeNumber={randomN}
-          mustStartSpinning={isSpinning}
+          mustStartSpinning={mustSpin}
           onStopSpinning={handleSpinOver}
-          spinDuration={0.001} //TODO: fix later
+          spinDuration={0.00001} //TODO: fix later
         ></Wheel>
       ) : (
         <div>No more temas left</div>
       )}
-      <Button onClick={handleSpinClick} disabled={isAllDrawn}>Spin</Button>
+
+      <Button onClick={handleSpinClick} disabled={isAllDrawn}>
+        Spin
+      </Button>
+
+      <Button onClick={handleClickSkipWheel} disabled={isAllDrawn}>
+        Skip
+      </Button>
+      <Button onClick={handleClickSaveSeeding} disabled={!isAllDrawn}>
+        SAVE
+      </Button>
     </>
   );
 }

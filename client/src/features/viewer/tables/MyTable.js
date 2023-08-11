@@ -2,6 +2,7 @@ import { useTournament } from "../../..";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { Typography } from "@mui/material";
 
 export const participationKeys = {
   all: "participations",
@@ -9,7 +10,7 @@ export const participationKeys = {
 };
 
 // query: {sort: "group"}
-export const useParticipations = (query) => {
+export const useParticipations = (query, enabled) => {
   return useQuery({
     queryKey: [participationKeys.query(query)],
 
@@ -24,10 +25,11 @@ export const useParticipations = (query) => {
       const res = await axios.get(queryString);
       return res.data;
     },
+    enabled: enabled === undefined ? true : enabled,
   });
 };
 
-const MyTable = ({ rows, cols }) => {
+const MyTable = ({ rows, cols, title, ...dataGridProps }) => {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
 
@@ -41,7 +43,8 @@ const MyTable = ({ rows, cols }) => {
   if (tournamentStatus !== "success") return <p>Loading...</p>;
 
   return (
-    <div style={{ width: "80%" }}>
+    <div sx={{ width: "80%" }}>
+      <Typography>{title}</Typography>
       <DataGrid
         editMode="row"
         isCellEditable={(params) => params.row.tournament.id === tournament?.id}
@@ -53,6 +56,7 @@ const MyTable = ({ rows, cols }) => {
           return res;
         }}
         onProcessRowUpdateError={(err) => console.log(err)}
+        {...dataGridProps}
       ></DataGrid>
     </div>
   );
