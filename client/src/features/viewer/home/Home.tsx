@@ -6,11 +6,10 @@ import InstagramBoard from "./InstagramBoard/instagramboard";
 import * as dayjs from "dayjs";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 
-// import { BracketsViewer } from 'brackets-viewer/src/main';
-import "brackets-viewer/dist/style.css"
-import { BracketsViewer } from "brackets-viewer/dist";
+import { BracketsViewer } from "ts-brackets-viewer";
+import "ts-brackets-viewer/dist/style.css";
 const bracketsViewer = new BracketsViewer();
 
 const useStageData = (id: string) => {
@@ -24,36 +23,46 @@ const useStageData = (id: string) => {
       );
       return res.data;
     },
-    enabled: !!tournament
+    enabled: !!tournament,
   });
 };
 
-const useMatches = (query: {start?: Date, end?: Date}) => {
+const useMatches = (query?: { start?: Date; end?: Date }) => {
   return useQuery({
     queryKey: ["matches", query],
     queryFn: async () => {
-      const res = await axios.get(`/api/matches`)
-    }
-  })
-}
+      let url = `/api/matches`;
+
+      if (query) {
+        url += "?";
+        for (const [k, v] of Object.entries(query)) {
+          url += `${k}=${v}`;
+        }
+      }
+
+      const res = await axios.get(url);
+      return res.data;
+    },
+  });
+};
 
 function Home() {
   const { data: tournament } = useTournament("current");
   const { data: stageData } = useStageData(tournament?.groupStage.id);
 
-  const startOfWeek = dayjs().day(0).toDate();
-  const {data: matches} = useMatches({start: startOfWeek})
+  const startOfWeek = useMemo(() => dayjs().day(1), []);
+
+  const { data: matches } = useMatches({start: startOfWeek.toDate()});
+  // console.log(matches)
 
   useEffect(() => {
     if (stageData) {
-      bracketsViewer.render(
-        {
-          stages: stageData.stage,
-          matches: stageData.match,
-          matchGames: stageData.match_game,
-          participants: stageData.participant,
-        },
-      );
+      bracketsViewer.render({
+        stages: stageData.stage,
+        matches: stageData.match,
+        matchGames: stageData.match_game,
+        participants: stageData.participant,
+      });
     }
   }, [stageData]);
   //tournament?
@@ -61,7 +70,7 @@ function Home() {
   //otherwise -> display countdown to next event
   //group stage/bracket -> dashboard
   //previous winner page
-  console.log(matches)
+  console.log(matches);
   if (tournament) {
     switch (tournament.registration.status) {
       case "awaiting":
@@ -83,8 +92,7 @@ function Home() {
         return (
           <>
             <div className="dashboard">
-              <GameBoard>
-              </GameBoard>
+              <GameBoard></GameBoard>
               <InstagramBoard></InstagramBoard>
             </div>
 
