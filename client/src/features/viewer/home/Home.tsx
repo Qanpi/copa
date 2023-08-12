@@ -27,7 +27,7 @@ const useStageData = (id: string) => {
   });
 };
 
-const useMatches = (query?: { start?: Date; end?: Date }) => {
+export const useMatches = (query?: { start?: Date; end?: Date }) => {
   return useQuery({
     queryKey: ["matches", query],
     queryFn: async () => {

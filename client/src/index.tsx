@@ -16,13 +16,14 @@ import CreateTeamPage from "./features/team/create/CreateTeam";
 import Home from "./features/viewer/home/Home";
 import ProfilePage from "./features/user/profile/Profile";
 import RegistrationPage from "./features/team/registration/registration";
-import TeamsTable from "./features/viewer/tables/teams/Teams";
+import TeamsTable from "./features/team/table/ParticipantsTable";
 import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
 import Draw from "./features/team/admin/draw/Draw";
 import TournamentStructure from "./features/tournament/admin/structure/structure";
 import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
+import MatchesTable from "./features/tournament/matches/table/MatchesTable";
 
 const userKeys = {
   all: ["users"],
@@ -106,6 +107,10 @@ function App() {
               <Route
                 path="/tables/teams"
                 element={<TeamsTable></TeamsTable>}
+              ></Route>
+              <Route
+                path="/tables/matches"
+                element={<MatchesTable></MatchesTable>}
               ></Route>
             </Route>
             <Route path="/admin">

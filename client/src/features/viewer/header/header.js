@@ -49,7 +49,7 @@ function Header() {
     const generateSublinks = (path) => {
         switch(path) {
             case "": return ["1"]
-            case "tables": return ["Teams"]
+            case "tables": return ["Teams", "Matches", "Group stage", "Bracket", "Gamblers"]
             default: return []
         }
     }

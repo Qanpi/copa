@@ -30,36 +30,9 @@ export const useParticipations = (query, enabled) => {
 };
 
 const MyTable = ({ rows, cols, title, ...dataGridProps }) => {
-  const { status: tournamentStatus, data: tournament } =
-    useTournament("current");
 
-  const updateParticipation = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.put(`/api/participations/${values.id}`, values);
-      return res.data;
-    },
-  });
 
-  if (tournamentStatus !== "success") return <p>Loading...</p>;
-
-  return (
-    <div sx={{ width: "80%" }}>
-      <Typography>{title}</Typography>
-      <DataGrid
-        editMode="row"
-        isCellEditable={(params) => params.row.tournament.id === tournament?.id}
-        autoheight
-        rows={rows}
-        columns={cols}
-        processRowUpdate={async (newRow, orig) => {
-          const res = await updateParticipation.mutateAsync(newRow);
-          return res;
-        }}
-        onProcessRowUpdateError={(err) => console.log(err)}
-        {...dataGridProps}
-      ></DataGrid>
-    </div>
-  );
+ 
 };
 
 export default MyTable;
