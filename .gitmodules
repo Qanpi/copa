@@ -1,6 +1,0 @@
-[submodule "client/brackets-viewer"]
-	path = client/brackets-viewer
-	url = https://github.com/Qanpi/brackets-viewer
-[submodule "client/node_modules/brackets-viewer"]
-	path = client/node_modules/brackets-viewer
-	url = https://github.com/Qanpi/brackets-viewer
