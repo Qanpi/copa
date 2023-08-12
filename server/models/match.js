@@ -7,6 +7,7 @@ const ObjectId = mongoose.SchemaTypes.ObjectId;
 const ParticipantResultSchema = new mongoose.Schema(
   {
     forfeit: Boolean,
+    name: String,
     id: {
       type: ObjectId,
       ref: collections.participants.id,
@@ -93,5 +94,9 @@ const MatchSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+MatchSchema.virtual("verboseStatus").get(function () {
+  return Status[this.status];
+})
 
 export default mongoose.model(collections.matches.id, MatchSchema);
