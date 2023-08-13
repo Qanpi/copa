@@ -10,6 +10,7 @@ import { useEffect, useLayoutEffect, useMemo } from "react";
 
 import { BracketsViewer } from "ts-brackets-viewer";
 import "ts-brackets-viewer/dist/style.css";
+import { Match } from "brackets-model";
 const bracketsViewer = new BracketsViewer();
 
 const useStageData = (id: string) => {
@@ -27,7 +28,7 @@ const useStageData = (id: string) => {
   });
 };
 
-export const useMatches = (query?: { start?: Date; end?: Date }) => {
+export const useMatches = (query?: { start?: Date; end?: Date, status?: string }) => {
   return useQuery({
     queryKey: ["matches", query],
     queryFn: async () => {
