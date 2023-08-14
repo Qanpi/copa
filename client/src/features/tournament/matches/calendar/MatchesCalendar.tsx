@@ -14,6 +14,19 @@ import {
   getStageFromTournament,
   useRound,
 } from "../../helpers";
+import { ObjectId } from "mongodb";
+import { useParticipations } from "../../../viewer/tables/MyTable";
+
+type MatchEvent = {
+  title: string;
+  start: Date;
+  end: Date;
+  opponent1: ObjectId;
+  opponent2: ObjectId;
+  group: ObjectId;
+  stage: ObjectId;
+  round: ObjectId;
+};
 
 function MatchesCalendar() {
   const { data: scheduledMatches, status: scheduledStatus } = useMatches({
@@ -32,10 +45,10 @@ function MatchesCalendar() {
           end: dayjs(m.date).add(6, "minute").toDate(),
           opponent1: m.opponent1.id,
           opponent2: m.opponent2.id,
-          group: getGroupFromTournament(tournament, m.group),
-          stage: getStageFromTournament(tournament, m.stage),
-          round: getRoundFromTournament(tournament, m.round),
-        };
+          group: m.group,
+          stage: m.stage,
+          round: m.round,
+        } as MatchEvent;
       }),
     [scheduledMatches, tournament]
   );
@@ -57,17 +70,15 @@ function MatchesCalendar() {
 
   if (scheduledStatus !== "success") return <div>Loading</div>;
 
-  const { event, anchorEl } = match;
-
   return (
     <>
-      <Popper open={popperOpen} anchorEl={anchorEl}>
-        <ClickAwayListener onClickAway={() => setPopperOpen(false)}>
-          <Paper>
-            <Typography>{`${event?.title}: ${event?.start} - ${event?.end}`}</Typography>
-            <Typography>{event?.opponent1}</Typography>
-            <Typography>{event?.opponent2}</Typography>
-          </Paper>
+      <Popper open={popperOpen} anchorEl={match.anchorEl}>
+        <ClickAwayListener
+          onClickAway={() => setPopperOpen(false)}
+        >
+          <div>
+            <MatchEventPopper {...match.event}></MatchEventPopper>
+          </div>
         </ClickAwayListener>
       </Popper>
 
@@ -88,5 +99,15 @@ function MatchesCalendar() {
     </>
   );
 }
+
+const MatchEventPopper = ({title, start, end, opponent1, opponent2}: Partial<MatchEvent>) => {
+  return (
+    <Paper>
+      <Typography>{`${title}: ${start} - ${end}`}</Typography>
+      <Typography>{opponent1.toString()}</Typography>
+      <Typography>{opponent2.toString()}</Typography>
+    </Paper>
+  );
+};
 
 export default MatchesCalendar;
