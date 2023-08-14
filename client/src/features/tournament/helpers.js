@@ -1,3 +1,5 @@
+import { useTournament } from "../..";
+
 export const divideGroups = (nParts, nGroups) => {
   const maxPartsPerGroup = Math.ceil(nParts / nGroups);
   const groupSizes = [maxPartsPerGroup - 1, maxPartsPerGroup];
@@ -45,3 +47,24 @@ export const finalRoundNames = (roundInfo) => {
       return `Round of ${Math.round(1 / roundInfo.fractionOfFinal) * 2}`;
   }
 };
+
+//FIXME: refactor the above out of this file -> it's not used multiple times
+
+export function getRoundFromTournament(tournament, id) {
+  return tournament.rounds?.find(r => r.id === id);
+}
+
+export function getStageFromTournament(tournament, id) {
+  return tournament.stages?.find(r => r.id === id);
+}
+
+export function getGroupFromTournament(tournament, id) {
+  return tournament.groups?.find(r => r.id === id);
+}
+
+export function useRound(id) {
+  const tournament = useTournament("current");
+
+  return getRoundFromTournament(tournament, id);
+}
+

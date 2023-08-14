@@ -5,6 +5,7 @@
     "module": "ESNext",
     "target": "es5",
     "jsx": "react-jsx",
+    "paths": {"@backend/*": ["../server/*"]},
     "allowJs": true,
     "sourceMap": true,
     "moduleResolution": "node",
