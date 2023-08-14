@@ -3,7 +3,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import type {} from "@mui/lab/themeAugmentation";
-import { Stack, Button, createTheme } from "@mui/material";
+import { Stack, Button, createTheme, Box } from "@mui/material";
 import {
   DateCalendar,
   DateCalendarProps,
@@ -16,13 +16,15 @@ import dayjs, { Dayjs } from "dayjs";
 import Weekday from "dayjs/plugin/weekday";
 import { Form, Formik, useField, useFormikContext } from "formik";
 import _ from "lodash";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { useTournament } from "../..";
 import MyDatePicker from "../inputs/datePicker/MyDatePicker";
 import { MatchesTable } from "../tournament/matches/table/MatchesTable";
 import { useMatches } from "../viewer/home/Home";
 import { useParticipations } from "../viewer/tables/MyTable";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
+import { Popper } from "@mui/base";
+import { EventClickArg } from "@fullcalendar/core";
 
 dayjs.extend(Weekday);
 
@@ -106,16 +108,8 @@ function AdminPanel() {
 
   const { data: tournament } = useTournament("current");
   const { data: participants } = useParticipations();
-
-  const blockedDatesReducer = (
-    state: Date[],
-    action: { type: string; date: Date }
-  ) => {
-    if (action.type === "added_date") {
-      return [...state, action.date];
-    }
-  };
-  const [blockedDates, dispatch] = useReducer(blockedDatesReducer, []);
+  const [teamAnchorEl, setTeamAnchorEl] = useState(null);
+  const isTeamPopperOpen = !!teamAnchorEl;
 
   if (unscheduledStatus !== "success" || scheduledStatus !== "success")
     return <div>Loading...</div>;
@@ -181,6 +175,10 @@ function AdminPanel() {
     }
   };
 
+  const handleEventClick = (info: EventClickArg) => {
+    setTeamAnchorEl(info.el);
+  }
+
   return (
     <div>
       <MatchesTable matches={unscheduledMatches}></MatchesTable>
@@ -195,9 +193,13 @@ function AdminPanel() {
         displayEventTime
         initialView="dayGridWeek"
         events={scheduled}
+        eventClick={handleEventClick}
         editable
         noEventsText="No matches scheduled for this week."
       ></FullCalendar>
+      <Popper open={isTeamPopperOpen} anchorEl={teamAnchorEl}>
+        <Box>Test popper</Box>
+      </Popper>
       <Formik
         initialValues={{
           start: nextMonday,
