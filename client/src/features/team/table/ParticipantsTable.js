@@ -6,13 +6,13 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useTournament } from "../../..";
-import { useParticipations } from "../../viewer/tables/MyTable";
+import { useParticipants } from "../../participant/hooks";
 import { useUnregisterTeam } from "../registration/registration";
 import MyTable from "../../viewer/tables/MyTable";
 
 function TeamsTable() {
   const { data: participants, status: participantsStatus } =
-    useParticipations();
+    useParticipants();
   const unregisterTeam = useUnregisterTeam();
   const { data: tournament, status: tournamentStatus } = useTournament("current");
 

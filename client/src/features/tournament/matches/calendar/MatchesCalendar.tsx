@@ -15,7 +15,7 @@ import {
   useRound,
 } from "../../helpers";
 import { ObjectId } from "mongodb";
-import { useParticipations } from "../../../viewer/tables/MyTable";
+import { useParticipants, useParticipant } from "../../../participant/hooks";
 
 type MatchEvent = {
   title: string;
@@ -101,11 +101,14 @@ function MatchesCalendar() {
 }
 
 const MatchEventPopper = ({title, start, end, opponent1, opponent2}: Partial<MatchEvent>) => {
+  const {data: opp1} = useParticipant(opponent1);
+  const {data: opp2} = useParticipant(opponent2);
+
   return (
     <Paper>
       <Typography>{`${title}: ${start} - ${end}`}</Typography>
-      <Typography>{opponent1.toString()}</Typography>
-      <Typography>{opponent2.toString()}</Typography>
+      <Typography>{opp1?.name}</Typography>
+      <Typography>{opp2?.name}</Typography>
     </Paper>
   );
 };

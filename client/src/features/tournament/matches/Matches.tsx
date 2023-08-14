@@ -20,7 +20,7 @@ import { useTournament } from "../../..";
 import MyDatePicker from "../../inputs/datePicker/MyDatePicker";
 import { MatchesTable } from "./table/MatchesTable";
 import { useMatches } from "../../viewer/home/Home";
-import { useParticipations } from "../../viewer/tables/MyTable";
+import { useParticipants } from "../../participant/hooks";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { Popper } from "@mui/base";
 import { EventClickArg } from "@fullcalendar/core";
@@ -29,7 +29,7 @@ import MatchesCalendar from "./calendar/MatchesCalendar";
 
 const useMatchScheduler = () => {
   const { data: tournament } = useTournament("current");
-  const { data: participants } = useParticipations();
+  const { data: participants } = useParticipants();
 
   const scheduleMatch = useMutation({
     mutationFn: async (values: { id: string; date: Date }) => {

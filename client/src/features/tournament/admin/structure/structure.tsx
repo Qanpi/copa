@@ -8,14 +8,26 @@ import {
 } from "react";
 import { useTournament } from "../../../..";
 import axios from "axios";
-import { UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Card, CardContent, Paper, Slider, Typography } from "@mui/material";
-import { useParticipations as useParticipants } from "../../../viewer/tables/MyTable";
-import { divideGroups, finalRoundNames } from "../../helpers";
+import {
+  UseQueryResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  Button,
+  Card,
+  CardContent,
+  Paper,
+  Slider,
+  Typography,
+} from "@mui/material";
+import { useParticipants } from "../../../participant/hooks";
 
 import { BracketsManager, helpers } from "brackets-manager";
 import { InMemoryDatabase } from "brackets-memory-db";
 import { Seeding } from "brackets-model";
+import { RoundNameInfo } from "ts-brackets-viewer";
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
 
@@ -27,23 +39,67 @@ const manager = new BracketsManager(storage);
 //3 lock the tournament structure
 // - manager create stages
 //2. export it to db
+export const divideGroups = (participants: number, groups: number) => {
+  const maxPartsPerGroup = Math.ceil(participants / groups);
+  const groupSizes = [maxPartsPerGroup - 1, maxPartsPerGroup];
+
+  const solutions = Array.from({ length: participants + 1 }, () => []); //[nParts: [solutions: [first/size, groupCount]]]
+  solutions[0].push({ size: null, length: 0 });
+
+  for (const w of groupSizes) {
+    for (let i = 1; i <= participants; i++) {
+      if (i - w >= 0) {
+        for (const s of solutions[i - w]) {
+          solutions[i].push({ size: w, length: s.length + 1 });
+        }
+      }
+    }
+  }
+
+  const solution = [];
+
+  let p = participants;
+  let l = groups;
+
+  while (l > 0) {
+    const end = solutions[p].find((g) => g.length === l);
+
+    const s = end.size;
+    solution.push(s);
+
+    p -= end.size;
+    l--;
+  }
+
+  return solution;
+};
+
+const finalRoundNames = (roundInfo: RoundNameInfo) => {
+  if ("fractionOfFinal" in roundInfo) {
+    switch (roundInfo.fractionOfFinal) {
+      case 1:
+        return "Finals";
+      case 0.5:
+        return "Semifinals";
+      case 0.25:
+        return "Quarterfinals";
+      default:
+        return `Round of ${Math.round(1 / roundInfo.fractionOfFinal) * 2}`;
+    }
+  }
+
+  return `Round ${roundInfo.roundNumber}`;
+};
 
 function TournamentStructure() {
   const { data: tournament } = useTournament("current");
   const { data: participants, status: participantsStatus } = useParticipants();
 
-  // const { data: tournamentData } = useQuery({
-  //   queryKey: ["tournamentData"],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/api/brackets/tournaments/${tournament.id}`);
-  //     return res.data;
-  //   },
-  //   enabled: isSuccess,
-  // });
-
   const [groupCount, setGroupCount] = useState(4);
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
-  const bracketSize = helpers.getNearestPowerOfTwo(groupCount * teamsBreakingPerGroup);
+  const bracketSize = helpers.getNearestPowerOfTwo(
+    groupCount * teamsBreakingPerGroup
+  );
   const mockTournamentId = 0;
 
   const queryClient = useQueryClient();
@@ -100,7 +156,7 @@ function TournamentStructure() {
         type: "round_robin",
         settings: {
           groupCount: groupCount,
-          size: participants.length
+          size: participants.length,
         },
       });
 
@@ -211,7 +267,9 @@ function TournamentStructure() {
         className="brackets-viewer"
         id="mock-bracket"
       ></div>
-      <Button type="submit" onClick={() => saveBracket.mutate()}>Lock in</Button>
+      <Button type="submit" onClick={() => saveBracket.mutate()}>
+        Lock in
+      </Button>
     </>
   );
 }

@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useTournament } from "../../../..";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { finalRoundNames } from "../../helpers";
 
 async function render() {
   const res = await axios.get("http://localhost:3002/db");

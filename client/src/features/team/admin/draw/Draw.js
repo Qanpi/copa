@@ -4,7 +4,7 @@ import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
 import * as Yup from "yup";
 import MyTextField from "../../../inputs/textField/mytextfield";
-import { useParticipations } from "../../../viewer/tables/MyTable";
+import { useParticipants } from "../../../participant/hooks";
 import Group from "../../group/Group";
 import { useUpdateTeam } from "../../hooks";
 import { useTournament } from "../../../..";
@@ -24,7 +24,7 @@ function Draw() {
   const [mustSpin, setMustSpin] = useState(false);
   const [randomN, setRandomN] = useState(0);
 
-  const { status: participationsStatus, refetch } = useParticipations(
+  const { status: participationsStatus, refetch } = useParticipants(
     {
       group: "",
     },
