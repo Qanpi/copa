@@ -23,8 +23,7 @@ import reportWebVitals from "./services/reportWebVitals";
 import Draw from "./features/team/admin/draw/Draw";
 import TournamentStructure from "./features/tournament/admin/structure/structure";
 import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
-import MatchesPage from "./features/tournament/matches/table/MatchesTable";
-import AdminPanel from "./features/admin/admin";
+import MatchesPage from "./features/tournament/matches/Matches";
 
 const userKeys = {
   all: ["users"],
@@ -96,10 +95,6 @@ function App() {
         <div className="primary">
           <Routes>
             <Route path="/" element={<Home></Home>}></Route>
-            <Route
-              path="/admin"
-              element={<AdminPanel></AdminPanel>}
-            ></Route>
             <Route
               path="/register"
               element={<RegistrationPage></RegistrationPage>}

@@ -1,12 +1,12 @@
 import { Typography } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useMatches } from "../../../viewer/home/Home";
 import { useTournament } from "../../../..";
 
-export const MatchesTable = ({matches}) => {
+export const MatchesTable = ({matches} : {matches: any[]}) => {
   const { data: tournament } = useTournament("current");
 
-  const cols = [
+  const cols: GridColDef[] = [
     {
       field: "date",
       headerName: "Date",
@@ -14,13 +14,13 @@ export const MatchesTable = ({matches}) => {
     {
       field: "group",
       headerName: "Group",
-      valueGetter: (p) => tournament?.groups.find((g) => g.id === p.value).name,
+      valueGetter: (p) => tournament?.groups.find((g: any) => g.id === p.value).name,
     },
     {
       field: "round",
       headerName: "Round",
       valueGetter: (p) =>
-        tournament?.rounds.find((r) => r.id === p.value).number,
+        tournament?.rounds.find((r: any) => r.id === p.value).number,
     },
     {
       field: "verboseStatus",
@@ -29,7 +29,7 @@ export const MatchesTable = ({matches}) => {
     {
       field: "stage",
       headerName: "Stage",
-      valueGetter: (p) => tournament?.stages.find((s) => s.id === p.value).name,
+      valueGetter: (p) => tournament?.stages.find((s: any) => s.id === p.value).name,
     },
   ];
 
