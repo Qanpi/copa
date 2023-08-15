@@ -1,11 +1,12 @@
 import { EventClickArg } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import listPlugin from "@fullcalendar/list"
 import interactionPlugin from "@fullcalendar/interaction";
 import { ClickAwayListener, Popper, selectClasses } from "@mui/base";
 import { Box, Paper, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useMatches } from "../../../viewer/home/Home";
 import { useTournament } from "../../../..";
 import {
@@ -16,6 +17,8 @@ import {
 } from "../../helpers";
 import { ObjectId } from "mongodb";
 import { useParticipants, useParticipant } from "../../../participant/hooks";
+import Dragula from "react-dragula"
+import "react-dragula/dist/dragula.css"
 
 type MatchEvent = {
   title: string;
@@ -50,7 +53,7 @@ function MatchesCalendar() {
           round: m.round,
         } as MatchEvent;
       }),
-    [scheduledMatches, tournament]
+    [scheduledMatches]
   );
 
   const [match, setMatch] = useState({
@@ -59,6 +62,15 @@ function MatchesCalendar() {
     anchorEl: null,
   });
   const [popperOpen, setPopperOpen] = useState(false);
+
+  useEffect(() => {
+    const days = document.getElementsByClassName("fc-daygrid-day-events");
+    if (days.length > 0) {
+      const day = Array.from(days).find(d => d.childElementCount > 1);
+      console.log(day);
+      Dragula([day as HTMLElement], {});
+    }
+  }, [popperOpen])
 
   const handleEventClick = useCallback((info: EventClickArg) => {
     const { extendedProps, ...rest } = info.event.toPlainObject();
@@ -83,7 +95,7 @@ function MatchesCalendar() {
       </Popper>
 
       <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
+        plugins={[dayGridPlugin, listPlugin]}
         headerToolbar={{
           left: "prev,next",
           center: "title",
