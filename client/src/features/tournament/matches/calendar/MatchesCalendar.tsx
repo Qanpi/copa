@@ -1,12 +1,28 @@
-import { EventClickArg } from "@fullcalendar/core";
+import {
+  EventApi,
+  EventClickArg,
+  EventDropArg,
+  EventInput,
+  EventSourceInput,
+} from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import listPlugin from "@fullcalendar/list"
-import interactionPlugin from "@fullcalendar/interaction";
+import listPlugin from "@fullcalendar/list";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin, {
+  EventResizeDoneArg,
+} from "@fullcalendar/interaction";
 import { ClickAwayListener, Popper, selectClasses } from "@mui/base";
 import { Box, Paper, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
 import { useMatches } from "../../../viewer/home/Home";
 import { useTournament } from "../../../..";
 import {
@@ -17,41 +33,54 @@ import {
 } from "../../helpers";
 import { ObjectId } from "mongodb";
 import { useParticipants, useParticipant } from "../../../participant/hooks";
-import Dragula from "react-dragula"
-import "react-dragula/dist/dragula.css"
+import Dragula from "react-dragula";
+import "react-dragula/dist/dragula.css";
+import { useUpdateMatch } from "../hooks";
+import { Match } from "@backend/models/match";
+import "./MatchesCalendar.css"
 
-type MatchEvent = {
-  title: string;
-  start: Date;
-  end: Date;
+// type MatchEvent = {
+//   matchId: ObjectId;
+//   title: string;
+//   start: Date;
+//   end: Date;
+//   opponent1: ObjectId;
+//   opponent2: ObjectId;
+//   group: ObjectId;
+//   stage: ObjectId;
+//   round: ObjectId;
+// };
+
+type MatchEvent = Omit<
+  Partial<Match>,
+  "opponent1" | "opponent2" | "duration"
+> & {
   opponent1: ObjectId;
   opponent2: ObjectId;
-  group: ObjectId;
-  stage: ObjectId;
-  round: ObjectId;
-};
+} & Partial<EventApi>;
 
 function MatchesCalendar() {
   const { data: scheduledMatches, status: scheduledStatus } = useMatches({
     status: "scheduled",
   });
 
-  const { data: tournament } = useTournament("current");
+  const updateMatch = useUpdateMatch();
 
-  const events = useMemo(
+  const events: MatchEvent[] = useMemo(
     () =>
-      scheduledMatches?.map((m) => {
+      scheduledMatches?.map((m, i) => {
         return {
           //FIXME: type
-          title: "Match",
-          start: dayjs(m.date).toDate(),
-          end: dayjs(m.date).add(6, "minute").toDate(),
+          id: m.id,
+          title: `Match ${i}`,
+          start: dayjs(m.start).toDate(),
+          end: dayjs(m.start).add(m.duration, "minute").toDate(),
           opponent1: m.opponent1.id,
           opponent2: m.opponent2.id,
           group: m.group,
           stage: m.stage,
           round: m.round,
-        } as MatchEvent;
+        };
       }),
     [scheduledMatches]
   );
@@ -63,15 +92,6 @@ function MatchesCalendar() {
   });
   const [popperOpen, setPopperOpen] = useState(false);
 
-  useEffect(() => {
-    const days = document.getElementsByClassName("fc-daygrid-day-events");
-    if (days.length > 0) {
-      const day = Array.from(days).find(d => d.childElementCount > 1);
-      console.log(day);
-      Dragula([day as HTMLElement], {});
-    }
-  }, [popperOpen])
-
   const handleEventClick = useCallback((info: EventClickArg) => {
     const { extendedProps, ...rest } = info.event.toPlainObject();
     const event = { ...extendedProps, ...rest };
@@ -80,14 +100,25 @@ function MatchesCalendar() {
     setPopperOpen(true);
   }, []);
 
+  const handleEventResize = (info: EventResizeDoneArg) => {
+    const { event } = info;
+
+    const duration = dayjs(event.end).diff(event.start, "minutes");
+    updateMatch.mutate({ id: event.id, duration });
+  };
+
+  const handleEventDrop = (info: EventDropArg) => {
+    const { event } = info;
+
+    updateMatch.mutate({ id: event.id, start: event.start });
+  };
+
   if (scheduledStatus !== "success") return <div>Loading</div>;
 
   return (
     <>
       <Popper open={popperOpen} anchorEl={match.anchorEl}>
-        <ClickAwayListener
-          onClickAway={() => setPopperOpen(false)}
-        >
+        <ClickAwayListener onClickAway={() => setPopperOpen(false)}>
           <div>
             <MatchEventPopper {...match.event}></MatchEventPopper>
           </div>
@@ -95,16 +126,27 @@ function MatchesCalendar() {
       </Popper>
 
       <FullCalendar
-        plugins={[dayGridPlugin, listPlugin]}
+        plugins={[listPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{
           left: "prev,next",
           center: "title",
-          right: "dayGridWeek,dayGridDay",
+          right: "listWeek,timeGridDay",
         }}
         displayEventTime
-        initialView="dayGridWeek"
+        initialView="listWeek"
+        views={{
+          timeGridDay: {
+            allDaySlot: false,
+          },
+        }}
         events={events}
         eventClick={handleEventClick}
+        eventDrop={handleEventDrop}
+        scrollTime={"12:00:00"}
+        nowIndicator
+        snapDuration={1}
+        expandRows
+        eventResize={handleEventResize}
         editable
         noEventsText="No matches scheduled for this week."
       ></FullCalendar>
@@ -112,13 +154,21 @@ function MatchesCalendar() {
   );
 }
 
-const MatchEventPopper = ({title, start, end, opponent1, opponent2}: Partial<MatchEvent>) => {
-  const {data: opp1} = useParticipant(opponent1);
-  const {data: opp2} = useParticipant(opponent2);
+const MatchEventPopper = ({
+  title,
+  start,
+  end,
+  opponent1,
+  opponent2,
+  id,
+}: MatchEvent) => {
+  const { data: opp1 } = useParticipant(opponent1);
+  const { data: opp2 } = useParticipant(opponent2);
 
   return (
     <Paper>
       <Typography>{`${title}: ${start} - ${end}`}</Typography>
+      <Typography>{id}</Typography>
       <Typography>{opp1?.name}</Typography>
       <Typography>{opp2?.name}</Typography>
     </Paper>
