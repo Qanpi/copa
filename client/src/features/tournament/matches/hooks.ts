@@ -1,10 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
 import { useTournament } from "../../..";
 import { useParticipants } from "../../participant/hooks";
 import { Match } from "@backend/models/match";
+import { ObjectId } from "mongodb";
 
 export const useUpdateMatch = () => {
   return useMutation({
@@ -63,3 +64,43 @@ export const useMatchScheduler = () => {
     }
   };
 };
+
+type Id = ObjectId | string;
+
+const matchKeys = {
+  all: "matches",
+  id: (id: Id) => [matchKeys.all, id.toString()],
+  query: (query: Partial<Match>) => [matchKeys.all, query],
+};
+
+export const useMatch = (id: Id) => {
+  return useQuery({
+    queryKey: [matchKeys.id(id)],
+    queryFn: async () => {
+      const url = `/api/${matchKeys.all}/${id}`;
+      const res = await axios.get(url);
+      return res.data as Match;
+    }
+  })
+}
+
+export const useMatches = (query?: { start?: Date; end?: Date; status?: string; }) => {
+  return useQuery({
+    queryKey: ["matches", query],
+    queryFn: async () => {
+      let url = `/api/matches`;
+
+      if (query) {
+        url += "?";
+        for (const [k, v] of Object.entries(query)) {
+          url += `${k}=${v}`;
+        }
+      }
+
+      const res = await axios.get(url);
+      return res.data as Match[];
+    },
+  });
+};
+
+

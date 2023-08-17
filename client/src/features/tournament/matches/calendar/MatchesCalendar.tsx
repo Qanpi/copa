@@ -23,7 +23,7 @@ import {
   useReducer,
   useState,
 } from "react";
-import { useMatches } from "../../../viewer/home/Home";
+import { useMatches } from "../hooks";
 import { useTournament } from "../../../..";
 import {
   getGroupFromTournament,

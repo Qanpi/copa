@@ -7,10 +7,10 @@ import * as dayjs from "dayjs";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useLayoutEffect, useMemo } from "react";
-import {Match} from "@backend/models/match"
 
 import { BracketsViewer } from "ts-brackets-viewer";
 import "ts-brackets-viewer/dist/style.css";
+import { useMatches } from "../../tournament/matches/hooks";
 const bracketsViewer = new BracketsViewer();
 
 const useStageData = (id: string) => {
@@ -25,25 +25,6 @@ const useStageData = (id: string) => {
       return res.data;
     },
     enabled: !!tournament,
-  });
-};
-
-export const useMatches = (query?: { start?: Date; end?: Date, status?: string }) => {
-  return useQuery({
-    queryKey: ["matches", query],
-    queryFn: async () => {
-      let url = `/api/matches`;
-
-      if (query) {
-        url += "?";
-        for (const [k, v] of Object.entries(query)) {
-          url += `${k}=${v}`;
-        }
-      }
-
-      const res = await axios.get(url);
-      return res.data as Match[];
-    },
   });
 };
 

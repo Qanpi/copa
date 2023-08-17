@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useMatches } from "../../../viewer/home/Home";
+import { useMatches } from "../hooks";
 import { useTournament } from "../../../..";
 
 export const MatchesTable = ({matches} : {matches: any[]}) => {
