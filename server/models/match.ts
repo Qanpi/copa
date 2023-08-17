@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedArraySubdocument, HydratedDocumentFromSchema, HydratedSingleSubdocument, InferSchemaType, VirtualType } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { Status } from "brackets-model";
 
@@ -29,19 +29,34 @@ const MatchGameSchema = new mongoose.Schema(
     opponent2: ParticipantResultSchema,
     status: {
       type: Number,
-      enum: Status
-    }
+      enum: Status,
+    },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  {
+    virtuals: {
+      parent_id: {
+        get() {
+          return this.$parent()?._id;
+        },
+      },
+
+      stage_id: {
+        get() {
+          return (this.$parent() as any)?.stage; //FIXME: not typesafe because circular ref
+        },
+      },
+    },
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
-MatchGameSchema.virtual("parent_id", function () {
-  return this.parent()._id;
-});
+type MatchGameVirtuals = {
+  parent_id: string;
+  stage_id: string;
+};
 
-MatchGameSchema.virtual("stage_id", function () {
-  return this.parent().stage_id;
-});
+export type MatchGame = InferSchemaType<typeof MatchGameSchema> & MatchGameVirtuals; 
 
 const MatchSchema = new mongoose.Schema(
   {
@@ -70,6 +85,7 @@ const MatchSchema = new mongoose.Schema(
     status: {
       type: Number,
       enum: Status,
+      required: true, //FIXME: default? 
     },
     games: [MatchGameSchema],
 
@@ -87,16 +103,27 @@ const MatchSchema = new mongoose.Schema(
     //     },
     //     scored: {type: Number}
     // },
-    date: { type: Date },
+    start: { type: Date },
+    duration: {type: Number, default: 6} //in minutes
   },
   {
+    virtuals: {
+      verboseStatus: {
+        get() {
+          return Status[this.status];
+        }
+      }
+    },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
 
-MatchSchema.virtual("verboseStatus").get(function () {
-  return Status[this.status];
-})
+type MatchVirtuals = {
+  verboseStatus: string;
+  id: string;
+}
+
+export type Match = InferSchemaType<typeof MatchSchema> & MatchVirtuals;
 
 export default mongoose.model(collections.matches.id, MatchSchema);

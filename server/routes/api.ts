@@ -5,7 +5,7 @@ import * as teams from "../controllers/teamsController.js";
 import * as matches from "../controllers/matchesController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
-import * as participations from "../controllers/participationsController.js";
+import * as participants from "../controllers/participationsController.js";
 
 const router = express.Router();
 
@@ -15,7 +15,11 @@ router.get(
   matches.getMany
 );
 
-router.patch("/matches/:matchId", matches.updateOne);
+router.get("/matches/:id", matches.getOne)
+
+router.patch("/matches/:id", matches.updateOne);
+
+router.patch("/matches", matches.resetDates)
 
 router.delete("/matches", matches.deleteMany);
 
@@ -80,22 +84,24 @@ router.get(
 // router.patch("/tournaments/:tournamentId/groups/:groupId", groups.updateOne)
 
 router.get(
-  "/participations",
+  "/participants",
   [
     query("team").optional(),
     query("tournament").optional(),
     query("group").isString().optional(),
   ],
-  participations.getMultiple
+  participants.getMultiple
 );
 
-router.post("/participations", participations.createOne);
+router.get("/participants/:id", participants.getOne)
 
-router.delete("/participations/:id", participations.deleteOne);
+router.post("/participants", participants.createOne);
 
-router.put("/participations/:id", participations.updateOne);
+router.delete("/participants/:id", participants.deleteOne);
 
-router.patch("/participations/:id", participations.updateOne);
+router.put("/participants/:id", participants.updateOne);
+
+router.patch("/participants/:id", participants.updateOne);
 
 // router.get("/tournaments/:id/teams", tournaments.getRegisteredTeams);
 

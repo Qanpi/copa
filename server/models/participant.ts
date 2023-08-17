@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import { collections } from "../configs/db.config.js";
+import { ObjectId } from "mongodb";
 
 const ParticipantSchema = new mongoose.Schema(
   {
@@ -16,13 +17,6 @@ const ParticipantSchema = new mongoose.Schema(
 
     division: {
       type: String,
-      validate: {
-        validator: (v) => {
-          return (
-            this.tournament.divisions && this.tournament.divisions.includes(v)
-          );
-        },
-      },
     },
     //TODO: make this more secure
     phoneNumber: {
@@ -34,7 +28,7 @@ const ParticipantSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: collections.tournaments.id,
       alias: "tournament_id",
-      index: true
+      index: true,
     },
   },
   {
@@ -43,11 +37,16 @@ const ParticipantSchema = new mongoose.Schema(
   }
 );
 
+type ParticipantVirtuals = {
+  createdAt: Date;
+  id: ObjectId;
+};
+
 ParticipantSchema.virtual("createdAt").get(function () {
   return this._id.getTimestamp();
 });
 
-export default mongoose.model(
-  collections.participants.id,
-  ParticipantSchema
-);
+export type Participant = InferSchemaType<typeof ParticipantSchema> &
+  ParticipantVirtuals;
+
+export default mongoose.model(collections.participants.id, ParticipantSchema);

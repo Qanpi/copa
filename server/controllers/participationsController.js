@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import Participation from "../models/participant.js";
+import Participant from "../models/participant.js";
 import Tournament from "../models/tournament.js";
 import Team from "../models/team.js";
 import { matchedData, validationResult } from "express-validator";
@@ -19,36 +19,41 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
     //TODO: refactor all other uses to checking role
     const participations =
       req.user?.role === "admin"
-        ? await Participation.find(filters).select(["+team.phoneNumber"])
-        : await Participation.find(filters);
+        ? await Participant.find(filters).select(["+team.phoneNumber"])
+        : await Participant.find(filters);
     return res.send(participations);
   }
 
   res.send({ errors: result.array() });
 });
 
+export const getOne = expressAsyncHandler(async (req, res) => {
+  const part = await Participant.findById(req.params.id);
+  res.send(part);
+});
+
 export const createOne = expressAsyncHandler(async (req, res) => {
   //TODO: remove unnecessary calls
   const team = await Team.findById(req.body.teamId);
 
-  const participation = await new Participation({
+  const participation = await new Participant({
     id: team.id,
     name: team.name,
-    tournament_id: req.body.tournamentId
+    tournament_id: req.body.tournamentId,
   }).save();
 
   res.send(participation);
 });
 
 export const deleteOne = expressAsyncHandler(async (req, res) => {
-  await Participation.findByIdAndDelete(req.params.id);
+  await Participant.findByIdAndDelete(req.params.id);
 
   res.status(204).send({});
 });
 
 export const updateOne = expressAsyncHandler(async (req, res) => {
   //potentially use upsert for better correspondence to http PUT
-  const participation = await Participation.findByIdAndUpdate(
+  const participation = await Participant.findByIdAndUpdate(
     req.params.id,
     req.body,
     { new: true }
