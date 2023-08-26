@@ -91,7 +91,7 @@ const finalRoundNames = (roundInfo: RoundNameInfo) => {
   return `Round ${roundInfo.roundNumber}`;
 };
 
-function TournamentStructure() {
+function StructurePage() {
   const { data: tournament } = useTournament("current");
   const { data: participants, status: participantsStatus } = useParticipants();
 
@@ -274,4 +274,4 @@ function TournamentStructure() {
   );
 }
 
-export default TournamentStructure;
+export default StructurePage;

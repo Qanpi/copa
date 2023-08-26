@@ -23,7 +23,7 @@ export const useUpdateTournament = (id) => {
   });
 };
 
-function AdminDashboard() {
+function DashboardPage() {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
@@ -69,4 +69,4 @@ function AdminDashboard() {
   );
 }
 
-export default AdminDashboard;
+export default DashboardPage;

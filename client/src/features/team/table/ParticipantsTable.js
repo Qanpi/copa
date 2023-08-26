@@ -10,7 +10,7 @@ import { useParticipants } from "../../participant/hooks";
 import { useUnregisterTeam } from "../registration/registration";
 import MyTable from "../../viewer/tables/MyTable";
 
-function TeamsTable() {
+function TeamsPage() {
   const { data: participants, status: participantsStatus } =
     useParticipants();
   const unregisterTeam = useUnregisterTeam();
@@ -92,4 +92,4 @@ function TeamsTable() {
   );
 }
 
-export default TeamsTable;
+export default TeamsPage;

@@ -20,7 +20,7 @@ const useGroups = () => {
     );
 };
 
-function Draw() {
+function DrawPage() {
   const [mustSpin, setMustSpin] = useState(false);
   const [randomN, setRandomN] = useState(0);
 
@@ -160,4 +160,4 @@ function Draw() {
   );
 }
 
-export default Draw;
+export default DrawPage;

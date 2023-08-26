@@ -28,7 +28,7 @@ const useStageData = (id: string) => {
   });
 };
 
-function Home() {
+function HomePage() {
   const { data: tournament } = useTournament("current");
   const { data: stageData } = useStageData(tournament?.groupStage.id);
 
@@ -90,4 +90,4 @@ function Home() {
   return <div className="banner">Winner page.</div>;
 }
 
-export default Home;
+export default HomePage;
