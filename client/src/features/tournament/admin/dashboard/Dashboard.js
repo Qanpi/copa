@@ -30,7 +30,7 @@ function AdminDashboard() {
 
   if (!tournament) return <CreateTournament></CreateTournament>;
 
-  const stageId = tournament.stages.indexOf(tournament.stage);
+  const stageId = tournament.stages.indexOf(tournament.statuses);
 
   const handleClickBack = () =>
     updateTournament.mutate({ stage: tournament.stages[stageId - 1] });
@@ -47,6 +47,8 @@ function AdminDashboard() {
         return (
           <GroupStages></GroupStages>
         );
+      default: 
+          return <div>No corresponding stage.</div>
     }
   };
 
@@ -57,7 +59,7 @@ function AdminDashboard() {
         <h3>Autumn 2023</h3>
       </div>
       <div>
-        <MyStepper steps={tournament.stages} activeStep={stageId}></MyStepper>
+        <MyStepper steps={tournament.statuses} activeStep={stageId}></MyStepper>
         {renderCurrentStage()}
         <Button onClick={handleClickBack}>Back</Button>
         <Button onClick={handleClickNext}>Next</Button>
