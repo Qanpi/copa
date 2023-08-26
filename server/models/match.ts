@@ -1,6 +1,13 @@
-import mongoose, { HydratedArraySubdocument, HydratedDocumentFromSchema, HydratedSingleSubdocument, InferSchemaType, VirtualType } from "mongoose";
+import mongoose, {
+  HydratedArraySubdocument,
+  HydratedDocumentFromSchema,
+  HydratedSingleSubdocument,
+  InferSchemaType,
+  VirtualType,
+} from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { Status } from "brackets-model";
+import { mergeWith } from "lodash-es";
 
 const ObjectId = mongoose.SchemaTypes.ObjectId;
 
@@ -56,7 +63,8 @@ type MatchGameVirtuals = {
   stage_id: string;
 };
 
-export type MatchGame = InferSchemaType<typeof MatchGameSchema> & MatchGameVirtuals; 
+export type MatchGame = InferSchemaType<typeof MatchGameSchema> &
+  MatchGameVirtuals;
 
 const MatchSchema = new mongoose.Schema(
   {
@@ -85,7 +93,7 @@ const MatchSchema = new mongoose.Schema(
     status: {
       type: Number,
       enum: Status,
-      required: true, //FIXME: default? 
+      required: true, //FIXME: default?
     },
     games: [MatchGameSchema],
 
@@ -104,15 +112,33 @@ const MatchSchema = new mongoose.Schema(
     //     scored: {type: Number}
     // },
     start: { type: Date },
-    duration: {type: Number, default: 6} //in minutes
+    duration: { type: Number, default: 6 }, //in minutes
   },
   {
     virtuals: {
       verboseStatus: {
         get() {
           return Status[this.status];
-        }
-      }
+        },
+      },
+    },
+    statics: {
+      translateAliases: (data: any) => {
+        data = data.toObject();
+
+        data.childCount = data["child_count"];
+        data.group = data["group_id"];
+        data.round = data["round_id"];
+        data.stage = data["stage_id"];
+
+        mergeWith(data, data.opponent1, (_objValue: any, srcValue: any, key: any, object: any) => {
+          const flatKey = "opponent1." + key;
+          object[flatKey] = srcValue;
+          delete object[key]
+        })
+        
+        return data;
+      },
     },
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -122,7 +148,7 @@ const MatchSchema = new mongoose.Schema(
 type MatchVirtuals = {
   verboseStatus: string;
   id: string;
-}
+};
 
 export type Match = InferSchemaType<typeof MatchSchema> & MatchVirtuals;
 

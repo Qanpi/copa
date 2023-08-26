@@ -11,6 +11,14 @@ import {
   remove as _remove,
 } from "lodash-es";
 
+// const flatten = (data: any) => {
+//   const obj = data.toObject()
+
+//   Object.keys(obj).forEach((key => {
+//     }
+//   }))
+// }
+
 export async function handleUpdate<T extends keyof DataTypes>(
   table: T,
   filter: Partial<DataTypes[T]> | Id,
@@ -80,8 +88,11 @@ export async function handleUpdate<T extends keyof DataTypes>(
         .then(() => true)
         .catch(err => {console.error(err); return false});
     case "match":
+      // flatten(data);
       if (typeof filter === "string") {
-        return Match.findByIdAndUpdate(filter, Match.translateAliases(data))
+        data = Match.translateAliases(data)
+
+        return Match.findByIdAndUpdate(filter, data)
           .exec()
           .then(() => true)
           .catch(err => {console.error(err); return false});

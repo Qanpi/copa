@@ -51,7 +51,6 @@ function Home() {
   //otherwise -> display countdown to next event
   //group stage/bracket -> dashboard
   //previous winner page
-  console.log(matches);
   if (tournament) {
     switch (tournament.registration.status) {
       case "awaiting":

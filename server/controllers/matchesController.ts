@@ -60,6 +60,7 @@ export const deleteMany = async (req: Request, res: Response) => {
 };
 
 export const updateOne = async (req: Request, res: Response) => {
+  //TODO: if statement
   await manager.update.match({...req.body, id: req.params.id});
 
   const match = await Match.findByIdAndUpdate(req.params.id, req.body, {
