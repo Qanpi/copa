@@ -24,12 +24,17 @@ import {
 } from "@mui/material";
 import { useParticipants } from "../../../participant/hooks";
 
+import { BracketsViewer } from "ts-brackets-viewer";
+import "ts-brackets-viewer/dist/style.css";
+
 import { BracketsManager, helpers } from "brackets-manager";
 import { InMemoryDatabase } from "brackets-memory-db";
 import { Seeding } from "brackets-model";
 import { RoundNameInfo } from "ts-brackets-viewer";
+
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
+const bracketsViewer = new BracketsViewer();
 
 //workflow
 //1. create in memory tournament structure
@@ -175,9 +180,7 @@ function StructurePage() {
 
   useLayoutEffect(() => {
     if (mockBracket) {
-      (
-        window as typeof window & { bracketsViewer?: any }
-      ).bracketsViewer.render(
+      bracketsViewer.render(
         {
           //FIXME: maybe fix to replace any with BracketsViewere later on
           stages: mockBracket.stage,

@@ -111,6 +111,7 @@ function Header() {
               <MenuItem>Gamblers</MenuItem>
             </Link>
           </SectionMenu>
+          <Link to="/tournament/dashboard">Dashboard</Link>
           <span>All-time</span>
           <span>Fantasy</span>
           <span>About</span>
