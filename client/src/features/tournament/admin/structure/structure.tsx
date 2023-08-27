@@ -103,7 +103,15 @@ function StructurePage() {
   const { data: tournament } = useTournament("current");
   const { data: participants, status: participantsStatus } = useParticipants();
 
-  const [groupCount, setGroupCount] = useState(4);
+  const [groupCount, setGroupCount] = useState(1);
+
+  useEffect(() => {
+    if (participants) {
+      const init = Math.min(participants.length, 4);
+      setGroupCount(init);
+    }
+  }, [participants])
+
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
   const bracketSize = helpers.getNearestPowerOfTwo(
     groupCount * teamsBreakingPerGroup
@@ -243,7 +251,7 @@ function StructurePage() {
             setGroupCount(v);
           }}
           min={1}
-          max={Math.ceil(participants.length / 2)}
+          max={participants.length}
           step={1}
           marks
           valueLabelDisplay="on"
