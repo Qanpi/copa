@@ -24,31 +24,45 @@ export const useUpdateTournament = (id) => {
   });
 };
 
+export const useMutateNextStage = () => {
+  const { data: tournament } = useTournament("current");
+  const updateTournament = useUpdateTournament();
+
+  return () => {
+    updateTournament.mutate({
+      stage: tournament.statuses[tournament.stageId + 1],
+    });
+  };
+};
+
+export const useMutatePreviousStage = () => {
+  const { data: tournament } = useTournament("current");
+  const updateTournament = useUpdateTournament();
+
+  return () => {
+    updateTournament.mutate({
+      stage: tournament.statuses[tournament.stageId - 1],
+    });
+  };
+};
+
 function DashboardPage() {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
-  const updateTournament = useUpdateTournament(tournament?.id);
 
   if (!tournament) return <NewTournamentPage></NewTournamentPage>;
 
-  const stageId = tournament.statuses.indexOf(tournament.stage);
-
-  const handleClickBack = () =>
-    updateTournament.mutate({ stage: tournament.statuses[stageId - 1] });
-  const handleClickNext = () =>
-    updateTournament.mutate({ stage: tournament.statuses[stageId + 1] });
-
   const renderCurrentStage = () => {
-    switch (stageId) {
-      case 0:
+    switch (tournament.stage) {
+      case "Registration":
         // return <SettingsStage></SettingsStage>;
         return <RegistrationStage></RegistrationStage>;
-      case 1:
-        return (
-          <StructurePage></StructurePage>
-        );
-      default: 
-          return <div>No corresponding stage.</div>
+      case "Group stage":
+        return <StructurePage></StructurePage>;
+      case "Bracket":
+      case "Over":
+      default:
+        return <div>No corresponding stage.</div>;
     }
   };
 
@@ -59,10 +73,11 @@ function DashboardPage() {
         <h3>Autumn 2023</h3>
       </div>
       <div>
-        <MyStepper steps={tournament.statuses} activeStep={stageId}></MyStepper>
+        <MyStepper
+          steps={tournament.statuses}
+          activeStep={tournament.stageId}
+        ></MyStepper>
         {renderCurrentStage()}
-        <Button onClick={handleClickBack}>Back</Button>
-        <Button onClick={handleClickNext}>Next</Button>
         {/* <MyChecklist items={tasks} heading="Checklist"></MyChecklist> */}
       </div>
     </>

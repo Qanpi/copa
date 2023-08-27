@@ -3,7 +3,14 @@ import {
   Card,
   CardContent,
   InputLabel,
-  Typography
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  AlertTitle,
+  Alert
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -12,21 +19,44 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useTournament } from "../../../..";
 import MyDatePicker from "../../../inputs/datePicker/MyDatePicker";
-import { useUpdateTournament } from "../dashboard/Dashboard";
+import {
+  useMutateNextStage,
+  useMutatePreviousStage,
+  useUpdateTournament,
+} from "../dashboard/Dashboard";
+import { useState } from "react";
+import { useParticipants } from "../../../participant/hooks";
+
+const ZeroParticipantsAlert = ({open}) => {
+  if (!open) return null;
+
+  return (
+    <Alert severity="error">
+      <AlertTitle>
+        Error.
+      </AlertTitle>
+      Unable to proceed past registration with 0 participants.
+    </Alert>
+  );
+};
 
 function RegistrationStage() {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
+  const moveToNextStage = useMutateNextStage();
 
-  //FIXME: custom hook extract needed
-  const { status, data: participations } = useQuery({
-    queryKey: ["participations"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/participants`);
-      return res.data;
-    },
-  });
+  const {data: participants} = useParticipants();
+
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const handleClickNextStage = () => {
+    if (participants.length === 0) {
+      setAlertOpen(true);
+      return;
+    }
+    moveToNextStage();
+  };
 
   if (tournamentStatus !== "success") return "bruh";
 
@@ -45,10 +75,9 @@ function RegistrationStage() {
       validationSchema={Yup.object({
         registration: Yup.object({
           from: Yup.date(),
-          to: Yup.date()
-            .when(["from"], ([from], schema) => {
-              if (from) return schema.min(dayjs(from).add(1, "day")); //can't be on the same day
-            }),
+          to: Yup.date().when(["from"], ([from], schema) => {
+            if (from) return schema.min(dayjs(from).add(1, "day")); //can't be on the same day
+          }),
         }),
       })}
       onSubmit={(values) => {
@@ -58,7 +87,7 @@ function RegistrationStage() {
       {(formik) => (
         <>
           <Form>
-            <Typography>Settings?</Typography>
+            <ZeroParticipantsAlert open={alertOpen}></ZeroParticipantsAlert>
             <div className="registration">
               <InputLabel>Open registration</InputLabel>
               <MyDatePicker disablePast label="from" name="registration.from" />
@@ -73,11 +102,13 @@ function RegistrationStage() {
             <Button type="submit">Confirm</Button>
             <Card sx={{ width: 1 / 2, height: 200 }}>
               <CardContent>
-                <Typography variant="h3">{participations?.length}</Typography>
+                <Typography variant="h3">{participants?.length}</Typography>
                 <Typography>currently registered</Typography>
               </CardContent>
             </Card>
           </Form>
+
+          <Button onClick={handleClickNextStage}>Next Stage</Button>
 
           {/* <Dialog open={openDialog}>
             <DialogTitle>{"Proceed to group stages prematurely?"}</DialogTitle>

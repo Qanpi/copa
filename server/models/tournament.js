@@ -157,8 +157,8 @@ const TournamentSchema = new mongoose.Schema(
       enum: [
         "Registration",
         "Group stage",
-        "Play-offs",
-        "Finished",
+        "Bracket",
+        "Over",
       ],
       default: "Registration",
     },
@@ -227,6 +227,10 @@ TournamentSchema.virtual("statuses").get(function () {
   return this.schema.path("stage").enumValues;
 });
 
+TournamentSchema.virtual("stageId").get(function () {
+  return this.statuses.indexOf(this.stage);
+})
+
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
 });
@@ -247,6 +251,7 @@ TournamentSchema.virtual("registration.status").get(function () {
 TournamentSchema.virtual("groupStage").get(function() {
     return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
 })
+
 
 // TournamentSchema.pre("findOneAndDelete", async function () {
 //   await Participant.deleteMany({tournament: this.id});
