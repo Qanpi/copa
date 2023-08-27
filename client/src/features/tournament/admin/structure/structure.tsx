@@ -193,7 +193,6 @@ function StructurePage() {
     if (mockBracket) {
       bracketsViewer.render(
         {
-          //FIXME: maybe fix to replace any with BracketsViewere later on
           stages: mockBracket.stage,
           matches: mockBracket.match,
           matchGames: mockBracket.match_game,

@@ -25,6 +25,7 @@ import StructurePage from "./features/tournament/admin/structure/structure";
 import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
 import MatchesPage from "./features/tournament/matches/Matches";
 import MatchPage from "./features/tournament/matches/page/MatchPage";
+import GroupStage from "./features/tournament/admin/groupStage/GroupStage";
 
 const userKeys = {
   all: ["users"],
@@ -108,10 +109,13 @@ function App() {
                 element={<DashboardPage></DashboardPage>}
               ></Route>
 
+              <Route path="/tournament/groups"
+              element={<GroupStage></GroupStage>}></Route>
+
               <Route
                 path="/tournament/structure"
                 element={<StructurePage></StructurePage>}
-              ></Route>
+              >R</Route>
 
               <Route path="/tournament/draw" element={<DrawPage></DrawPage>}></Route>
 
