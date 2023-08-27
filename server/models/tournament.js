@@ -155,13 +155,12 @@ const TournamentSchema = new mongoose.Schema(
       //FIXME: rename to avoid confusion with brackets stages
       type: String,
       enum: [
-        "Settings",
         "Registration",
         "Group stage",
         "Play-offs",
         "Finished",
       ],
-      default: "Settings",
+      default: "Registration",
     },
     end: Date,
   },

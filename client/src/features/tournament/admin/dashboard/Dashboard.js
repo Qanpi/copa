@@ -7,7 +7,8 @@ import "./Dashboard.css";
 import GroupStages from "../groupStage/GroupStage";
 import RegistrationStage from "../registration/Registration";
 import { Button } from "@mui/material";
-import CreateTournament from "../../../tournament/admin/create/CreateTournament";
+import NewTournamentPage from "../../../tournament/admin/create/CreateTournament";
+import StructurePage from "../structure/structure";
 
 export const useUpdateTournament = (id) => {
   const queryClient = useQueryClient();
@@ -28,24 +29,23 @@ function DashboardPage() {
     useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
 
-  if (!tournament) return <CreateTournament></CreateTournament>;
+  if (!tournament) return <NewTournamentPage></NewTournamentPage>;
 
-  const stageId = tournament.stages.indexOf(tournament.statuses);
+  const stageId = tournament.statuses.indexOf(tournament.stage);
 
   const handleClickBack = () =>
-    updateTournament.mutate({ stage: tournament.stages[stageId - 1] });
+    updateTournament.mutate({ stage: tournament.statuses[stageId - 1] });
   const handleClickNext = () =>
-    updateTournament.mutate({ stage: tournament.stages[stageId + 1] });
+    updateTournament.mutate({ stage: tournament.statuses[stageId + 1] });
 
   const renderCurrentStage = () => {
     switch (stageId) {
       case 0:
-        return <SettingsStage></SettingsStage>;
-      case 1:
+        // return <SettingsStage></SettingsStage>;
         return <RegistrationStage></RegistrationStage>;
-      case 2:
+      case 1:
         return (
-          <GroupStages></GroupStages>
+          <StructurePage></StructurePage>
         );
       default: 
           return <div>No corresponding stage.</div>

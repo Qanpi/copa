@@ -45,6 +45,9 @@ const bracketsViewer = new BracketsViewer();
 // - manager create stages
 //2. export it to db
 export const divideGroups = (participants: number, groups: number) => {
+  if (participants === 0) throw new RangeError(`Can't divide 0 participants into ${groups} groups`);
+  if (groups === 0) throw new RangeError(`Can't divide ${participants} into 0 groups.`)
+
   const maxPartsPerGroup = Math.ceil(participants / groups);
   const groupSizes = [maxPartsPerGroup - 1, maxPartsPerGroup];
 

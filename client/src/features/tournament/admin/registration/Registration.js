@@ -23,7 +23,7 @@ function RegistrationStage() {
   const { status, data: participations } = useQuery({
     queryKey: ["participations"],
     queryFn: async () => {
-      const res = await axios.get(`/api/participations`);
+      const res = await axios.get(`/api/participants`);
       return res.data;
     },
   });
@@ -36,17 +36,16 @@ function RegistrationStage() {
         registration: {
           from: tournament.registration.from
             ? dayjs(tournament.registration.from)
-            : dayjs().endOf("day"),
+            : null,
           to: tournament.registration.to
             ? dayjs(tournament.registration.to)
-            : dayjs().add(7, "day").endOf("day"),
+            : null,
         },
       }}
       validationSchema={Yup.object({
         registration: Yup.object({
-          from: Yup.date().min(dayjs()).required(),
+          from: Yup.date(),
           to: Yup.date()
-            .required()
             .when(["from"], ([from], schema) => {
               if (from) return schema.min(dayjs(from).add(1, "day")); //can't be on the same day
             }),
@@ -67,7 +66,7 @@ function RegistrationStage() {
                 disablePast
                 label="to"
                 name="registration.to"
-                minDate={formik.values.registration.from.add(1, "day")}
+                minDate={formik.values.registration.from?.add(1, "day")}
               />
             </div>
 
@@ -79,6 +78,7 @@ function RegistrationStage() {
               </CardContent>
             </Card>
           </Form>
+
           {/* <Dialog open={openDialog}>
             <DialogTitle>{"Proceed to group stages prematurely?"}</DialogTitle>
             <DialogContent>
