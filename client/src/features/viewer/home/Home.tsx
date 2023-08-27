@@ -7,10 +7,10 @@ import * as dayjs from "dayjs";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useMatches } from "../../tournament/matches/hooks";
 
 import { BracketsViewer } from "ts-brackets-viewer";
 import "ts-brackets-viewer/dist/style.css";
-import { useMatches } from "../../tournament/matches/hooks";
 const bracketsViewer = new BracketsViewer();
 
 const useStageData = (id: string) => {
@@ -27,6 +27,12 @@ const useStageData = (id: string) => {
     enabled: !!tournament,
   });
 };
+
+//STATES
+//1 registration period
+  //before, during and after
+//2 tournament in progress
+//3 winners of last copa
 
 function HomePage() {
   const { data: tournament } = useTournament("current");
