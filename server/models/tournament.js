@@ -229,7 +229,7 @@ TournamentSchema.virtual("statuses").get(function () {
 
 TournamentSchema.virtual("stageId").get(function () {
   return this.statuses.indexOf(this.stage);
-})
+});
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
