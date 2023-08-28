@@ -124,7 +124,10 @@ const MatchSchema = new mongoose.Schema(
     },
     statics: {
       translateAliases: (data: any) => {
-        data = data.toObject();
+        if (typeof data !== "object") {
+          //FIXME: assumed this is a mongoose model
+          data = data.toObject();
+        }
 
         data.childCount = data["child_count"];
         data.group = data["group_id"];

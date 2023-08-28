@@ -67,7 +67,10 @@ const StageSchema = new mongoose.Schema(
       enum: ["round_robin", "single_elimination", "double_elimination"],
     },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 StageSchema.virtual("tournament_id").get(function () {
@@ -95,11 +98,11 @@ export const GroupSchema = new mongoose.Schema(
   }
 );
 
-GroupSchema.virtual("name").get(function() {
+GroupSchema.virtual("name").get(function () {
   const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
 
   return `Group ${alphabet[this.number - 1]}`;
-})
+});
 
 GroupSchema.virtual("participants", {
   ref: collections.participants.id,
@@ -154,12 +157,7 @@ const TournamentSchema = new mongoose.Schema(
     stage: {
       //FIXME: rename to avoid confusion with brackets stages
       type: String,
-      enum: [
-        "Registration",
-        "Group stage",
-        "Bracket",
-        "Over",
-      ],
+      enum: ["Registration", "Group stage", "Bracket", "Over"],
       default: "Registration",
     },
     end: Date,
@@ -248,10 +246,9 @@ TournamentSchema.virtual("registration.status").get(function () {
   } else return "over";
 });
 
-TournamentSchema.virtual("groupStage").get(function() {
-    return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
-})
-
+TournamentSchema.virtual("groupStage").get(function () {
+  return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
+});
 
 // TournamentSchema.pre("findOneAndDelete", async function () {
 //   await Participant.deleteMany({tournament: this.id});

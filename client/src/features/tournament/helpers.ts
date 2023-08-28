@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 import { Id, QueryKeyFactory } from "../../types";
+import { RoundNameInfo } from "ts-brackets-viewer";
 
 export const tournamentKeys = {
   all: ["tournaments"],
@@ -48,5 +49,21 @@ export const useCreateTournament = () => {
       queryClient.setQueryData(["tournament", "detail", "current"], tournament);
     },
   });
+};
+export const finalRoundNames = (roundInfo: RoundNameInfo) => {
+  if ("fractionOfFinal" in roundInfo) {
+    switch (roundInfo.fractionOfFinal) {
+      case 1:
+        return "Finals";
+      case 0.5:
+        return "Semifinals";
+      case 0.25:
+        return "Quarterfinals";
+      default:
+        return `Round of ${Math.round(1 / roundInfo.fractionOfFinal) * 2}`;
+    }
+  }
+
+  return `Round ${roundInfo.roundNumber}`;
 };
 
