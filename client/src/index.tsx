@@ -21,12 +21,14 @@ import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
 import DrawPage from "./features/team/draw/Draw";
-import StructurePage from "./features/tournament/admin/structure/structure";
+import BracketStructure from "./features/tournament/bracket/BracketStructure";
 import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
 import MatchesPage from "./features/tournament/matches/Matches";
 import MatchPage from "./features/tournament/matches/page/MatchPage";
-import GroupStage from "./features/tournament/admin/groupStage/GroupStage";
+import GroupStageStructure from "./features/tournament/groupStage/GroupStageStructure";
 import DashboardPage from "./features/dashboard/Dashboard";
+import GroupStagePage from "./features/tournament/groupStage/GroupStage";
+import BracketPage from "./features/tournament/bracket/Bracket";
 
 const userKeys = {
   all: ["users"],
@@ -85,11 +87,11 @@ function App() {
               ></Route>
 
               <Route path="/tournament/groups"
-              element={<GroupStage></GroupStage>}></Route>
+              element={<GroupStagePage></GroupStagePage>}></Route>
 
               <Route
-                path="/tournament/structure"
-                element={<StructurePage></StructurePage>}
+                path="/tournament/bracket"
+                element={<BracketPage></BracketPage>}
               >R</Route>
 
               <Route path="/tournament/draw" element={<DrawPage></DrawPage>}></Route>
