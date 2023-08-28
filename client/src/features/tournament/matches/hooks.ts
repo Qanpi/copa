@@ -5,7 +5,7 @@ import _ from "lodash";
 import { useTournament } from "../helpers";
 import { useParticipants } from "../../participant/hooks";
 import { Match } from "@backend/models/match";
-import { Id } from "../../../types";
+import { Id, QueryKeyFactory } from "../../../types";
 
 export const useUpdateMatch = () => {
   return useMutation({
@@ -65,10 +65,10 @@ export const useMatchScheduler = () => {
   };
 };
 
-const matchKeys = {
+const matchKeys: QueryKeyFactory<Match> = {
   all: "matches",
-  id: (id: Id) => [matchKeys.all, id.toString()],
-  query: (query: Partial<Match>) => [matchKeys.all, query],
+  id: (id) => [matchKeys.all, id.toString()],
+  query: (query) => [matchKeys.all, query],
 };
 
 export const useMatch = (id: Id) => {

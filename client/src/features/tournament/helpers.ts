@@ -4,17 +4,17 @@ import {
     useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
-import { Id } from "../../types";
+import { Id, QueryKeyFactory } from "../../types";
 
 export const tournamentKeys = {
   all: ["tournaments"],
-  details: () => [...tournamentKeys.all, "detail"],
-  detail: (id: Id) => [...tournamentKeys.details(), id],
+  id: (id: Id) => [tournamentKeys.all, id],
+  query: () => [...tournamentKeys.all, "detail"],
 };
 
 export const useTournament = (id: string) => {
   return useQuery({
-    queryKey: tournamentKeys.detail(id),
+    queryKey: tournamentKeys.id(id),
     queryFn: async () => {
       const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
       return response.data;
@@ -31,7 +31,7 @@ export const useUpdateTournament = (id: Id) => {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(tournamentKeys.detail(id));
+      queryClient.invalidateQueries(tournamentKeys.id(id));
     },
   });
 };
