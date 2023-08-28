@@ -141,9 +141,8 @@ function DashboardPage() {
     },
     onSuccess: (tournament) => {
       queryClient.setQueryData(["tournament", "detail", "current"], tournament);
-    }
-  })
-
+    },
+  });
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -161,66 +160,64 @@ function DashboardPage() {
 
   return (
     <>
-      <div>
-        <Stepper activeStep={activeStep}>
-          {Object.keys(steps).map((label, i) => (
-            <Step key={label}>
-              <StepButton onClick={() => handleClickStep(i)}>
-                {label}
-              </StepButton>
-            </Step>
-          ))}
-        </Stepper>
+      <Stepper activeStep={activeStep}>
+        {Object.keys(steps).map((label, i) => (
+          <Step key={label}>
+            <StepButton onClick={() => handleClickStep(i)}>{label}</StepButton>
+          </Step>
+        ))}
+      </Stepper>
 
-        <Formik
-          initialValues={{
-            settings: {
-              playerCount: 4,
-              matchLength: 6,
-            },
-            divisions: ["Men's", "Women's"],
-            rules: "",
-            organizer: {
-              name: "",
-              phoneNumber: "",
-            },
-          }}
-          validationSchema={Yup.object({
-            settings: Yup.object({
-              playerCount: Yup.number().min(1).max(11).required(),
-              matchLength: Yup.number().min(1).max(20).required(),
-            }),
-            divisions: Yup.array().min(1).required().of(Yup.string()),
-            organizer: Yup.object({
-              name: Yup.string().required(),
-              phoneNumber: Yup.string().notRequired(),
-            }),
-            rules: Yup.string().optional(), //TODO: at lfor time being
+      <Formik
+        initialValues={{
+          settings: {
+            playerCount: 4,
+            matchLength: 6,
+          },
+          divisions: ["Men's", "Women's"],
+          rules: "",
+          organizer: {
+            name: "",
+            phoneNumber: "",
+          },
+        }}
+        validationSchema={Yup.object({
+          settings: Yup.object({
+            playerCount: Yup.number().min(1).max(11).required(),
+            matchLength: Yup.number().min(1).max(20).required(),
+          }),
+          divisions: Yup.array().min(1).required().of(Yup.string()),
+          organizer: Yup.object({
+            name: Yup.string().required(),
+            phoneNumber: Yup.string().notRequired(),
+          }),
+          rules: Yup.string().required(), //TODO: at lfor time being
+        })}
+        onSubmit={(values) => {
+          createTournament.mutate(values);
+        }}
+      >
+        <Form>
+          {/* Bit of a hack to ensure that the file input doesn't remount and as such reset */}
+          {Object.values(steps).map((Section, i) => {
+            return (
+              <Container
+                key={i}
+                sx={{ display: activeStep === i ? undefined : "none" }}
+              >
+                <Section></Section>
+              </Container>
+            );
           })}
-          onSubmit={(values) => {
-            createTournament.mutate(values);
-          }}
-        >
-          <Form>
-            {/* Bit of a hack to ensure that the file input doesn't remount and as such reset */}
-            {Object.values(steps).map((Section, i) => {
-              return (
-                <Container
-                  key={i}
-                  sx={{ display: activeStep === i ? undefined : "none" }}
-                >
-                  <Section></Section>
-                </Container>
-              );
-            })}
-            {activeStep === lastStep ? (
-              <Button type="submit">Submit</Button>
-            ) : (
-              <Button type="button" onClick={() => setActiveStep((s) => s + 1)}>Next</Button>
-            )}
-          </Form>
-        </Formik>
-      </div>
+          {activeStep === lastStep ? (
+            <Button type="submit">Submit</Button>
+          ) : (
+            <Button type="button" onClick={() => setActiveStep((s) => s + 1)}>
+              Next
+            </Button>
+          )}
+        </Form>
+      </Formik>
     </>
   );
 }

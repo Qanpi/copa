@@ -1,9 +1,13 @@
 import { useField, useFormikContext } from "formik";
 import { TextField } from "@mui/material";
 
-const MyTextField = ({ ...props }) => {
+const MyTextField = ({...props }) => {
   const [field, meta] = useField(props);
   const {setFieldTouched} = useFormikContext();
+
+  const handleInput = () => {
+    setFieldTouched(field.name, true);
+  }
 
   return (
     <TextField
@@ -11,7 +15,7 @@ const MyTextField = ({ ...props }) => {
       helperText={meta.touched && meta.error}
       {...field}
       {...props}
-      onInput={() => setFieldTouched(field.name, true)}
+      // onInput={handleInput}
     ></TextField>
   );
 };
