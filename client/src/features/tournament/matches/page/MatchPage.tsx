@@ -7,7 +7,7 @@ import { Button } from "@mui/base";
 import { useCallback } from "react";
 import { NumberInput } from "@mui/base/Unstable_NumberInput/NumberInput";
 import { Formik, Form } from "formik";
-import ScoreCounter from "../../../inputs/ScoreCounter/ScoreCounter";
+import ScoreCounter from "../../../inputs/ScoreCounter";
 
 const MatchTimer = ({ min }: { min: number }) => {
   const getExpiryTimestamp = () => dayjs().add(min, "minutes").toDate();

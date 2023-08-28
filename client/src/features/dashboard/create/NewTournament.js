@@ -1,76 +1,20 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  StepLabel,
-  Stepper,
+  Button,
+  Container,
   Step,
   StepButton,
-  Autocomplete,
-  TextField,
-  Container,
-  StepContent,
+  Stepper
 } from "@mui/material";
-import axios from "axios";
-import { tournamentKeys, useTournament } from "../../../..";
-import SettingsStage from "../settings/Settings";
-import "./Dashboard.css";
-import GroupStages from "../groupStage/GroupStage";
-import RegistrationStage from "../registration/Registration";
-import { Button } from "@mui/material";
-import NewTournamentPage from "../../../tournament/admin/create/CreateTournament";
-import StructurePage from "../structure/structure";
+import { useQueryClient } from "@tanstack/react-query";
+import { Form, Formik } from "formik";
 import { useState } from "react";
-import MyNumberSlider from "../../../inputs/numberSlider/myNumberSlider";
-import { Formik, Form, useField, useFormikContext, useFormik } from "formik";
 import * as Yup from "yup";
-import MyFileInput from "../../../inputs/fileInput/MyFileInput";
-import MyTextField from "../../../inputs/textField/mytextfield";
-
-export const useUpdateTournament = (id) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.patch(`/api/tournaments/${id}`, values);
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(tournamentKeys.detail(id));
-    },
-  });
-};
-
-const MyAutocomplete = ({ ...props }) => {
-  const [field, meta] = useField(props);
-  const { setFieldValue, setFieldTouched } = useFormikContext();
-
-  return (
-    <Autocomplete
-      multiple
-      options={meta.initialValue}
-      freeSolo
-      {...field}
-      onChange={(_, value, reason) => {
-        setFieldValue(field.name, value);
-        setFieldTouched(field.name, true, false);
-      }}
-      renderInput={(params) => {
-        return (
-          <TextField
-            error={meta.error && meta.touched}
-            helperText={meta.touched && meta.error}
-            {...params}
-            label="Divisions"
-            placeholder="Type any name..."
-            InputProps={{
-              ...params.InputProps,
-              type: "search",
-            }}
-          />
-        );
-      }}
-    ></Autocomplete>
-  );
-};
+import { useTournament } from "../../tournament/helpers";
+import MyFileInput from "../../inputs/MyFileInput";
+import MyNumberSlider from "../../inputs/myNumberSlider";
+import MyTextField from "../../inputs/mytextfield";
+import MyAutocomplete from "../../inputs/MyAutocomplete";
+import { createTournament, useCreateTournament } from "../../tournament/helpers";
 
 const Parameters = () => {
   return (
@@ -102,7 +46,7 @@ const Parameters = () => {
           { value: 11, label: "11 p" },
         ]}
       />
-      <MyAutocomplete name="divisions"></MyAutocomplete>
+      <MyAutocomplete name="divisions"/>
     </>
   );
 };
@@ -128,30 +72,15 @@ const ContactInfo = () => {
   );
 };
 
-function DashboardPage() {
-  const { status: tournamentStatus, data: tournament } =
-    useTournament("current");
-
-  const queryClient = useQueryClient();
-
-  const createTournament = useMutation({
-    mutationFn: async (body) => {
-      const res = await axios.post(`/api/tournaments/`, body);
-      return res.data;
-    },
-    onSuccess: (tournament) => {
-      queryClient.setQueryData(["tournament", "detail", "current"], tournament);
-    },
-  });
+function NewTournamentPage() {
+  const createTournament = useCreateTournament();
 
   const [activeStep, setActiveStep] = useState(0);
-
   const steps = {
     Parameters: Parameters,
     Rules: Rules,
     "Contact Info": ContactInfo,
   };
-
   const lastStep = Object.keys(steps).length - 1;
 
   const handleClickStep = (i) => {
@@ -222,4 +151,4 @@ function DashboardPage() {
   );
 }
 
-export default DashboardPage;
+export default NewTournamentPage;

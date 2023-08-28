@@ -1,11 +1,11 @@
 import { Button } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useTournament } from "../../../..";
-import MyFileInput from "../../../inputs/fileInput/MyFileInput";
-import MyNumberSlider from "../../../inputs/numberSlider/myNumberSlider";
-import MyTextField from "../../../inputs/textField/mytextfield";
-import { useUpdateTournament } from "../dashboard/Dashboard";
+import { useTournament } from "../../helpers";
+import MyFileInput from "../../../inputs/MyFileInput";
+import MyNumberSlider from "../../../inputs/myNumberSlider";
+import MyTextField from "../../../inputs/mytextfield";
+import { useUpdateTournament } from "../../helpers";
 
 function SettingsStage() {
   const { data: tournament } = useTournament("current");

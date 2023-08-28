@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useTournament } from "../../../..";
+import { useTournament } from "../../helpers";
 import axios from "axios";
 import {
   UseQueryResult,

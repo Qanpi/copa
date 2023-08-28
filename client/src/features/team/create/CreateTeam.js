@@ -12,8 +12,8 @@ import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useUser } from "../../..";
-import MyTextField from "../../inputs/textField/mytextfield";
-import MyFileInput from "../../inputs/fileInput/MyFileInput";
+import MyTextField from "../../inputs/mytextfield";
+import MyFileInput from "../../inputs/MyFileInput";
 
 export const teamValidationSchema = Yup.object({
   name: Yup.string().max(20).trim().required(),
@@ -30,9 +30,8 @@ export const teamValidationSchema = Yup.object({
   picture: Yup.string().optional(),
 });
 
-function CreateTeamPage() {
+function NewTeamPage() {
   const {status: userStatus, data: user} = useUser("me");
-
 
   const navigate = useNavigate();
 
@@ -130,4 +129,4 @@ function CreateTeamPage() {
   );
 }
 
-export default CreateTeamPage;
+export default NewTeamPage;

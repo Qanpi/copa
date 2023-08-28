@@ -11,8 +11,8 @@ import * as ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Header from "./features/viewer/header/header";
 import "./index.css";
-import DashboardPage from "./features/tournament/admin/dashboard/Dashboard";
-import CreateTeamPage from "./features/team/create/CreateTeam";
+import NewTournamentPage from "./features/dashboard/create/NewTournament";
+import NewTeamPage from "./features/team/create/CreateTeam";
 import HomePage from "./features/viewer/home/Home";
 import ProfilePage from "./features/user/profile/Profile";
 import RegistrationPage from "./features/team/registration/registration";
@@ -20,12 +20,13 @@ import TeamsPage from "./features/team/table/ParticipantsTable";
 import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
-import DrawPage from "./features/team/admin/draw/Draw";
+import DrawPage from "./features/team/draw/Draw";
 import StructurePage from "./features/tournament/admin/structure/structure";
 import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
 import MatchesPage from "./features/tournament/matches/Matches";
 import MatchPage from "./features/tournament/matches/page/MatchPage";
 import GroupStage from "./features/tournament/admin/groupStage/GroupStage";
+import DashboardPage from "./features/dashboard/Dashboard";
 
 const userKeys = {
   all: ["users"],
@@ -42,32 +43,6 @@ export const useUser = (id: string) => {
           ? await axios.get("/me")
           : await axios.get(`/api/${userKeys.all}/${id}`);
       return res.data;
-    },
-  });
-};
-
-// export const useAuth = () => {
-//   return useQuery({
-//     queryKey: userKeys.detail("me"),
-//     queryFn: async () => {
-//       const res = await axios.get(`/me`);
-//       return res.data;
-//     }
-//   })
-// }
-
-export const tournamentKeys = {
-  all: ["tournaments"],
-  details: () => [...tournamentKeys.all, "detail"],
-  detail: (id: string) => [...tournamentKeys.details(), id],
-};
-
-export const useTournament = (id: string) => {
-  return useQuery({
-    queryKey: tournamentKeys.detail(id),
-    queryFn: async () => {
-      const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
-      return response.data;
     },
   });
 };
@@ -152,7 +127,7 @@ function App() {
 
               <Route
                 path="/teams/new"
-                element={<CreateTeamPage></CreateTeamPage>}
+                element={<NewTeamPage></NewTeamPage>}
               ></Route>
 
               <Route

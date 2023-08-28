@@ -3,11 +3,11 @@ import { Form, Formik } from "formik";
 import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
 import * as Yup from "yup";
-import MyTextField from "../../../inputs/textField/mytextfield";
-import { useParticipants } from "../../../participant/hooks";
-import Group from "../../group/Group";
-import { useUpdateTeam } from "../../hooks";
-import { useTournament } from "../../../..";
+import MyTextField from "../../inputs/mytextfield";
+import { useParticipants } from "../../participant/hooks";
+import Group from "../group/Group";
+import { useUpdateTeam } from "../hooks";
+import { useTournament } from "../../tournament/helpers";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 

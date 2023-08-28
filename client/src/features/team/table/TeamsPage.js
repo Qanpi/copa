@@ -1,31 +1,19 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  InputLabel,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useTournament } from "../../tournament/helpers";
 import { useParticipants } from "../../participant/hooks";
 import { useUnregisterTeam } from "../registration/registration";
-import MyTable from "../../viewer/tables/MyTable";
-import MyDatePicker from "../../inputs/MyDatePicker";
-import { Form, Formik } from "formik";
-import * as Yup from "yup";
-import { useUpdateTournament } from "../../tournament/helpers";
+import { NotEnoughParticipantsAlert } from "./ParticipantsTable";
 
-function TeamsPage() {
+export function TeamsPage() {
   const { data: participants, status: participantsStatus } = useParticipants();
   const unregisterTeam = useUnregisterTeam();
-  const { data: tournament, status: tournamentStatus } =
-    useTournament("current");
+  const { data: tournament, status: tournamentStatus } = useTournament("current");
 
   const cols = [
     {
@@ -73,8 +61,6 @@ function TeamsPage() {
       },
     },
   ];
-  const updateTournament = useUpdateTournament(tournament?.id);
-
   const updateParticipation = useMutation({
     mutationFn: async (values) => {
       const res = await axios.put(`/api/participations/${values.id}`, values);
@@ -115,24 +101,30 @@ function TeamsPage() {
           updateTournament.mutate(values);
         }}
       >
-        {({ values }) => 
-          <Form>
-            <div className="registration">
-              <InputLabel>Open registration</InputLabel>
-              <MyDatePicker disablePast label="from" name="registration.from" />
-              <MyDatePicker
-                disablePast
-                label="to"
-                name="registration.to"
-                minDate={values.registration.from?.add(1, "day")}
-              />
-            </div>
+        <Form>
+          <NotEnoughParticipantsAlert
+            open={alertOpen}
+          ></NotEnoughParticipantsAlert>
+          <div className="registration">
+            <InputLabel>Open registration</InputLabel>
+            <MyDatePicker disablePast label="from" name="registration.from" />
+            <MyDatePicker
+              disablePast
+              label="to"
+              name="registration.to"
+              minDate={values.registration.from?.add(1, "day")} />
+          </div>
 
-            <Button type="submit">Confirm</Button>
-          </Form>
-        }
+          <Button type="submit">Confirm</Button>
+          <Card sx={{ width: 1 / 2, height: 200 }}>
+            <CardContent>
+              <Typography variant="h3">{participants?.length}</Typography>
+              <Typography>currently registered</Typography>
+            </CardContent>
+          </Card>
+          <Button onClick={handleClickNextStage}>Next Stage</Button>
+        </Form>
       </Formik>
-
       <DataGrid
         editMode="row"
         isCellEditable={(params) => params.row.tournament === tournament?.id}
@@ -148,5 +140,3 @@ function TeamsPage() {
     </div>
   );
 }
-
-export default TeamsPage;

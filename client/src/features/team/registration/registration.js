@@ -3,9 +3,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
 import { Link } from "react-router-dom";
-import { useTeam, useTournament, useUser } from "../../..";
-import MyTextField from "../../inputs/textField/mytextfield";
-import MySelect from "../../inputs/select/mySelect";
+import { useTeam, useUser } from "../../..";
+import { useTournament } from "../../tournament/helpers";
+import MyTextField from "../../inputs/mytextfield";
+import MySelect from "../../inputs/mySelect";
 import * as Yup from "yup";
 import { useUpdateTeam } from "../hooks";
 

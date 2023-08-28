@@ -2,10 +2,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
-import { useTournament } from "../../..";
+import { useTournament } from "../helpers";
 import { useParticipants } from "../../participant/hooks";
 import { Match } from "@backend/models/match";
-import { ObjectId } from "mongodb";
+import { Id } from "../../../types";
 
 export const useUpdateMatch = () => {
   return useMutation({
@@ -64,8 +64,6 @@ export const useMatchScheduler = () => {
     }
   };
 };
-
-type Id = ObjectId | string;
 
 const matchKeys = {
   all: "matches",

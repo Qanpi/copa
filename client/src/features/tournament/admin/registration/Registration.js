@@ -17,13 +17,13 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { Form, Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
-import { useTournament } from "../../../..";
-import MyDatePicker from "../../../inputs/datePicker/MyDatePicker";
+import { useTournament } from "../../helpers";
+import MyDatePicker from "../../../inputs/MyDatePicker";
 import {
   useMutateNextStage,
   useMutatePreviousStage,
-  useUpdateTournament,
-} from "../dashboard/Dashboard";
+} from "../../../dashboard/create/NewTournament";
+import { useUpdateTournament } from "../../helpers";
 import { useState } from "react";
 import { useParticipants } from "../../../participant/hooks";
 
