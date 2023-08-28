@@ -131,41 +131,29 @@ const ContactInfo = () => {
 function DashboardPage() {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
-  const updateTournament = useUpdateTournament(tournament?.id);
 
-  const renderCurrentStage = () => {
-    switch (tournament.stage) {
-      case "Registration":
-        // return <SettingsStage></SettingsStage>;
-        return <RegistrationStage></RegistrationStage>;
-      case "Group stage":
-        return <StructurePage></StructurePage>;
-      case "Bracket":
-      case "Over":
-      default:
-        return <div>No corresponding stage.</div>;
-    }
-  };
+  const queryClient = useQueryClient();
 
-  const getActiveForm = (activeStep) => {
-    switch (activeStep) {
-      case 0:
-        return <Parameters></Parameters>;
-      case 1:
-        return <Rules></Rules>;
-      default:
-        return <div>Undefined.</div>;
+  const createTournament = useMutation({
+    mutationFn: async (body) => {
+      const res = await axios.post(`/api/tournaments/`, body);
+      return res.data;
+    },
+    onSuccess: (tournament) => {
+      queryClient.setQueryData(["tournament", "detail", "current"], tournament);
     }
-  };
+  })
+
 
   const [activeStep, setActiveStep] = useState(0);
-  // const steps = ["Parameters", "Rules", "Contact Info"];
 
   const steps = {
     Parameters: Parameters,
     Rules: Rules,
     "Contact Info": ContactInfo,
   };
+
+  const lastStep = Object.keys(steps).length - 1;
 
   const handleClickStep = (i) => {
     setActiveStep(i);
@@ -210,7 +198,7 @@ function DashboardPage() {
             rules: Yup.string().optional(), //TODO: at lfor time being
           })}
           onSubmit={(values) => {
-            updateTournament.mutate(values);
+            createTournament.mutate(values);
           }}
         >
           <Form>
@@ -225,10 +213,13 @@ function DashboardPage() {
                 </Container>
               );
             })}
+            {activeStep === lastStep ? (
+              <Button type="submit">Submit</Button>
+            ) : (
+              <Button type="button" onClick={() => setActiveStep((s) => s + 1)}>Next</Button>
+            )}
           </Form>
         </Formik>
-
-        <Button onClick={() => setActiveStep((s) => s + 1)}>Next</Button>
       </div>
     </>
   );
