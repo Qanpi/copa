@@ -1,11 +1,10 @@
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime.js";
+import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { romanize } from "../services/helpers.js";
-import relativeTime from "dayjs/plugin/relativeTime.js";
-import dayjs from "dayjs";
 import Metadata from "./metadata.js";
-import { ObjectId } from "mongodb";
-import Participant from "./participant.js";
 dayjs.extend(relativeTime);
 
 const RoundSchema = new mongoose.Schema(
