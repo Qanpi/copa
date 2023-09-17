@@ -2,13 +2,7 @@ import { validationResult } from "express-validator";
 import Match from "../models/match.js";
 import { Request, Response } from "express";
 
-import MongooseForBrackets from "../services/brackets/index";
-const storage = new MongooseForBrackets();
-
-import { BracketsManager } from "brackets-manager";
-const manager = new BracketsManager(storage, true);
-
-
+import { manager } from "./tournamentsController.js";
 
 export const getMany = async (req: Request, res: Response) => {
   const endFilter = req.query.end
