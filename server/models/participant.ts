@@ -1,14 +1,9 @@
 import mongoose, { InferSchemaType } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { ObjectId } from "mongodb";
-import BracketsParticipantSchema from "brackets-mongo-db/dist/models/ParticipantSchema";
+import { Participant as BracketsParticipant } from "brackets-mongo-db";
 
-const BracketsParticipant = mongoose.model(
-  "Participant",
-  BracketsParticipantSchema
-);
-
-const CopaParticipantSchema = new mongoose.Schema(
+const ParticipantSchema = new mongoose.Schema(
   {
     // tournament: {
     //   type: mongoose.SchemaTypes.ObjectId,
@@ -39,11 +34,11 @@ const CopaParticipantSchema = new mongoose.Schema(
   }
 );
 
-const CopaParticipant = BracketsParticipant.discriminator(
-  "CopaParticipant",
-  CopaParticipantSchema
+const Participant = BracketsParticipant.discriminator(
+  "Participant",
+  ParticipantSchema
 );
 
-export type TParticipant = InferSchemaType<typeof CopaParticipant.schema>;
+export type TParticipant = InferSchemaType<typeof Participant.schema>;
 
-export default CopaParticipant;
+export default Participant;

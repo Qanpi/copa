@@ -1,10 +1,8 @@
 import { Status } from "brackets-model";
-import BracketsMatchSchema from "brackets-mongo-db/dist/models/MatchSchema";
+import { Match as BracketsMatch } from "brackets-mongo-db";
 import mongoose, { InferSchemaType } from "mongoose";
 
-const BracketsMatch = await mongoose.model("Match", BracketsMatchSchema);
-
-const CopaMatchSchema = new mongoose.Schema(
+const MatchSchema = new mongoose.Schema(
   {
     start: { type: Date },
     duration: { type: Number, default: 6 }, //in minutes
@@ -12,6 +10,7 @@ const CopaMatchSchema = new mongoose.Schema(
   {
     virtuals: {
       verboseStatus: {
+        //FIXME: remove/rework later
         get(this: any) {
           return Status[this.status];
         },
@@ -24,7 +23,8 @@ const CopaMatchSchema = new mongoose.Schema(
   }
 );
 
-const CopaMatch = BracketsMatch.discriminator("CopaMatch", CopaMatchSchema);
+const Match = BracketsMatch.discriminator("Match", MatchSchema);
 
-export type TMatch = InferSchemaType<typeof CopaMatch.schema>;
-export default CopaMatch;
+export type TMatch = InferSchemaType<typeof Match.schema>;
+
+export default Match;

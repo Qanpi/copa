@@ -1,6 +1,9 @@
-import MatchGameSchema from "brackets-mongo-db/dist/models/MatchGameSchema"
 import mongoose, { InferSchemaType } from "mongoose";
+import { MatchGame as BracketsMatchGame } from "brackets-mongo-db";
 
-export type MatchGame = InferSchemaType<typeof MatchGameSchema>;
+const MatchGameSchema = new mongoose.Schema({}, { id: true });
 
-export default mongoose.model("MatchGame", MatchGameSchema);
+const MatchGame = BracketsMatchGame.discriminator("MatchGame", MatchGameSchema);
+
+export type MatchGame = InferSchemaType<typeof MatchGame.schema>;
+export default MatchGame;
