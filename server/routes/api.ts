@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { query, body, param } from "express-validator";
 
 import * as teams from "../controllers/teamsController.js";
@@ -6,6 +6,7 @@ import * as matches from "../controllers/matchesController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
 import * as participants from "../controllers/participationsController.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -120,5 +121,10 @@ router.patch("/users/:id", users.updateOne);
 router.post("/users", users.createOne);
 
 router.delete("/users/:id", users.deleteOne);
+
+router.delete("/", async (req: Request, res: Response) => {
+  await mongoose.connection.dropDatabase();
+  return res.status(204).send({});
+})
 
 export default router;
