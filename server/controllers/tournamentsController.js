@@ -3,6 +3,13 @@ import Tournament from "../models/tournament.js";
 import Team from "../models/team.js";
 import { validate } from "../middleware/validation.js";
 
+import {JsonDatabase} from "brackets-json-db"
+const storage = new JsonDatabase();
+
+import { BracketsManager } from "brackets-manager";
+import { validationResult } from "express-validator";
+export const manager = new BracketsManager(storage, true);
+
 export const createOne = expressAsyncHandler(async (req, res) => {
   if (!validate(req, res)) return; //FIXME: change other requests too
 
@@ -92,12 +99,6 @@ export const unregisterTeam = expressAsyncHandler(async (req, res) => {
   res.send(await team.save()); //is it weird to return team here?
 });
 
-import MongooseForBrackets from "../services/brackets/index";
-const storage = new MongooseForBrackets();
-
-import { BracketsManager } from "brackets-manager";
-import { validationResult } from "express-validator";
-const manager = new BracketsManager(storage, true);
 
 export const getTournamentDataById = async (req, res) => {
   const data = await manager.get.tournamentData(req.params.id);
@@ -133,10 +134,6 @@ export const getStageData = async (req, res) => {
 
   res.send(stage);
 };
-
-
-
-// groups ?
 
 export const getGroups = expressAsyncHandler(async (req, res) => {
   const tournament = await Tournament.findById(req.params.id)

@@ -3,8 +3,14 @@
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node",
+    "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true
+    }
   },
   "compilerOptions": {
-      "target": "ESNext"
+    "allowSyntheticDefaultImports": true,
+    "target": "ESNext",
+    "esModuleInterop": true
   },
 }

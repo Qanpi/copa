@@ -13,5 +13,5 @@ export const connectMongoose = async () => {
 };
 
 export const disconnectMongoose = async () => {
-  return await mongoose.connection.close();
+  return await mongoose.disconnect();
 }

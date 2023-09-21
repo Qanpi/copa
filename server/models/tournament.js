@@ -1,105 +1,20 @@
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime.js";
 import mongoose from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { romanize } from "../services/helpers.js";
-import relativeTime from "dayjs/plugin/relativeTime.js";
-import dayjs from "dayjs";
-import Metadata from "./metadata.js";
-import { ObjectId } from "mongodb";
-import Participant from "./participant.js";
+
+import { Tournament as BracketsTournament } from "brackets-mongo-db";
+
+import { GroupSchema, RoundSchema, StageSchema } from "brackets-mongo-db";
+
 dayjs.extend(relativeTime);
 
-const RoundSchema = new mongoose.Schema(
-  {
-    group: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: collections.groups.id,
-      alias: "group_id",
-    },
-    number: Number,
-    stage: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: collections.stages.id,
-      alias: "stage_id",
-    },
-  },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
-);
-
-export const Round = mongoose.model(collections.rounds.id, RoundSchema);
-
-const StageSchema = new mongoose.Schema(
-  {
-    name: String,
-    number: Number,
-    settings: {
-      size: Number,
-      seedOrdering: {
-        type: [String],
-        enum: [
-          "natural",
-          "reverse",
-          "half_shift",
-          "reverse_half_shift",
-          "pair_flip",
-          "inner_outer",
-          "groups.effort_balanced",
-          "groups.seed_optimized",
-          "groups.bracket_optimized",
-        ],
-      },
-      balanceByes: Boolean,
-      consolationFinal: Boolean,
-      grandFinal: {
-        type: String,
-        enum: ["none", "simple", "double"],
-      },
-      groupCount: Number,
-      manualGrouping: [[Number]],
-      matchesChildCount: Number,
-      roundRobinMode: {
-        type: String,
-        enum: ["simple", "double"],
-      },
-      skipFirstRound: Boolean,
-    },
-    type: {
-      type: String,
-      enum: ["round_robin", "single_elimination", "double_elimination"],
-    },
-  },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
-);
-
-StageSchema.virtual("tournament_id").get(function () {
-  return this.parent()._id;
-});
-
-//FIXME: remove superfluous model creation
-export const Stage = mongoose.model(collections.stages.id, StageSchema);
-
-export const GroupSchema = new mongoose.Schema(
-  {
-    number: Number,
-    stage: {
-      type: mongoose.SchemaTypes.ObjectId,
-      alias: "stage_id",
-    },
-    division: String,
-    options: {
-      breakingCount: Number,
-    },
-  },
-  {
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true },
-  }
-);
-
-GroupSchema.virtual("name").get(function() {
+GroupSchema.virtual("name").get(function () {
   const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
 
   return `Group ${alphabet[this.number - 1]}`;
-})
+});
 
 GroupSchema.virtual("participants", {
   ref: collections.participants.id,
@@ -112,14 +27,10 @@ GroupSchema.virtual("participants", {
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
   {
-    count: {
-      type: Number,
-      default: 1,
-    },
     name: {
       type: String,
       default: function () {
-        return `Copa ${romanize(this.count)}`;
+        return `Copa ${romanize(this.idx)}`;
       },
     },
     settings: {
@@ -143,11 +54,11 @@ const TournamentSchema = new mongoose.Schema(
       from: Date,
       to: Date,
     },
-    groups: [GroupSchema],
     divisions: {
       type: [String],
       default: ["Men's", "Women's"],
     },
+    groups: [GroupSchema],
     stages: [StageSchema],
     rounds: [RoundSchema],
 
@@ -168,60 +79,17 @@ const TournamentSchema = new mongoose.Schema(
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
-    statics: {
-      async findCurrent() {
-        const meta = await Metadata.findOne({
-          model: collections.tournaments.id,
-        });
-        const tournament = await this.findById(meta.latest);
-        return tournament;
-      },
-      translateSubAliases(subdoc, obj) {
-        switch (subdoc) {
-          case "group":
-            if (obj.stage_id) {
-              obj.stage = new ObjectId(obj.stage_id);
-              delete obj.stage_id;
-            }
-            break;
-          case "stage":
-            if (obj.tournament_id) {
-              obj.tournament_id = new ObjectId(obj.tournament_id);
-            }
-            break;
-          case "round":
-            if (obj.group_id) {
-              obj.group = new ObjectId(obj.group_id);
-              delete obj.group_id;
-            }
-            if (obj.stage_id) {
-              obj.stage = new ObjectId(obj.stage_id);
-              delete obj.stage_id;
-            }
-            break;
-        }
-        return obj;
-      },
-    },
+    // statics: {
+      // async findLatest() {
+      //   const meta = await Metadata.findOne({
+      //     model: collections.tournaments.id,
+      //   });
+      //   const tournament = await this.findById(meta.latest);
+      //   return tournament;
+      // },
+    // },
   }
 );
-
-TournamentSchema.pre("save", async function (next) {
-  if (this.isNew) {
-    let metadata = await Metadata.findOne({
-      model: collections.tournaments.id,
-    });
-    if (!metadata)
-      metadata = new Metadata({ model: collections.tournaments.id });
-
-    this.count = metadata.count;
-    metadata.idx++;
-    metadata.latest = this._id;
-
-    await metadata.save();
-  }
-  next();
-});
 
 //FIXME: renamed var
 TournamentSchema.virtual("statuses").get(function () {
@@ -245,9 +113,9 @@ TournamentSchema.virtual("registration.status").get(function () {
   } else return "over";
 });
 
-TournamentSchema.virtual("groupStage").get(function() {
-    return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
-})
+TournamentSchema.virtual("groupStage").get(function () {
+  return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
+});
 
 // TournamentSchema.pre("findOneAndDelete", async function () {
 //   await Participant.deleteMany({tournament: this.id});
@@ -280,4 +148,9 @@ TournamentSchema.virtual("groupStage").get(function() {
 //   }
 // });
 
-export default mongoose.model(collections.tournaments.id, TournamentSchema);
+const Tournament = BracketsTournament.discriminator(
+  "Tournament",
+  TournamentSchema
+);
+
+export default Tournament;
