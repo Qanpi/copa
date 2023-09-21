@@ -1,0 +1,3 @@
+[submodule "copa.wiki"]
+	path = copa.wiki
+	url = https://github.com/Qanpi/copa.wiki.git
