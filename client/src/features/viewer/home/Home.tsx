@@ -36,7 +36,7 @@ const useStageData = (id: string) => {
 
 function HomePage() {
   const { data: tournament } = useTournament("current");
-  const { data: stageData } = useStageData(tournament?.groupStage.id);
+  const { data: stageData } = useStageData(tournament?.groupStage?.id);
 
   const startOfWeek = useMemo(() => dayjs().day(1), []);
 
