@@ -3,7 +3,7 @@ import {
   Card,
   CardContent,
   InputLabel,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -30,6 +30,7 @@ function RegistrationStage() {
   if (tournamentStatus !== "success") return "bruh";
 
   return (
+    <>
       <Formik
         initialValues={{
           registration: {
@@ -55,11 +56,11 @@ function RegistrationStage() {
           updateTournament.mutate(values);
         }}
       >
-        {({ values }) => 
+        {({ values }) => (
           <Form>
             <div className="registration">
               <InputLabel>Open registration</InputLabel>
-              <MyDatePicker disablePast label="from" name="registration.from" />
+              <MyDatePicker label="from" name="registration.from" />
               <MyDatePicker
                 disablePast
                 label="to"
@@ -70,8 +71,12 @@ function RegistrationStage() {
 
             <Button type="submit">Confirm</Button>
           </Form>
-        }
+        )}
       </Formik>
+      <Card>
+        <CardContent>Teams registered</CardContent>
+      </Card>
+    </>
   );
 }
 

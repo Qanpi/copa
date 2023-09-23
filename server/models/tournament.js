@@ -62,17 +62,26 @@ const TournamentSchema = new mongoose.Schema(
     stages: [StageSchema],
     rounds: [RoundSchema],
 
-    stage: {
-      //FIXME: rename to avoid confusion with brackets stages
-      type: String,
-      enum: ["Registration", "Group stage", "Bracket", "Over"],
-      default: "Registration",
-    },
     end: Date,
   },
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
+    virtuals: {
+      state: {
+        get() {
+          const now = new Date();
+          if (!this.registration.end || now < this.registration.end) {
+            return "Registration";
+          }
+        }
+      },
+      states: {
+        get() {
+          return ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"]
+        }
+      }
+    }
     // statics: {
       // async findLatest() {
       //   const meta = await Metadata.findOne({
@@ -85,14 +94,6 @@ const TournamentSchema = new mongoose.Schema(
   }
 );
 
-//FIXME: renamed var
-TournamentSchema.virtual("statuses").get(function () {
-  return this.schema.path("stage").enumValues;
-});
-
-TournamentSchema.virtual("stageId").get(function () {
-  return this.statuses.indexOf(this.stage);
-});
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
