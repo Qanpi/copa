@@ -6,7 +6,7 @@ import MyStepper from "../../../inputs/stepper/mystepper.js";
 import SettingsStage from "../settings/Settings.js";
 import "./Dashboard.css";
 import GroupStages from "../groupStage/GroupStage.js";
-import RegistrationStage from "../registration/Registration.js";
+import RegistrationStage from "../../../dashboard/Registration.js";
 import { Button } from "@mui/material";
 import CreateTournament from "../../../tournament/admin/create/CreateTournament.js";
 
