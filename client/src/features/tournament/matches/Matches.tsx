@@ -28,53 +28,15 @@ function MatchesPage() {
     status: "unscheduled",
   });
 
-  const handleScheduleMatches = useMatchScheduler();
 
   if (unscheduledStatus !== "success") return <div>Loading...</div>;
 
-  const nextMonday = dayjs().day(8);
 
   return (
     <div>
       <MatchesCalendar></MatchesCalendar>
       <MatchesTable matches={unscheduledMatches}></MatchesTable>
 
-      <Formik
-        initialValues={{
-          start: nextMonday,
-          blocked: [] as Dayjs[],
-        }}
-        onSubmit={(values) =>
-          handleScheduleMatches(
-            values.start,
-            values.blocked,
-            unscheduledMatches
-          )
-        }
-      >
-        {({ values }) => (
-          <>
-            <Form>
-              <MyDatePicker
-                disablePast
-                name="start"
-                label="start"
-              ></MyDatePicker>
-              {/* TODO: TIME PICKER, weekend block checkbox */}
-
-              <DateBlocker
-                name="blocked"
-                blockedDays={values.blocked}
-                minDate={values.start}
-              ></DateBlocker>
-
-              <Button type="submit">
-                Automatically schedule group stage matches
-              </Button>
-            </Form>
-          </>
-        )}
-      </Formik>
     </div>
   );
 }

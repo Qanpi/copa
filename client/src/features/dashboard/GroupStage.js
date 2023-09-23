@@ -1,0 +1,84 @@
+import { Button, Card, CardContent, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Formik, Form } from "formik";
+import MyDatePicker from "../inputs/MyDatePicker.js";
+import { Popper } from "@mui/base";
+import { EventClickArg } from "@fullcalendar/core";
+import DateBlocker from "../inputs/DateBlocker.tsx";
+import dayjs, { Dayjs } from "dayjs";
+import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
+
+function GroupStage() {
+
+  const { data: unscheduledMatches, status: unscheduledStatus } = useMatches({
+    status: "unscheduled",
+  });
+
+  const nextMonday = dayjs().day(8);
+
+  const handleScheduleMatches = useMatchScheduler();
+
+  return (
+    <>
+      <Link to="/tournament/draw">Draw teams</Link>
+
+      <Formik
+        initialValues={{
+          start: nextMonday,
+          blocked: [],
+        }}
+        onSubmit={(values) =>
+          handleScheduleMatches(
+            values.start,
+            values.blocked,
+            unscheduledMatches
+          )
+        }
+      >
+        {({ values }) => (
+          <>
+            <Form>
+              <MyDatePicker
+                disablePast
+                name="start"
+                label="start"
+              ></MyDatePicker>
+              {/* TODO: TIME PICKER, weekend block checkbox */}
+
+              <DateBlocker
+                name="blocked"
+                blockedDays={values.blocked}
+                minDate={values.start}
+              ></DateBlocker>
+
+              <Button type="submit">
+                Automatically schedule group stage matches
+              </Button>
+            </Form>
+          </>
+        )}
+      </Formik>
+
+      <Card>
+        <CardContent>
+          <Typography>Matches scheduled</Typography>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <Typography>Matches complete</Typography>
+        </CardContent>
+      </Card>
+      {/* maybe show groups and other related data */}
+      {/* <AdminCalendar></AdminCalendar> */}
+      {/* <MyChecklist items={tasks}></MyChecklist> */}
+      {/* <Backdrop open={true} className="backdrop">
+        <ClockIcon></ClockIcon>
+        <Typography>Please wait for the registration period to end.</Typography>
+      </Backdrop> */}
+    </>
+  );
+}
+
+export default GroupStage;

@@ -16,7 +16,7 @@ import RegistrationPage from "./features/team/registration/registration";
 import TeamsPage from "./features/team/table/ParticipantsTable";
 import BracketPage from "./features/tournament/bracket/Bracket.tsx";
 import GroupStagePage from "./features/tournament/groupStage/GroupStage.tsx";
-import MatchesPage from "./features/tournament/matches/Matches";
+import MatchesPage from "./features/tournament/matches/Matches.tsx";
 import MatchPage from "./features/tournament/matches/page/MatchPage";
 import ProfilePage from "./features/user/profile/Profile";
 import Header from "./features/viewer/header/header";
