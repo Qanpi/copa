@@ -1,7 +1,15 @@
-import NewTournamentPage from "./create/NewTournament.js";
+import NewTournamentPage from "./NewTournament.js";
+import RegistrationStage from "./Registration.js";
 
 function DashboardPage() {
-  return <NewTournamentPage></NewTournamentPage>
+  const state = "registration";
+
+  switch(state) {
+    case "kickstart":
+      return <NewTournamentPage></NewTournamentPage>
+    case "registration":
+      return <RegistrationStage></RegistrationStage>
+  }
 }
 
 export default DashboardPage;
