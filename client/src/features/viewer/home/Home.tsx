@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useTournament } from "../../tournament/helpers";
+import { useTournament } from "../../tournament/hooks";
 import GameBoard from "./GameBoard/gameboard";
 import "./Home.css";
 import InstagramBoard from "./InstagramBoard/instagramboard";
@@ -36,7 +36,7 @@ const useStageData = (id: string) => {
 
 function HomePage() {
   const { data: tournament } = useTournament("current");
-  const { data: stageData } = useStageData(tournament?.groupStage.id);
+  const { data: stageData } = useStageData(tournament?.groupStage?.id);
 
   const startOfWeek = useMemo(() => dayjs().day(1), []);
 

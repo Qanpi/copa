@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useMatches } from "../hooks";
-import { useTournament } from "../../helpers";
+import { useTournament } from "../../hooks";
 
 export const MatchesTable = ({matches} : {matches: any[]}) => {
   const { data: tournament } = useTournament("current");

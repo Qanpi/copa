@@ -37,7 +37,7 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.body.teamId);
 
   const participation = await new Participant({
-    id: team.id,
+    team: team.id,
     name: team.name,
     tournament_id: req.body.tournamentId,
   }).save();

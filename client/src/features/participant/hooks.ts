@@ -1,12 +1,16 @@
-import { UseQueryOptions, UseQueryResult, useQuery } from "@tanstack/react-query";
+import {
+  UseQueryOptions,
+  UseQueryResult,
+  useQuery,
+} from "@tanstack/react-query";
 import axios from "axios";
 import { ObjectId } from "mongodb";
-import {Participant} from "@backend/models/participant"
+import { TParticipant } from "@backend/models/participant";
 
 export const participantKeys = {
   all: "participants",
   id: (id?: ObjectId) => [participantKeys.all, id?.toString()],
-  query: (query: Partial<Participant>) => [participantKeys.all, query],
+  query: (query: Partial<TParticipant>) => [participantKeys.all, query],
 };
 
 export const useParticipant = (id?: ObjectId) => {
@@ -15,14 +19,13 @@ export const useParticipant = (id?: ObjectId) => {
     queryFn: async () => {
       const url = `/api/${participantKeys.all}/${id}`;
       const res = await axios.get(url);
-      return res.data as Participant;
+      return res.data as TParticipant;
     },
-    enabled: !!id
-  })
-}
+    enabled: !!id,
+  });
+};
 
-
-export const useParticipants = (query?: Partial<Participant>) => {
+export const useParticipants = (query?: Partial<TParticipant>) => {
   return useQuery({
     queryKey: [participantKeys.query(query)],
 
@@ -35,7 +38,7 @@ export const useParticipants = (query?: Partial<Participant>) => {
       }
 
       const res = await axios.get(url);
-      return res.data as Participant[];
+      return res.data as TParticipant[];
     },
   });
 };

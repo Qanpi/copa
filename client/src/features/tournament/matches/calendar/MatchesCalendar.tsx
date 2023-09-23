@@ -13,6 +13,22 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { ClickAwayListener, Popper } from "@mui/base";
 import { Paper, Typography } from "@mui/material";
 import dayjs from "dayjs";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
+import { useMatches } from "../hooks";
+import { useTournament } from "../../hooks";
+import {
+  getGroupFromTournament,
+  getRoundFromTournament,
+  getStageFromTournament,
+  useRound,
+} from "../../helpers";
 import { ObjectId } from "mongodb";
 import {
   useCallback,
@@ -20,9 +36,9 @@ import {
   useState
 } from "react";
 import "react-dragula/dist/dragula.css";
-import { useParticipant } from "../../../participant/hooks";
-import { useMatches, useUpdateMatch } from "../hooks";
-import "./MatchesCalendar.css";
+import { useUpdateMatch } from "../hooks";
+import { TMatch } from "@backend/models/match";
+import "./MatchesCalendar.css"
 
 // type MatchEvent = {
 //   matchId: ObjectId;
@@ -37,7 +53,7 @@ import "./MatchesCalendar.css";
 // };
 
 type MatchEvent = Omit<
-  Partial<Match>,
+  Partial<TMatch>,
   "opponent1" | "opponent2" | "duration"
 > & {
   opponent1: ObjectId;

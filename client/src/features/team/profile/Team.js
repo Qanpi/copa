@@ -11,9 +11,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import relativeTime from "dayjs/plugin/relativeTime.js";
 import { useParams } from "react-router-dom";
-import { useTeam } from "../../..";
+import { useTeam } from "../hooks.ts";
 
 dayjs.extend(relativeTime);
 

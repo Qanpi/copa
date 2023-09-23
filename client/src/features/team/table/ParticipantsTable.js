@@ -12,14 +12,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import { useTournament } from "../../tournament/helpers";
-import { useParticipants } from "../../participant/hooks";
-import { useUnregisterTeam } from "../registration/registration";
-import MyTable from "../../viewer/tables/MyTable";
-import MyDatePicker from "../../inputs/MyDatePicker";
-import { Form, Formik } from "formik";
-import * as Yup from "yup";
-import { useUpdateTournament } from "../../tournament/helpers";
+import { useTournament } from "../../tournament/hooks.ts";
+import { useParticipants } from "../../participant/hooks.ts";
+import { useUnregisterTeam } from "../registration/registration.js";
+import MyTable from "../../viewer/tables/MyTable.js";
 
 function TeamsPage() {
   const { data: participants, status: participantsStatus } = useParticipants();
