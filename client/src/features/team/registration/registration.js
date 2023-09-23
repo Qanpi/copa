@@ -3,11 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
 import { Link } from "react-router-dom";
-import { useTeam, useTournament, useUser } from "../../..";
-import MyTextField from "../../inputs/textField/mytextfield";
-import MySelect from "../../inputs/select/mySelect";
+import { useTeam, useUpdateTeam } from "../hooks.ts";
+import { useUser } from "../../user/hooks.ts";
+import { useTournament } from "../../tournament/hooks.ts";
+import MyTextField from "../../inputs/textField/mytextfield.js";
+import MySelect from "../../inputs/select/mySelect.js";
 import * as Yup from "yup";
-import { useUpdateTeam } from "../hooks";
 
 export const useUnregisterTeam = () => {
   const queryClient = useQueryClient();

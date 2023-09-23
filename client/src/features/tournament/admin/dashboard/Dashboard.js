@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { tournamentKeys, useTournament } from "../../../..";
-import MyStepper from "../../../inputs/stepper/mystepper";
-import SettingsStage from "../settings/Settings";
+import { tournamentKeys } from "../../hooks.ts";
+import { useTournament } from "../../hooks.ts";
+import MyStepper from "../../../inputs/stepper/mystepper.js";
+import SettingsStage from "../settings/Settings.js";
 import "./Dashboard.css";
-import GroupStages from "../groupStage/GroupStage";
-import RegistrationStage from "../registration/Registration";
+import GroupStages from "../groupStage/GroupStage.js";
+import RegistrationStage from "../registration/Registration.js";
 import { Button } from "@mui/material";
-import CreateTournament from "../../../tournament/admin/create/CreateTournament";
+import CreateTournament from "../../../tournament/admin/create/CreateTournament.js";
 
 export const useUpdateTournament = (id) => {
   const queryClient = useQueryClient();

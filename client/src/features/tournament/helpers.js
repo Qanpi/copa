@@ -1,4 +1,4 @@
-import { useTournament } from "../..";
+import { useTournament } from "./hooks";
 
 
 

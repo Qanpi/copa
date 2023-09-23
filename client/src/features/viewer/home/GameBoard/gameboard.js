@@ -1,7 +1,6 @@
-import GameDay from "../GameDay/gameday";
+import GameDay from "../GameDay/gameday.js";
 import { useEffect, useState } from "react";
 import "./gameboard.css"
-import axios from "axios"
 
 function GameBoard() {
     const [gameDays, setGameDays] = useState([])

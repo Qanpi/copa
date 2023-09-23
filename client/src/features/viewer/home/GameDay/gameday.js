@@ -1,4 +1,4 @@
-import GameRecord from "../GameRecord/gamerecord";
+import GameRecord from "../GameRecord/gamerecord.js";
 
 function GameDay() {
     return (

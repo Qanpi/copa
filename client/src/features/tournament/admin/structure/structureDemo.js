@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useTournament } from "../../../..";
+import { useTournament } from "../../hooks";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 

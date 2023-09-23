@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
-import { useTournament } from "../../..";
+import { useTournament } from "../hooks";
 import { useParticipants } from "../../participant/hooks";
 import { TMatch } from "@backend/models/match";
 import { ObjectId } from "mongodb";

@@ -3,9 +3,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
 } from "@tanstack/react-query";
-import axios from "axios";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
@@ -20,73 +18,11 @@ import TeamsPage from "./features/team/table/ParticipantsTable";
 import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
-import DrawPage from "./features/team/admin/draw/Draw";
+import DrawPage from "./features/team/admin/Draw";
 import StructurePage from "./features/tournament/admin/structure/structure";
 import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
 import MatchesPage from "./features/tournament/matches/Matches";
 import MatchPage from "./features/tournament/matches/page/MatchPage";
-
-const userKeys = {
-  all: ["users"],
-  details: () => [...userKeys.all, "detail"],
-  detail: (id: string) => [...userKeys.details(), id],
-};
-
-export const useUser = (id: string) => {
-  return useQuery({
-    queryKey: userKeys.detail(id),
-    queryFn: async () => {
-      const res =
-        id === "me"
-          ? await axios.get("/me")
-          : await axios.get(`/api/${userKeys.all}/${id}`);
-      return res.data;
-    },
-  });
-};
-
-// export const useAuth = () => {
-//   return useQuery({
-//     queryKey: userKeys.detail("me"),
-//     queryFn: async () => {
-//       const res = await axios.get(`/me`);
-//       return res.data;
-//     }
-//   })
-// }
-
-export const tournamentKeys = {
-  all: ["tournaments"],
-  details: () => [...tournamentKeys.all, "detail"],
-  detail: (id: string) => [...tournamentKeys.details(), id],
-};
-
-export const useTournament = (id: string) => {
-  return useQuery({
-    queryKey: tournamentKeys.detail(id),
-    queryFn: async () => {
-      const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
-      return response.data;
-    },
-  });
-};
-
-export const teamKeys = {
-  all: ["teams"],
-  details: () => [teamKeys.all, "detail"],
-  detail: (id: string) => [...teamKeys.details(), id],
-};
-
-export const useTeam = (name: string, props: object) => {
-  return useQuery({
-    queryKey: teamKeys.detail(name),
-    queryFn: async () => {
-      const response = await axios.get(`/api/teams/?name=${name}`);
-      return response.data[0] || null; //FIXME: assuming the response is array; maybe do this validation on server?
-    },
-    ...props,
-  });
-};
 
 function App() {
   return (

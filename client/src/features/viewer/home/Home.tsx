@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useTournament } from "../../..";
+import { useTournament } from "../../tournament/hooks";
 import GameBoard from "./GameBoard/gameboard";
 import "./Home.css";
 import InstagramBoard from "./InstagramBoard/instagramboard";

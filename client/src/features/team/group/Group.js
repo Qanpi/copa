@@ -8,9 +8,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import MyTable from "../../viewer/tables/MyTable";
+import { isEqual } from "lodash";
 import { memo } from "react";
-import { differenceWith, isEqual } from "lodash";
+import MyTable from "../../viewer/tables/MyTable.js";
 
 function Group({ name, participants, disableHead }) {
   const teamValueGetter = (params, fieldName) => {

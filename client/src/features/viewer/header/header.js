@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { useUser } from "../../..";
-import UserPanel from "../../user/userMenu/userpanel";
+import { useUser } from "../../user/hooks.ts";
+import UserPanel from "../../user/userMenu/userpanel.js";
 import "./header.css";
 import { useRef, useState } from "react";
 

@@ -2,12 +2,11 @@
   "extends": "@tsconfig/create-react-app/tsconfig.json",
   "ts-node": {
     "esm": true,
-    "experimentalSpecifierResolution": "node",
     "compilerOptions": {
       "allowSyntheticDefaultImports": true,
       "paths": {"@frontend/*": ["./client/*"]},
       "allowImportingTsExtensions": true,
-      "esModuleInterop": true
+      "esModuleInterop": true,
     }
   },
   "compilerOptions": {
