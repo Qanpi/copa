@@ -4,12 +4,12 @@ import { Dayjs } from "dayjs";
 import _ from "lodash";
 import { useTournament } from "../../..";
 import { useParticipants } from "../../participant/hooks";
-import { Match } from "@backend/models/match";
+import { TMatch } from "@backend/models/match";
 import { ObjectId } from "mongodb";
 
 export const useUpdateMatch = () => {
   return useMutation({
-    mutationFn: async (values: Partial<Match>) => {
+    mutationFn: async (values: Partial<TMatch>) => {
       const res = await axios.patch(`/api/matches/${values.id}`, values);
       return res.data;
     },
@@ -70,7 +70,7 @@ type Id = ObjectId | string;
 const matchKeys = {
   all: "matches",
   id: (id: Id) => [matchKeys.all, id.toString()],
-  query: (query: Partial<Match>) => [matchKeys.all, query],
+  query: (query: Partial<TMatch>) => [matchKeys.all, query],
 };
 
 export const useMatch = (id: Id) => {
@@ -79,7 +79,7 @@ export const useMatch = (id: Id) => {
     queryFn: async () => {
       const url = `/api/${matchKeys.all}/${id}`;
       const res = await axios.get(url);
-      return res.data as Match;
+      return res.data as TMatch;
     }
   })
 }
@@ -98,7 +98,7 @@ export const useMatches = (query?: { start?: Date; end?: Date; status?: string; 
       }
 
       const res = await axios.get(url);
-      return res.data as Match[];
+      return res.data as TMatch[];
     },
   });
 };

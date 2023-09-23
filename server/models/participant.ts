@@ -1,7 +1,7 @@
 import mongoose, { InferSchemaType } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { ObjectId } from "mongodb";
-import { Participant as BracketsParticipant } from "brackets-mongo-db";
+import { Participant as BracketsParticipant, TParticipant as TBracketsParticipant } from "brackets-mongo-db";
 
 const ParticipantSchema = new mongoose.Schema(
   {
@@ -39,6 +39,6 @@ const Participant = BracketsParticipant.discriminator(
   ParticipantSchema
 );
 
-export type TParticipant = InferSchemaType<typeof Participant.schema>;
+export type TParticipant = InferSchemaType<typeof Participant.schema> & TBracketsParticipant;
 
 export default Participant;

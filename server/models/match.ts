@@ -1,11 +1,12 @@
 import { Status } from "brackets-model";
-import { Match as BracketsMatch } from "brackets-mongo-db";
+import { Match as BracketsMatch, TMatch as TBracketsMatch } from "brackets-mongo-db";
 import mongoose, { InferSchemaType } from "mongoose";
 
 const MatchSchema = new mongoose.Schema(
   {
     start: { type: Date },
     duration: { type: Number, default: 6 }, //in minutes
+    id: String,
   },
   {
     virtuals: {
@@ -25,6 +26,6 @@ const MatchSchema = new mongoose.Schema(
 
 const Match = BracketsMatch.discriminator("Match", MatchSchema);
 
-export type TMatch = InferSchemaType<typeof Match.schema>;
+export type TMatch = InferSchemaType<typeof MatchSchema> & TBracketsMatch;
 
 export default Match;

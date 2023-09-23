@@ -36,7 +36,7 @@ import { useParticipants, useParticipant } from "../../../participant/hooks";
 import Dragula from "react-dragula";
 import "react-dragula/dist/dragula.css";
 import { useUpdateMatch } from "../hooks";
-import { Match } from "@backend/models/match";
+import { TMatch } from "@backend/models/match";
 import "./MatchesCalendar.css"
 
 // type MatchEvent = {
@@ -52,7 +52,7 @@ import "./MatchesCalendar.css"
 // };
 
 type MatchEvent = Omit<
-  Partial<Match>,
+  Partial<TMatch>,
   "opponent1" | "opponent2" | "duration"
 > & {
   opponent1: ObjectId;
