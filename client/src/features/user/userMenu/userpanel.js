@@ -3,7 +3,8 @@ import axios from "axios";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { useUser, useTeam } from "../../..";
+import { useTeam } from "../../team/hooks.ts";
+import { useUser } from "../hooks.ts";
 
 function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");

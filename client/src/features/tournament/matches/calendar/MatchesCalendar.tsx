@@ -24,7 +24,7 @@ import {
   useState,
 } from "react";
 import { useMatches } from "../hooks";
-import { useTournament } from "../../../..";
+import { useTournament } from "../../hooks";
 import {
   getGroupFromTournament,
   getRoundFromTournament,

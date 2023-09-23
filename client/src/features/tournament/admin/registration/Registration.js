@@ -10,9 +10,9 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useTournament } from "../../../..";
-import MyDatePicker from "../../../inputs/datePicker/MyDatePicker";
-import { useUpdateTournament } from "../dashboard/Dashboard";
+import { useTournament } from "../../hooks.ts";
+import MyDatePicker from "../../../inputs/datePicker/MyDatePicker.js";
+import { useUpdateTournament } from "../dashboard/Dashboard.js";
 
 function RegistrationStage() {
   const { status: tournamentStatus, data: tournament } =

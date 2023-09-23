@@ -1,7 +1,4 @@
-import { Backdrop, Typography } from "@mui/material";
-import MyChecklist from "../../../inputs/checklist/MyChecklist";
-import "./GroupStage.css"
-import { ClockIcon } from "@mui/x-date-pickers";
+import "./GroupStage.css";
 
 const tasks = [{ name: "Draw teams", description: "Allocate into groups" }];
 function GroupStage() {

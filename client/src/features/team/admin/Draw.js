@@ -1,15 +1,11 @@
-import { Button, Typography } from "@mui/material";
-import { Form, Formik } from "formik";
-import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { Wheel } from "react-custom-roulette/";
-import * as Yup from "yup";
-import MyTextField from "../../../inputs/textField/mytextfield";
-import { useParticipants } from "../../../participant/hooks";
-import Group from "../../group/Group";
-import { useUpdateTeam } from "../../hooks";
-import { useTournament } from "../../../..";
+import { Button } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { Wheel } from "react-custom-roulette/";
+import { useTournament } from "../../tournament/hooks.ts";
+import { useParticipants } from "../../participant/hooks.ts";
+import Group from "../group/Group.js";
 
 const useGroups = () => {
   const { data: tournament, isSuccess } = useTournament("current");

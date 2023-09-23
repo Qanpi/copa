@@ -1,14 +1,13 @@
-import { useContext } from "react";
-import "./Profile.css";
+import Timeline from "@mui/lab/Timeline/Timeline.js";
+import TimelineConnector from "@mui/lab/TimelineConnector/TimelineConnector.js";
+import TimelineContent from "@mui/lab/TimelineContent/TimelineContent.js";
+import TimelineDot from "@mui/lab/TimelineDot/TimelineDot.js";
+import TimelineItem from "@mui/lab/TimelineItem/TimelineItem.js";
+import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator.js";
 import { Avatar } from "@mui/material";
-import TimelineContent from "@mui/lab/TimelineContent/TimelineContent";
-import TimelineItem from "@mui/lab/TimelineItem/TimelineItem";
-import Timeline from "@mui/lab/Timeline/Timeline"
-import TimelineDot from "@mui/lab/TimelineDot/TimelineDot"
-import TimelineConnector from "@mui/lab/TimelineConnector/TimelineConnector"
-import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator"
-import { useUser } from "../../..";
 import { useParams } from "react-router";
+import { useUser } from "../hooks.ts";
+import "./Profile.css";
 
 function ProfilePage() {
   const {id} = useParams();
