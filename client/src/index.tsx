@@ -18,7 +18,7 @@ import TeamsPage from "./features/team/table/ParticipantsTable";
 import TeamPage from "./features/team/profile/Team";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import reportWebVitals from "./services/reportWebVitals";
-import DrawPage from "./features/team/admin/Draw";
+import DrawPage from "./features/team/admin/Draw.js";
 import StructurePage from "./features/tournament/admin/structure/structure";
 import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
 import MatchesPage from "./features/tournament/matches/Matches";
