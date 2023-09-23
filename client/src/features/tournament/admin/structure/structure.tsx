@@ -1,31 +1,28 @@
 /// <reference types="webpack/module" />
 import {
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
-import { useTournament } from "../../hooks";
-import axios from "axios";
-import {
-  UseQueryResult,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import {
   Button,
   Card,
   CardContent,
-  Paper,
   Slider,
-  Typography,
+  Typography
 } from "@mui/material";
-import { useParticipants } from "../../../participant/hooks";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient
+} from "@tanstack/react-query";
+import axios from "axios";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from "react";
+import { useParticipants } from "../../../participant/hooks.ts";
+import { useTournament } from "../../hooks.ts";
 
 import { BracketsViewer } from "ts-brackets-viewer";
-import "ts-brackets-viewer/dist/style.css";
+// import "ts-brackets-viewer/dist/style.css";
 
 import { BracketsManager, helpers } from "brackets-manager";
 import { InMemoryDatabase } from "brackets-memory-db";
