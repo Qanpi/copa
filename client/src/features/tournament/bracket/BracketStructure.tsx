@@ -18,8 +18,8 @@ import {
   useRef,
   useState
 } from "react";
-import { useParticipants } from "../../../participant/hooks.ts";
-import { useTournament } from "../../hooks.ts";
+import { useParticipants } from "../../participant/hooks.ts";
+import { useTournament } from "../hooks.ts";
 
 import { BracketsViewer } from "ts-brackets-viewer";
 // import "ts-brackets-viewer/dist/style.css";

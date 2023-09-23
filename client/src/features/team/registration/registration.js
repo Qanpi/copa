@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import { useTeam, useUpdateTeam } from "../hooks.ts";
 import { useUser } from "../../user/hooks.ts";
 import { useTournament } from "../../tournament/hooks.ts";
-import MyTextField from "../../inputs/textField/mytextfield.js";
-import MySelect from "../../inputs/select/mySelect.js";
+import MyTextField from "../../inputs/mytextfield.js";
+import MySelect from "../../inputs/mySelect.js";
 import * as Yup from "yup";
 
 export const useUnregisterTeam = () => {

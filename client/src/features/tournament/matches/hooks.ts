@@ -1,11 +1,10 @@
+import { TMatch } from "@backend/models/match";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
-import { useTournament } from "../hooks";
 import { useParticipants } from "../../participant/hooks";
-import { TMatch } from "@backend/models/match";
-import { ObjectId } from "mongodb";
+import { useTournament } from "../hooks";
 
 export const useUpdateMatch = () => {
   return useMutation({
@@ -67,13 +66,8 @@ export const useMatchScheduler = () => {
 
 const matchKeys: QueryKeyFactory<Match> = {
   all: "matches",
-<<<<<<< HEAD
-  id: (id) => [matchKeys.all, id.toString()],
-  query: (query) => [matchKeys.all, query],
-=======
   id: (id: Id) => [matchKeys.all, id.toString()],
   query: (query: Partial<TMatch>) => [matchKeys.all, query],
->>>>>>> develop
 };
 
 export const useMatch = (id: Id) => {

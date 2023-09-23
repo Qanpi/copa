@@ -11,7 +11,7 @@ import {
   useEffect,
   useState
 } from "react";
-import { useTournament } from "../helpers";
+import { useTournament } from "../hooks";
 import { useParticipants } from "../../participant/hooks";
 
 import "ts-brackets-viewer/dist/style.css";

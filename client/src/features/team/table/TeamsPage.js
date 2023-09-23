@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import { useTournament } from "../../tournament/helpers";
+import { useTournament } from "../../tournament/hooks";
 import { useParticipants } from "../../participant/hooks";
 import { useUnregisterTeam } from "../registration/registration";
 import { NotEnoughParticipantsAlert } from "./ParticipantsTable";

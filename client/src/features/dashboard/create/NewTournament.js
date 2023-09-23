@@ -9,12 +9,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Form, Formik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
-import { useTournament } from "../../tournament/helpers";
-import MyFileInput from "../../inputs/MyFileInput";
-import MyNumberSlider from "../../inputs/myNumberSlider";
-import MyTextField from "../../inputs/mytextfield";
-import MyAutocomplete from "../../inputs/MyAutocomplete";
-import { createTournament, useCreateTournament } from "../../tournament/helpers";
+import { useTournament } from "../../tournament/hooks.ts";
+import MyFileInput from "../../inputs/MyFileInput.js";
+import MyNumberSlider from "../../inputs/myNumberSlider.js";
+import MyTextField from "../../inputs/mytextfield.js";
+import MyAutocomplete from "../../inputs/MyAutocomplete.tsx";
+import { createTournament, useCreateTournament } from "../../tournament/hooks.ts";
 
 const Parameters = () => {
   return (

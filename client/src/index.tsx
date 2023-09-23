@@ -7,22 +7,22 @@ import {
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Header from "./features/viewer/header/header";
-import "./index.css";
-import NewTournamentPage from "./features/dashboard/create/NewTournament";
+import DashboardPage from "./features/dashboard/Dashboard.js";
 import NewTeamPage from "./features/team/create/CreateTeam";
-import HomePage from "./features/viewer/home/Home";
-import ProfilePage from "./features/user/profile/Profile";
+import DrawPage from "./features/team/draw/Draw.js";
+import JoinTeamPage from "./features/team/join/JoinTeam";
+import TeamPage from "./features/team/profile/Team";
 import RegistrationPage from "./features/team/registration/registration";
 import TeamsPage from "./features/team/table/ParticipantsTable";
-import TeamPage from "./features/team/profile/Team";
-import JoinTeamPage from "./features/team/join/JoinTeam";
-import reportWebVitals from "./services/reportWebVitals";
-import DrawPage from "./features/team/Draw.js";
-import BracketStructure from "./features/tournament/bracket/BracketStructure";
-import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
+import BracketPage from "./features/tournament/bracket/Bracket.tsx";
+import GroupStagePage from "./features/tournament/groupStage/GroupStage.tsx";
 import MatchesPage from "./features/tournament/matches/Matches";
 import MatchPage from "./features/tournament/matches/page/MatchPage";
+import ProfilePage from "./features/user/profile/Profile";
+import Header from "./features/viewer/header/header";
+import HomePage from "./features/viewer/home/Home";
+import "./index.css";
+import reportWebVitals from "./services/reportWebVitals";
 
 function App() {
   return (

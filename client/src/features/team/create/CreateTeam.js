@@ -12,8 +12,8 @@ import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useUser } from "../../user/hooks.ts";
-import MyFileInput from "../../inputs/fileInput/MyFileInput.js";
-import MyTextField from "../../inputs/textField/mytextfield.js";
+import MyFileInput from "../../inputs/MyFileInput.js";
+import MyTextField from "../../inputs/mytextfield.js";
 
 export const teamValidationSchema = Yup.object({
   name: Yup.string().max(20).trim().required(),

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { finalRoundNames, useTournament } from "../helpers";
+import { finalRoundNames, useTournament } from "../hooks";
 import GroupStageStructure from "./GroupStageStructure";
 import axios from "axios";
 
