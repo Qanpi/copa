@@ -62,23 +62,20 @@ const TournamentSchema = new mongoose.Schema(
     stages: [StageSchema],
     rounds: [RoundSchema],
 
+    state: {
+      type: String,
+      enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
+      default: "Registration",
+    },
     end: Date,
   },
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
     virtuals: {
-      state: {
-        get() {
-          const now = new Date();
-          if (!this.registration.end || now < this.registration.end) {
-            return "Registration";
-          }
-        }
-      },
       states: {
         get() {
-          return ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"]
+          return this.schema.path("state").enumValues;
         }
       }
     }
