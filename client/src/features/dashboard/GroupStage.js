@@ -9,6 +9,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
 import DrawPage from "../team/draw/Draw.js";
 import GroupStageStructure from "./GroupStageStructure.tsx";
+import Scheduler from "./Scheduler.tsx";
 
 function GroupStage({next, prev}) {
 
@@ -46,28 +47,14 @@ function GroupStage({next, prev}) {
           )
         }
       >
-        {({ values }) => (
-          <>
             <Form>
-              <MyDatePicker
-                disablePast
-                name="start"
-                label="start"
-              ></MyDatePicker>
-              {/* TODO: TIME PICKER, weekend block checkbox */}
 
-              <DateBlocker
-                name="blocked"
-                blockedDays={values.blocked}
-                minDate={values.start}
-              ></DateBlocker>
-
+              <Scheduler></Scheduler>
+              
               <Button type="submit">
                 Automatically schedule group stage matches
               </Button>
             </Form>
-          </>
-        )}
       </Formik>
 
       <Card>

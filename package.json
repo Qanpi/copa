@@ -58,6 +58,7 @@
     "passport-google-oauth": "^2.0.0",
     "pug": "^3.0.2",
     "qs": "^6.11.2",
+    "react-date-range": "^1.4.0",
     "react-google-charts": "^4.0.1",
     "ts-node": "^10.9.1"
   },
@@ -69,6 +70,7 @@
     "@types/debug": "^4.1.8",
     "@types/jest": "^29.5.3",
     "@types/lodash-es": "^4.17.8",
+    "@types/react-date-range": "^1.4.4",
     "babel-jest": "^29.6.2",
     "eslint": "^8.45.0",
     "eslint-plugin-react": "^7.33.0",
