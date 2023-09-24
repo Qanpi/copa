@@ -2,10 +2,12 @@ import { Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useMatches } from "../hooks.ts";
 import { useTournament } from "../../hooks.ts";
+import { useParticipants } from "../../../participant/hooks.ts";
 
 export const MatchesTable = () => {
   const { data: tournament } = useTournament("current");
   const { data: matches } = useMatches();
+  const { data: participants } = useParticipants();
 
   const cols: GridColDef[] = [
     {
@@ -16,15 +18,16 @@ export const MatchesTable = () => {
       field: "opponent1",
       headerName: "Home",
       valueGetter: (p) => {
-        return p.value.name;
+        const participant = participants?.find(part => part.id === p.value.id);
+        return participant.name;
       }
     },
     {
       field: "opponent2",
       headerName: "Away",
       valueGetter: (p) => {
-        console.log(p.value)
-        return p.value.name;
+        const participant = participants?.find(part => part.id === p.value.id);
+        return participant.name;
       }
     },
     {

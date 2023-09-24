@@ -1,6 +1,9 @@
 import { Status } from "brackets-model";
-import { Match as BracketsMatch, TMatch as TBracketsMatch } from "brackets-mongo-db";
-import mongoose, { InferSchemaType } from "mongoose";
+import {
+  Match as BracketsMatch,
+  TMatch as TBracketsMatch,
+} from "brackets-mongo-db";
+import mongoose, { InferSchemaType, SchemaTypes } from "mongoose";
 
 const MatchSchema = new mongoose.Schema(
   {
