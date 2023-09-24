@@ -10,13 +10,36 @@ import { GroupSchema, RoundSchema, StageSchema } from "brackets-mongo-db";
 
 dayjs.extend(relativeTime);
 
-GroupSchema.virtual("name").get(function () {
-  const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+const CustomStageSchema = StageSchema.discriminator(
+  "Tournament", //name must match the discriminator of Tournament model because of how brackets-mongo-db works
+  new mongoose.Schema({}, { id: true })
+);
 
-  return `Group ${alphabet[this.number - 1]}`;
-});
+const CustomRoundSchema = RoundSchema.discriminator(
+  "Tournament",
+  new mongoose.Schema({}, { id: true })
+);
 
-GroupSchema.virtual("participants", {
+const CustomGroupSchema = GroupSchema.discriminator(
+  "Tournament",
+  new mongoose.Schema(
+    {},
+    {
+      id: true,
+      virtuals: {
+        name: {
+          get() {
+            const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+
+            return `Group ${alphabet[this.number - 1]}`;
+          },
+        },
+      },
+    }
+  )
+);
+
+CustomGroupSchema.virtual("participants", {
   ref: collections.participants.id,
   localField: "_id",
   foreignField: "group",
@@ -58,9 +81,9 @@ const TournamentSchema = new mongoose.Schema(
       type: [String],
       default: ["Men's", "Women's"],
     },
-    groups: [GroupSchema],
-    stages: [StageSchema],
-    rounds: [RoundSchema],
+    groups: [CustomGroupSchema],
+    stages: [CustomStageSchema],
+    rounds: [CustomRoundSchema],
 
     state: {
       type: String,
@@ -76,21 +99,20 @@ const TournamentSchema = new mongoose.Schema(
       states: {
         get() {
           return this.schema.path("state").enumValues;
-        }
-      }
-    }
+        },
+      },
+    },
     // statics: {
-      // async findLatest() {
-      //   const meta = await Metadata.findOne({
-      //     model: collections.tournaments.id,
-      //   });
-      //   const tournament = await this.findById(meta.latest);
-      //   return tournament;
-      // },
+    // async findLatest() {
+    //   const meta = await Metadata.findOne({
+    //     model: collections.tournaments.id,
+    //   });
+    //   const tournament = await this.findById(meta.latest);
+    //   return tournament;
+    // },
     // },
   }
 );
-
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();

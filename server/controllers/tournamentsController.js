@@ -2,12 +2,16 @@ import expressAsyncHandler from "express-async-handler";
 import Tournament from "../models/tournament.js";
 import Team from "../models/team.js";
 import { validate } from "../middleware/validation.js";
-
-import {JsonDatabase} from "brackets-json-db"
-const storage = new JsonDatabase();
-
-import { BracketsManager } from "brackets-manager";
 import { validationResult } from "express-validator";
+
+
+import MongooseForBrackets from "brackets-mongo-db";
+import { BracketsManager } from "brackets-manager";
+import Participant from "../models/participant.js";
+import Match from "../models/match.js";
+import MatchGame from "../models/matchGame.js";
+
+const storage = new MongooseForBrackets(Tournament, Participant, Match, MatchGame);
 export const manager = new BracketsManager(storage, true);
 
 export const createOne = expressAsyncHandler(async (req, res) => {
