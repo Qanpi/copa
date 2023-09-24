@@ -1,18 +1,27 @@
 import { Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useMatches } from "../hooks.ts";
+import { useMatches, useUpdateMatch } from "../hooks.ts";
 import { useTournament } from "../../hooks.ts";
 import { useParticipants } from "../../../participant/hooks.ts";
+import { notStrictEqual } from "assert";
+import { TMatch } from "@backend/models/match.ts";
 
 export const MatchesTable = () => {
   const { data: tournament } = useTournament("current");
   const { data: matches } = useMatches();
   const { data: participants } = useParticipants();
 
+  const updateMatch = useUpdateMatch();
+
   const cols: GridColDef[] = [
     {
-      field: "date",
+      field: "start",
       headerName: "Date",
+      editable: true,
+      type: "dateTime",
+      valueGetter: (p) => {
+        return p.value ? new Date(p.value) : new Date() //FIXME: custom type
+      }
     },
     {
       field: "opponent1",
@@ -62,7 +71,12 @@ export const MatchesTable = () => {
 
   if (!matches) return <>LOading</>;
 
-  return <DataGrid editMode="row" rows={matches} columns={cols}></DataGrid>;
+  const handleRowUpdate = async (newRow: TMatch, og: TMatch) => {
+    const res = await updateMatch.mutateAsync(newRow);
+    return res;
+  }
+
+  return <DataGrid editMode="row" rows={matches} columns={cols} processRowUpdate={handleRowUpdate}></DataGrid>;
 };
 
 function MatchesPage() {

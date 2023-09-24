@@ -7,7 +7,7 @@ import { manager } from "./tournamentsController.js";
 export const getMany = async (req: Request, res: Response) => {
   const endFilter = req.query.end
     ? {
-        date: {
+        start: {
           $lt: req.query.end,
         },
       }
@@ -15,7 +15,7 @@ export const getMany = async (req: Request, res: Response) => {
 
   const startFilter = req.query.start
     ? {
-        date: {
+        start: {
           $gte: req.query.start,
         },
       }
@@ -27,13 +27,13 @@ export const getMany = async (req: Request, res: Response) => {
 
   switch (req.query.status) {
     case "unscheduled":
-      query["date"] = {
+      query["start"] = {
         $exists: false,
       };
       break;
 
     case "scheduled":
-      query["date"] = {
+      query["start"] = {
         $exists: true,
       };
       break;
