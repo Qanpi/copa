@@ -24,6 +24,7 @@ import { useMatches, useUpdateMatch } from "../hooks.ts";
 import "./MatchesCalendar.css";
 
 import { TMatch } from "@backend/models/match.ts";
+import { Link } from "react-router-dom";
 
 // type MatchEvent = {
 //   matchId: ObjectId;
@@ -111,7 +112,7 @@ function MatchesCalendar() {
         </ClickAwayListener>
       </Popper>
 
-      {/* //TODO: port over to react-calendar-timeline */}
+      //TODO: port over to react-calendar-timeline
       <FullCalendar
         plugins={[listPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{
@@ -155,7 +156,7 @@ const MatchEventPopper = ({
   return (
     <Paper>
       <Typography>{`${title}: ${start} - ${end}`}</Typography>
-      <Typography>{id}</Typography>
+      <Link to={`/tournament/matches/${id}`}>Match link</Link>
       <Typography>{opp1?.name}</Typography>
       <Typography>{opp2?.name}</Typography>
     </Paper>
