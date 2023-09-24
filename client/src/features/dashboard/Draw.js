@@ -3,9 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
-import { useTournament } from "../../tournament/hooks.ts";
-import { useParticipants } from "../../participant/hooks.ts";
-import Group from "../group/Group.js";
+import { useTournament } from "../tournament/hooks.ts";
+import { useParticipants } from "../participant/hooks.ts";
+import Group from "../team/group/Group.js";
 
 const useGroups = () => {
   const { data: tournament, isSuccess } = useTournament("current");
@@ -69,8 +69,27 @@ function DrawPage() {
     },
   });
 
+  const createStage = useMutation({
+    mutationFn: async (values) => {
+      await axios.post(`/api/tournaments/${tournament.id}/stages`, {
+        name: "Group Stage",
+        tournamentId: tournament.id,
+        type: "round_robin",
+        //TODO: division: ""
+        seedingIds: values.seedingIds,
+        settings: {
+          groupCount: values.groups,
+          size: values.participants,
+        },
+      });
+    }
+  });
+
   const handleClickSaveSeeding = (e) => {
-    updateSeeding.mutate({ seedingIds: seeding.map(s => s.id) });
+    createStage.mutate({
+      seedingIds: seeding.map(s => s.id),
+      groups: 4
+    })
   };
 
   //TODO: skipping the whole process if desired

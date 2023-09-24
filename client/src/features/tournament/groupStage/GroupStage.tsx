@@ -8,7 +8,7 @@ import axios from "axios";
 //3 display groups normally
 import { BracketsViewer } from "ts-brackets-viewer";
 import { useEffect, useRef } from "react";
-import DrawPage from "../../team/draw/Draw";
+import DrawPage from "../../dashboard/Draw";
 const bracketsViewer = new BracketsViewer();
 
 const useGroupStage = () => {

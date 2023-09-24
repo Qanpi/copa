@@ -7,7 +7,7 @@ import { EventClickArg } from "@fullcalendar/core";
 import DateBlocker from "../inputs/DateBlocker.tsx";
 import dayjs, { Dayjs } from "dayjs";
 import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
-import DrawPage from "../team/draw/Draw.js";
+import DrawPage from "./Draw.js";
 import GroupStageStructure from "./GroupStageStructure.tsx";
 import Scheduler from "./Scheduler.tsx";
 

@@ -13,6 +13,21 @@ export const MatchesTable = () => {
       headerName: "Date",
     },
     {
+      field: "opponent1",
+      headerName: "Home",
+      valueGetter: (p) => {
+        return p.value.name;
+      }
+    },
+    {
+      field: "opponent2",
+      headerName: "Away",
+      valueGetter: (p) => {
+        console.log(p.value)
+        return p.value.name;
+      }
+    },
+    {
       field: "group_id",
       headerName: "Group",
       valueGetter: (p) => {

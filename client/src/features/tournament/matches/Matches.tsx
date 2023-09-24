@@ -24,14 +24,6 @@ import MatchesCalendar from "./calendar/MatchesCalendar";
 import { useMatchScheduler } from "./hooks";
 
 function MatchesPage() {
-  const { data: unscheduledMatches, status: unscheduledStatus } = useMatches({
-    status: "unscheduled",
-  });
-
-
-  if (unscheduledStatus !== "success") return <div>Loading...</div>;
-
-
   return (
     <div>
       <MatchesCalendar></MatchesCalendar>

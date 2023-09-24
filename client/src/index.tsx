@@ -9,7 +9,7 @@ import * as ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import DashboardPage from "./features/dashboard/Dashboard.js";
 import NewTeamPage from "./features/team/create/CreateTeam";
-import DrawPage from "./features/team/draw/Draw.js";
+import DrawPage from "./features/dashboard/Draw.js";
 import JoinTeamPage from "./features/team/join/JoinTeam";
 import TeamPage from "./features/team/profile/Team";
 import RegistrationPage from "./features/team/registration/registration";
