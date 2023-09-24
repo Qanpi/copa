@@ -7,6 +7,8 @@ import { EventClickArg } from "@fullcalendar/core";
 import DateBlocker from "../inputs/DateBlocker.tsx";
 import dayjs, { Dayjs } from "dayjs";
 import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
+import DrawPage from "../team/draw/Draw.js";
+import GroupStageStructure from "./GroupStageStructure.tsx";
 
 function GroupStage({next, prev}) {
 
@@ -24,7 +26,8 @@ function GroupStage({next, prev}) {
 
   return (
     <>
-      <Link to="/tournament/draw">Draw teams</Link>
+      <GroupStageStructure></GroupStageStructure>
+      <DrawPage></DrawPage>
 
       <Formik
         initialValues={{

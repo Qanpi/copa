@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { finalRoundNames, useTournament } from "../hooks";
-import GroupStageStructure from "./GroupStageStructure";
+import GroupStageStructure from "../../dashboard/GroupStageStructure";
 import axios from "axios";
 
 //1 div into groups
@@ -29,12 +29,10 @@ const useGroupStage = () => {
 function GroupStagePage() {
     const { data: stage } = useGroupStage();
 
-    console.log(stage);
-
     const bracketsRef = useRef(null);
 
     useEffect(() => {
-        if (stage.participant.length !== 0) {
+        if (stage) {
             bracketsViewer.render(
                 {
                     stages: stage.stage,
@@ -56,14 +54,11 @@ function GroupStagePage() {
         };
     }, [stage]);
 
-    if (!stage) {
-        return <GroupStageStructure></GroupStageStructure>
-    } else if (stage.participant.length === 0) {
-        return <DrawPage></DrawPage> 
-    }
+    if (!stage) return <>
+        Group stage not defined yet
+    </>
 
     return <>
-
         <div
             ref={bracketsRef}
             className="brackets-viewer group-stage"

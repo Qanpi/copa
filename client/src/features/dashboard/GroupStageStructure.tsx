@@ -11,8 +11,8 @@ import {
   useEffect,
   useState
 } from "react";
-import { useTournament } from "../hooks";
-import { useParticipants } from "../../participant/hooks";
+import { useTournament } from "../tournament/hooks";
+import { useParticipants } from "../participant/hooks";
 
 import "ts-brackets-viewer/dist/style.css";
 import axios from "axios";
