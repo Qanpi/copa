@@ -2,11 +2,10 @@ import { Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useMatches } from "../hooks.ts";
 import { useTournament } from "../../hooks.ts";
-import { TMatch } from "@backend/models/match.ts";
 
-export const MatchesTable = ({ matches }: { matches: TMatch[] }) => {
+export const MatchesTable = () => {
   const { data: tournament } = useTournament("current");
-  console.log(tournament)
+  const { data: matches } = useMatches();
 
   const cols: GridColDef[] = [
     {
@@ -14,42 +13,45 @@ export const MatchesTable = ({ matches }: { matches: TMatch[] }) => {
       headerName: "Date",
     },
     {
-      field: "group",
+      field: "group_id",
       headerName: "Group",
       valueGetter: (p) => {
-        if (tournament?.groups !== undefined) {
-          console.log(Array.isArray(tournament.groups))
-          return tournament.groups.find((g) => g.id === p.value).name
-        }
+        const group = tournament?.groups.find((g) => g.id === p.value)
+        return group?.name;
       },
     },
     {
-      field: "round",
+      field: "round_id",
       headerName: "Round",
-      valueGetter: (p) =>
-        tournament?.rounds?.find((r: any) => r.id === p.value).number,
+      valueGetter: (p) => {
+        const round = tournament?.rounds.find((g) => g.id === p.value)
+        return round?.number;
+      }
     },
     {
       field: "verboseStatus",
       headerName: "Status",
     },
     {
-      field: "stage",
+      field: "stage_id",
       headerName: "Stage",
-      valueGetter: (p) => tournament?.states?.find((s: any) => s.id === p.value).name,
+      valueGetter: (p) => {
+        const state = tournament?.stages.find((g) => g.id === p.value)
+        return state?.name;
+      }
     },
   ];
+
+  if (!matches) return <>LOading</>;
 
   return <DataGrid editMode="row" rows={matches} columns={cols}></DataGrid>;
 };
 
 function MatchesPage() {
-  const { data: matches } = useMatches();
 
-  if (!matches) return <div>Loading...</div>;
   return (
     <>
-      <MatchesTable matches={matches}></MatchesTable>
+      <MatchesTable></MatchesTable>
       <Typography>Matches</Typography>
     </>
   );

@@ -35,7 +35,7 @@ function MatchesPage() {
   return (
     <div>
       <MatchesCalendar></MatchesCalendar>
-      <MatchesTable matches={unscheduledMatches}></MatchesTable>
+      <MatchesTable></MatchesTable>
 
     </div>
   );
