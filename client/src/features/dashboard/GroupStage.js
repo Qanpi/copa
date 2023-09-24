@@ -8,7 +8,7 @@ import DateBlocker from "../inputs/DateBlocker.tsx";
 import dayjs, { Dayjs } from "dayjs";
 import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
 
-function GroupStage() {
+function GroupStage({next, prev}) {
 
   const { data: unscheduledMatches, status: unscheduledStatus } = useMatches({
     status: "unscheduled",
@@ -17,6 +17,10 @@ function GroupStage() {
   const nextMonday = dayjs().day(8);
 
   const handleScheduleMatches = useMatchScheduler();
+
+  const handleClickNext = () => {
+    next();
+  }
 
   return (
     <>
@@ -70,6 +74,8 @@ function GroupStage() {
           <Typography>Matches complete</Typography>
         </CardContent>
       </Card>
+
+      <Button onClick={handleClickNext}>Next</Button>
       {/* maybe show groups and other related data */}
       {/* <AdminCalendar></AdminCalendar> */}
       {/* <MyChecklist items={tasks}></MyChecklist> */}

@@ -12,22 +12,33 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
 import MyDatePicker from "../inputs/MyDatePicker.js";
+import { useParticipants } from "../participant/hooks.ts";
+import { nextTick } from "process";
 
-function RegistrationStage() {
+function RegistrationStage({next, prev}) {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
 
-  //FIXME: custom hook extract needed
-  const { status, data: participations } = useQuery({
-    queryKey: ["participations"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/participants`);
-      return res.data;
-    },
-  });
+  const { data: participants } = useParticipants();
 
   if (tournamentStatus !== "success") return "bruh";
+
+  const handleClickNext = async () => {
+    const now = new Date();
+
+    if (new Date(tournament.registration.to) > now) {
+      alert("end early?");
+
+      await updateTournament.mutateAsync({
+        registration: {
+          to: now
+        }
+      })
+    }
+
+    next();
+  };
 
   return (
     <>
@@ -74,8 +85,13 @@ function RegistrationStage() {
         )}
       </Formik>
       <Card>
-        <CardContent>Teams registered</CardContent>
+        <CardContent>
+          <Typography variant="h2">{participants?.length}</Typography>
+          team(s) registered
+        </CardContent>
       </Card>
+
+      <Button onClick={handleClickNext}>Next</Button>
     </>
   );
 }

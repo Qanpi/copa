@@ -1,31 +1,41 @@
 import { Step, StepButton, StepLabel, Stepper, Typography } from "@mui/material";
 import NewTournamentPage from "./NewTournament.js";
 import RegistrationStage from "./Registration.js";
-import { useTournament } from "../tournament/hooks.ts";
+import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
 import GroupStage from "./GroupStage.js";
 
 function DashboardPage() {
-  const state = "group stage";
   const { data: tournament } = useTournament("current");
+  const updateTournament = useUpdateTournament(tournament?.id);
 
   if (!tournament) return <NewTournamentPage></NewTournamentPage>;
 
   const currentSection = () => {
     switch (tournament.state) {
       case "Registration":
-        return <RegistrationStage></RegistrationStage>;
-      case "group stage":
-        return <GroupStage></GroupStage>;
+        return <RegistrationStage next={nextSection} prev={prevSection}></RegistrationStage>;
+      case "Group stage":
+        return <GroupStage next={nextSection} prev={prevSection}></GroupStage>;
       default:
         return <Typography>Unknown tournament state.</Typography>
     }
   };
 
-  const stepId = tournament.states.indexOf(tournament.state);
+  const stateId = tournament.states.indexOf(tournament.state);
+
+  const nextSection = () => {
+    const next = tournament.states[stateId + 1];
+    updateTournament.mutate({state: next});
+  }
+
+  const prevSection = () => {
+    const prev = tournament.states[stateId - 1];
+    updateTournament.mutate({state: prev});
+  }
 
   return (
     <>
-      <Stepper activeStep={stepId} orientation="vertical">
+      <Stepper activeStep={stateId} orientation="vertical">
         {tournament.states.map((s, i) => (
           <Step key={i}>
             <StepLabel>{s}</StepLabel>
