@@ -57,10 +57,11 @@ export const updateOne = async (req: Request, res: Response) => {
   //TODO: if statement
   await manager.update.match({...req.body, id: req.params.id});
 
-  const match = await Match.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.send(match);
+  // const match = await Match.findByIdAndUpdate(req.params.id, req.body, {
+  //   new: true,
+  // });
+
+  res.send({});
 };
 
 export const resetDates = async(req: Request, res: Response) => {

@@ -34,11 +34,12 @@ function GroupStagePage() {
 
     useEffect(() => {
         if (stage) {
+            console.log(stage)
             const stageData = {
                 stages: stage.stage,
                 matches: stage.match,
                 matchGames: stage.match_game,
-                participants: stage.participant.length === 0 ? [""] : stage.participant,
+                participants: stage.participant,
             }
 
             bracketsViewer.render(stageData,

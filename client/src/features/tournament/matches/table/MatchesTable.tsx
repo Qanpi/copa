@@ -28,7 +28,7 @@ export const MatchesTable = () => {
       headerName: "Home",
       valueGetter: (p) => {
         const participant = participants?.find(part => part.id === p.value.id);
-        return participant.name;
+        return participant?.name;
       }
     },
     {
@@ -36,7 +36,7 @@ export const MatchesTable = () => {
       headerName: "Away",
       valueGetter: (p) => {
         const participant = participants?.find(part => part.id === p.value.id);
-        return participant.name;
+        return participant?.name;
       }
     },
     {

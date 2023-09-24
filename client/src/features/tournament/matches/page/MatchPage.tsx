@@ -46,27 +46,31 @@ function MatchPage() {
 
   return (
     <Formik
-      initialValues={{
-        id,
-        opponent1: {
-          score: 0,
-          result: undefined,
-        },
-        opponent2: {
-          score: 0,
-          result: undefined
-        },
-      }}
+      initialValues={match}
       onSubmit={(values) => updateMatch.mutate(values)}
     >
-      <Form>
-        <div>{opp1?.name}</div>
-        <ScoreCounter name="opponent1.score"></ScoreCounter>
-        <div>{opp2?.name}</div>
-        <ScoreCounter name="opponent2.score"></ScoreCounter>
-        <Button type="submit">Submit</Button>
-        <MatchTimer min={match.duration}></MatchTimer>
-      </Form>
+      {({ values, submitForm, setFieldValue }) => (
+        <Form>
+          <div>{opp1?.name}</div>
+          <ScoreCounter name="opponent1.score"></ScoreCounter>
+          <div>{opp2?.name}</div>
+          <ScoreCounter name="opponent2.score"></ScoreCounter>
+          <Button onClick={
+            () => {
+              const s1 = values.opponent1.score;
+              const s2 = values.opponent2.score;
+
+              if (s1 > s2) setFieldValue("opponent1.result", "win");
+              else if (s1 === s2) setFieldValue("opponent1.result", "draw"); //FIXME: deal with this properly
+              else setFieldValue("opponent2.result", "win");
+
+              submitForm();
+            }
+          }>Submit</Button>
+          <MatchTimer min={match.duration}></MatchTimer>
+        </Form>
+      )
+      }
     </Formik>
   );
 }
