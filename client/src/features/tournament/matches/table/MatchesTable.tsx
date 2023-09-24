@@ -1,10 +1,12 @@
 import { Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useMatches } from "../hooks";
-import { useTournament } from "../../hooks";
+import { useMatches } from "../hooks.ts";
+import { useTournament } from "../../hooks.ts";
+import { TMatch } from "@backend/models/match.ts";
 
-export const MatchesTable = ({matches} : {matches: any[]}) => {
+export const MatchesTable = ({ matches }: { matches: TMatch[] }) => {
   const { data: tournament } = useTournament("current");
+  console.log(tournament)
 
   const cols: GridColDef[] = [
     {
@@ -14,13 +16,18 @@ export const MatchesTable = ({matches} : {matches: any[]}) => {
     {
       field: "group",
       headerName: "Group",
-      valueGetter: (p) => tournament?.groups.find((g: any) => g.id === p.value).name,
+      valueGetter: (p) => {
+        if (tournament?.groups !== undefined) {
+          console.log(Array.isArray(tournament.groups))
+          return tournament.groups.find((g) => g.id === p.value).name
+        }
+      },
     },
     {
       field: "round",
       headerName: "Round",
       valueGetter: (p) =>
-        tournament?.rounds.find((r: any) => r.id === p.value).number,
+        tournament?.rounds?.find((r: any) => r.id === p.value).number,
     },
     {
       field: "verboseStatus",
@@ -29,7 +36,7 @@ export const MatchesTable = ({matches} : {matches: any[]}) => {
     {
       field: "stage",
       headerName: "Stage",
-      valueGetter: (p) => tournament?.stages.find((s: any) => s.id === p.value).name,
+      valueGetter: (p) => tournament?.states?.find((s: any) => s.id === p.value).name,
     },
   ];
 

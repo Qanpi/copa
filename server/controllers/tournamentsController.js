@@ -117,10 +117,11 @@ export const createStage = async (req, res) => {
 export const updateStage = async (req, res) => {
   //TODO: validation and tournament check
 
-  if (req.body.seeding) {
-    const bool = await manager.update.seeding(
+  if (req.body.seedingIds) {
+    const bool = await manager.update.seedingIds(
       req.params.stageId,
-      req.body.seeding
+      req.body.seedingIds,
+      true
     );
   }
 

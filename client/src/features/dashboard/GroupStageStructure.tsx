@@ -51,7 +51,12 @@ function GroupStageStructure() {
 
   if (participantsStatus !== "success") return;
 
-  const groups = divideGroups(participants.length, groupCount);
+  let groups;
+  try {
+    groups = divideGroups(participants.length, groupCount);
+  } catch (err) {
+    return <>Error</>
+  }
 
   const handleClickSubmit = () => {
     createGroupStage.mutate({

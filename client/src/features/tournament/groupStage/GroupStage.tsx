@@ -18,6 +18,7 @@ const useGroupStage = () => {
         queryKey: ["brackets", "tournament"], //FIXME:
         queryFn: async () => {
             const stageId = tournament?.groupStage.id;
+
             const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}`);
 
             return res.data;
@@ -33,30 +34,34 @@ function GroupStagePage() {
 
     useEffect(() => {
         if (stage) {
-            bracketsViewer.render(
-                {
-                    stages: stage.stage,
-                    matches: stage.match,
-                    matchGames: stage.match_game,
-                    participants: stage.participant,
-                },
+            const stageData = {
+                stages: stage.stage,
+                matches: stage.match,
+                matchGames: stage.match_game,
+                participants: stage.participant.length === 0 ? [""] : stage.participant,
+            }
+
+            bracketsViewer.render(stageData,
                 {
                     selector: ".group-stage",
                     customRoundName: finalRoundNames,
                 }
             );
+
+
+            const local = bracketsRef.current;
+
+            return () => {
+                local.innerHTML = ""; //clear past bracket
+            }
         }
 
-        const local = bracketsRef.current;
-
-        return () => {
-            if (local) local.innerHTML = ""; //clear past bracket
-        };
     }, [stage]);
 
     if (!stage) return <>
-        Group stage not defined yet
+        Gro p stage not defined yet
     </>
+
 
     return <>
         <div

@@ -20,12 +20,10 @@ function DrawPage() {
   const [mustSpin, setMustSpin] = useState(false);
   const [randomN, setRandomN] = useState(0);
 
-  const { status: participationsStatus, refetch } = useParticipants(
-    {
-      group: "",
-    },
-    false
-  );
+  const { status: participationsStatus, refetch } = useParticipants({
+    group: "",
+  });
+
   const [groupless, setGroupless] = useState([]);
 
   const wheelOptions = groupless.map((p) => {
@@ -37,14 +35,13 @@ function DrawPage() {
 
   useEffect(() => {
     const firstLoad = async () => {
-      const participants = await refetch();
-      setGroupless(participants.data);
+      const {data: participants} = await refetch();
+      setGroupless(participants);
     };
 
     firstLoad();
   }, []);
 
-  // console.log(groupless);
 
   // const queryClient = useQueryClient();
   // const assignToGroup = useMutation({
@@ -73,8 +70,8 @@ function DrawPage() {
   });
 
   const handleClickSaveSeeding = (e) => {
-    updateSeeding.mutate({seeding: seeding});
-  }
+    updateSeeding.mutate({ seedingIds: seeding.map(s => s.id) });
+  };
 
   //TODO: skipping the whole process if desired
   // const [currentGroup, setCurrentGroup] = useState(0);
@@ -109,7 +106,7 @@ function DrawPage() {
 
     setSeeding(newSeeding);
     setGroupless(newGroupless);
-  }
+  };
 
   if (!groups) return <div>Loading...</div>;
 

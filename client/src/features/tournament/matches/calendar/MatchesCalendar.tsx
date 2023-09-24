@@ -23,6 +23,8 @@ import { useParticipant } from "../../../participant/hooks.ts";
 import { useMatches, useUpdateMatch } from "../hooks.ts";
 import "./MatchesCalendar.css";
 
+import { TMatch } from "@backend/models/match.ts";
+
 // type MatchEvent = {
 //   matchId: ObjectId;
 //   title: string;
@@ -61,9 +63,9 @@ function MatchesCalendar() {
           end: dayjs(m.start).add(m.duration, "minute").toDate(),
           opponent1: m.opponent1.id,
           opponent2: m.opponent2.id,
-          group: m.group,
-          stage: m.stage,
-          round: m.round,
+          group: m.group_id,
+          stage: m.stage_id,
+          round: m.round_id,
         };
       }),
     [scheduledMatches]

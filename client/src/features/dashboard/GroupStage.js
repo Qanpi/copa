@@ -24,6 +24,10 @@ function GroupStage({next, prev}) {
     next();
   }
 
+  const handleClickPrev = () => {
+    prev();
+  }
+
   return (
     <>
       <GroupStageStructure></GroupStageStructure>
@@ -78,6 +82,7 @@ function GroupStage({next, prev}) {
         </CardContent>
       </Card>
 
+      <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
       {/* maybe show groups and other related data */}
       {/* <AdminCalendar></AdminCalendar> */}
