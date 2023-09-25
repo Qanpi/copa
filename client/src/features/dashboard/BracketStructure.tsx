@@ -15,6 +15,7 @@ import axios from "axios";
 import {
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState
 } from "react";
@@ -28,7 +29,8 @@ import { BracketsManager, helpers } from "brackets-manager";
 import { InMemoryDatabase } from "brackets-memory-db";
 import { Seeding } from "brackets-model";
 import { RoundNameInfo } from "ts-brackets-viewer";
-import { groupBy, flatten } from "lodash-es";
+import { groupBy, flatten, create } from "lodash-es";
+import { isSeedingWithIds } from "brackets-manager/dist/helpers";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
@@ -106,70 +108,41 @@ function BracketStructure({ prev, next }) {
 
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
 
+  const groupedParticipants = useMemo(() => {
+    const grouped = groupBy(participants, (p) => {
+      const id = p.group_id;
+      const group = tournament.groups.find(g => g.id === id);
+      return group.number;
+    });
+
+    return Object.values(grouped);
+  }, [participants, tournament.groups])
+
+  const sliced = groupedParticipants.map(group => group.slice(0, teamsBreakingPerGroup));
+  const seeding = flatten(sliced);
+
   const bracketSize = helpers.getNearestPowerOfTwo(
     groupCount * teamsBreakingPerGroup
   );
 
   const mockTournamentId = 0;
 
-  const createMockStage = useMutation({
-    mutationFn: async () => {
-      const grouped = groupBy(participants, (p) => {
-        const id = p.group_id;
-        const group = tournament.groups.find(g => g.id === id);
-        return group.number;
-      });
-      const groupedArray = Object.values(grouped);
-      console.log(groupedArray)
-
-      const sliced = groupedArray.map(group => group.slice(0, teamsBreakingPerGroup));
-      const seeding = flatten(sliced);
-
-      return await manager.create.stage({
+  useEffect(() => {
+    const render = async () => {
+      await manager.create.stage({
         name: "Preview Bracket",
         tournamentId: mockTournamentId,
         type: "single_elimination",
+        seeding,
         settings: {
           size: bracketSize,
           seedOrdering: ["inner_outer"],
           balanceByes: true,
-        },
-        seeding
+        }
       });
-    }
-  });
 
-  useEffect(() => {
-    createMockStage.mutate();
+      const mockBracket = await manager.get.tournamentData(mockTournamentId);
 
-    return () => manager.delete.tournament(mockTournamentId);
-  }, [participants, teamsBreakingPerGroup])
-
-  const { data: mockBracket } = useQuery({
-    queryKey: ["brackets", "tournament"], //FIXME:
-    queryFn: async () => {
-      const data = await manager.get.tournamentData(mockTournamentId);
-      return data;
-    },
-  });
-
-  const saveBracket = useMutation({
-    mutationFn: async () => {
-      await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        name: "Elimination Bracket",
-        tournamentId: tournament.id,
-        type: "single_elimination",
-        settings: {
-          size: bracketSize,
-        },
-      });
-    },
-  });
-
-  const bracketsRef = useRef(null);
-
-  useEffect(() => {
-    if (mockBracket) {
       bracketsViewer.render(
         {
           stages: mockBracket.stage,
@@ -184,16 +157,38 @@ function BracketStructure({ prev, next }) {
       );
     }
 
-    const local = bracketsRef.current;
+    if (seeding.length !== 0) render();
 
+    const local = bracketsRef.current;
     return () => {
-      if (local) local.innerHTML = ""; //FIXME: clear past bracket
+      if (local) local.innerHTML = "";
+      manager.delete.tournament(mockTournamentId);
     };
-  }, [mockBracket]);
+  }, [seeding, bracketSize]);
+
+  const handleSliderChange = async (_e, value) => {
+    setTeamsBreakingPerGroup(value);
+  }
+
+  const saveBracket = useMutation({
+    mutationFn: async () => {
+      await axios.post(`/api/tournaments/${tournament.id}/stages`, {
+        name: "Preview Bracket",
+        tournamentId: mockTournamentId,
+        type: "single_elimination",
+        seeding,
+        settings: {
+          size: bracketSize,
+          seedOrdering: ["inner_outer"],
+          balanceByes: true,
+        }
+      });
+    },
+  });
+
+  const bracketsRef = useRef(null);
 
   if (participantsStatus !== "success") return;
-
-  const groups = divideGroups(participants.length, groupCount);
 
   return (
     <>
@@ -201,9 +196,9 @@ function BracketStructure({ prev, next }) {
         <Typography>Teams breaking from each of the {groupCount} groups</Typography>
         <Slider
           value={teamsBreakingPerGroup}
-          onChange={(e, v: number) => setTeamsBreakingPerGroup(v)}
+          onChange={handleSliderChange}
           min={1}
-          max={Math.min(...groups)}
+          max={Math.min(...groupedParticipants.map(g => g.length))}
           step={1}
           marks
           valueLabelDisplay="on"
@@ -217,7 +212,7 @@ function BracketStructure({ prev, next }) {
       ></div>
       <Button type="submit" onClick={() => saveBracket.mutate()}>
         Lock in
-      </Button>
+      </ Button>
       <Button onClick={prev}>Previous</Button>
     </>
   );
