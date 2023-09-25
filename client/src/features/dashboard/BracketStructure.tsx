@@ -28,6 +28,7 @@ import { BracketsManager, helpers } from "brackets-manager";
 import { InMemoryDatabase } from "brackets-memory-db";
 import { Seeding } from "brackets-model";
 import { RoundNameInfo } from "ts-brackets-viewer";
+import { groupBy, flatten } from "lodash-es";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
@@ -96,19 +97,12 @@ const finalRoundNames = (roundInfo: RoundNameInfo) => {
   return `Round ${roundInfo.roundNumber}`;
 };
 
-function BracketStructure() {
+function BracketStructure({ prev, next }) {
   const { data: tournament } = useTournament("current");
   const { data: participants, status: participantsStatus } = useParticipants();
 
-
   const { groupStage } = tournament;
   const groupCount = groupStage.settings.groupCount;
-  const { data: groupStandings } = useQuery({
-    queryFn: async () => {
-      const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${groupStage.id}/standings`);
-      return res.data;
-    }
-  })
 
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
 
@@ -120,6 +114,17 @@ function BracketStructure() {
 
   const createMockStage = useMutation({
     mutationFn: async () => {
+      const grouped = groupBy(participants, (p) => {
+        const id = p.group_id;
+        const group = tournament.groups.find(g => g.id === id);
+        return group.number;
+      });
+      const groupedArray = Object.values(grouped);
+      console.log(groupedArray)
+
+      const sliced = groupedArray.map(group => group.slice(0, teamsBreakingPerGroup));
+      const seeding = flatten(sliced);
+
       return await manager.create.stage({
         name: "Preview Bracket",
         tournamentId: mockTournamentId,
@@ -129,25 +134,24 @@ function BracketStructure() {
           seedOrdering: ["inner_outer"],
           balanceByes: true,
         },
-        seeding: groupStandings.slice(bracketSize),
+        seeding
       });
     }
-  })
+  });
 
   useEffect(() => {
     createMockStage.mutate();
 
     return () => manager.delete.tournament(mockTournamentId);
-  }, [createMockStage])
+  }, [participants, teamsBreakingPerGroup])
 
   const { data: mockBracket } = useQuery({
     queryKey: ["brackets", "tournament"], //FIXME:
     queryFn: async () => {
-      const data = await manager.get.stageData(0);
+      const data = await manager.get.tournamentData(mockTournamentId);
       return data;
     },
   });
-
 
   const saveBracket = useMutation({
     mutationFn: async () => {
@@ -214,6 +218,7 @@ function BracketStructure() {
       <Button type="submit" onClick={() => saveBracket.mutate()}>
         Lock in
       </Button>
+      <Button onClick={prev}>Previous</Button>
     </>
   );
 }

@@ -18,7 +18,7 @@ function DashboardPage() {
       case "Group stage":
         return <GroupStage next={nextSection} prev={prevSection}></GroupStage>;
       case "Bracket":
-        return <BracketStructure></BracketStructure>
+        return <BracketStructure next={nextSection} prev={prevSection}></BracketStructure>
       default:
         return <Typography>Unknown tournament state.</Typography>
     }

@@ -44,30 +44,11 @@ function DrawPage() {
 
 
   // const queryClient = useQueryClient();
-  // const assignToGroup = useMutation({
-  //   mutationFn: async (values) => {
-  //     const res = await axios.patch(`/api/participations/${values.id}`, values);
-  //     return res.data;
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries("groups");
-  //   },
-  // });
 
   const { data: tournament } = useTournament("current");
 
   const groups = useGroups();
   const [seeding, setSeeding] = useState([]);
-
-  const updateSeeding = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.patch(
-        `/api/tournaments/${tournament.id}/stages/${tournament.groupStage.id}`,
-        values
-      );
-      return res.data;
-    },
-  });
 
   const createStage = useMutation({
     mutationFn: async (values) => {
@@ -85,8 +66,24 @@ function DrawPage() {
     }
   });
 
-  const handleClickSaveSeeding = (e) => {
-    createStage.mutate({
+  const groupCount = 4;
+
+  const assignToGroup = useMutation({
+    mutationFn: async (values) => {
+      const res = await axios.patch(`/api/participants/${values.id}`, values);
+      return res.data;
+    }
+  });
+
+  const handleClickSaveSeeding = async () => {
+    for (const [i, part] of seeding.entries()) {
+      const group_n = i % 4 + 1;
+      const group = tournament.groups.find(g => g.number === group_n);
+
+      await assignToGroup.mutateAsync({...part, group_id: group.id});
+    }
+
+    await createStage.mutateAsync({
       seedingIds: seeding.map(s => s.id),
       groups: 4
     })
