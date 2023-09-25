@@ -1,4 +1,4 @@
-import BracketStructure from "./BracketStructure";
+import BracketStructure from "../../dashboard/BracketStructure";
 
 function BracketPage() {
     return <BracketStructure></BracketStructure>
