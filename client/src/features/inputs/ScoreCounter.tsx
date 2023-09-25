@@ -55,6 +55,7 @@ const ScoreCounter = function CustomNumberInput(
         },
       }}
       min={0}
+      defaultValue={0}
       {...field}
       {...props}
 

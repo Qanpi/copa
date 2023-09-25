@@ -135,6 +135,10 @@ TournamentSchema.virtual("groupStage").get(function () {
   return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
 });
 
+TournamentSchema.virtual("bracket").get(function () {
+  return this.stages.find((s) => s.type === "single_elimination"); //TODO: allow for multiple (divisions)
+});
+
 // TournamentSchema.pre("findOneAndDelete", async function () {
 //   await Participant.deleteMany({tournament: this.id});
 // })

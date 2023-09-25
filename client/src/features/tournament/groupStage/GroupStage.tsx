@@ -9,60 +9,61 @@ import axios from "axios";
 import { BracketsViewer } from "ts-brackets-viewer";
 import { useEffect, useRef } from "react";
 import DrawPage from "../../dashboard/Draw";
+import { Id } from "brackets-model";
 const bracketsViewer = new BracketsViewer();
 
-const useGroupStage = () => {
+export const useStageData = (stageId: Id) => {
     const { data: tournament } = useTournament("current");
 
     return useQuery({
         queryKey: ["brackets", "tournament"], //FIXME:
         queryFn: async () => {
-            const stageId = tournament?.groupStage.id;
-
             const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}`);
-
             return res.data;
         },
         enabled: !!tournament
     });
 }
 
-function GroupStagePage() {
-    const { data: stage } = useGroupStage();
-
-    const bracketsRef = useRef(null);
+export const useBracketsViewer = (stageData) => {
+    const ref = useRef(null);
 
     useEffect(() => {
-        if (stage) {
-            console.log(stage)
-            const stageData = {
-                stages: stage.stage,
-                matches: stage.match,
-                matchGames: stage.match_game,
-                participants: stage.participant,
+        if (stageData) {
+            const viewerData = {
+                stages: stageData.stage,
+                matches: stageData.match,
+                matchGames: stageData.match_game,
+                participants: stageData.participant,
             }
 
-            bracketsViewer.render(stageData,
+            bracketsViewer.render(viewerData,
                 {
-                    selector: ".group-stage",
+                    // selector: ".group-stage",
                     customRoundName: finalRoundNames,
                 }
             );
 
-
-            const local = bracketsRef.current;
+            const local = ref.current;
 
             return () => {
                 local.innerHTML = ""; //clear past bracket
             }
         }
 
-    }, [stage]);
+    }, [stageData]);
 
-    if (!stage) return <>
+    return ref;
+}
+function GroupStagePage() {
+    const {data: tournament} = useTournament("current");
+    const { data: stageData } = useStageData(tournament?.groupStage.id);
+
+    const bracketsRef = useBracketsViewer(stageData);
+
+    if (!stageData) return <>
         Gro p stage not defined yet
     </>
-
 
     return <>
         <div

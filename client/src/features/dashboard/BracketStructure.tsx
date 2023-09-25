@@ -173,8 +173,8 @@ function BracketStructure({ prev, next }) {
   const saveBracket = useMutation({
     mutationFn: async () => {
       await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        name: "Preview Bracket",
-        tournamentId: mockTournamentId,
+        name: "Bracket",
+        tournamentId: tournament.id,
         type: "single_elimination",
         seeding,
         settings: {
