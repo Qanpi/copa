@@ -78,6 +78,10 @@ router.get(
   tournaments.getStageData
 );
 
+router.get("/tournaments/:tournamentId/stages/:stageId/seeding", tournaments.getSeeding)
+
+router.get("/tournaments/:tournamentId/stages/:stageId/standings", tournaments.getStandings)
+
 // router.get("/tournaments/:id/groups", tourn.getMultiple)
 
 // router.post("/tournaments/:id/groups", groups.createOne);

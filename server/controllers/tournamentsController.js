@@ -4,14 +4,18 @@ import Team from "../models/team.js";
 import { validate } from "../middleware/validation.js";
 import { validationResult } from "express-validator";
 
-
 import MongooseForBrackets from "brackets-mongo-db";
 import { BracketsManager } from "brackets-manager";
 import Participant from "../models/participant.js";
 import Match from "../models/match.js";
 import MatchGame from "../models/matchGame.js";
 
-const storage = new MongooseForBrackets(Tournament, Participant, Match, MatchGame);
+const storage = new MongooseForBrackets(
+  Tournament,
+  Participant,
+  Match,
+  MatchGame
+);
 export const manager = new BracketsManager(storage, true);
 
 export const createOne = expressAsyncHandler(async (req, res) => {
@@ -103,7 +107,6 @@ export const unregisterTeam = expressAsyncHandler(async (req, res) => {
   res.send(await team.save()); //is it weird to return team here?
 });
 
-
 export const getTournamentDataById = async (req, res) => {
   const data = await manager.get.tournamentData(req.params.id);
   res.send(data);
@@ -132,12 +135,23 @@ export const updateStage = async (req, res) => {
 export const getCurrentStage = async (req, res) => {
   const stage = await manager.get.currentStage(req.params.id);
   res.send(stage);
-}
+};
 
 export const getStageData = async (req, res) => {
   const stage = await manager.get.stageData(req.params.stageId);
 
   res.send(stage);
+};
+
+export const getSeeding = async (req, res) => {
+  const seeding = await manager.get.seeding(req.params.stageId);
+
+  return res.send(seeding);
+};
+
+export const getStandings = async (req, res) => {
+  const standings = await manager.get.finalStandings(req.params.stageId);
+  return res.send(standings);
 };
 
 export const getGroups = expressAsyncHandler(async (req, res) => {
