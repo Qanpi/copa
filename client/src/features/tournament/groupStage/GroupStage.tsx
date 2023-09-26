@@ -16,10 +16,11 @@ export const useStageData = (stageId: Id) => {
     return useQuery({
         queryKey: ["brackets", "tournament"], //FIXME:
         queryFn: async () => {
+            console.log("test")
             const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}`);
             return res.data;
         },
-        enabled: tournament && stageId
+        enabled: Boolean(tournament) && Boolean(stageId)
     });
 }
 
