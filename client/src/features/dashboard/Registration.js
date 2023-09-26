@@ -55,9 +55,7 @@ function RegistrationStage({ next, prev }) {
 
     if (response) {
       await updateTournament.mutateAsync({
-        registration: {
-          to: now,
-        },
+        "registration.to": now,
       });
 
       next();
