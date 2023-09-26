@@ -2,14 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { finalRoundNames, useTournament } from "../hooks";
 import GroupStageStructure from "../../dashboard/GroupStageStructure";
 import axios from "axios";
-
-//1 div into groups
-//2 draw teams into groups
-//3 display groups normally
-import { BracketsViewer } from "ts-brackets-viewer";
+import { BracketsViewer, ViewerData } from "ts-brackets-viewer";
 import { useEffect, useRef } from "react";
 import DrawPage from "../../dashboard/Draw";
 import { Id } from "brackets-model";
+import { DataTypes, ValueToArray } from "brackets-manager";
+
 const bracketsViewer = new BracketsViewer();
 
 export const useStageData = (stageId: Id) => {
@@ -21,11 +19,11 @@ export const useStageData = (stageId: Id) => {
             const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}`);
             return res.data;
         },
-        enabled: !!tournament
+        enabled: tournament && stageId
     });
 }
 
-export const useBracketsViewer = (stageData) => {
+export const useBracketsViewer = (stageData: ValueToArray<DataTypes>) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -57,7 +55,7 @@ export const useBracketsViewer = (stageData) => {
 }
 function GroupStagePage() {
     const {data: tournament} = useTournament("current");
-    const { data: stageData } = useStageData(tournament?.groupStage.id);
+    const { data: stageData } = useStageData(tournament?.groupStage?.id);
 
     const bracketsRef = useBracketsViewer(stageData);
 
