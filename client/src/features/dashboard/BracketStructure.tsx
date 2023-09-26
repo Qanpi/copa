@@ -109,10 +109,10 @@ function BracketStructure({ prev, next }) {
 
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
 
-  const {data: groupedParticipants} = useGroupedParticipants();
+  const groupedParticipants = useGroupedParticipants(participants);
 
   //TODO: sort by rank before slicing
-  const sliced = groupedParticipants.map(group => group.slice(0, teamsBreakingPerGroup));
+  const sliced = Object.values(groupedParticipants).map(group => group.slice(0, teamsBreakingPerGroup));
   const seeding = flatten(sliced);
 
   const bracketSize = helpers.getNearestPowerOfTwo(
