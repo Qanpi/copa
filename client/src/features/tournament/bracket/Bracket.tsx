@@ -5,7 +5,7 @@ import { useTournament } from "../hooks";
 
 function BracketPage() {
     const { data: tournament } = useTournament("current");
-    const {data: stageData } = useStageData(tournament?.bracket.id);
+    const {data: stageData } = useStageData(tournament?.bracket?.id);
 
     const bracketsRef = useBracketsViewer(stageData);
 
@@ -13,7 +13,6 @@ function BracketPage() {
         Bracket not defined yet
     </>
 
-    console.log(stageData);
     return <>
         <div
             ref={bracketsRef}
