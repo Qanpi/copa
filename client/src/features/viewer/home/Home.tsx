@@ -18,23 +18,25 @@ function HomePage() {
   if (!tournament)
     return <div className="banner">Winner page.</div>;
 
-  const now = new Date();
-
   if (!tournament.registration.from)
     return <>Registration will be starting soon.</>
 
-  if (now <= tournament.registration.from)
+  const now = new Date();
+  const from = new Date(tournament.registration.from);
+  const to = new Date(tournament.registration.to);
+
+  if (now <= from)
     return (
       <div>
-        Registration will begin {dayjs().to(tournament.registration.from)}
+        Registration will begin {dayjs().to(tournament.registration.from)}.
       </div>
     );
 
-  if (now <= tournament.registration.to)
+  if (now <= to)
     return (
       <>
         <div>
-          Registration closes {dayjs().to(tournament.registration.to)}
+          Registration closes {dayjs().to(tournament.registration.to)}.
         </div>
         <Link to="/register">Register</Link>
       </>
