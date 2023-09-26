@@ -5,49 +5,51 @@ import { useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
 import { useTournament } from "../tournament/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
+import { groupBy } from "lodash-es";
 import Group from "../team/group/Group.js";
 
+export const useGroupedParticipants = () => {
+  const { data: participants } = useParticipants();
+  const {data: groups} = useGroups();
+
+  const grouped = groupBy(participants, (p) => {
+    const id = p.group_id;
+    const group = groups.find((g) => g.id === id);
+
+    return group.number;
+  });
+
+  return Object.values(grouped); //FIXME: does this ensure sorting?
+};
+
 const useGroups = () => {
+  const {data: tournament} = useTournament();
+
+  return tournament?.groups;
+}
+
+const useGroup = (id) => {
   const { data: tournament, isSuccess } = useTournament("current");
 
-  if (isSuccess)
-    return tournament.groups.filter(
-      (g) => g.stage === tournament.groupStage.id
-    );
+  return tournament?.groups.find((g) => g.id === id);
 };
 
 function DrawPage() {
   const [mustSpin, setMustSpin] = useState(false);
   const [randomN, setRandomN] = useState(0);
 
-  const { status: participationsStatus, refetch } = useParticipants({
-    group: "",
+  const { data: tournament } = useTournament("current");
+  const { data: groupless } = useParticipants({
+    group: "none",
   });
 
-  const [groupless, setGroupless] = useState([]);
-
-  const wheelOptions = groupless.map((p) => {
+  const wheelOptions = groupless?.map((p) => {
     const l = 10;
     const trimmed =
       p.name.length > l ? p.name.substring(0, l - 3) + "..." : p.name;
     return { option: trimmed, ...p };
   });
 
-  useEffect(() => {
-    const firstLoad = async () => {
-      const {data: participants} = await refetch();
-      setGroupless(participants);
-    };
-
-    firstLoad();
-  }, []);
-
-
-  // const queryClient = useQueryClient();
-
-  const { data: tournament } = useTournament("current");
-
-  const groups = useGroups();
   const [seeding, setSeeding] = useState([]);
 
   const createStage = useMutation({
@@ -63,7 +65,7 @@ function DrawPage() {
           size: values.participants,
         },
       });
-    }
+    },
   });
 
   const groupCount = 4;
@@ -72,39 +74,41 @@ function DrawPage() {
     mutationFn: async (values) => {
       const res = await axios.patch(`/api/participants/${values.id}`, values);
       return res.data;
-    }
+    },
   });
 
-  const handleClickSaveSeeding = async () => {
+  const handleClickSaveSeeding = () => {
     for (const [i, part] of seeding.entries()) {
-      const group_n = i % 4 + 1;
-      const group = tournament.groups.find(g => g.number === group_n);
+      const group_n = (i % 4) + 1;
+      const group = tournament.groups.find((g) => g.number === group_n);
 
-      await assignToGroup.mutateAsync({...part, group_id: group.id});
+      assignToGroup.mutate({ ...part, group_id: group.id });
     }
 
-    await createStage.mutateAsync({
-      seedingIds: seeding.map(s => s.id),
-      groups: 4
-    })
+    createStage.mutate({
+      seedingIds: seeding.map((s) => s.id),
+      groups: 4,
+    });
   };
 
-  //TODO: skipping the whole process if desired
-  // const [currentGroup, setCurrentGroup] = useState(0);
-
-  const isAllDrawn = groupless.length === 0;
+  const isWheelVisible = !groupless || groupless.length === 0;
 
   const handleSpinOver = () => {
     setMustSpin(false);
 
     const chosen = wheelOptions[randomN];
-    setGroupless(groupless.filter((p) => p.id !== chosen.id));
+
+    const groupN = seeding.length % 4;
+    const group = tournament.groups.find((g) => g.number === groupN);
+
+    assignToGroup.mutate({ ...chosen, group_id: group.id });
     setSeeding([...seeding, chosen]);
   };
 
   const handleSpinClick = () => {
-    if (isAllDrawn || mustSpin) return;
+    if (isWheelVisible || mustSpin) return;
     const n = Math.floor(Math.random() * groupless.length);
+
     setRandomN(n);
     setMustSpin(true);
   };
@@ -120,8 +124,8 @@ function DrawPage() {
       newGroupless.splice(n, 1);
     }
 
+    //TODO: assign grups to prts
     setSeeding(newSeeding);
-    setGroupless(newGroupless);
   };
 
   if (!groups) return <div>Loading...</div>;
@@ -143,7 +147,7 @@ function DrawPage() {
     <>
       {groupTables}
 
-      {!isAllDrawn ? (
+      {!isWheelVisible ? (
         <Wheel
           data={wheelOptions}
           prizeNumber={randomN}
@@ -155,14 +159,14 @@ function DrawPage() {
         <div>No more temas left</div>
       )}
 
-      <Button onClick={handleSpinClick} disabled={isAllDrawn}>
+      <Button onClick={handleSpinClick} disabled={isWheelVisible}>
         Spin
       </Button>
 
-      <Button onClick={handleClickSkipWheel} disabled={isAllDrawn}>
+      <Button onClick={handleClickSkipWheel} disabled={isWheelVisible}>
         Skip
       </Button>
-      <Button onClick={handleClickSaveSeeding} disabled={!isAllDrawn}>
+      <Button onClick={handleClickSaveSeeding} disabled={!isWheelVisible}>
         SAVE
       </Button>
     </>
