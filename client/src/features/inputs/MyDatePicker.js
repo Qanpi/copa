@@ -7,8 +7,6 @@ const MyDatePicker = ({ ...props }) => {
 
   return (
       <DatePicker
-        {...props}
-        {...field}
         slotProps={{
           textField: {
             helperText: meta.touched && meta.error,
@@ -16,6 +14,7 @@ const MyDatePicker = ({ ...props }) => {
           },
         }}
 
+        {...field}
         onChange={(value) => {
             setFieldValue(field.name, value)
         }}
@@ -23,6 +22,8 @@ const MyDatePicker = ({ ...props }) => {
             //disable validation because of out-of-sync issues
             //see: https://github.com/jaredpalmer/formik/issues/2059
             setFieldTouched(field.name, true, false)         }}
+
+        {...props}
       />
   );
 };
