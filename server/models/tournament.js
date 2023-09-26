@@ -118,19 +118,6 @@ TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
 });
 
-TournamentSchema.virtual("registration.status").get(function () {
-  if (!this.registration.to || !this.registration.from) return "indefinite";
-
-  const now = new Date();
-  const { from, to } = this.registration;
-
-  if (now < from) {
-    return "awaiting";
-  } else if (now <= to) {
-    return "in progress";
-  } else return "over";
-});
-
 TournamentSchema.virtual("groupStage").get(function () {
   return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
 });
