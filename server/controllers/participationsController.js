@@ -11,8 +11,6 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
     const data = matchedData(req);
 
     const filters = {
-      "team.id": data?.team,
-      "tournament.id": data?.tournament,
       group: data?.group === "none" ? null : data?.group,
     };
 

@@ -22,13 +22,16 @@ import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import { nextTick } from "process";
 import { useState } from "react";
+import { isEmpty } from "lodash-es";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
 
-  const { data: participants } = useParticipants();
+  const { data: participants } = useParticipants({
+    tournament_id: tournament?.id,
+  });
 
   const [isEarlyDialogOpen, setEarlyDialogOpen] = useState(false);
   const [isZeroParticipantAlertOpen, setZeroParticipantAlertOpen] =
@@ -42,7 +45,7 @@ function RegistrationStage({ next, prev }) {
 
     const now = new Date();
 
-    if (new Date(tournament.registration.to) > now) {
+    if (!tournament.registration?.to || new Date(tournament.registration.to) > now) {
       setEarlyDialogOpen(true);
       return;
     }
@@ -99,8 +102,8 @@ function RegistrationStage({ next, prev }) {
       <Formik
         initialValues={{
           registration: {
-            from: from && dayjs(from),
-            to: to && dayjs(to),
+            from: from ? dayjs(from) : null,
+            to: to ? dayjs(to) : null,
           },
         }}
         validationSchema={Yup.object({
@@ -117,7 +120,7 @@ function RegistrationStage({ next, prev }) {
           updateTournament.mutate(values);
         }}
       >
-        {({ values, setFieldValue }) => (
+        {({ values, setFieldValue, submitForm, validateForm, isValid }) => (
           <Form>
             <div className="registration">
               <InputLabel>Open registration</InputLabel>
@@ -134,17 +137,29 @@ function RegistrationStage({ next, prev }) {
             </div>
 
             <Button type="submit">Confirm</Button>
+            <Card>
+              <CardContent>
+                <Typography variant="h2">{participants?.length}</Typography>
+                team(s) registered
+              </CardContent>
+            </Card>
+
+            <Button
+              onClick={async () => {
+                // //workaround because formik is dumb
+                // //see: https://github.com/jaredpalmer/formik/issues/1580
+                // await submitForm();
+                // const errors = await validateForm();
+
+                // if (isEmpty(errors))
+                handleClickNext();
+              }}
+            >
+              Next
+            </Button>
           </Form>
         )}
       </Formik>
-      <Card>
-        <CardContent>
-          <Typography variant="h2">{participants?.length}</Typography>
-          team(s) registered
-        </CardContent>
-      </Card>
-
-      <Button onClick={handleClickNext}>Next</Button>
     </>
   );
 }
