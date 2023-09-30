@@ -17,25 +17,14 @@ import { useParticipants } from "../participant/hooks";
 import "ts-brackets-viewer/dist/style.css";
 import axios from "axios";
 
-const useCreateGroupStage = () => {
+const useCreateStage = () => {
   const { data: tournament } = useTournament("current");
 
-  type Body = {
-    groups: number,
-    participants: number,
-  };
-
   return useMutation({
-    mutationFn: async (values: Body) => {
+    mutationFn: async (values: any) => {
       await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        name: "Group Stage",
         tournamentId: tournament.id,
-        type: "round_robin",
-        //TODO: division: ""
-        settings: {
-          groupCount: values.groups,
-          size: values.participants,
-        },
+        ...values
       });
     }
   })
@@ -47,22 +36,22 @@ function GroupStageStructure() {
   const [groupCount, setGroupCount] = useState(4);
   const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
 
-  const createGroupStage = useCreateGroupStage();
+  const createGroupStage = useCreateStage();
 
   if (participantsStatus !== "success") return;
 
-  let groups;
-  try {
-    groups = divideGroups(participants.length, groupCount);
-  } catch (err) {
-    return <>Error</>
-  }
+  const groups = divideGroups(participants.length, groupCount);
 
   const handleClickSubmit = () => {
     createGroupStage.mutate({
-      participants: participants.length,
-      groups: groupCount
-    });
+        name: "Group Stage",
+        type: "round_robin",
+        //TODO: division: ""
+        settings: {
+          groupCount,
+          size: participants.length,
+        },
+      });
   }
 
   return (

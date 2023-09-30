@@ -55,22 +55,6 @@ function DrawPage() {
 
   const groups = useGroups();
 
-  const createStage = useMutation({
-    mutationFn: async (values) => {
-      await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        name: "Group Stage",
-        tournamentId: tournament.id,
-        type: "round_robin",
-        //TODO: division: ""
-        // seedingIds: values.seedingIds,
-        settings: {
-          groupCount: values.groups,
-          size: values.participants,
-        },
-      });
-    },
-  });
-
   const queryClient = useQueryClient();
   const assignParticipantToGroup = useMutation({
     mutationFn: async (values) => {
@@ -216,16 +200,6 @@ function DrawPage() {
       <Button onClick={handleResetSeeding}>Reset</Button>
       <Button onClick={handleConfirmSeeding} disabled={!isWheelVisible}>
         Confirm
-      </Button>
-      <Button
-        onClick={() =>
-          createStage.mutate({
-            groups: groupCount,
-            // participants: participants.length,
-          })
-        }
-      >
-        ttst
       </Button>
     </>
   );
