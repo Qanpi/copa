@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
@@ -76,6 +76,14 @@ function DrawPage() {
     },
   });
 
+  const {data: seeding} = useQuery({
+    queryKey: ["seeding"],
+    queryFn: async (id) => {
+      const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${tournament.groupStage.id}/seeding`);
+      return res.data;
+    }
+  })
+
   if (!participantsByGroup) return <>Loading...</>;
 
   const grouplessParticipants = participantsByGroup.find(
@@ -97,13 +105,6 @@ function DrawPage() {
   const groupCount = 4;
 
   const handleConfirmSeeding = () => {
-    // for (const [i, part] of seeding.entries()) {
-    //   const group_n = (i % 4) + 1;
-    //   const group = tournament.groups.find((g) => g.number === group_n);
-
-    //   assignParticipantToGroup.mutate({ ...part, group_id: group.id });
-    // }
-
     if (grouplessParticipants.length !== 0) return;
 
     const seeding = groupedParticipants.map((g) => g.participants).flat();
@@ -174,7 +175,7 @@ function DrawPage() {
     );
   });
 
-  if (grouplessParticipants.length === 0) {
+  if (seeding.length !== 0) {
     return;
   }
 
