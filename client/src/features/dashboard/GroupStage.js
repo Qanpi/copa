@@ -10,8 +10,11 @@ import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
 import DrawPage from "./Draw.js";
 import GroupStageStructure from "./GroupStageStructure.tsx";
 import Scheduler from "./Scheduler.tsx";
+import { useTournament } from "../tournament/hooks.ts";
+import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
 
 function GroupStage({next, prev}) {
+  const {data: tournament} = useTournament("current");
 
   const { data: unscheduledMatches, status: unscheduledStatus } = useMatches({
     status: "unscheduled",
@@ -28,6 +31,7 @@ function GroupStage({next, prev}) {
   const handleClickPrev = () => {
     prev();
   }
+
 
   return (
     <>

@@ -174,6 +174,10 @@ function DrawPage() {
     );
   });
 
+  if (grouplessParticipants.length === 0) {
+    return;
+  }
+
   return (
     <>
       {groupTables}

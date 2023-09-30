@@ -16,6 +16,7 @@ import { useParticipants } from "../participant/hooks";
 
 import "ts-brackets-viewer/dist/style.css";
 import axios from "axios";
+import { useStageData } from "../tournament/groupStage/GroupStage";
 
 const useCreateStage = () => {
   const { data: tournament } = useTournament("current");
@@ -38,6 +39,9 @@ function GroupStageStructure() {
 
   const createGroupStage = useCreateStage();
 
+  const {data: tournament} = useTournament("current");
+  const {data: groupStage} = useStageData(tournament?.groupStage?.id); 
+
   if (participantsStatus !== "success") return;
 
   const groups = divideGroups(participants.length, groupCount);
@@ -55,6 +59,8 @@ function GroupStageStructure() {
         },
       });
   }
+
+  if (groupStage) return;
 
   return (
     <Container>
