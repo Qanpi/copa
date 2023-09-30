@@ -43,6 +43,8 @@ function GroupStageStructure() {
   const groups = divideGroups(participants.length, groupCount);
 
   const handleClickSubmit = () => {
+    //TODO: refactor to the draw to avoid excessive db requests
+    //i.e. create stage only ones with the alr defined seeding
     createGroupStage.mutate({
         name: "Group Stage",
         type: "round_robin",
