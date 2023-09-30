@@ -66,7 +66,8 @@ function RegistrationStage({ next, prev }) {
 
   if (tournamentStatus !== "success") return "bruh";
 
-  const { to, from } = tournament.registration;
+  const to = tournament.registration?.to;
+  const from = tournament.registration?.from;
 
   return (
     <>
@@ -79,7 +80,7 @@ function RegistrationStage({ next, prev }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autofocus onClick={() => handleDialogClose(false)}>
+          <Button autoFocus onClick={() => handleDialogClose(false)}>
             No
           </Button>
           <Button onClick={() => handleDialogClose(true)}>Yes</Button>
