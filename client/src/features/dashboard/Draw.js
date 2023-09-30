@@ -1,10 +1,10 @@
 import { Button } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
 import { useTournament } from "../tournament/hooks.ts";
-import { useParticipants } from "../participant/hooks.ts";
+import { participantKeys, useParticipants } from "../participant/hooks.ts";
 import { groupBy } from "lodash-es";
 import Group from "../team/group/Group.js";
 import { DataGrid } from "@mui/x-data-grid";
@@ -15,16 +15,26 @@ const useGroups = () => {
   return tournament?.groups;
 };
 
-export const useGroupedParticipants = (participants) => {
+//TODO: convert into temp storage? 
+export const useGroupedParticipants = () => {
   const groups = useGroups();
+  const { data: participants } = useParticipants();
 
-  if (groups.length === 0) return []; //before groups are initialized
+  if (groups.length === 0 || !participants) return; //before groups are initialized
 
-  const grouped = groupBy(participants, (p) => {
-    const id = p.group_id;
-    const group = groups.find((g) => g.id === id);
+  const grouped = groups
+    .sort((a, b) => a.number - b.number)
+    .map((g) => {
+      //sort may not be necessary
+      return {
+        name: g.name,
+        participants: participants.filter((p) => p.group_id === g.id),
+      };
+    });
 
-    return group?.name;
+  grouped.push({
+    name: "none",
+    participants: participants.filter((p) => !Boolean(p.group_id)),
   });
 
   return grouped;
@@ -38,14 +48,12 @@ const useGroup = (id) => {
 
 function DrawPage() {
   const [mustSpin, setMustSpin] = useState(false);
-  const [randomN, setRandomN] = useState(0);
 
   const { data: tournament } = useTournament("current");
-  const { data: participants } = useParticipants();
-  const groups = useGroups();
-  const groupedParticipants = useGroupedParticipants(participants);
+  // const { data: participants } = useParticipants();
+  const participantsByGroup = useGroupedParticipants();
 
-  const [seeding, setSeeding] = useState([]);
+  const groups = useGroups();
 
   const createStage = useMutation({
     mutationFn: async (values) => {
@@ -63,16 +71,37 @@ function DrawPage() {
     },
   });
 
+  const queryClient = useQueryClient();
   const assignParticipantToGroup = useMutation({
     mutationFn: async (values) => {
       const res = await axios.patch(`/api/participants/${values.id}`, values);
       return res.data;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries(participantKeys.all)
+    }
   });
 
-  if (!participants) return <div>Loading...</div>;
+  const updateStage = useMutation({
+    mutationFn: async (values) => {
+      const res = await axios.patch(
+        `/api/tournaments/${tournament.id}/stages/${values.id}`,
+        values
+      );
+      return res.data;
+    },
+  });
 
-  const grouplessParticipants = groupedParticipants[undefined];
+  if (!participantsByGroup) return <>Loading...</>;
+
+  const grouplessParticipants = participantsByGroup.find(
+    (g) => g.name === "none"
+  ).participants;
+  const groupedParticipants = participantsByGroup.filter(
+    (g) => g.name !== "none"
+  );
+
+  const randomN = Math.floor(Math.random() * grouplessParticipants.length);
 
   const wheelOptions = grouplessParticipants?.map((p) => {
     const l = 10;
@@ -83,61 +112,74 @@ function DrawPage() {
 
   const groupCount = 4;
 
-  const handleClickSaveSeeding = () => {
-    for (const [i, part] of seeding.entries()) {
-      const group_n = (i % 4) + 1;
-      const group = tournament.groups.find((g) => g.number === group_n);
+  const handleConfirmSeeding = () => {
+    // for (const [i, part] of seeding.entries()) {
+    //   const group_n = (i % 4) + 1;
+    //   const group = tournament.groups.find((g) => g.number === group_n);
 
-      assignParticipantToGroup.mutate({ ...part, group_id: group.id });
-    }
+    //   assignParticipantToGroup.mutate({ ...part, group_id: group.id });
+    // }
 
-    createStage.mutate({
-      seedingIds: seeding.map((s) => s.id),
-      groups: 4,
+    if (grouplessParticipants.length !== 0) return;
+
+    const seeding = groupedParticipants.map((g) => g.participants).flat();
+    const seedingIds = seeding.map((s) => s.id);
+
+    updateStage.mutate({
+      id: tournament.groupStage.id,
+      seedingIds,
     });
   };
 
   const isWheelVisible =
     !grouplessParticipants || grouplessParticipants.length === 0;
 
+  const getCurrentGroup = () => {
+    const smallestGrouping = groupedParticipants.reduce((a, b) =>
+      a.participants.length <= b.participants.length ? a : b
+    );
+
+    return groups.find((g) => g.name === smallestGrouping.name);
+  };
+
   const handleSpinOver = () => {
     setMustSpin(false);
 
     const chosen = wheelOptions[randomN];
 
-    const groupN = seeding.length % 4 + 1;
-    const group = groups.find((g) => g.number === groupN);
-
+    //find the group with the smallest n of participants
+    const group = getCurrentGroup();
     assignParticipantToGroup.mutate({ ...chosen, group_id: group.id });
-    setSeeding([...seeding, chosen]);
+    // setSeeding([...seeding, chosen]); //FIXME: seeding is reset after a realod, but the participants in groups aren't -> bad. Either figure out a way to keep of latest group, or use tmep memory and then commit and push at the end.
   };
 
-  const handleSpinClick = () => {
+  const handleSpin = () => {
     if (isWheelVisible || mustSpin) return;
-    const n = Math.floor(Math.random() * grouplessParticipants.length);
 
-    setRandomN(n);
     setMustSpin(true);
   };
 
-  const handleClickSkipWheel = () => {
-    const newGroupless = [...grouplessParticipants];
-    const newSeeding = [...seeding];
+  const handleSkipWheel = () => {
+    const initialGroup = getCurrentGroup();
 
-    while (newGroupless.length) {
-      const n = Math.floor(Math.random() * newGroupless.length);
+    let n = initialGroup.number;
 
-      newSeeding.push(newGroupless[n]);
-      newGroupless.splice(n, 1);
+    for (const part of grouplessParticipants) {
+      const group = groups.find(g => g.number === (n - 1) % groups.length + 1);
+      assignParticipantToGroup.mutate({ ...part, group_id: group.id });
+      n++;
     }
-
-    //TODO: assign grups to prts
-    setSeeding(newSeeding);
   };
 
-  const groupTables = Object.entries(groupedParticipants).map(([name, participants]) => {
-    if (name === "undefined") return null;
+  const handleResetSeeding = () => {
+    groupedParticipants.forEach(({ _, participants }) => {
+      participants.forEach((p) => {
+        assignParticipantToGroup.mutate({ ...p, group_id: null });
+      });
+    });
+  };
 
+  const groupTables = groupedParticipants.map(({ name, participants }) => {
     return (
       <Group
         name={name}
@@ -164,17 +206,27 @@ function DrawPage() {
         <div>No more temas left</div>
       )}
 
-      <Button onClick={handleSpinClick} disabled={isWheelVisible}>
+      <Button onClick={handleSpin} disabled={isWheelVisible}>
         Spin
       </Button>
 
-      <Button onClick={handleClickSkipWheel} disabled={isWheelVisible}>
+      <Button onClick={handleSkipWheel} disabled={isWheelVisible}>
         Skip
       </Button>
-      <Button onClick={handleClickSaveSeeding} disabled={!isWheelVisible}>
-        SAVE
+      <Button onClick={handleResetSeeding}>Reset</Button>
+      <Button onClick={handleConfirmSeeding} disabled={!isWheelVisible}>
+        Confirm
       </Button>
-      <Button onClick={() => createStage.mutate({groups: groupCount, participants: participants.length})}>ttst</Button>
+      <Button
+        onClick={() =>
+          createStage.mutate({
+            groups: groupCount,
+            // participants: participants.length,
+          })
+        }
+      >
+        ttst
+      </Button>
     </>
   );
 }
