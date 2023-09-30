@@ -23,6 +23,7 @@ import { useParticipants } from "../participant/hooks.ts";
 import { nextTick } from "process";
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
+import NumberCard from "./NumberCard.tsx";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
@@ -137,12 +138,7 @@ function RegistrationStage({ next, prev }) {
             </div>
 
             <Button type="submit">Confirm</Button>
-            <Card>
-              <CardContent>
-                <Typography variant="h2">{participants?.length}</Typography>
-                team(s) registered
-              </CardContent>
-            </Card>
+            <NumberCard number={participants?.length}>team(s) registered</NumberCard>
 
             <Button
               onClick={async () => {

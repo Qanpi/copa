@@ -12,13 +12,15 @@ import GroupStageStructure from "./GroupStageStructure.tsx";
 import Scheduler from "./Scheduler.tsx";
 import { useTournament } from "../tournament/hooks.ts";
 import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
+import NumberCard from "./NumberCard.tsx";
 
 function GroupStage({next, prev}) {
   const {data: tournament} = useTournament("current");
 
-  const { data: unscheduledMatches, status: unscheduledStatus } = useMatches({
-    status: "unscheduled",
-  });
+  const { data: matches, status: unscheduledStatus } = useMatches();
+
+  const unscheduledMatches = matches?.filter(m => !m.start)
+  const scheduledMatches = matches?.filter(m => !!m.start)
 
   const nextMonday = dayjs().day(8);
 
@@ -61,17 +63,8 @@ function GroupStage({next, prev}) {
             </Form>
       </Formik>
 
-      <Card>
-        <CardContent>
-          <Typography>Matches scheduled</Typography>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent>
-          <Typography>Matches complete</Typography>
-        </CardContent>
-      </Card>
+      <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>matches scheduled</NumberCard>
+      <NumberCard number={`0/${matches?.length}`}>matches complete</NumberCard>
 
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
