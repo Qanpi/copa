@@ -31,7 +31,7 @@ import { Seeding } from "brackets-model";
 import { RoundNameInfo } from "ts-brackets-viewer";
 import { groupBy, flatten, create } from "lodash-es";
 import { isSeedingWithIds } from "brackets-manager/dist/helpers";
-import { useGroupedParticipants } from "./Draw.js";
+import { useGroupedParticipants } from "./Draw.tsx";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
@@ -109,9 +109,8 @@ function BracketStructure({ prev, next }) {
 
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
 
-  const groupedParticipants = useGroupedParticipants(participants);
-
   //TODO: sort by rank before slicing
+  //FIXME: groupedParticipnats
   const sliced = Object.values(groupedParticipants).map(group => group.slice(0, teamsBreakingPerGroup));
   const seeding = flatten(sliced);
 

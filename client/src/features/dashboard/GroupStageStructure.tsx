@@ -14,11 +14,12 @@ import {
 import { useTournament } from "../tournament/hooks";
 import { useParticipants } from "../participant/hooks";
 
+
 import "ts-brackets-viewer/dist/style.css";
 import axios from "axios";
 import { useStageData } from "../tournament/groupStage/GroupStage";
 
-const useCreateStage = () => {
+export const useCreateStage = () => {
   const { data: tournament } = useTournament("current");
 
   return useMutation({
@@ -30,65 +31,6 @@ const useCreateStage = () => {
     }
   })
 }
-
-function GroupStageStructure() {
-  const { data: participants, status: participantsStatus } = useParticipants();
-
-  const [groupCount, setGroupCount] = useState(4);
-  const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
-
-  const createGroupStage = useCreateStage();
-
-  const {data: tournament} = useTournament("current");
-  const {data: groupStage} = useStageData(tournament?.groupStage?.id); 
-
-  if (participantsStatus !== "success") return;
-
-  const groups = divideGroups(participants.length, groupCount);
-
-  const handleClickSubmit = () => {
-    //TODO: refactor to the draw to avoid excessive db requests
-    //i.e. create stage only ones with the alr defined seeding
-    createGroupStage.mutate({
-        name: "Group Stage",
-        type: "round_robin",
-        //TODO: division: ""
-        settings: {
-          groupCount,
-          size: participants.length,
-        },
-      });
-  }
-
-  if (groupStage) return;
-
-  return (
-    <Container>
-      <Slider
-        value={groupCount}
-        onChange={(e, v: number) => {
-          setGroupCount(v);
-        }}
-        min={1}
-        max={participants.length}
-        step={1}
-        marks
-        valueLabelDisplay="on"
-      ></Slider>
-      {groups.map((n, i) => (
-        <Card key={alphabet[i]}>
-          <CardContent>
-            <Typography>Group {alphabet[i]}</Typography>
-            <Typography>{n} team(s)</Typography>
-          </CardContent>
-        </Card>
-      ))}
-      <Button onClick={handleClickSubmit}>Submit</Button>
-    </Container>
-  );
-}
-
-export default GroupStageStructure; 
 
 //workflow (deprecated)
 //1. create in memory tournament structure

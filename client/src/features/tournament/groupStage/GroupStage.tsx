@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { finalRoundNames, useTournament } from "../hooks";
-import GroupStageStructure from "../../dashboard/GroupStageStructure";
+import GroupStageStructure from "../../dashboard/GroupStage";
 import axios from "axios";
 import { BracketsViewer, ViewerData } from "ts-brackets-viewer";
 import { useEffect, useRef } from "react";

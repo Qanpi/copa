@@ -7,7 +7,7 @@ import { EventClickArg } from "@fullcalendar/core";
 import DateBlocker from "../inputs/DateBlocker.tsx";
 import dayjs, { Dayjs } from "dayjs";
 import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
-import DrawPage from "./Draw.js";
+import DrawPage from "./Draw.tsx";
 import GroupStageStructure from "./GroupStageStructure.tsx";
 import Scheduler from "./Scheduler.tsx";
 import { useTournament } from "../tournament/hooks.ts";
@@ -37,8 +37,8 @@ function GroupStage({next, prev}) {
 
   return (
     <>
-      <GroupStageStructure></GroupStageStructure>
       <DrawPage></DrawPage>
+
 
       <Formik
         initialValues={{
