@@ -64,10 +64,12 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
   const result = await Tournament.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
+
   res.send(result);
 });
 
 export const deleteOne = expressAsyncHandler(async (req, res) => {
+  await manager.delete.tournament(req.params.id);
   await Tournament.findByIdAndDelete(req.params.id);
   res.status(204).send({});
 });
