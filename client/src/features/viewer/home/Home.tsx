@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useLayoutEffect, useMemo } from "react";
 import { useMatches } from "../../tournament/matches/hooks";
+import MatchesCalendar from "../../tournament/matches/calendar/MatchesCalendar";
+import { Box } from "@mui/material";
 
 function HomePage() {
   const { data: tournament } = useTournament("current");
@@ -45,8 +47,12 @@ function HomePage() {
   return (
     <>
       <div className="dashboard">
-        <GameBoard></GameBoard>
-        <InstagramBoard></InstagramBoard>
+        <MatchesCalendar></MatchesCalendar>
+        <Box sx={{
+          width: "700px",
+          height: "700px",
+          background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))"
+        }}></Box>
       </div>
 
       <div className="group-stage" id="test">

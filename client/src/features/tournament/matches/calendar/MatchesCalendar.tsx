@@ -112,7 +112,6 @@ function MatchesCalendar() {
         </ClickAwayListener>
       </Popper>
 
-      //TODO: port over to react-calendar-timeline
       <FullCalendar
         plugins={[listPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{

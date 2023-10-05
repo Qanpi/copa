@@ -1,11 +1,3 @@
-.dashboard {
-  height: 600px;
-  background: red;
-  display: flex;
-  justify-content: center;
-  gap: 100px;
-}
-
 .title-wrapper {
   text-align: center;
 }
