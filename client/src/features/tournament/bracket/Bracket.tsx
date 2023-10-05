@@ -16,7 +16,8 @@ function BracketPage() {
     return <>
         <div
             ref={bracketsRef}
-            className="brackets-viewer bracket"
+            className="brackets-viewer"
+            id="bracket"
         ></div>
     </>
 }

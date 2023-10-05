@@ -37,7 +37,7 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>) => {
 
             bracketsViewer.render(viewerData,
                 {
-                    // selector: ".group-stage",
+                    selector: "#group-stage",
                     customRoundName: finalRoundNames,
                 }
             );
@@ -66,7 +66,8 @@ function GroupStagePage() {
     return <>
         <div
             ref={bracketsRef}
-            className="brackets-viewer group-stage"
+            className="brackets-viewer"
+            id="group-stage"
         ></div>
     </>
 }
