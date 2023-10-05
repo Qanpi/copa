@@ -88,6 +88,7 @@ router.get("/tournaments/:tournamentId/stages/:stageId/standings", tournaments.g
 
 // router.patch("/tournaments/:tournamentId/groups/:groupId", groups.updateOne)
 
+//FIXME: refactor into subcollection of tounament
 router.get(
   "/participants",
   [
