@@ -14,7 +14,7 @@ export const useStageData = (stageId: Id) => {
     const { data: tournament } = useTournament("current");
 
     return useQuery({
-        queryKey: ["brackets", "tournament"], //FIXME:
+        queryKey: ["brackets", "tournament", stageId], //FIXME:
         queryFn: async () => {
             const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}`);
             return res.data;
@@ -49,7 +49,7 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>) => {
             }
         }
 
-    }, [stageData]);
+    }, [stageData, ref]);
 
     return ref;
 }
