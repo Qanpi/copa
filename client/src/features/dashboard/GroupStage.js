@@ -21,6 +21,7 @@ function GroupStage({next, prev}) {
 
   const unscheduledMatches = matches?.filter(m => !m.start)
   const scheduledMatches = matches?.filter(m => !!m.start)
+  const completedMatches = matches?.filter(m => m.verboseStatus === "Completed")
 
   const nextMonday = dayjs().day(8);
 
@@ -64,7 +65,7 @@ function GroupStage({next, prev}) {
       </Formik>
 
       <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>matches scheduled</NumberCard>
-      <NumberCard number={`0/${matches?.length}`}>matches complete</NumberCard>
+      <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>matches complete</NumberCard>
 
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
