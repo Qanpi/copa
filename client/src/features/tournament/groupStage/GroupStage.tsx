@@ -27,7 +27,7 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>) => {
     const ref = useRef(null);
 
     useEffect(() => {
-        if (stageData) {
+        if (stageData && ref.current) {
             const viewerData = {
                 stages: stageData.stage,
                 matches: stageData.match,

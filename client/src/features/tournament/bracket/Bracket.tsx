@@ -9,7 +9,7 @@ function BracketPage() {
 
     const bracketsRef = useBracketsViewer(stageData);
 
-    if (!stageData) return <>
+    if (!bracketsRef.current) return <>
         Bracket not defined yet
     </>
 

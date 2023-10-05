@@ -19,9 +19,18 @@ export const MatchesTable = () => {
       headerName: "Date",
       editable: true,
       type: "dateTime",
-      valueGetter: (p) => {
-        return p.value ? new Date(p.value) : new Date() //FIXME: custom type
-      }
+      // valueGetter({row}) {
+      //   return undefined;
+      // },
+      // valueSetter({value, row}) {
+      //   return row;
+      // },
+      // valueParser(value, params) {
+      //   return new Date(value);
+      // },
+      // valueSetter(params) {
+      //     console.log(params)
+      // },
     },
     {
       field: "opponent1",
@@ -76,7 +85,7 @@ export const MatchesTable = () => {
     return res;
   }
 
-  return <DataGrid editMode="row" rows={matches} columns={cols} processRowUpdate={handleRowUpdate}></DataGrid>;
+  return <DataGrid rows={matches} columns={cols} processRowUpdate={handleRowUpdate}></DataGrid>;
 };
 
 function MatchesPage() {
