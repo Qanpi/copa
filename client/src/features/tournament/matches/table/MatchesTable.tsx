@@ -91,15 +91,3 @@ export const MatchesTable = () => {
 
   return <DataGrid rows={matches} columns={cols} processRowUpdate={handleRowUpdate}></DataGrid>;
 };
-
-function MatchesPage() {
-
-  return (
-    <>
-      <MatchesTable></MatchesTable>
-      <Typography>Matches</Typography>
-    </>
-  );
-}
-
-export default MatchesPage;

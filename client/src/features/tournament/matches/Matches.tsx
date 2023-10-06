@@ -28,7 +28,6 @@ function MatchesPage() {
     <div>
       <MatchesCalendar></MatchesCalendar>
       <MatchesTable></MatchesTable>
-
     </div>
   );
 }
