@@ -112,9 +112,11 @@ function BracketStructure({ prev, next }) {
   const bracketSize = groupCount * teamsBreakingPerGroup;
 
   const { data: matches } = useMatches();
-  const groupedMatches = Object.values(groupBy(matches, "group_id"));
+  const bracketMatches = matches?.filter(m => m.stage_id === tournament?.groupStage?.id);
 
-  const rankings = groupedMatches.map(matches => getRanking(matches));
+  const groupedMatches = Object.values(groupBy(bracketMatches, "group_id"));
+
+  const rankings = groupedMatches.map(m => getRanking(m));
   const rankedParticipants = rankings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
   const cutOffParticipants = rankedParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
   const seeding = cutOffParticipants.flat();
