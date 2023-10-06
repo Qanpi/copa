@@ -36,16 +36,20 @@ export const MatchesTable = () => {
       field: "opponent1",
       headerName: "Home",
       valueGetter: (p) => {
+        if (p.value === null) return "BYE";
+
         const participant = participants?.find(part => part.id === p.value.id);
-        return participant?.name;
+        return participant?.name || "TBD";
       }
     },
     {
       field: "opponent2",
       headerName: "Away",
       valueGetter: (p) => {
+        if (p.value === null) return "BYE";
+
         const participant = participants?.find(part => part.id === p.value.id);
-        return participant?.name;
+        return participant?.name || "TBD";
       }
     },
     {
