@@ -25,11 +25,12 @@ import "./index.css";
 import reportWebVitals from "./services/reportWebVitals";
 import { useUser } from "./features/user/hooks.ts";
 import SignInPage from "./features/user/SignInPage.tsx";
+import MyTeamPage from "./features/team/MyTeamPage.tsx";
 
 export const AdminContext = React.createContext(null);
 
 function App() {
-  const {data: user, status: userStatus} = useUser("me");
+  const { data: user, status: userStatus } = useUser("me");
 
   if (userStatus !== "success") return;
 
@@ -90,11 +91,13 @@ function App() {
                 ></Route>
               </Route>
 
+              {/* //TODO: restrict possible team names */}
               <Route path="/teams">
+                <Route path="/teams/mine" element={<MyTeamPage></MyTeamPage>}></Route>
                 <Route
                   path="/teams/join"
                   element={<JoinTeamPage></JoinTeamPage>}
-                ></Route>
+                >R</Route>
 
                 <Route
                   path="/teams/new"

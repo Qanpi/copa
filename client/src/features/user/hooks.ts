@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const userKeys = {
+export const userKeys = {
   all: ["users"],
   details: () => [...userKeys.all, "detail"],
   detail: (id: string) => [...userKeys.details(), id],
@@ -18,3 +18,12 @@ export const useUser = (id: string) => {
     },
   });
 };
+
+export const useUpdateUser = () => {
+  return useMutation({
+    mutationFn: async (values) => {
+      const res = await axios.patch(`/api/users/${values.id}`, values);
+      return res.data;
+    }
+  })
+}

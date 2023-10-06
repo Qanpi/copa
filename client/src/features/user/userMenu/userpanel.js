@@ -28,7 +28,7 @@ function UserPanel() {
       </div>
       <div className="dropdown">
         <Link to={`/users/${user.id}`}>Profile</Link>
-        <Link to={team ? `/teams/${team.name}` : "/teams/join"}>My team</Link>
+        <Link to={`/teams/mine`}>My team</Link>
         <p>Settings</p>
         <p onClick={logout.mutate}>Log out</p>
       </div>

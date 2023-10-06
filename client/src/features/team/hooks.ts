@@ -31,3 +31,4 @@ export const useTeam = (name: string) => {
     enabled: Boolean(name),
   });
 };
+
