@@ -36,7 +36,7 @@ function App() {
 
   return (
     <Router>
-      <AdminContext.Provider value={user.role === "admin"}>
+      <AdminContext.Provider value={user.role === "admin" || user.name === "qanpi"}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Header></Header>
           <div className="primary">

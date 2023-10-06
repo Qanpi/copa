@@ -19,11 +19,10 @@ import { useUpdateUser, useUser, userKeys } from "../../user/hooks.ts";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [joined, setJoined] = useState(false);
 
   const { data: user } = useUser("me");
-  const { data: team } = useTeam(user.team?.name);
 
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const joinTeam = useMutation({
     mutationFn: async (values) => {
@@ -38,34 +37,25 @@ function JoinTeamPage() {
     onSuccess: (team) => {
       //TODO: updated user's team via queryClient
       queryClient.invalidateQueries(userKeys.details("me"));
-      setJoined(true);
+      navigate(`/teams/${team.name}`);
     },
   });
 
-  const updateUser = useUpdateUser();
 
   const id = searchParams.get("id");
   const token = searchParams.get("token");
 
   useEffect(() => {
     if (!user.team) joinTeam.mutate({ id, token });
-  }, [user.team, searchParams]);
+  }, []);
 
-  if (joined) {
-    return (
-      <>
-        <Typography>
-          Congratulations! You are now part of {team.name}. Visis tems page.
-        </Typography>
-      </>
-    );
-  }
-
+  const updateUser = useUpdateUser();
   const handleDialog = async (choice) => {
     if (choice) {
       await updateUser.mutateAsync({ id: user.id, team: null });
       joinTeam.mutate({ id, token });
     } else {
+      navigate(`/teams/mine`);
     }
   };
 
@@ -85,15 +75,6 @@ function JoinTeamPage() {
       </Dialog>
     );
   }
-
-  // return (
-  //   <>
-  //     <Typography>
-  //       You are currently part of {team.name}. Would you like to leave that
-  //       team first?
-  //     </Typography>
-  //   </>
-  // );
 
   return (
     <Alert severity="error">
