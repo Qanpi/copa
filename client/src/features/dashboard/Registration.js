@@ -125,7 +125,7 @@ function RegistrationStage({ next, prev }) {
           <Form>
             <div className="registration">
               <InputLabel>Open registration</InputLabel>
-              <MyDatePicker label="from 00:00 on" name="registration.from" />
+              <MyDatePicker label="from 00:00 on" name="registration.from" disablePast/>
               <MyDatePicker
                 disablePast
                 label="to 23:59 on"

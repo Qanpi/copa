@@ -1,7 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import { collections } from "../configs/db.config.js";
+import { UserResponse } from "@azure/cosmos";
 
-const UserSchema = mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     name: String,
     googleId: String,
@@ -37,8 +38,8 @@ const UserSchema = mongoose.Schema(
 //member, manager
 //admin
 
-UserSchema.virtual("isAdmin").get(function () {
-  return this.role === "admin";
-})
+const User = mongoose.model(collections.users.id, UserSchema);
 
-export default mongoose.model(collections.users.id, UserSchema);
+export type TUser = InferSchemaType<typeof UserSchema>;
+
+export default User;

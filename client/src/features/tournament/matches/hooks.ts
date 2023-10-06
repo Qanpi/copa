@@ -1,16 +1,22 @@
 import { TMatch } from "@backend/models/match";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
 import { useParticipants } from "../../participant/hooks";
 import { useTournament } from "../hooks";
+import { QueryKeyFactory } from "../../../types";
 
 export const useUpdateMatch = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (values: Partial<TMatch>) => {
       const res = await axios.patch(`/api/matches/${values.id}`, values);
       return res.data;
+    },
+    onSuccess(data) {
+      queryClient.setQueryData(matchKeys.id(data.id), data);
     },
   });
 };
@@ -64,24 +70,26 @@ export const useMatchScheduler = () => {
   };
 };
 
-const matchKeys: QueryKeyFactory<Match> = {
+const matchKeys: QueryKeyFactory<TMatch> = {
   all: "matches",
-  id: (id: Id) => [matchKeys.all, id.toString()],
-  query: (query: Partial<TMatch>) => [matchKeys.all, query],
+  id: (id) => [matchKeys.all, id],
+  query: (query) => [matchKeys.all, query],
 };
 
-export const useMatch = (id: Id) => {
+export const useMatch = (id: string) => {
   return useQuery({
     queryKey: [matchKeys.id(id)],
     queryFn: async () => {
       const url = `/api/${matchKeys.all}/${id}`;
       const res = await axios.get(url);
       return res.data as TMatch;
-    }
-  })
-}
+    },
+  });
+};
 
-export const useMatches = (query?: Partial<TMatch> & {scheduled?: boolean}) => {
+export const useMatches = (
+  query?: Partial<TMatch> & { scheduled?: boolean }
+) => {
   return useQuery({
     queryKey: ["matches", query],
     queryFn: async () => {
@@ -99,5 +107,3 @@ export const useMatches = (query?: Partial<TMatch> & {scheduled?: boolean}) => {
     },
   });
 };
-
-

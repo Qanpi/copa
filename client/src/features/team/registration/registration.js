@@ -57,7 +57,7 @@ function RegistrationPage() {
     queryKey: ["participation"],
     queryFn: async () => {
       const res = await axios.get(
-        `/api/participations?team=${team.id}&tournament=${tournament.id}`
+        `/api/participants?team=${team.id}&tournament=${tournament.id}`
       );
       return res.data[0] || null; //assumed it's a singular value
     },
@@ -74,7 +74,7 @@ function RegistrationPage() {
           <Button onClick={() => unregisterTeam.mutate({id: team.id})}>Unregister</Button>
         </>
       );
-    } else if (team.manager == user.id) {
+    } else if (team.manager === user.id) {
       return (
         <>
           <Typography variant="h6">

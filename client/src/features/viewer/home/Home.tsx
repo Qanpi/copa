@@ -20,7 +20,7 @@ function HomePage() {
   if (!tournament)
     return <div className="banner">Winner page.</div>;
 
-  if (!tournament.registration.from)
+  if (!tournament.registration?.from)
     return <>Registration will be starting soon.</>
 
   const now = new Date();
@@ -40,7 +40,7 @@ function HomePage() {
         <div>
           Registration closes {dayjs().to(tournament.registration.to)}.
         </div>
-        <Link to="/register">Register</Link>
+        <Link to="/tournament/register">Register</Link>
       </>
     );
 

@@ -28,6 +28,6 @@ const MatchSchema = new mongoose.Schema(
 
 const Match = BracketsMatch.discriminator("Match", MatchSchema);
 
-export type TMatch = InferSchemaType<typeof MatchSchema> & TBracketsMatch;
+export type TMatch = {id: string} & InferSchemaType<typeof MatchSchema> & TBracketsMatch;
 
 export default Match;
