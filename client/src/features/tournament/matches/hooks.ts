@@ -81,7 +81,7 @@ export const useMatch = (id: Id) => {
   })
 }
 
-export const useMatches = (query?: Partial<TMatch>) => {
+export const useMatches = (query?: Partial<TMatch> & {scheduled?: boolean}) => {
   return useQuery({
     queryKey: ["matches", query],
     queryFn: async () => {

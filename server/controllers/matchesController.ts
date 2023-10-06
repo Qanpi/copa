@@ -25,18 +25,14 @@ export const getMany = async (req: Request, res: Response) => {
     $and: [startFilter, endFilter],
   };
 
-  switch (req.query.status) {
-    case "unscheduled":
-      query["start"] = {
-        $exists: false,
-      };
-      break;
-
-    case "scheduled":
-      query["start"] = {
-        $exists: true,
-      };
-      break;
+  if (req.query.scheduled === "true") {
+    query["start"] = {
+      $exists: true
+    }
+  } else if (req.query.scheduled === "false") {
+    query["start"] = {
+      $exists: false
+    }
   }
 
   const matches = await Match.find({...req.query, ...query});

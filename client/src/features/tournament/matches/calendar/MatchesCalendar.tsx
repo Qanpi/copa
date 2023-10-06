@@ -48,7 +48,7 @@ type MatchEvent = Omit<
 
 function MatchesCalendar() {
   const { data: scheduledMatches, status: scheduledStatus } = useMatches({
-    status: "scheduled",
+    scheduled: true, 
   });
 
   const updateMatch = useUpdateMatch();
