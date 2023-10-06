@@ -118,9 +118,9 @@ function BracketStructure({ prev, next }) {
     }
   });
 
-  const rankedParticipants = standings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
-  const cutOffParticipants = rankedParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
-  const seeding = cutOffParticipants?.flat();
+  const standingParticipants = standings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
+  const breaking = standingParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
+  const seeding = breaking?.flat();
 
   const mockTournamentId = 0;
 
