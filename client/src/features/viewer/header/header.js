@@ -13,7 +13,8 @@ import { useLocation } from "react-router-dom";
 import { useUser } from "../../user/hooks.ts";
 import UserPanel from "../../user/userMenu/userpanel.js";
 import "./header.css";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import { AdminContext } from "../../../index.tsx";
 
 const SectionMenu = ({ title, children }) => {
   const [open, setOpen] = useState(false);
@@ -83,11 +84,8 @@ const SectionMenu = ({ title, children }) => {
 
 function Header() {
   const { pathname } = useLocation();
-  const parentPath = pathname.split("/")[1];
 
-  const { status: userStatus, data: user } = useUser("me");
-
-  if (userStatus !== "success") return <div>Loading...</div>;
+  const isAdmin = useContext(AdminContext);
 
   return (
     <header>
@@ -111,11 +109,10 @@ function Header() {
               <MenuItem>Gamblers</MenuItem>
             </Link>
           </SectionMenu>
-          <Link to="/tournament/dashboard">Dashboard</Link>
+          {isAdmin ? <Link to="/tournament/dashboard">Dashboard</Link> : null}
           <span>All-time</span>
           <span>Fantasy</span>
           <span>About</span>
-          {user ? <Link to="/admin/dashboard">Admin</Link> : null}
         </div>
         <UserPanel></UserPanel>
       </div>

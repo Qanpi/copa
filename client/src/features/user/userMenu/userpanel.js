@@ -34,13 +34,9 @@ function UserPanel() {
       </div>
     </div>
   ) : (
-    <span onClick={handleSignIn}>{"Sign in"}</span>
+    <Link to={`/login`}>Sign in</Link>
   );
 }
 
-function handleSignIn() {
-  //axios.get("login/federated/google")
-  window.open("http://localhost:3001/login/federated/google", "_self");
-}
 
 export default UserPanel;

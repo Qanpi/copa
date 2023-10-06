@@ -21,13 +21,13 @@ export const teamKeys = {
   detail: (id: string) => [...teamKeys.details(), id],
 };
 
-export const useTeam = (name: string, props: object) => {
+export const useTeam = (name: string) => {
   return useQuery({
     queryKey: teamKeys.detail(name),
     queryFn: async () => {
       const response = await axios.get(`/api/teams/?name=${name}`);
       return response.data[0] || null; //FIXME: assuming the response is array; maybe do this validation on server?
     },
-    ...props,
+    enabled: Boolean(name),
   });
 };
