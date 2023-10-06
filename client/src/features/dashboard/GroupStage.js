@@ -17,13 +17,14 @@ import NumberCard from "./NumberCard.tsx";
 function GroupStage({next, prev}) {
   const {data: tournament} = useTournament("current");
 
-  const { data: matches, status: unscheduledStatus } = useMatches();
+  const { data: matches } = useMatches({
+    stage_id: tournament?.groupStage.id
+  });
 
+  //TODO: refactor to server side ?
   const unscheduledMatches = matches?.filter(m => !m.start)
   const scheduledMatches = matches?.filter(m => !!m.start)
   const completedMatches = matches?.filter(m => m.verboseStatus === "Completed")
-
-  const nextMonday = dayjs().day(8);
 
   const handleScheduleMatches = useMatchScheduler();
 
@@ -35,16 +36,14 @@ function GroupStage({next, prev}) {
     prev();
   }
 
-
   return (
     <>
       <DrawPage></DrawPage>
 
-
       <Formik
         initialValues={{
-          start: nextMonday,
-          blocked: [],
+          start: dayjs().day(8), //next Monday
+          blocked: [], //next Monday
         }}
         onSubmit={(values) =>
           handleScheduleMatches(

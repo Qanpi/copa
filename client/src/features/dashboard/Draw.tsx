@@ -54,13 +54,6 @@ function DrawPage() {
     staleTime: Infinity
   });
 
-  // const updateParticipant = useMutation({
-  //   mutationFn: async (values) => {
-  //     const res = await axios.patch(`/api/participants/${values.id}`, values);
-  //     return res;
-  //   }
-  // })
-
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([]);
 
@@ -72,11 +65,6 @@ function DrawPage() {
   const groupSizes = arrangeGroups(participants.length, groupCount);
 
   const handleConfirmSeeding = () => {
-    // for (let i=0; i<seeding.length; i++) {
-    //   const n = i % groupCount; 
-    //   updateParticipant.mutate({...seeding[i], group_id: });
-    // }
-
     createGroupStage.mutate({
       name: "Group Stage",
       type: "round_robin",
@@ -102,6 +90,8 @@ function DrawPage() {
   }
 
   const groupless = participants?.filter(p => !seeding.some(s => s.id === p.id));
+
+  if (groupStage) return;
 
   return (
     <>
@@ -166,11 +156,6 @@ function FortuneWheel({ participants, onSelected }) {
 
     const chosen = wheelOptions[randomN];
     onSelected(chosen);
-
-    //find the group with the smallest n of participants
-    // const group = getCurrentGroup();
-    // assignParticipantToGroup.mutate({ ...chosen, group_id: group.id });
-    // setSeeding([...seeding, chosen]); //FIXME: seeding is reset after a realod, but the participants in groups aren't -> bad. Either figure out a way to keep of latest group, or use tmep memory and then commit and push at the end.
   };
 
   const handleSpin = () => {
@@ -196,7 +181,6 @@ function FortuneWheel({ participants, onSelected }) {
       <Button onClick={handleSpin} disabled={isWheelVisible}>
         Spin
       </Button>
-
     </>
   );
 }
