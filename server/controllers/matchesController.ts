@@ -39,7 +39,7 @@ export const getMany = async (req: Request, res: Response) => {
       break;
   }
 
-  const matches = await Match.find(query);
+  const matches = await Match.find({...req.query, ...query});
   res.send(matches);
 };
 

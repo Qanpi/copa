@@ -81,7 +81,7 @@ export const useMatch = (id: Id) => {
   })
 }
 
-export const useMatches = (query?: { start?: Date; end?: Date; status?: string; }) => {
+export const useMatches = (query?: Partial<TMatch>) => {
   return useQuery({
     queryKey: ["matches", query],
     queryFn: async () => {
