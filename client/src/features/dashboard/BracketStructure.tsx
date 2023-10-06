@@ -23,7 +23,6 @@ import { useParticipants } from "../participant/hooks.ts";
 import { useTournament } from "../tournament/hooks.ts";
 
 import { BracketsViewer } from "ts-brackets-viewer";
-import { getRanking } from "ts-brackets-viewer/dist/helpers.js"
 // import "ts-brackets-viewer/dist/style.css";
 
 import { BracketsManager, helpers } from "brackets-manager";
@@ -111,16 +110,17 @@ function BracketStructure({ prev, next }) {
 
   const bracketSize = groupCount * teamsBreakingPerGroup;
 
-  const { data: matches } = useMatches({
-    stage_id: tournament?.groupStage?.id
+  const {data: standings} = useQuery({
+    queryKey: ["stndngs"],
+    queryFn: async () => {
+      const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${tournament?.groupStage?.id}/standings`);
+      return res.data;
+    }
   });
 
-  const groupedMatches = Object.values(groupBy(matches, "group_id"));
-
-  const rankings = groupedMatches.map(m => getRanking(m));
-  const rankedParticipants = rankings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
+  const rankedParticipants = standings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
   const cutOffParticipants = rankedParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
-  const seeding = cutOffParticipants.flat();
+  const seeding = cutOffParticipants?.flat();
 
   const mockTournamentId = 0;
 

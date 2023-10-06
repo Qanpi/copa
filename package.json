@@ -60,6 +60,7 @@
     "qs": "^6.11.2",
     "react-date-range": "^1.4.0",
     "react-google-charts": "^4.0.1",
+    "ts-brackets-viewer": "^1.6.1",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {

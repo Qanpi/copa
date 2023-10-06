@@ -9,6 +9,8 @@ import { BracketsManager } from "brackets-manager";
 import Participant from "../models/participant.js";
 import Match from "../models/match.js";
 import MatchGame from "../models/matchGame.js";
+import { groupBy } from "lodash-es";
+import { getRanking } from "ts-brackets-viewer/dist/helpers.js";
 
 const storage = new MongooseForBrackets(
   Tournament,
@@ -152,8 +154,18 @@ export const getSeeding = async (req, res) => {
 };
 
 export const getStandings = async (req, res) => {
-  const standings = await manager.get.finalStandings(req.params.stageId);
-  return res.send(standings);
+  const stageData = await manager.get.stageData(req.params.stageId);
+
+  if (stageData.stage[0].type === "round_robin") {
+    const matches = stageData.match;
+    const groupedMatches = Object.values(groupBy(matches, "group_id"));
+
+    const standings = groupedMatches.map((m) => getRanking(m));
+    return res.send(standings);
+  } else {
+    const standings = await manager.get.finalStandings(req.params.stageId);
+    return res.send(standings);
+  }
 };
 
 export const getGroups = expressAsyncHandler(async (req, res) => {
