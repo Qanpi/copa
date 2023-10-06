@@ -54,6 +54,13 @@ function DrawPage() {
     staleTime: Infinity
   });
 
+  // const updateParticipant = useMutation({
+  //   mutationFn: async (values) => {
+  //     const res = await axios.patch(`/api/participants/${values.id}`, values);
+  //     return res;
+  //   }
+  // })
+
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([]);
 
@@ -65,6 +72,11 @@ function DrawPage() {
   const groupSizes = arrangeGroups(participants.length, groupCount);
 
   const handleConfirmSeeding = () => {
+    // for (let i=0; i<seeding.length; i++) {
+    //   const n = i % groupCount; 
+    //   updateParticipant.mutate({...seeding[i], group_id: });
+    // }
+
     createGroupStage.mutate({
       name: "Group Stage",
       type: "round_robin",

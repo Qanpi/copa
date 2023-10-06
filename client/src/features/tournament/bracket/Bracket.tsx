@@ -7,7 +7,7 @@ function BracketPage() {
     const { data: tournament } = useTournament("current");
     const {data: stageData } = useStageData(tournament?.bracket?.id);
 
-    const bracketsRef = useBracketsViewer(stageData);
+    const bracketsRef = useBracketsViewer(stageData, "#bracket");
 
     if (!stageData) return <>
         Bracket not defined yet

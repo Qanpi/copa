@@ -3,7 +3,7 @@ import { finalRoundNames, useTournament } from "../hooks";
 import GroupStageStructure from "../../dashboard/GroupStage";
 import axios from "axios";
 import { BracketsViewer, ViewerData } from "ts-brackets-viewer";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import DrawPage from "../../dashboard/Draw";
 import { Id } from "brackets-model";
 import { DataTypes, ValueToArray } from "brackets-manager";
@@ -23,10 +23,11 @@ export const useStageData = (stageId: Id) => {
     });
 }
 
-export const useBracketsViewer = (stageData: ValueToArray<DataTypes>) => {
+export const useBracketsViewer = (stageData: ValueToArray<DataTypes>, selector: string) => {
     const ref = useRef(null);
 
     useEffect(() => {
+        console.log(stageData, ref.current);
         if (stageData && ref.current) {
             const viewerData = {
                 stages: stageData.stage,
@@ -37,7 +38,7 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>) => {
 
             bracketsViewer.render(viewerData,
                 {
-                    selector: "#group-stage",
+                    selector,
                     customRoundName: finalRoundNames,
                 }
             );
@@ -57,7 +58,7 @@ function GroupStagePage() {
     const {data: tournament} = useTournament("current");
     const { data: stageData } = useStageData(tournament?.groupStage?.id);
 
-    const bracketsRef = useBracketsViewer(stageData);
+    const bracketsRef = useBracketsViewer(stageData, "#group-stage");
 
     if (!stageData) return <>
         Gro p stage not defined yet

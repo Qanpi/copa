@@ -23,6 +23,7 @@ import { useParticipants } from "../participant/hooks.ts";
 import { useTournament } from "../tournament/hooks.ts";
 
 import { BracketsViewer } from "ts-brackets-viewer";
+import { getRanking } from "ts-brackets-viewer/dist/helpers.js"
 // import "ts-brackets-viewer/dist/style.css";
 
 import { BracketsManager, helpers } from "brackets-manager";
@@ -32,6 +33,7 @@ import { RoundNameInfo } from "ts-brackets-viewer";
 import { groupBy, flatten, create } from "lodash-es";
 import { isSeedingWithIds } from "brackets-manager/dist/helpers";
 import { useGroupedParticipants } from "./Draw.tsx";
+import { useMatches } from "../tournament/matches/hooks.ts";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
@@ -104,19 +106,18 @@ function BracketStructure({ prev, next }) {
   const { data: tournament } = useTournament("current");
   const { data: participants, status: participantsStatus } = useParticipants();
 
-  const { groupStage } = tournament;
-  const groupCount = groupStage.settings.groupCount;
-
+  const groupCount = tournament?.groupStage.settings.groupCount;
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
 
-  //TODO: sort by rank before slicing
-  //FIXME: groupedParticipnats
-  const sliced = Object.values(groupedParticipants).map(group => group.slice(0, teamsBreakingPerGroup));
-  const seeding = flatten(sliced);
+  const bracketSize = groupCount * teamsBreakingPerGroup;
 
-  const bracketSize = helpers.getNearestPowerOfTwo(
-    groupCount * teamsBreakingPerGroup
-  );
+  const { data: matches } = useMatches();
+  const groupedMatches = Object.values(groupBy(matches, "group_id"));
+
+  const rankings = groupedMatches.map(matches => getRanking(matches));
+  const rankedParticipants = rankings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
+  const cutOffParticipants = rankedParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
+  const seeding = cutOffParticipants.flat();
 
   const mockTournamentId = 0;
 
@@ -128,7 +129,7 @@ function BracketStructure({ prev, next }) {
         type: "single_elimination",
         seeding,
         settings: {
-          size: bracketSize,
+          size: helpers.getNearestPowerOfTwo(bracketSize),
           seedOrdering: ["inner_outer"],
           balanceByes: true,
         }
@@ -150,7 +151,7 @@ function BracketStructure({ prev, next }) {
       );
     }
 
-    if (seeding.length !== 0) render();
+    if (seeding && seeding.length !== 0) render();
 
     const local = bracketsRef.current;
     return () => {
@@ -171,7 +172,7 @@ function BracketStructure({ prev, next }) {
         type: "single_elimination",
         seeding,
         settings: {
-          size: bracketSize,
+          size: helpers.getNearestPowerOfTwo(bracketSize),
           seedOrdering: ["inner_outer"],
           balanceByes: true,
         }
@@ -191,7 +192,7 @@ function BracketStructure({ prev, next }) {
           value={teamsBreakingPerGroup}
           onChange={handleSliderChange}
           min={1}
-          max={Math.min(...groupedParticipants.map(g => g.length))}
+          max={Math.ceil(participants.length / groupCount)}
           step={1}
           marks
           valueLabelDisplay="on"
