@@ -16,6 +16,7 @@ export const useUpdateMatch = () => {
       return res.data;
     },
     onSuccess(data) {
+      queryClient.invalidateQueries([matchKeys.all])
       // queryClient.setQueryData(matchKeys.id(data.id), data);
     },
   });

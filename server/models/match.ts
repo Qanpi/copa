@@ -9,6 +9,7 @@ const MatchSchema = new mongoose.Schema(
   {
     start: { type: Date },
     duration: { type: Number, default: 6 }, //in minutes
+    elapsed: {type: Number, default: 0} //in seconds
   },
   {
     virtuals: {

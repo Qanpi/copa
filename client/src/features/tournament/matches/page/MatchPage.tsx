@@ -4,31 +4,55 @@ import { useParticipant } from "../../../participant/hooks";
 import { useTimer } from "react-timer-hook";
 import dayjs from "dayjs";
 import { Button } from "@mui/base";
-import { useCallback } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { NumberInput } from "@mui/base/Unstable_NumberInput/NumberInput";
-import { Formik, Form } from "formik";
+import { Formik, Form, useFormikContext } from "formik";
 import ScoreCounter from "../../../inputs/ScoreCounter";
+import { AdminContext } from "../../../..";
 
-const MatchTimer = ({ min }: { min: number }) => {
-  const getExpiryTimestamp = () => dayjs().add(min, "minutes").toDate();
+const MatchTimer = ({ duration }: { duration: number }) => {
+  console.log(duration)
+  const getExpiryTimestamp = () => dayjs().add(duration, "seconds").toDate();
 
-  const { minutes, seconds, start, pause, resume, restart } = useTimer({
+  const { minutes, seconds, start, pause, resume, restart, isRunning, totalSeconds } = useTimer({
     expiryTimestamp: getExpiryTimestamp(),
     onExpire: () => console.log("epxciring"),
     autoStart: false,
   });
 
+  const {setFieldValue, submitForm} = useFormikContext();
+
+  useEffect(() => {
+    const updateFrequency = 5;
+
+    if (isRunning && seconds % updateFrequency === 0) {
+      setFieldValue("elapsed", duration - totalSeconds);
+      submitForm();
+    }
+
+  }, [seconds])
+
+  const isAdmin = useContext(AdminContext);
+
+  const handleReset = () => {
+    setFieldValue("elapsed", 0);
+    submitForm();
+    //FIXME: restari gfter page reload doesn't worki
+    restart(getExpiryTimestamp(), false);
+  }
+
   return (
     <>
-      <div>{`${minutes}:${seconds}`}</div>
-      <div>
-        <Button onClick={start}>Start</Button>
-        <Button onClick={pause}>Pause</Button>
-        <Button onClick={resume}>Resume</Button>
-        <Button onClick={() => restart(getExpiryTimestamp(), false)}>
+      <div>{`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}</div>
+      {isAdmin ? <div>
+        {isRunning ?
+          <Button onClick={pause}>Pause</Button> :
+          <Button onClick={resume}>Start</Button>
+        }
+        <Button onClick={handleReset}>
           Reset
         </Button>
-      </div>
+      </div> : null}
     </>
   );
 };
@@ -36,13 +60,18 @@ const MatchTimer = ({ min }: { min: number }) => {
 function MatchPage() {
   const { id } = useParams();
   const { data: match, status } = useMatch(id);
+  console.log(match)
 
   const { data: opp1 } = useParticipant(match?.opponent1.id);
   const { data: opp2 } = useParticipant(match?.opponent2.id);
 
   const updateMatch = useUpdateMatch();
 
+  const isAdmin = useContext(AdminContext);
+
   if (status === "loading") return <div>Loading...</div>;
+
+  const duration = match.duration * 60 - match.elapsed;
 
   return (
     <Formik
@@ -55,7 +84,8 @@ function MatchPage() {
           <ScoreCounter name="opponent1.score"></ScoreCounter>
           <div>{opp2?.name}</div>
           <ScoreCounter name="opponent2.score"></ScoreCounter>
-          <Button onClick={
+          {values.elapsed}
+          {isAdmin ? <Button onClick={
             () => {
               const s1 = values.opponent1.score;
               const s2 = values.opponent2.score;
@@ -66,8 +96,8 @@ function MatchPage() {
 
               submitForm();
             }
-          }>Submit</Button>
-          <MatchTimer min={match.duration}></MatchTimer>
+          }>Submit</Button> : null}
+          <MatchTimer duration={duration}></MatchTimer>
         </Form>
       )
       }
