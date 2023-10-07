@@ -96,6 +96,8 @@ function DrawPage() {
   return (
     <>
       <Container>
+        <Typography>Number of groups</Typography>
+
         <Slider
           value={groupCount}
           onChange={(e, v: number) => {

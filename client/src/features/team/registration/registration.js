@@ -83,9 +83,7 @@ function RegistrationPage() {
           </Typography>
           <Formik
             initialValues={{
-              id: team.id,
-              name: team.name,
-              phoneNumber: "",
+              ...team,
               division: "",
             }}
             validationSchema={Yup.object({
