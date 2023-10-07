@@ -19,7 +19,7 @@ dayjs.extend(relativeTime);
 
 function TeamPage() {
   const { name } = useParams();
-  const {data: team, status: teamStatus, refetch: refetchTeam} = useTeam(name);
+  const {data: team, status: teamStatus} = useTeam(name);
 
   const {
     status: inviteStatus,
@@ -32,6 +32,7 @@ function TeamPage() {
       const {token, expiresAt} = invite.data;
 
       return {
+        //FIXME: localhost
         link: `localhost:3000/teams/join?id=${team.id}&token=${token}`,
         countdown: dayjs().to(expiresAt),
       };
@@ -53,7 +54,7 @@ function TeamPage() {
     <>
       <h1>{team.name}</h1>
       <h2>{team.manager}</h2>
-      <Button onClick={() => team ? fetchInvite() : refetchTeam()}>Invite</Button>
+      <Button onClick={() => fetchInvite()}>Invite</Button>
       {inviteStatus === "success" ? (
         <Alert>
           <AlertTitle>Generated invite link!</AlertTitle>

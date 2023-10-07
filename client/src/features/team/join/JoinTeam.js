@@ -50,7 +50,6 @@ function JoinTeamPage() {
   }, []);
 
   if (user.team) {
-    console.log(user.team)
     if (user.team.id === id) {
       navigate(`/teams/${user.team.name}`);
     }
