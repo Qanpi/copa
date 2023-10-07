@@ -16,7 +16,7 @@ export const useUpdateMatch = () => {
       return res.data;
     },
     onSuccess(data) {
-      queryClient.setQueryData(matchKeys.id(data.id), data);
+      // queryClient.setQueryData(matchKeys.id(data.id), data);
     },
   });
 };

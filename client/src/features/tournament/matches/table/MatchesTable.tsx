@@ -18,19 +18,10 @@ export const MatchesTable = () => {
       field: "start",
       headerName: "Date",
       editable: true,
-      type: "dateTime",
-      // valueGetter({row}) {
-      //   return undefined;
-      // },
-      // valueSetter({value, row}) {
-      //   return row;
-      // },
-      // valueParser(value, params) {
-      //   return new Date(value);
-      // },
-      // valueSetter(params) {
-      //     console.log(params)
-      // },
+      type: "date",
+      valueGetter({ value }) {
+        return value ? new Date(value) : undefined;
+      },
     },
     {
       field: "opponent1",
@@ -84,10 +75,11 @@ export const MatchesTable = () => {
 
   if (!matches) return <>LOading</>;
 
-  const handleRowUpdate = async (newRow: TMatch, og: TMatch) => {
-    const res = await updateMatch.mutateAsync(newRow);
-    return res;
+  const handleRowUpdate = (newRow: TMatch, og: TMatch) => {
+    updateMatch.mutate(newRow);
+    return newRow;
   }
 
-  return <DataGrid rows={matches} columns={cols} processRowUpdate={handleRowUpdate}></DataGrid>;
+  //FIXME: better error handling
+  return <DataGrid rows={matches} columns={cols} processRowUpdate={handleRowUpdate} onProcessRowUpdateError={(err) => console.error(err)}></DataGrid>;
 };
