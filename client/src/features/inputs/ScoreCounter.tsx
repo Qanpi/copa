@@ -55,9 +55,7 @@ const ScoreCounter = function CustomNumberInput(
         },
       }}
       min={0}
-      defaultValue={0}
       {...field}
-      {...props}
 
       onChange={(e, v) => {
         setFieldValue(field.name, v);

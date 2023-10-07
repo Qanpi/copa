@@ -75,7 +75,17 @@ function MatchPage() {
 
   return (
     <Formik
-      initialValues={match}
+      initialValues={{
+        ...match,
+        opponent1: {
+          ...match.opponent1,
+          score: 0
+        },
+        opponent2: {
+          ...match.opponent2,
+          score: 0
+        }
+      }}
       onSubmit={(values) => updateMatch.mutate(values)}
     >
       {({ values, submitForm, setFieldValue }) => (
