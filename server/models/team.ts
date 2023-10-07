@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
 
@@ -10,7 +10,7 @@ const TeamSchema = new mongoose.Schema(
       index: true,
       //do i even need the below? how would an attack vector look?
       set: encodeURIComponent,
-      get: decodeURIComponent
+      get: decodeURIComponent,
     },
     about: {
       type: String,
@@ -47,25 +47,31 @@ const TeamSchema = new mongoose.Schema(
       conceded: { type: Number },
     },
   },
-  { toJSON: { virtuals: true, getters: true }, toObject: { virtuals: true } }
+  {
+    toJSON: { virtuals: true, getters: true },
+    toObject: { virtuals: true },
+    methods: {
+      async passManagement() {
+        //TODO: test this
+        const newManager = await User.findOne({
+          team: this.id,
+          id: { $ne: this.manager },
+        });
+        this.manager = newManager ? newManager.id : undefined;
+        //TODO: document the fact this doesn't delete the team
+
+        return this.save();
+      },
+    },
+  }
 );
 
-TeamSchema.virtual("players", {
+TeamSchema.virtual("members", {
   ref: collections.users.id,
   localField: "_id",
   foreignField: "team",
 });
 
-TeamSchema.methods.passManagement = async function () {
-  //TODO: test this
-  const newManager = await User.findOne({
-    team: this.id,
-    id: { $ne: this.manager },
-  });
-  this.manager = newManager ? newManager.id : undefined;
-  //TODO: document the fact this doesn't delete the team
-
-  return this.save();
-};
+export type TTeam = InferSchemaType<typeof TeamSchema>;
 
 export default mongoose.model(collections.teams.id, TeamSchema);
