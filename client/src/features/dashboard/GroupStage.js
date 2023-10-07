@@ -24,10 +24,9 @@ import { useState } from "react";
 
 function GroupStage({ next, prev }) {
   const { data: tournament } = useTournament("current");
-  const { groupStage } = tournament;
 
   const { data: matches } = useMatches({
-    stage_id: groupStage?.id,
+    stage_id: tournament?.groupStage?.id,
   });
 
   const scheduledMatches = matches?.filter((m) => !!m.start);
@@ -58,7 +57,7 @@ function GroupStage({ next, prev }) {
           </Typography>
         </Alert>
       ) : null}
-      {!groupStage ? (
+      {!tournament?.groupStage ? (
         <Link to="/tournament/draw">Draw teams</Link>
       ) : (
         <>

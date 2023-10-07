@@ -18,10 +18,9 @@ const Scheduler = () => {
   });
 
   const {data: tournament} = useTournament("current");
-  const {groupStage} = tournament;
 
   const { data: unscheduledMatches } = useMatches({
-    stage_id: groupStage?.id,
+    stage_id: tournament?.groupStage?.id,
     scheduled: false
   });
 

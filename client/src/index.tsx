@@ -26,6 +26,7 @@ import reportWebVitals from "./services/reportWebVitals";
 import { useUser } from "./features/user/hooks.ts";
 import SignInPage from "./features/user/SignInPage.tsx";
 import MyTeamPage from "./features/team/MyTeamPage.tsx";
+import Scheduler from "./features/dashboard/Scheduler.tsx";
 
 export const AdminContext = React.createContext(null);
 
@@ -62,9 +63,11 @@ function App() {
                 <Route
                   path="/tournament/bracket"
                   element={<BracketPage></BracketPage>}
-                >R</Route>
+                ></Route>
 
-                <Route path="/tournament/draw" element={<DrawPage></DrawPage>}></Route>
+                <Route path="/tournament/scheduler" element={<Scheduler></Scheduler>}></Route>
+
+                <Route path="/tournament/draw" element={<DrawPage></DrawPage>}>RR</Route>
 
                 <Route
                   path="/tournament/teams"
