@@ -7,6 +7,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import DrawPage from "../../dashboard/Draw";
 import { Id } from "brackets-model";
 import { DataTypes, ValueToArray } from "brackets-manager";
+import { useNavigate } from "react-router";
 
 const bracketsViewer = new BracketsViewer();
 
@@ -26,8 +27,9 @@ export const useStageData = (stageId: Id) => {
 export const useBracketsViewer = (stageData: ValueToArray<DataTypes>, selector: string) => {
     const ref = useRef(null);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        console.log(stageData, ref.current);
         if (stageData && ref.current) {
             const viewerData = {
                 stages: stageData.stage,
@@ -40,6 +42,10 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>, selector: 
                 {
                     selector,
                     customRoundName: finalRoundNames,
+                    onMatchClick: (match) =>{
+                        //TODO: maybe make popover and the link
+                        navigate(`/tournament/matches/${match.id}`)
+                    },
                 }
             );
 
