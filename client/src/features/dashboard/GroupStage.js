@@ -36,7 +36,7 @@ function GroupStage({ next, prev }) {
 
   const [incompleteMatchesAlert, setIncompleteMatchesAlert] = useState(false);
   const handleClickNext = () => {
-    if (matches.length - scheduledMatches.length !== 0) {
+    if (matches.length - completedMatches.length !== 0) {
       return setIncompleteMatchesAlert(true);
     }
     next();
