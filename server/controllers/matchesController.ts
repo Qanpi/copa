@@ -5,44 +5,45 @@ import { Request, Response } from "express";
 import { manager } from "./tournamentsController.js";
 
 export const getMany = async (req: Request, res: Response) => {
-  const endFilter = req.query.end
-    ? {
-        start: {
-          $lt: req.query.end,
-        },
-      }
-    : {};
-
-  const startFilter = req.query.start
-    ? {
-        start: {
-          $gte: req.query.start,
-        },
-      }
-    : {};
-
-  const query: any = {
-    $and: [startFilter, endFilter],
-  };
+  //FIXME: refactor this better
+  const query: any = {};
 
   if (req.query.scheduled === "true") {
     query["start"] = {
-      $exists: true
-    }
+      $exists: true,
+    };
   } else if (req.query.scheduled === "false") {
     query["start"] = {
-      $exists: false
-    }
+      $exists: false,
+    };
+  } else {
+    const endFilter = req.query.end
+      ? {
+          start: {
+            $lt: req.query.end,
+          },
+        }
+      : {};
+
+    const startFilter = req.query.start
+      ? {
+          start: {
+            $gte: req.query.start,
+          },
+        }
+      : {};
+
+    query["$and"] = [startFilter, endFilter];
   }
 
-  const matches = await Match.find({...req.query, ...query});
+  const matches = await Match.find({ ...req.query, scheduled: undefined, ...query });
   res.send(matches);
 };
 
-export const getOne = async(req: Request, res: Response) => {
+export const getOne = async (req: Request, res: Response) => {
   const match = await Match.findById(req.params.id);
   res.send(match);
-}
+};
 
 export const deleteMany = async (req: Request, res: Response) => {
   await Match.deleteMany({});
@@ -51,7 +52,7 @@ export const deleteMany = async (req: Request, res: Response) => {
 
 export const updateOne = async (req: Request, res: Response) => {
   //TODO: if statement
-  await manager.update.match({...req.body, id: req.params.id});
+  await manager.update.match({ ...req.body, id: req.params.id });
 
   // const match = await Match.findByIdAndUpdate(req.params.id, req.body, {
   //   new: true,
@@ -60,13 +61,12 @@ export const updateOne = async (req: Request, res: Response) => {
   res.send({});
 };
 
-export const resetDates = async(req: Request, res: Response) => {
-  const matches = await Match.updateMany({}, {$unset: {start: ""}});
+export const resetDates = async (req: Request, res: Response) => {
+  const matches = await Match.updateMany({}, { $unset: { start: "" } });
   res.send(matches);
-}
+};
 
 export const reportResults = async (req: Request, res: Response) => {
-
   const updated = await Match.findById(req.body.id);
-  res.send(updated)
-}
+  res.send(updated);
+};

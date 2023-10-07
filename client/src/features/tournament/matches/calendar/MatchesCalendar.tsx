@@ -132,7 +132,7 @@ function MatchesCalendar() {
         scrollTime={"12:00:00"}
         nowIndicator
         snapDuration={1}
-        expandRows
+        // expandRows
         eventResize={handleEventResize}
         editable
         noEventsText="No matches scheduled for this week."
