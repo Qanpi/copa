@@ -57,7 +57,7 @@ function JoinTeamPage() {
     return (
       <LeaveTeamDialog
         onLeave={() => joinTeam.mutate({ id, token })}
-        onStay={() => navigate(`/teams/mine`)}
+        onStay={() => navigate(`/teams/none`)}
       ></LeaveTeamDialog>
     );
   }

@@ -56,8 +56,8 @@ function NewTeamPage() {
   return (
     <>
       <LeaveTeamDialog
-        onLeave={() => navigate(`/teams/mine`)}
-        onStay={() => navigate(`/teams/mine`)}
+        onLeave={() => navigate(`/teams/none`)}
+        onStay={() => navigate(`/teams/none`)}
       ></LeaveTeamDialog>
 
       <h1>Create new team</h1>

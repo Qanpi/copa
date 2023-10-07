@@ -25,7 +25,7 @@ import "./index.css";
 import reportWebVitals from "./services/reportWebVitals";
 import { useUser } from "./features/user/hooks.ts";
 import SignInPage from "./features/user/SignInPage.tsx";
-import MyTeamPage from "./features/team/MyTeamPage.tsx";
+import NoTeamPage from "./features/team/NoTeamPage.tsx";
 import Scheduler from "./features/dashboard/Scheduler.tsx";
 import BracketStructure from "./features/dashboard/BracketStructure.tsx";
 
@@ -99,7 +99,7 @@ function App() {
 
               {/* //TODO: restrict possible team names */}
               <Route path="/teams">
-                <Route path="/teams/mine" element={<MyTeamPage></MyTeamPage>}></Route>
+                <Route path="/teams/none" element={<NoTeamPage></NoTeamPage>}></Route>
                 <Route
                   path="/teams/join"
                   element={<JoinTeamPage></JoinTeamPage>}
