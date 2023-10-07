@@ -54,7 +54,7 @@ function RegistrationPage() {
     },
   });
 
-  const { data: participation } = useQuery({
+  const { data: participant } = useQuery({
     queryKey: ["participation"],
     queryFn: async () => {
       const res = await axios.get(
@@ -68,11 +68,11 @@ function RegistrationPage() {
   const unregisterTeam = useUnregisterTeam(); 
 
   if (team) {
-    if (participation) {
+    if (participant) {
       return (
         <>
           <div>Congratulations! Your team is already registered.</div>
-          <Button onClick={() => unregisterTeam.mutate({id: team.id})}>Unregister</Button>
+          <Button onClick={() => unregisterTeam.mutate({id: participant.id})}>Unregister</Button>
         </>
       );
     } else if (team.manager === user.id) {
