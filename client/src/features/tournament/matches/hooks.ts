@@ -98,7 +98,7 @@ export const useMatches = (
       if (query) {
         url += "?";
         for (const [k, v] of Object.entries(query)) {
-          url += `${k}=${v}`;
+          url += `${k}=${v}&`; //FIXME: appends & at the end
         }
       }
 
