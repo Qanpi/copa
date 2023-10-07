@@ -55,7 +55,7 @@ UserSchema.pre("findOneAndUpdate", async function () {
     const user = await this.model.findOne(this.getQuery());
     const team = await Team.findById(user.team.id);
 
-    team?.passManagement();
+    if (team?.manager?.equals(user._id)) team?.passManagement();
   }
 });
 
