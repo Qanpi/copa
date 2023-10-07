@@ -22,6 +22,11 @@ function GroupStage({ next, prev }) {
     stage_id: groupStage?.id,
   });
 
+  const scheduledMatches = matches?.filter((m) => !!m.start);
+  const completedMatches = matches?.filter(
+    (m) => m.verboseStatus === "Completed"
+  );
+
   const handleClickNext = () => {
     next();
   };
@@ -32,46 +37,21 @@ function GroupStage({ next, prev }) {
 
   return (
     <>
-      <GroupStagePane></GroupStagePane>
+      {!groupStage ? (
+        <Link to="/tournament/draw">Draw teams</Link>
+      ) : (
+        <>
+          <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
+            matches scheduled
+          </NumberCard>
+          <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
+            matches complete
+          </NumberCard>
+        </>
+      )}
 
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
-      {/* maybe show groups and other related data */}
-      {/* <AdminCalendar></AdminCalendar> */}
-      {/* <MyChecklist items={tasks}></MyChecklist> */}
-      {/* <Backdrop open={true} className="backdrop">
-        <ClockIcon></ClockIcon>
-        <Typography>Please wait for the registration period to end.</Typography>
-      </Backdrop> */}
-    </>
-  );
-}
-
-function GroupStagePane() {
-  const { data: tournament } = useTournament("current");
-  const { groupStage } = tournament;
-
-  const { data: matches } = useMatches({
-    stage_id: groupStage?.id,
-  });
-
-  const scheduledMatches = matches?.filter((m) => !!m.start);
-  const completedMatches = matches?.filter(
-    (m) => m.verboseStatus === "Completed"
-  );
-
-  if (!groupStage) {
-    return <Link to="/tournament/draw">Draw teams</Link>;
-  }
-
-  return (
-    <>
-      <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
-        matches scheduled
-      </NumberCard>
-      <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
-        matches complete
-      </NumberCard>
     </>
   );
 }

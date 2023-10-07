@@ -91,7 +91,9 @@ function DrawPage() {
 
   const groupless = participants?.filter(p => !seeding.some(s => s.id === p.id));
 
-  if (groupStage) return;
+  if (groupStage) return (
+    <>Sorry for now it's impossible to reset the draw. Contact support.</>
+  );
 
   return (
     <>
