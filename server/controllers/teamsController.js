@@ -58,10 +58,7 @@ export const joinTeam = expressAsyncHandler(async (req, res) => {
     const team = await Team.findById(req.params.id).select(["+invite.token", "+invite.expiresAt"]);
 
     if (team.invite.token === token && team.invite.expiresAt >= new Date()) {
-      const user = await User.findById(req.user.id);
-      user.team = team;
-      await user.save();
-
+      await User.findByIdAndJoinTeam(req.user.id, team);
       res.send(team);
     } else {
       res.status(403).send({});

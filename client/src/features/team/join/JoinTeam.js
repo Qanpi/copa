@@ -14,7 +14,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link, useSearchParams } from "react-router-dom";
-import { useTeam } from "../hooks.ts";
+import { useTeam, useTeamById } from "../hooks.ts";
 import { useUpdateUser, useUser, userKeys } from "../../user/hooks.ts";
 import LeaveTeamDialog from "../LeaveTeamDialog.tsx";
 
@@ -50,6 +50,11 @@ function JoinTeamPage() {
   }, []);
 
   if (user.team) {
+    console.log(user.team)
+    if (user.team.id === id) {
+      navigate(`/teams/${user.team.name}`);
+    }
+
     return (
       <LeaveTeamDialog
         onLeave={() => joinTeam.mutate({ id, token })}

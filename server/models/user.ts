@@ -23,6 +23,16 @@ const UserSchema = new mongoose.Schema(
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
+    statics: {
+      async findByIdAndJoinTeam(id, team) {
+        await User.findByIdAndUpdate(id, {
+          team: {
+            id: team._id,
+            name: team.name,
+          },
+        });
+      },
+    },
   }
 );
 

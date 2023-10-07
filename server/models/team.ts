@@ -68,12 +68,7 @@ const TeamSchema = new mongoose.Schema(
 
 TeamSchema.pre("save", async function () {
   if (this.isNew) {
-    await User.findByIdAndUpdate(this.manager, {
-      team: {
-        id: this._id,
-        name: this.name
-      }
-    });
+    User.findByIdAndJoinTeam(this.manager, this);
   }
 });
 
