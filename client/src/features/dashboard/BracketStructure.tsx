@@ -101,6 +101,19 @@ const finalRoundNames = (roundInfo: RoundNameInfo) => {
   return `Round ${roundInfo.roundNumber}`;
 };
 
+export const useStandings = (stageId: string) => {
+  const { data: tournament } = useTournament("current");
+
+  return useQuery({
+    queryKey: ["stndngs"],
+    queryFn: async () => {
+      const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}/standings`);
+      return res.data;
+    },
+    enabled: Boolean(tournament) && Boolean(stageId)
+  });
+}
+
 function BracketStructure({ prev, next }) {
   const { data: tournament } = useTournament("current");
   const { data: participants, status: participantsStatus } = useParticipants();
@@ -110,14 +123,7 @@ function BracketStructure({ prev, next }) {
 
   const bracketSize = groupCount * teamsBreakingPerGroup;
 
-  const {data: standings} = useQuery({
-    queryKey: ["stndngs"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${tournament?.groupStage?.id}/standings`);
-      return res.data;
-    },
-    enabled: Boolean(tournament)
-  });
+  const { data: standings } = useStandings(tournament?.groupStage?.id); 
 
   const standingParticipants = standings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
   const breaking = standingParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
