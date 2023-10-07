@@ -4,7 +4,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -12,10 +12,11 @@ import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useUser } from "../../user/hooks.ts";
-import MyFileInput from "../../inputs/fileInput/MyFileInput.js";
-import MyTextField from "../../inputs/textField/mytextfield.js";
+import MyFileInput from "../../inputs/MyFileInput.js";
+import MyTextField from "../../inputs/mytextfield.js";
+import LeaveTeamDialog from "../LeaveTeamDialog.tsx";
 
-export const teamValidationSchema = Yup.object({
+export const teamValidationSchema = {
   name: Yup.string().max(20).trim().required(),
   about: Yup.string().max(100).optional(),
   phoneNumber: Yup.string()
@@ -25,14 +26,14 @@ export const teamValidationSchema = Yup.object({
     .required(),
   instagramUrl: Yup.string()
     .url()
-    .matches(/https:\/\/www\.instagram\.com\/\S+\/?/).optional(), //TODO: maybe be even stricter than \S
+    .matches(/https:\/\/www\.instagram\.com\/\S+\/?/)
+    .optional(), //TODO: maybe be even stricter than \S
   banner: Yup.string().optional(),
   picture: Yup.string().optional(),
-});
+};
 
-function CreateTeamPage() {
-  const {status: userStatus, data: user} = useUser("me");
-
+function NewTeamPage() {
+  const { status: userStatus, data: user } = useUser("me");
 
   const navigate = useNavigate();
 
@@ -50,44 +51,15 @@ function CreateTeamPage() {
     },
   });
 
-  const leaveTeam = useMutation({
-    mutationFn: () => {
-      return axios.delete(`/api/teams/${user.team.id}/players/${user.id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teams", user.team.id] });
-    },
-  });
-
-  const handleDialogResponse = (isConfirmed) => {
-    if (isConfirmed) {
-      leaveTeam.mutate();
-    } else {
-      //or maybbe just show error again for submitting but allow to view creation form
-      return navigate(`/teams/${user.team.id}`);
-      //return
-    }
-  };
-
-  if (userStatus !== "success") return <div>User loading.</div>
+  if (userStatus !== "success") return <div>User loading.</div>;
 
   return (
     <>
-      <Dialog open={!!user.team}>
-        <DialogTitle>{"Leave current team?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            In order to create a team of your own, you must first leave your
-            current team.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={() => handleDialogResponse(false)}>
-            No
-          </Button>
-          <Button onClick={() => handleDialogResponse(true)}>Yes</Button>
-        </DialogActions>
-      </Dialog>
+      <LeaveTeamDialog
+        onLeave={() => navigate(`/teams/none`)}
+        onStay={() => navigate(`/teams/none`)}
+      ></LeaveTeamDialog>
+
       <h1>Create new team</h1>
       <Formik
         initialValues={{
@@ -99,7 +71,7 @@ function CreateTeamPage() {
           banner: "",
           picture: "",
         }}
-        validationSchema={teamValidationSchema}
+        validationSchema={Yup.object(teamValidationSchema)}
         onSubmit={(values) => {
           createTeam.mutate(values);
         }}
@@ -108,15 +80,9 @@ function CreateTeamPage() {
           <MyTextField label="Team name" name="name"></MyTextField>
           <MyTextField label="About" name="about"></MyTextField>
 
-          <MyTextField
-            label="PHone number"
-            name="phoneNumber"
-          ></MyTextField>
+          <MyTextField label="PHone number" name="phoneNumber"></MyTextField>
 
-          <MyTextField
-            label="Instagram page"
-            name="instagramUrl"
-          ></MyTextField>
+          <MyTextField label="Instagram page" name="instagramUrl"></MyTextField>
           {/* <MySelect name="division" label="Division">
             <MenuItem value="Men's">Men's</MenuItem>
             <MenuItem value="Women's">Women's</MenuItem>
@@ -130,4 +96,4 @@ function CreateTeamPage() {
   );
 }
 
-export default CreateTeamPage;
+export default NewTeamPage;

@@ -11,9 +11,7 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
     const data = matchedData(req);
 
     const filters = {
-      "team.id": data?.team,
-      "tournament.id": data?.tournament,
-      group: data?.group || null,
+      group: data?.group === "none" ? null : data?.group,
     };
 
     //TODO: refactor all other uses to checking role

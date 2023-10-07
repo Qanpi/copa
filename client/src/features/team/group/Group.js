@@ -8,28 +8,21 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import { isEqual } from "lodash";
 import { memo } from "react";
-import MyTable from "../../viewer/tables/MyTable.js";
 
 function Group({ name, participants, disableHead }) {
-  const teamValueGetter = (params, fieldName) => {
-    return params.row.team[fieldName];
-  };
-
   const cols = [
     {
       field: "name",
-      headerName: "Team",
-    },
-    {
-      field: "wins",
+      headerName: name 
     },
   ];
 
   const rows = participants || [];
 
-  return <MyTable title={name} rows={rows} cols={cols} hideFooter></MyTable>;
+  return <DataGrid rows={rows} columns={cols} hideFooter></DataGrid>;
 
   return (
     <div>

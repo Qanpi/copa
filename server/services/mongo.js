@@ -6,7 +6,7 @@ const debug = _debugger("mongodb:");
 export const connectMongoose = async () => {
   return await mongoose
     .connect(process.env["MONGODB_CONNECTION_STRING"], {
-      ignoreUndefined: true,
+      ignoreUndefined: true
     })
     .then(() => debug("Connection to CosmosDB succesful."))
     .catch(console.error);

@@ -1,27 +1,19 @@
-import {
-  Button,
-  InputLabel,
-  Tooltip,
-  Typography
-} from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
-import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
-import * as Yup from "yup";
-import { useParticipants } from "../../participant/hooks.ts";
-import { useTournament, useUpdateTournament } from "../../tournament/hooks.ts";
-import { useUnregisterTeam } from "../registration/registration.js";
-import MyDatePicker from "../../inputs/MyDatePicker.js";
+import { useTournament } from "../../tournament/hooks";
+import { useParticipants } from "../../participant/hooks";
+import { useUnregisterTeam } from "../registration/registration";
+import { NotEnoughParticipantsAlert } from "./ParticipantsTable";
 
-function TeamsPage() {
+export function TeamsPage() {
   const { data: participants, status: participantsStatus } = useParticipants();
   const unregisterTeam = useUnregisterTeam();
-  const { data: tournament, status: tournamentStatus } =
-    useTournament("current");
+  const { data: tournament, status: tournamentStatus } = useTournament("current");
 
   const cols = [
     {
@@ -69,8 +61,6 @@ function TeamsPage() {
       },
     },
   ];
-  const updateTournament = useUpdateTournament(tournament?.id);
-
   const updateParticipation = useMutation({
     mutationFn: async (values) => {
       const res = await axios.put(`/api/participations/${values.id}`, values);
@@ -85,7 +75,6 @@ function TeamsPage() {
   return (
     <div sx={{ width: "80%" }}>
       <Typography>Teams</Typography>
-
 
       <DataGrid
         editMode="row"
@@ -102,5 +91,3 @@ function TeamsPage() {
     </div>
   );
 }
-
-export default TeamsPage;

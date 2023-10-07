@@ -1,43 +1,30 @@
 import {
   EventApi,
   EventClickArg,
-  EventDropArg,
-  EventInput,
-  EventSourceInput,
+  EventDropArg
 } from "@fullcalendar/core";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import listPlugin from "@fullcalendar/list";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin, {
   EventResizeDoneArg,
 } from "@fullcalendar/interaction";
-import { ClickAwayListener, Popper, selectClasses } from "@mui/base";
-import { Box, Paper, Typography } from "@mui/material";
+import listPlugin from "@fullcalendar/list";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import { ClickAwayListener, Popper } from "@mui/base";
+import { Paper, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
-import { useMatches } from "../hooks";
-import { useTournament } from "../../hooks";
-import {
-  getGroupFromTournament,
-  getRoundFromTournament,
-  getStageFromTournament,
-  useRound,
-} from "../../helpers";
 import { ObjectId } from "mongodb";
-import { useParticipants, useParticipant } from "../../../participant/hooks";
-import Dragula from "react-dragula";
+import {
+  useCallback,
+  useMemo,
+  useState
+} from "react";
 import "react-dragula/dist/dragula.css";
-import { useUpdateMatch } from "../hooks";
-import { TMatch } from "@backend/models/match";
-import "./MatchesCalendar.css"
+import { useParticipant } from "../../../participant/hooks.ts";
+import { useMatches, useUpdateMatch } from "../hooks.ts";
+import "./MatchesCalendar.css";
+
+import { TMatch } from "@backend/models/match.ts";
+import { Link } from "react-router-dom";
 
 // type MatchEvent = {
 //   matchId: ObjectId;
@@ -61,7 +48,7 @@ type MatchEvent = Omit<
 
 function MatchesCalendar() {
   const { data: scheduledMatches, status: scheduledStatus } = useMatches({
-    status: "scheduled",
+    scheduled: true, 
   });
 
   const updateMatch = useUpdateMatch();
@@ -77,9 +64,9 @@ function MatchesCalendar() {
           end: dayjs(m.start).add(m.duration, "minute").toDate(),
           opponent1: m.opponent1.id,
           opponent2: m.opponent2.id,
-          group: m.group,
-          stage: m.stage,
-          round: m.round,
+          group: m.group_id,
+          stage: m.stage_id,
+          round: m.round_id,
         };
       }),
     [scheduledMatches]
@@ -145,7 +132,7 @@ function MatchesCalendar() {
         scrollTime={"12:00:00"}
         nowIndicator
         snapDuration={1}
-        expandRows
+        // expandRows
         eventResize={handleEventResize}
         editable
         noEventsText="No matches scheduled for this week."
@@ -168,7 +155,7 @@ const MatchEventPopper = ({
   return (
     <Paper>
       <Typography>{`${title}: ${start} - ${end}`}</Typography>
-      <Typography>{id}</Typography>
+      <Link to={`/tournament/matches/${id}`}>Match link</Link>
       <Typography>{opp1?.name}</Typography>
       <Typography>{opp2?.name}</Typography>
     </Paper>

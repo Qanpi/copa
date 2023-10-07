@@ -2,12 +2,22 @@ import expressAsyncHandler from "express-async-handler";
 import Tournament from "../models/tournament.js";
 import Team from "../models/team.js";
 import { validate } from "../middleware/validation.js";
-
-import {JsonDatabase} from "brackets-json-db"
-const storage = new JsonDatabase();
-
-import { BracketsManager } from "brackets-manager";
 import { validationResult } from "express-validator";
+
+import MongooseForBrackets from "brackets-mongo-db";
+import { BracketsManager } from "brackets-manager";
+import Participant from "../models/participant.js";
+import Match from "../models/match.js";
+import MatchGame from "../models/matchGame.js";
+import { groupBy } from "lodash-es";
+import { getRanking } from "ts-brackets-viewer/dist/helpers.js";
+
+const storage = new MongooseForBrackets(
+  Tournament,
+  Participant,
+  Match,
+  MatchGame
+);
 export const manager = new BracketsManager(storage, true);
 
 export const createOne = expressAsyncHandler(async (req, res) => {
@@ -56,10 +66,12 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
   const result = await Tournament.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
+
   res.send(result);
 });
 
 export const deleteOne = expressAsyncHandler(async (req, res) => {
+  await manager.delete.tournament(req.params.id);
   await Tournament.findByIdAndDelete(req.params.id);
   res.status(204).send({});
 });
@@ -99,7 +111,6 @@ export const unregisterTeam = expressAsyncHandler(async (req, res) => {
   res.send(await team.save()); //is it weird to return team here?
 });
 
-
 export const getTournamentDataById = async (req, res) => {
   const data = await manager.get.tournamentData(req.params.id);
   res.send(data);
@@ -113,10 +124,11 @@ export const createStage = async (req, res) => {
 export const updateStage = async (req, res) => {
   //TODO: validation and tournament check
 
-  if (req.body.seeding) {
-    const bool = await manager.update.seeding(
+  if (req.body.seedingIds) {
+    const bool = await manager.update.seedingIds(
       req.params.stageId,
-      req.body.seeding
+      req.body.seedingIds,
+      true
     );
   }
 
@@ -127,12 +139,33 @@ export const updateStage = async (req, res) => {
 export const getCurrentStage = async (req, res) => {
   const stage = await manager.get.currentStage(req.params.id);
   res.send(stage);
-}
+};
 
 export const getStageData = async (req, res) => {
   const stage = await manager.get.stageData(req.params.stageId);
 
   res.send(stage);
+};
+
+export const getSeeding = async (req, res) => {
+  const seeding = await manager.get.seeding(req.params.stageId);
+
+  return res.send(seeding);
+};
+
+export const getStandings = async (req, res) => {
+  const stageData = await manager.get.stageData(req.params.stageId);
+
+  if (stageData.stage[0].type === "round_robin") {
+    const matches = stageData.match;
+    const groupedMatches = Object.values(groupBy(matches, "group_id"));
+
+    const standings = groupedMatches.map((m) => getRanking(m));
+    return res.send(standings);
+  } else {
+    const standings = await manager.get.finalStandings(req.params.stageId);
+    return res.send(standings);
+  }
 };
 
 export const getGroups = expressAsyncHandler(async (req, res) => {

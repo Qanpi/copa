@@ -10,13 +10,36 @@ import { GroupSchema, RoundSchema, StageSchema } from "brackets-mongo-db";
 
 dayjs.extend(relativeTime);
 
-GroupSchema.virtual("name").get(function () {
-  const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+const CustomStageSchema = StageSchema.discriminator(
+  "Tournament", //name must match the discriminator of Tournament model because of how brackets-mongo-db works
+  new mongoose.Schema({}, { id: true })
+);
 
-  return `Group ${alphabet[this.number - 1]}`;
-});
+const CustomRoundSchema = RoundSchema.discriminator(
+  "Tournament",
+  new mongoose.Schema({}, { id: true })
+);
 
-GroupSchema.virtual("participants", {
+const CustomGroupSchema = GroupSchema.discriminator(
+  "Tournament",
+  new mongoose.Schema(
+    {},
+    {
+      id: true,
+      virtuals: {
+        name: {
+          get() {
+            const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+
+            return `Group ${alphabet[this.number - 1]}`;
+          },
+        },
+      },
+    }
+  )
+);
+
+CustomGroupSchema.virtual("participants", {
   ref: collections.participants.id,
   localField: "_id",
   foreignField: "group",
@@ -58,63 +81,49 @@ const TournamentSchema = new mongoose.Schema(
       type: [String],
       default: ["Men's", "Women's"],
     },
-    groups: [GroupSchema],
-    stages: [StageSchema],
-    rounds: [RoundSchema],
+    groups: [CustomGroupSchema],
+    stages: [CustomStageSchema],
+    rounds: [CustomRoundSchema],
 
-    stage: {
-      //FIXME: rename to avoid confusion with brackets stages
+    state: {
       type: String,
-      enum: [
-        "Settings",
-        "Registration",
-        "Group stage",
-        "Play-offs",
-        "Finished",
-      ],
-      default: "Settings",
+      enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
+      default: "Registration",
     },
     end: Date,
   },
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
+    virtuals: {
+      states: {
+        get() {
+          return this.schema.path("state").enumValues;
+        },
+      },
+    },
     // statics: {
-      // async findLatest() {
-      //   const meta = await Metadata.findOne({
-      //     model: collections.tournaments.id,
-      //   });
-      //   const tournament = await this.findById(meta.latest);
-      //   return tournament;
-      // },
+    // async findLatest() {
+    //   const meta = await Metadata.findOne({
+    //     model: collections.tournaments.id,
+    //   });
+    //   const tournament = await this.findById(meta.latest);
+    //   return tournament;
+    // },
     // },
   }
 );
-
-//FIXME: renamed var
-TournamentSchema.virtual("statuses").get(function () {
-  return this.schema.path("stage").enumValues;
-});
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
 });
 
-TournamentSchema.virtual("registration.status").get(function () {
-  if (!this.registration.to || !this.registration.from) return "indefinite";
-
-  const now = new Date();
-  const { from, to } = this.registration;
-
-  if (now < from) {
-    return "awaiting";
-  } else if (now <= to) {
-    return "in progress";
-  } else return "over";
-});
-
 TournamentSchema.virtual("groupStage").get(function () {
   return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
+});
+
+TournamentSchema.virtual("bracket").get(function () {
+  return this.stages.find((s) => s.type === "single_elimination"); //TODO: allow for multiple (divisions)
 });
 
 // TournamentSchema.pre("findOneAndDelete", async function () {
