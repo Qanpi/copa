@@ -115,7 +115,8 @@ function BracketStructure({ prev, next }) {
     queryFn: async () => {
       const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${tournament?.groupStage?.id}/standings`);
       return res.data;
-    }
+    },
+    enabled: Boolean(tournament)
   });
 
   const standingParticipants = standings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
@@ -190,11 +191,11 @@ function BracketStructure({ prev, next }) {
   return (
     <>
       <div>
-        <Typography>Teams breaking from each of the {groupCount} groups</Typography>
+        <Typography>Teams breaking from each group</Typography>
         <Slider
           value={teamsBreakingPerGroup}
           onChange={handleSliderChange}
-          min={1}
+          min={2}
           max={Math.ceil(participants.length / groupCount)}
           step={1}
           marks

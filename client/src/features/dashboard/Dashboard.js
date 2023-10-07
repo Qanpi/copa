@@ -4,6 +4,7 @@ import RegistrationStage from "./Registration.js";
 import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
 import GroupStage from "./GroupStage.js";
 import BracketStructure from "./BracketStructure.tsx";
+import Bracket from "./Bracket.tsx";
 
 function DashboardPage() {
   const { data: tournament } = useTournament("current");
@@ -18,7 +19,7 @@ function DashboardPage() {
       case "Group stage":
         return <GroupStage next={nextSection} prev={prevSection}></GroupStage>;
       case "Bracket":
-        return <BracketStructure next={nextSection} prev={prevSection}></BracketStructure>
+        return <Bracket next={nextSection} prev={prevSection}></Bracket>
       default:
         return <Typography>Unknown tournament state.</Typography>
     }

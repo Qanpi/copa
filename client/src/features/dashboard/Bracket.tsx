@@ -1,33 +1,21 @@
 import {
-  Alert,
-  AlertTitle,
-  Button,
-  Card,
-  CardContent,
-  Typography,
+    Alert,
+    AlertTitle,
+    Button,
+    Typography
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { Formik, Form } from "formik";
-import MyDatePicker from "../inputs/MyDatePicker.js";
-import { Popper } from "@mui/base";
-import { EventClickArg } from "@fullcalendar/core";
-import DateBlocker from "../inputs/DateBlocker.tsx";
-import dayjs, { Dayjs } from "dayjs";
-import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
-import DrawPage from "./Draw.tsx";
-import GroupStageStructure from "./GroupStageStructure.tsx";
-import Scheduler from "./Scheduler.tsx";
-import { useTournament } from "../tournament/hooks.ts";
-import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
-import NumberCard from "./NumberCard.tsx";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useTournament } from "../tournament/hooks.ts";
+import { useMatches } from "../tournament/matches/hooks.ts";
+import NumberCard from "./NumberCard.tsx";
 import { Status } from "brackets-model";
 
-function GroupStage({ next, prev }) {
+function Bracket({ next, prev }) {
   const { data: tournament } = useTournament("current");
 
   const { data: matches } = useMatches({
-    stage_id: tournament?.groupStage?.id,
+    stage_id: tournament?.bracket?.id,
   });
 
   const scheduledMatches = matches?.filter((m) => !!m.start);
@@ -58,8 +46,8 @@ function GroupStage({ next, prev }) {
           </Typography>
         </Alert>
       ) : null}
-      {!tournament?.groupStage ? (
-        <Link to="/tournament/draw">Draw teams</Link>
+      {!tournament?.bracket? (
+        <Link to="/tournament/structure">Arrange bracket</Link>
       ) : (
         <>
           <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
@@ -77,4 +65,4 @@ function GroupStage({ next, prev }) {
   );
 }
 
-export default GroupStage;
+export default Bracket;

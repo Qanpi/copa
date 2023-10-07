@@ -62,8 +62,9 @@ function MatchPage() {
   const { data: match, status } = useMatch(id);
   console.log(match)
 
-  const { data: opp1 } = useParticipant(match?.opponent1.id);
-  const { data: opp2 } = useParticipant(match?.opponent2.id);
+  //FIXME: auto-complete match if one of the articpns is BYE
+  const { data: opp1 } = useParticipant(match?.opponent1?.id);
+  const { data: opp2 } = useParticipant(match?.opponent2?.id);
 
   const updateMatch = useUpdateMatch();
 
