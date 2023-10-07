@@ -16,7 +16,7 @@ import MyFileInput from "../../inputs/MyFileInput.js";
 import MyTextField from "../../inputs/mytextfield.js";
 import LeaveTeamDialog from "../LeaveTeamDialog.tsx";
 
-export const teamValidationSchema = Yup.object({
+export const teamValidationSchema = {
   name: Yup.string().max(20).trim().required(),
   about: Yup.string().max(100).optional(),
   phoneNumber: Yup.string()
@@ -30,7 +30,7 @@ export const teamValidationSchema = Yup.object({
     .optional(), //TODO: maybe be even stricter than \S
   banner: Yup.string().optional(),
   picture: Yup.string().optional(),
-});
+};
 
 function NewTeamPage() {
   const { status: userStatus, data: user } = useUser("me");
@@ -71,7 +71,7 @@ function NewTeamPage() {
           banner: "",
           picture: "",
         }}
-        validationSchema={teamValidationSchema}
+        validationSchema={Yup.object(teamValidationSchema)}
         onSubmit={(values) => {
           createTeam.mutate(values);
         }}

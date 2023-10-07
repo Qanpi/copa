@@ -17,6 +17,7 @@ const TeamSchema = new mongoose.Schema(
     },
     //FIXME: different name on frontend
     instagramUrl: String,
+    phoneNumber: String,
     //one to many, store on the many side
     manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id },
     // players: [

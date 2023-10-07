@@ -8,6 +8,7 @@ import { useUser } from "../../user/hooks.ts";
 import { useTournament } from "../../tournament/hooks.ts";
 import MyTextField from "../../inputs/mytextfield.js";
 import MySelect from "../../inputs/mySelect.js";
+import { teamValidationSchema } from "../create/CreateTeam.js";
 import * as Yup from "yup";
 
 export const useUnregisterTeam = () => {
@@ -15,7 +16,7 @@ export const useUnregisterTeam = () => {
 
   return useMutation({
     mutationFn: async (values) => {
-      const res = await axios.delete(`/api/participations/${values.id}`);
+      const res = await axios.delete(`/api/participants/${values.id}`);
       return res.data;
     },
     onSuccess: () => {
@@ -41,7 +42,7 @@ function RegistrationPage() {
 
   const registerTeam = useMutation({
     mutationFn: async (bool) => {
-      const res = await axios.post(`/api/participations`, {
+      const res = await axios.post(`/api/participants`, {
         teamId: team.id,
         tournamentId: tournament.id,
       });
@@ -88,13 +89,8 @@ function RegistrationPage() {
               division: "",
             }}
             validationSchema={Yup.object({
-              name: Yup.string().max(20).trim().required(),
-              phoneNumber: Yup.string()
-                .matches(
-                  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/
-                )
-                .required(),
-              division: Yup.string().required(),
+              ...teamValidationSchema,
+              division: Yup.string().required()
             })}
             onSubmit={(values) => updateTeam.mutate(values)}
           >
@@ -104,7 +100,6 @@ function RegistrationPage() {
                 <MyTextField
                   label="Phone number"
                   name="phoneNumber"
-                  type="tel"
                 ></MyTextField>
                 <MySelect name="division">
                   <MenuItem value="Men's">Men's</MenuItem>
