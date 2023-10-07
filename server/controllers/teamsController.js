@@ -8,10 +8,6 @@ import dayjs from "dayjs"
 export const createOne = expressAsyncHandler(async (req, res) => {
   const team = await new Team(req.body).save();
 
-  const manager = await User.findById(team.manager);
-  manager.team = team; //maybe refactor to a sep. function
-  await manager.save();
-
   res.send(team);
 });
 

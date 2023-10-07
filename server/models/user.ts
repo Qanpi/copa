@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType } from "mongoose";
+import mongoose, { InferSchemaType, Types } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { UserResponse } from "@azure/cosmos";
 import Team from "./team.js";

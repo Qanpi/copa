@@ -66,6 +66,14 @@ const TeamSchema = new mongoose.Schema(
   }
 );
 
+TeamSchema.pre("save", async function () {
+  if (this.isNew) {
+    await User.findByIdAndUpdate(this.manager, {
+      team: this._id,
+    });
+  }
+});
+
 TeamSchema.virtual("members", {
   ref: collections.users.id,
   localField: "_id",
