@@ -35,12 +35,12 @@ function RegistrationStage({ next, prev }) {
   });
 
   const [isEarlyDialogOpen, setEarlyDialogOpen] = useState(false);
-  const [isZeroParticipantAlertOpen, setZeroParticipantAlertOpen] =
+  const [notEnoughParticipants, setNotEnoughParticipants] =
     useState(false);
 
-  const handleClickNext = async () => {
-    if (participants.length === 0) {
-      setZeroParticipantAlertOpen(true);
+  const handleClickNext = () => {
+    if (participants.length < 2) {
+      setNotEnoughParticipants(true);
       return;
     }
 
@@ -91,11 +91,11 @@ function RegistrationStage({ next, prev }) {
         </DialogActions>
       </Dialog>
 
-      {isZeroParticipantAlertOpen ? (
+      {notEnoughParticipants ? (
         <Alert severity="error">
-          <AlertTitle>Error: 0 participants</AlertTitle>
+          <AlertTitle>Error: Not enough participants</AlertTitle>
           <Typography>
-            Can't proceed to the next stage with 0 participants.
+            Can't proceed to the next stage with {participants.length} participant(s).
           </Typography>
         </Alert>
       ) : null}
