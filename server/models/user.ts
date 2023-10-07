@@ -9,8 +9,11 @@ const UserSchema = new mongoose.Schema(
     googleId: String,
     avatar: String,
     team: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: collections.teams.id,
+      id: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: collections.teams.id,
+      },
+      name: String,
     },
     role: {
       type: String,
@@ -40,11 +43,11 @@ UserSchema.pre("findOneAndUpdate", async function () {
 
   if (update && "team" in update && update.team === null) {
     const user = await this.model.findOne(this.getQuery());
-    const team = await Team.findById(user.team);
+    const team = await Team.findById(user.team.id);
 
     team?.passManagement();
   }
-})
+});
 
 const User = mongoose.model(collections.users.id, UserSchema);
 
