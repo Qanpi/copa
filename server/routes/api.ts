@@ -4,6 +4,7 @@ import { query, body, param } from "express-validator";
 import * as teams from "../controllers/teamsController.js";
 import * as matches from "../controllers/matchesController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
+import * as stages from "../controllers/stagesController.js";
 import * as users from "../controllers/usersController.js";
 import * as participants from "../controllers/participationsController.js";
 import mongoose from "mongoose";
@@ -63,24 +64,24 @@ router.patch("/tournaments/:id", tournaments.updateOne);
 router.delete("/tournaments/:id", tournaments.deleteOne);
 
 //brackets
-router.post("/tournaments/:id/stages/", tournaments.createStage);
+router.post("/tournaments/:id/stages/", stages.createStage);
 
 router.patch(
   "/tournaments/:tournamentId/stages/:stageId",
-  tournaments.updateStage
+  stages.updateStage
 );
 
-router.get("/tournaments/:id/stages/current", tournaments.getCurrentStage);
+router.get("/tournaments/:id/stages/current", stages.getCurrentStage);
 
 router.get(
   "/tournaments/:tournamentId/stages/:stageId",
   [param("stageId")],
-  tournaments.getStageData
+  stages.getStageData
 );
 
-router.get("/tournaments/:tournamentId/stages/:stageId/seeding", tournaments.getSeeding)
+router.get("/tournaments/:tournamentId/stages/:stageId/seeding", stages.getSeeding)
 
-router.get("/tournaments/:tournamentId/stages/:stageId/standings", tournaments.getStandings)
+router.get("/tournaments/:tournamentId/stages/:stageId/standings", stages.getStandings)
 
 // router.get("/tournaments/:id/groups", tourn.getMultiple)
 
