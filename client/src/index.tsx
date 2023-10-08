@@ -35,21 +35,14 @@ export const AdminContext = React.createContext(null);
 export const DivisionContext = React.createContext(null);
 export const DivisionDispatchContext = React.createContext(null);
 
-function divisionReducer(state, action: { type: "previous" | "next" | "specific", nId?: number }) {
-  if (action.type === "next") {
-    const nId = state.nId + 1;
-    return {
-      ...state,
-      nId,
-      selectedDivision: state.divisions[nId]
-    }
-  }
+function divisionReducer(state, action: { nId: number }) {
+  return action.nId;
 }
 
 function App() {
   const { data: tournament } = useTournament("current");
-  const { data: divisions } = useDivisions(tournament?.id);
-  const [divisionsContext, dispatch] = React.useReducer(divisionReducer, { divisions, nId: 0, selected: divisions?.[0] });
+  const divisions = useDivisions(tournament?.id); 
+  const [selected, dispatch] = React.useReducer(divisionReducer, 0);
 
   const { data: user, status: userStatus } = useUser("me");
   if (userStatus !== "success") return;
@@ -57,7 +50,7 @@ function App() {
   return (
     <Router>
       <AdminContext.Provider value={user.role === "admin" || user.name === "qanpi"}>
-        <DivisionContext.Provider value={divisionsContext}>
+        <DivisionContext.Provider value={divisions?.[selected]}>
           <DivisionDispatchContext.Provider value={dispatch}>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>

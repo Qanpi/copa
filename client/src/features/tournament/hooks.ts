@@ -20,6 +20,7 @@ export const useTournament = (id: string) => {
       const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
       return response.data;
     },
+    enabled: Boolean(id)
   });
 };
 
@@ -37,19 +38,7 @@ export const useUpdateTournament = (id: Id) => {
   });
 };
 
-export const useCreateTournament = () => {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (body) => {
-      const res = await axios.post(`/api/tournaments/`, body);
-      return res.data;
-    },
-    onSuccess: (tournament) => {
-      queryClient.setQueryData(["tournament", "detail", "current"], tournament);
-    },
-  });
-};
 
 export const divisionKeys = {
   all: "divisions",
@@ -70,14 +59,9 @@ export const useDivision = (id: string) => {
 }
 
 export const useDivisions = (tournamentId: string) => {
-  return useQuery({
-    queryKey: [divisionKeys.all],
-    queryFn: async () => {
-      const response = await axios.get(`/api/${tournamentKeys.all}/${tournamentId}/${divisionKeys.all}`);
-      return response.data;
-    },
-    enabled: Boolean(tournamentId)
-  });
+  const { data: tournament } = useTournament(tournamentId);
+
+  return tournament?.divisions;
 }
 
 export const finalRoundNames = (roundInfo: RoundNameInfo) => {

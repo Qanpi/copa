@@ -26,12 +26,12 @@ export const useParticipant = (id?: ObjectId) => {
   });
 };
 
-export const useParticipants = (division: string, query?: Partial<TParticipant>) => {
+export const useParticipants = (divisionId: string, query?: Partial<TParticipant>) => {
   return useQuery({
     queryKey: [participantKeys.query(query)],
 
     queryFn: async () => {
-      let url = `/api/${divisionKeys.all}/${division}/${participantKeys.all}`;
+      let url = `/api/${divisionKeys.all}/${divisionId}/${participantKeys.all}`;
 
       if (query) {
         url += "?";
@@ -41,5 +41,7 @@ export const useParticipants = (division: string, query?: Partial<TParticipant>)
       const res = await axios.get(url);
       return res.data as TParticipant[];
     },
+
+    enabled: Boolean(divisionId)
   });
 };

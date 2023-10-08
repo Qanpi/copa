@@ -170,9 +170,8 @@ function RegistrationStage({ next, prev }) {
 }
 
 function DashPane() {
-  const context = useContext(DivisionContext);
-  console.log(context)
-  const { data: participants } = useParticipants(context.selectedDivision?.id);
+  const division = useContext(DivisionContext);
+  const { data: participants } = useParticipants(division?.id);
 
   return (
     <NumberCard number={participants?.length}>team(s) registered</NumberCard>

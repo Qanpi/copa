@@ -5,12 +5,13 @@ import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
 import GroupStage from "./GroupStage.js";
 import BracketStructure from "./BracketStructure.tsx";
 import Bracket from "./Bracket.tsx";
+import CreateTournamentPage from "./CreateTournament.tsx";
 
 function DashboardPage() {
   const { data: tournament } = useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
 
-  if (!tournament) return <NewTournamentPage></NewTournamentPage>;
+  if (!tournament) return <CreateTournamentPage></CreateTournamentPage>;
 
   const currentSection = () => {
     switch (tournament.state) {
