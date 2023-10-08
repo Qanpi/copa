@@ -31,9 +31,6 @@ function WinnerTribute() {
 function HomePage() {
   const { data: tournament } = useTournament("current");
 
-  const startOfWeek = useMemo(() => dayjs().day(1), []);
-  const { data: matches } = useMatches({ start: startOfWeek.toDate() });
-
   if (!tournament) return <>Loadng...</>
 
   if (tournament.state === "Complete") 

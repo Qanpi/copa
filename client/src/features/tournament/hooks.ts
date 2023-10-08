@@ -1,7 +1,7 @@
 import {
-    useMutation,
-    useQuery,
-    useQueryClient
+  useMutation,
+  useQuery,
+  useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
 import { Id, QueryKeyFactory } from "../../types";
@@ -50,6 +50,25 @@ export const useCreateTournament = () => {
     },
   });
 };
+
+export const divisionKeys = {
+  all: "divisions",
+  id: (id: Id) => [divisionKeys.all, id],
+  query: () => [divisionKeys.all, "detail"],
+};
+
+export const useDivision = (id: string) => {
+  const { data: tournament } = useTournament("current");
+
+  return useQuery({
+    queryKey: divisionKeys.id(id),
+    queryFn: async () => {
+      const response = await axios.get(`/api/${tournamentKeys.all}/${tournament.id}/${divisionKeys.all}/${id}`);
+      return response.data;
+    },
+  });
+}
+
 export const finalRoundNames = (roundInfo: RoundNameInfo) => {
   if ("fractionOfFinal" in roundInfo) {
     switch (roundInfo.fractionOfFinal) {

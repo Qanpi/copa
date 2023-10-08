@@ -14,14 +14,26 @@ const TournamentSchema = new mongoose.Schema(
       name: String,
       phoneNumber: String,
     },
-    divisions: {
-      type: [SchemaTypes.ObjectId],
+    registration: {
+        from: Date,
+        to: Date,
+    },
+    state: {
+        type: String,
+        enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
+        default: "Registration",
     },
   },
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
     virtuals: {
+      states: {
+        get() {
+          const statePath = this.schema.path("state");
+          return statePath.enumValues;
+        },
+      },
       name: {
         get() {
           return `Copa ${romanize(this.idx)}`;
