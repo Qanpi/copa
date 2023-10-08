@@ -1,96 +1,22 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import mongoose from "mongoose";
+import mongoose, { SchemaTypes } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { romanize } from "../services/helpers.js";
 
-import { Tournament as BracketsTournament } from "brackets-mongo-db";
-
-import { GroupSchema, RoundSchema, StageSchema } from "brackets-mongo-db";
-
 dayjs.extend(relativeTime);
-
-const CustomStageSchema = StageSchema.discriminator(
-  "Tournament", //name must match the discriminator of Tournament model because of how brackets-mongo-db works
-  new mongoose.Schema({}, { id: true })
-);
-
-const CustomRoundSchema = RoundSchema.discriminator(
-  "Tournament",
-  new mongoose.Schema({}, { id: true })
-);
-
-const CustomGroupSchema = GroupSchema.discriminator(
-  "Tournament",
-  new mongoose.Schema(
-    {},
-    {
-      id: true,
-      virtuals: {
-        name: {
-          get() {
-            const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
-
-            return `Group ${alphabet[this.number - 1]}`;
-          },
-        },
-      },
-    }
-  )
-);
-
-CustomGroupSchema.virtual("participants", {
-  ref: collections.participants.id,
-  localField: "_id",
-  foreignField: "group",
-});
-
-// export const Group = mongoose.model(collections.groups.id, GroupSchema);
 
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      default: function () {
-        return `Copa ${romanize(this.idx)}`;
-      },
-    },
-    settings: {
-      matchLength: {
-        type: Number,
-        default: 6,
-      },
-      playerCount: {
-        type: Number,
-        default: 4,
-      },
-    },
-    rules: {
-      type: String,
-    },
+    idx: Number,
     organizer: {
       name: String,
       phoneNumber: String,
     },
-    registration: {
-      from: Date,
-      to: Date,
-    },
     divisions: {
-      type: [String],
-      default: ["Men's", "Women's"],
+      type: [SchemaTypes.ObjectId],
     },
-    groups: [CustomGroupSchema],
-    stages: [CustomStageSchema],
-    rounds: [CustomRoundSchema],
-
-    state: {
-      type: String,
-      enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
-      default: "Registration",
-    },
-    end: Date,
   },
   {
     toObject: { virtuals: true },
@@ -99,6 +25,11 @@ const TournamentSchema = new mongoose.Schema(
       states: {
         get() {
           return this.schema.path("state").enumValues;
+        },
+      },
+      name: {
+        get() {
+          return `Copa ${romanize(this.idx)}`;
         },
       },
     },
@@ -116,14 +47,6 @@ const TournamentSchema = new mongoose.Schema(
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
-});
-
-TournamentSchema.virtual("groupStage").get(function () {
-  return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
-});
-
-TournamentSchema.virtual("bracket").get(function () {
-  return this.stages.find((s) => s.type === "single_elimination"); //TODO: allow for multiple (divisions)
 });
 
 // TournamentSchema.pre("findOneAndDelete", async function () {
@@ -157,9 +80,6 @@ TournamentSchema.virtual("bracket").get(function () {
 //   }
 // });
 
-const Tournament = BracketsTournament.discriminator(
-  "Tournament",
-  TournamentSchema
-);
+const Tournament = mongoose.model("Tournament", TournamentSchema);
 
 export default Tournament;

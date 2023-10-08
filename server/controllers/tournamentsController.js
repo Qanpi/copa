@@ -5,10 +5,13 @@ import Team from "../models/team.js";
 import Tournament from "../models/tournament.js";
 
 import { BracketsManager } from "brackets-manager";
-import MongooseForBrackets, { Group, Round, Stage } from "brackets-mongo-db";
+import MongooseForBrackets from "brackets-mongo-db";
 import Match from "../models/match.js";
 import MatchGame from "../models/matchGame.js";
 import Participant from "../models/participant.js";
+import Stage from "../models/stage.ts";
+import Round from "../models/round.ts";
+import Group from "../models/group.ts";
 
 import { groupBy } from "lodash-es";
 import { getRanking } from "ts-brackets-viewer/dist/helpers.js";
