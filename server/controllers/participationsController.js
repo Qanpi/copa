@@ -37,7 +37,7 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   const participation = await new Participant({
     team: team.id,
     name: team.name,
-    tournament_id: req.body.tournamentId,
+    division: req.params.id,
   }).save();
 
   res.send(participation);

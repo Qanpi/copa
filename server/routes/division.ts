@@ -1,12 +1,15 @@
 import { query, param } from "express-validator";
 import * as stages from "../controllers/stagesController.js";
 import * as divisions from "../controllers/divisionsController.js";
+import * as participants from "../controllers/participationsController.js";
 import express from "express";
 
 const router = express.Router();
 
 //DIVISIONS
-router.get("/divisions/", divisions.getMultiple)
+
+//PARTICIPANTS
+router.post("/participants", participants.createOne);
 
 //STAGES
 router.post("/stages/", stages.createStage);

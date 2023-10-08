@@ -6,11 +6,13 @@ import * as matches from "../controllers/matchesController.js";
 import * as users from "../controllers/usersController.js";
 import * as participants from "../controllers/participationsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
-import bracketsRouter from "./brackets.js"
+import * as divisions from "../controllers/divisionsController.js"
+import divisionRouter from "./division.js"
 import mongoose from "mongoose";
 
 const router = express.Router();
 
+//TOURNAMENT
 router.get("/tournaments", tournaments.getMultiple);
 router.get("/tournaments/current", tournaments.getCurrent);
 router.get(
@@ -24,7 +26,12 @@ router.post(
 router.patch("/tournaments/:id", tournaments.updateOne);
 router.delete("/tournaments/:id", tournaments.deleteOne);
 
-router.use("/tournaments/:id", bracketsRouter);
+//DIVISIONS
+router.get("/tournaments/:id/divisions", divisions.readMany);
+router.post("/tournaments/:id/divisions", divisions.createOne);
+router.patch("/tournaments/:id/divisions/:divisionId", divisions.updateOne);
+
+router.use("/divisions/:id", divisionRouter); //avoid overly nested urls
 
 router.get(
   "/matches",
