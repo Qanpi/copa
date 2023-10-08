@@ -6,7 +6,7 @@ import {
 import axios from "axios";
 import { ObjectId } from "mongodb";
 import { TParticipant } from "@backend/models/participant";
-import { divisionKeys } from "../tournament/hooks";
+import { divisionKeys, tournamentKeys } from "../tournament/hooks";
 
 export const participantKeys = {
   all: "participants",
@@ -18,7 +18,7 @@ export const useParticipant = (id?: ObjectId) => {
   return useQuery({
     queryKey: [participantKeys.id(id)],
     queryFn: async () => {
-      const url = `/api/${participantKeys.all}/${id}`;
+      const url = `/api/${tournamentKeys.all}/${id}`;
       const res = await axios.get(url);
       return res.data as TParticipant;
     },
@@ -26,12 +26,12 @@ export const useParticipant = (id?: ObjectId) => {
   });
 };
 
-export const useParticipants = (divisionId: string, query?: Partial<TParticipant>) => {
+export const useParticipants = (tournamentId: string, query?: Partial<TParticipant>) => {
   return useQuery({
     queryKey: [participantKeys.query(query)],
 
     queryFn: async () => {
-      let url = `/api/${divisionKeys.all}/${divisionId}/${participantKeys.all}`;
+      let url = `/api/${tournamentKeys.all}/${tournamentId}/${participantKeys.all}`;
 
       if (query) {
         url += "?";
@@ -42,6 +42,6 @@ export const useParticipants = (divisionId: string, query?: Partial<TParticipant
       return res.data as TParticipant[];
     },
 
-    enabled: Boolean(divisionId)
+    enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
   });
 };

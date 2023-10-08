@@ -16,6 +16,7 @@ function NoTeamPage() {
     // }, [team])
 
     return <>
+    <Typography>You are not currently in a tem</Typography>
         To join a team, please ask the manager for the link.
         <Link to="/teams/new">Create team</Link>
     </>

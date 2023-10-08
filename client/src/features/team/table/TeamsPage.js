@@ -7,12 +7,12 @@ import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useTournament } from "../../tournament/hooks";
 import { useParticipants } from "../../participant/hooks";
-import { useUnregisterTeam } from "../registration/registration";
+import { useDeleteParticipant } from "../registration/registration";
 import { NotEnoughParticipantsAlert } from "./ParticipantsTable";
 
 export function TeamsPage() {
   const { data: participants, status: participantsStatus } = useParticipants();
-  const unregisterTeam = useUnregisterTeam();
+  const unregisterTeam = useDeleteParticipant();
   const { data: tournament, status: tournamentStatus } = useTournament("current");
 
   const cols = [

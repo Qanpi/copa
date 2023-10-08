@@ -14,12 +14,12 @@ import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useParticipants } from "../../participant/hooks.ts";
 import { useTournament, useUpdateTournament } from "../../tournament/hooks.ts";
-import { useUnregisterTeam } from "../registration/registration.js";
+import { useDeleteParticipant } from "../registration/registration.js";
 import MyDatePicker from "../../inputs/MyDatePicker.js";
 
 function TeamsPage() {
   const { data: participants, status: participantsStatus } = useParticipants();
-  const unregisterTeam = useUnregisterTeam();
+  const unregisterTeam = useDeleteParticipant();
   const { data: tournament, status: tournamentStatus } =
     useTournament("current");
 
