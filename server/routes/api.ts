@@ -35,7 +35,6 @@ router.use("/divisions/:id", divisionRouter); //avoid overly nested urls
 
 router.get(
   "/matches",
-  [query("start").isDate(), query("end").isDate()],
   matches.getMany
 );
 
@@ -71,26 +70,7 @@ router.post("/teams/:id/join", teams.joinTeam);
 
 // router.patch("/tournaments/:tournamentId/groups/:groupId", groups.updateOne)
 
-//FIXME: refactor into subcollection of tounament
-router.get(
-  "/participants",
-  [
-    query("team").optional(),
-    query("tournament").optional(),
-    query("group").isString().optional(),
-  ],
-  participants.getMultiple
-);
 
-router.get("/participants/:id", participants.getOne)
-
-router.post("/participants", participants.createOne);
-
-router.delete("/participants/:id", participants.deleteOne);
-
-router.put("/participants/:id", participants.updateOne);
-
-router.patch("/participants/:id", participants.updateOne);
 
 // router.get("/tournaments/:id/teams", tournaments.getRegisteredTeams);
 

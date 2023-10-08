@@ -4,25 +4,17 @@ import Tournament from "../models/tournament.js";
 import Team from "../models/team.js";
 import { matchedData, validationResult } from "express-validator";
 
-export const getMultiple = expressAsyncHandler(async (req, res) => {
-  const result = validationResult(req);
-
-  if (result.isEmpty()) {
-    const data = matchedData(req);
-
-    const filters = {
-      group: data?.group === "none" ? null : data?.group,
-    };
-
-    //TODO: refactor all other uses to checking role
-    const participations =
-      req.user?.role === "admin"
-        ? await Participant.find(filters).select(["+team.phoneNumber"])
-        : await Participant.find(filters);
-    return res.send(participations);
+export const getMany = expressAsyncHandler(async (req, res) => {
+  const filter = {
+    ...req.query,
+    tournament_id: req.params.id
   }
-
-  res.send({ errors: result.array() });
+  //TODO: refactor all other uses to checking role
+  const participants =
+    req.user?.role === "admin"
+      ? await Participant.find(filter).select(["+team.phoneNumber"])
+      : await Participant.find(filter);
+  return res.send(participants);
 });
 
 export const getOne = expressAsyncHandler(async (req, res) => {
@@ -37,7 +29,7 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   const participation = await new Participant({
     team: team.id,
     name: team.name,
-    division: req.params.id,
+    tournament_id: req.params.id,
   }).save();
 
   res.send(participation);

@@ -13,6 +13,7 @@ const ParticipantSchema = new mongoose.Schema(
     //   ref: collections.tournaments.id,
     //   // index: true,
     // },
+    //FIXME: remove
     group_id: {
       type: SchemaTypes.ObjectId,
     },
