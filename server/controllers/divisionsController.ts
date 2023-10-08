@@ -7,7 +7,11 @@ export const createOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const readMany = expressAsyncHandler(async (req, res) => {
-  const results = await Division.find({});
+  const filter = {
+    tournament: req.params.id
+  }
+
+  const results = await Division.find(filter);
   res.send(results);
 });
 
