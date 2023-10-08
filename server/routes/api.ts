@@ -8,7 +8,7 @@ import * as participants from "../controllers/participationsController.js";
 import tournamentRouter from "./tournamentRouter.js"
 import mongoose from "mongoose";
 
-export const router = express.Router();
+const router = express.Router();
 
 router.use("/tournament", tournamentRouter);
 

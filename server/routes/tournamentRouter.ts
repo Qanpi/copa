@@ -2,7 +2,9 @@ import { query, param } from "express-validator";
 import * as stages from "../controllers/stagesController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as divisions from "../controllers/divisionsController.js";
-import { router } from "./api";
+import express from "express";
+
+const router = express.Router();
 
 // TOURNAMENT
 router.get("/tournaments", tournaments.getMultiple);
