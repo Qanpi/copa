@@ -48,7 +48,7 @@ function DrawPage() {
   const { data: participants, status: participantsStatus } = useQuery({
     queryKey: [participantKeys.all],
     queryFn: async () => {
-      const res = await axios.get(`/api/participants`);
+      const res = await axios.get(`/api/tournaments/${tournament?.id}/participants`);
       return res.data;
     },
     staleTime: Infinity
