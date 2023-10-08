@@ -5,6 +5,7 @@ import * as divisions from "../controllers/divisionsController.js";
 import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
+import * as participants from "../controllers/participationsController.js";
 import divisionRouter from "./division.js";
 
 const router = express.Router();
@@ -23,7 +24,14 @@ router.post(
 router.patch("/tournaments/:id", tournaments.updateOne);
 router.delete("/tournaments/:id", tournaments.deleteOne);
 
-//DIVISIONS
+//PARTICIPANTS
+router.get("/tournaments/:id/participants", participants.getMany);
+router.get("/tournaments/:id/participants/:id", participants.getOne)
+router.post("/tournaments/:id/participants", participants.createOne);
+router.delete("/tournaments/:id/participants/:id", participants.deleteOne);
+router.patch("/tournaments/:id/participants/:id", participants.updateOne);
+
+//DIVISIONS //TODO: legacy, deprecated, since subdocs (?)
 router.get("/tournaments/:id/divisions", divisions.readMany);
 router.post("/tournaments/:id/divisions", divisions.createOne);
 router.put("/tournaments/:id/divisions/:divisionId", divisions.updateOne);

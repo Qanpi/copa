@@ -5,10 +5,8 @@ import Team from "../models/team.js";
 import { matchedData, validationResult } from "express-validator";
 
 export const getMany = expressAsyncHandler(async (req, res) => {
-  const filter = {
-    ...req.query,
-    tournament_id: req.params.id
-  }
+  //translateAliases because division = tournament_id;
+  const filter = Participant.translateAliases(req.query);
   //TODO: refactor all other uses to checking role
   const participants =
     req.user?.role === "admin"
@@ -23,14 +21,9 @@ export const getOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const createOne = expressAsyncHandler(async (req, res) => {
-  //TODO: remove unnecessary calls
-  const team = await Team.findById(req.body.teamId);
-
-  const participation = await new Participant({
-    team: team.id,
-    name: team.name,
-    tournament_id: req.params.id,
-  }).save();
+  const participation = await new Participant(
+    Participant.translateAliases(req.body)
+  ).save();
 
   res.send(participation);
 });
