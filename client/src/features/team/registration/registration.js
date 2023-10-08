@@ -11,7 +11,7 @@ import MySelect from "../../inputs/mySelect.js";
 import { teamValidationSchema } from "../create/CreateTeam.js";
 import * as Yup from "yup";
 import { useParticipants } from "../../participant/hooks.ts";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useLayoutEffect } from "react";
 
 //team member -> ask manager
 //team manager -> register
@@ -31,7 +31,7 @@ function RegistrationPage() {
   const participant = participants?.[0];
 
   const navigate = useNavigate();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (user && !user.team) {
       return navigate(`/teams/none`);
     }
