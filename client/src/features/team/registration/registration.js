@@ -112,6 +112,7 @@ function RegistrationForm() {
                 division: selected.id,
                 team: team.id,
                 name: team.name,
+                phoneNumber: team.phoneNumber
               });
             },
           });
