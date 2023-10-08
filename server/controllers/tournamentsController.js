@@ -4,62 +4,27 @@ import { validate } from "../middleware/validation.js";
 import Team from "../models/team.js";
 import Tournament from "../models/tournament.js";
 
-import { BracketsManager } from "brackets-manager";
-import MongooseForBrackets from "brackets-mongo-db";
-import Match from "../models/match.js";
-import MatchGame from "../models/matchGame.js";
-import Participant from "../models/participant.js";
-import Stage from "../models/stage.ts";
-import Round from "../models/round.ts";
-import Group from "../models/group.ts";
-
 import { groupBy } from "lodash-es";
 import { getRanking } from "ts-brackets-viewer/dist/helpers.js";
-
-const storage = new MongooseForBrackets(
-  Participant,
-  Match,
-  MatchGame,
-  Round,
-  Stage,
-  Group
-);
-
-export const manager = new BracketsManager(storage, true);
+import { bracketsManager } from "../services/bracketsManager.js";
 
 export const createOne = expressAsyncHandler(async (req, res) => {
-  if (!validate(req, res)) return; //FIXME: change other requests too
-
   const newTournament = await new Tournament(req.body).save();
   res.send(newTournament);
 });
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
-  validate(req, res);
-
   const results = await Tournament.find({});
   res.send(results);
 });
 
 export const getOne = expressAsyncHandler(async (req, res) => {
-  const validation = validationResult(req);
-
-  if (!validation.isEmpty()) {
-    res.send({ errors: validation.array() });
-    return false;
-  }
-
-  if (req.query.data) {
-    console.log("detail requested");
-  }
-
   const result = await Tournament.findById(req.params.id);
   res.send(result);
 });
 
 export const getCurrent = expressAsyncHandler(async (req, res) => {
-  validate(req, res);
-
+  //FIXME:
   const result = await Tournament.findOne({
     //TODO: verify that only one not over is possible
     stage: { $ne: "Finished" },
@@ -78,7 +43,7 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const deleteOne = expressAsyncHandler(async (req, res) => {
-  await manager.delete.tournament(req.params.id);
+  await bracketsManager.delete.tournament(req.params.id);
   await Tournament.findByIdAndDelete(req.params.id);
   res.status(204).send({});
 });
@@ -119,12 +84,12 @@ export const unregisterTeam = expressAsyncHandler(async (req, res) => {
 });
 
 export const getTournamentDataById = async (req, res) => {
-  const data = await manager.get.tournamentData(req.params.id);
+  const data = await bracketsManager.get.tournamentData(req.params.id);
   res.send(data);
 };
 
 export const createStage = async (req, res) => {
-  const stage = await manager.create.stage(req.body);
+  const stage = await bracketsManager.create.stage(req.body);
   res.send(stage);
 };
 
@@ -132,36 +97,36 @@ export const updateStage = async (req, res) => {
   //TODO: validation and tournament check
 
   if (req.body.seedingIds) {
-    const bool = await manager.update.seedingIds(
+    const bool = await bracketsManager.update.seedingIds(
       req.params.stageId,
       req.body.seedingIds,
       true
     );
   }
 
-  const stage = await manager.get.currentStage(); //FIXME: may be problematic to use currentStage
+  const stage = await bracketsManager.get.currentStage(); //FIXME: may be problematic to use currentStage
   res.send(stage);
 };
 
 export const getCurrentStage = async (req, res) => {
-  const stage = await manager.get.currentStage(req.params.id);
+  const stage = await bracketsManager.get.currentStage(req.params.id);
   res.send(stage);
 };
 
 export const getStageData = async (req, res) => {
-  const stage = await manager.get.stageData(req.params.stageId);
+  const stage = await bracketsManager.get.stageData(req.params.stageId);
 
   res.send(stage);
 };
 
 export const getSeeding = async (req, res) => {
-  const seeding = await manager.get.seeding(req.params.stageId);
+  const seeding = await bracketsManager.get.seeding(req.params.stageId);
 
   return res.send(seeding);
 };
 
 export const getStandings = async (req, res) => {
-  const stageData = await manager.get.stageData(req.params.stageId);
+  const stageData = await bracketsManager.get.stageData(req.params.stageId);
 
   if (stageData.stage[0].type === "round_robin") {
     const matches = stageData.match;
@@ -170,7 +135,7 @@ export const getStandings = async (req, res) => {
     const standings = groupedMatches.map((m) => getRanking(m));
     return res.send(standings);
   } else {
-    const standings = await manager.get.finalStandings(req.params.stageId);
+    const standings = await bracketsManager.get.finalStandings(req.params.stageId);
     return res.send(standings);
   }
 };

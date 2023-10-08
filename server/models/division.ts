@@ -1,6 +1,7 @@
 import mongoose, { SchemaTypes } from "mongoose";
 
 const DivisionSchema = new mongoose.Schema({
+    tournament: SchemaTypes.ObjectId,
     rules: {
         type: String,
     },

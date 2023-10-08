@@ -2,7 +2,7 @@ import { validationResult } from "express-validator";
 import Match from "../models/match.js";
 import { Request, Response } from "express";
 
-import { manager } from "./tournamentsController.js";
+import { bracketsManager } from "../services/bracketsManager.js";
 
 export const getMany = async (req: Request, res: Response) => {
   //FIXME: refactor this better
@@ -52,7 +52,7 @@ export const deleteMany = async (req: Request, res: Response) => {
 
 export const updateOne = async (req: Request, res: Response) => {
   //TODO: if statement
-  await manager.update.match({ ...req.body, id: req.params.id });
+  await bracketsManager.update.match({ ...req.body, id: req.params.id });
 
   // const match = await Match.findByIdAndUpdate(req.params.id, req.body, {
   //   new: true,
