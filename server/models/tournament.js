@@ -28,15 +28,6 @@ const TournamentSchema = new mongoose.Schema(
         },
       },
     },
-    // statics: {
-    // async findLatest() {
-    //   const meta = await Metadata.findOne({
-    //     model: collections.tournaments.id,
-    //   });
-    //   const tournament = await this.findById(meta.latest);
-    //   return tournament;
-    // },
-    // },
   }
 );
 
