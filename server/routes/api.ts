@@ -5,12 +5,26 @@ import * as teams from "../controllers/teamsController.js";
 import * as matches from "../controllers/matchesController.js";
 import * as users from "../controllers/usersController.js";
 import * as participants from "../controllers/participationsController.js";
-import tournamentRouter from "./tournamentRouter.js"
+import * as tournaments from "../controllers/tournamentsController.js";
+import bracketsRouter from "./brackets.js"
 import mongoose from "mongoose";
 
 const router = express.Router();
 
-router.use("/tournament", tournamentRouter);
+router.get("/tournaments", tournaments.getMultiple);
+router.get("/tournaments/current", tournaments.getCurrent);
+router.get(
+    "/tournaments/:id",
+    tournaments.getOne
+);
+router.post(
+    "/tournaments",
+    tournaments.createOne
+);
+router.patch("/tournaments/:id", tournaments.updateOne);
+router.delete("/tournaments/:id", tournaments.deleteOne);
+
+router.use("/tournaments/:id", bracketsRouter);
 
 router.get(
   "/matches",

@@ -1,19 +1,19 @@
-import { groupBy } from "lodash";
-import { getRanking } from "ts-brackets-viewer/dist/helpers";
-import { bracketsManager } from "../services/bracketsManager";
+import { groupBy } from "lodash-es";
+import { getRanking } from "ts-brackets-viewer/dist/helpers.js";
+import { bracketsManager } from "../services/bracketsManager.js";
+import { Request, Response } from "express";
 
-export const createStage = async (req, res) => {
+export const createStage = async (req: Request, res: Response) => {
   const stage = await bracketsManager.create.stage(req.body);
   res.send(stage);
 };
 
-export const updateStage = async (req, res) => {
+export const updateStage = async (req: Request, res: Response) => {
   //TODO: validation and tournament check
   if (req.body.seedingIds) {
     const bool = await bracketsManager.update.seedingIds(
       req.params.stageId,
       req.body.seedingIds,
-      true
     );
   }
 
@@ -22,24 +22,24 @@ export const updateStage = async (req, res) => {
   res.send({});
 };
 
-export const getCurrentStage = async (req, res) => {
+export const getCurrentStage = async (req: Request, res: Response) => {
   const stage = await bracketsManager.get.currentStage(req.params.id);
   res.send(stage);
 };
 
-export const getStageData = async (req, res) => {
+export const getStageData = async (req: Request, res: Response) => {
   const stage = await bracketsManager.get.stageData(req.params.stageId);
 
   res.send(stage);
 };
 
-export const getSeeding = async (req, res) => {
+export const getSeeding = async (req: Request, res: Response) => {
   const seeding = await bracketsManager.get.seeding(req.params.stageId);
 
   return res.send(seeding);
 };
 
-export const getStandings = async (req, res) => {
+export const getStandings = async (req: Request, res: Response) => {
   const stageData = await bracketsManager.get.stageData(req.params.stageId);
 
   if (stageData.stage[0].type === "round_robin") {
