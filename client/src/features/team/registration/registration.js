@@ -76,7 +76,7 @@ function RegistrationForm() {
   const updateTeam = useUpdateTeam();
 
   const queryClient = useQueryClient();
-  const registerTeam = useMutation({
+  const registerParticipant = useMutation({
     mutationFn: async (values) => {
       const res = await axios.post(
         `/api/tournaments/${tournament.id}/participants`,
@@ -107,7 +107,7 @@ function RegistrationForm() {
 
           const selected = divisions.find((d) => d.name === values.division);
 
-          registerTeam.mutate({
+          registerParticipant.mutate({
             division: selected.id,
             team: team.id,
           });
