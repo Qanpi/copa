@@ -2,14 +2,22 @@ import { groupBy } from "lodash-es";
 import { getRanking } from "ts-brackets-viewer/dist/helpers.js";
 import { bracketsManager } from "../services/bracketsManager.js";
 import { Request, Response } from "express";
+import expressAsyncHandler from "express-async-handler";
+import Stage from "../models/stage.js";
 
 export const createStage = async (req: Request, res: Response) => {
   const stage = await bracketsManager.create.stage(req.body);
   res.send(stage);
 };
 
+export const getMany = expressAsyncHandler(async (req, res) => {
+  const filter = req.body;
+  const stages = await Stage.find(filter);
+  res.send(stages);
+})
+
 export const updateStage = async (req: Request, res: Response) => {
-  //TODO: validation and tournament check
+  //TODO: validation =and tournament check
   if (req.body.seedingIds) {
     const bool = await bracketsManager.update.seedingIds(
       req.params.stageId,

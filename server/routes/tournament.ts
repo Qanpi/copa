@@ -1,5 +1,7 @@
 import { query, param } from "express-validator";
 import * as stages from "../controllers/stagesController.js";
+import * as rounds from "../controllers/roundsController.js";
+import * as groups from "../controllers/groupsController.js";
 import * as matches from "../controllers/matchesController.js";
 import * as divisions from "../controllers/divisionsController.js";
 import * as participants from "../controllers/participationsController.js";
@@ -42,6 +44,12 @@ router.get("/matches/:id", matches.getOne)
 router.patch("/matches/:id", matches.updateOne);
 router.patch("/matches", matches.resetDates)
 router.delete("/matches", matches.deleteMany);
+
+//GROUPS
+router.get("/groups", groups.getMany);
+
+//ROUNDS
+router.get("/rounds", rounds.getMany);
 
 
 export default router;
