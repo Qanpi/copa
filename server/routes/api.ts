@@ -1,15 +1,16 @@
 import express, { Request, Response } from "express";
-import { query, body, param } from "express-validator";
+import { query, body } from "express-validator";
 
 import * as teams from "../controllers/teamsController.js";
 import * as matches from "../controllers/matchesController.js";
-import * as tournaments from "../controllers/tournamentsController.js";
-import * as stages from "../controllers/stagesController.js";
 import * as users from "../controllers/usersController.js";
 import * as participants from "../controllers/participationsController.js";
+import tournamentRouter from "./tournamentRouter.js"
 import mongoose from "mongoose";
 
-const router = express.Router();
+export const router = express.Router();
+
+router.use("/tournament", tournamentRouter);
 
 router.get(
   "/matches",
@@ -42,46 +43,6 @@ router.delete("/teams/:id", teams.removeById);
 router.get("/teams/:id/invite", teams.generateInviteToken);
 
 router.post("/teams/:id/join", teams.joinTeam);
-
-router.post(
-  "/tournaments",
-  [body("regStart").isDate().optional(), body("regEnd").isDate().optional()],
-  tournaments.createOne
-);
-
-router.get("/tournaments", tournaments.getMultiple);
-
-router.get("/tournaments/current", tournaments.getCurrent);
-
-router.get(
-  "/tournaments/:id",
-  query("data").isBoolean().optional(),
-  tournaments.getOne
-);
-
-router.patch("/tournaments/:id", tournaments.updateOne);
-
-router.delete("/tournaments/:id", tournaments.deleteOne);
-
-//brackets
-router.post("/tournaments/:id/stages/", stages.createStage);
-
-router.patch(
-  "/tournaments/:tournamentId/stages/:stageId",
-  stages.updateStage
-);
-
-router.get("/tournaments/:id/stages/current", stages.getCurrentStage);
-
-router.get(
-  "/tournaments/:tournamentId/stages/:stageId",
-  [param("stageId")],
-  stages.getStageData
-);
-
-router.get("/tournaments/:tournamentId/stages/:stageId/seeding", stages.getSeeding)
-
-router.get("/tournaments/:tournamentId/stages/:stageId/standings", stages.getStandings)
 
 // router.get("/tournaments/:id/groups", tourn.getMultiple)
 
