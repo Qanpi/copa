@@ -29,7 +29,7 @@ import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import { nextTick } from "process";
 import { useContext, useState } from "react";
-import { isEmpty } from "lodash-es";
+import { groupBy, isEmpty, mapKeys } from "lodash-es";
 import NumberCard from "./NumberCard.tsx";
 import { DivisionContext, DivisionDispatchContext } from "../../index.tsx";
 
@@ -38,19 +38,36 @@ function RegistrationStage({ next, prev }) {
     useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
 
-  const division = useContext(DivisionContext);
-  const { data: participants } = useParticipants(tournament?.id, {
-    division: division?.id
-  });
-
   const [isEarlyDialogOpen, setEarlyDialogOpen] = useState(false);
-  const [notEnoughParticipants, setNotEnoughParticipants] = useState(false);
+  const [notEnoughParticipants, setNotEnoughParticipants] = useState(null);
+
+  const { data: divisions } = useDivisions(tournament?.id);
+  const division = useContext(DivisionContext);
+  const { data: allParticipants } = useParticipants(tournament?.id);
+
+  const participants = allParticipants?.filter(
+    (p) => p.division === division.id
+  );
+  
+  const participantsByDivision = groupBy(allParticipants, "division");
 
   const handleClickNext = () => {
-    //FIXME: check all divisions
-    if (participants.length < 2) {
-      setNotEnoughParticipants(true);
-      return;
+    for (const division of divisions) {
+      const participants = participantsByDivision[division.id];
+      //FIXME: check all divisions
+      if (!participants) {
+        return setNotEnoughParticipants({
+          count: 0,
+          division: division.name,
+        });
+      } else if (participants.length < 2) {
+        setNotEnoughParticipants({
+          count: participants.length,
+          division: division.name,
+        });
+
+        return;
+      }
     }
 
     const now = new Date();
@@ -102,8 +119,9 @@ function RegistrationStage({ next, prev }) {
         <Alert severity="error">
           <AlertTitle>Error: Not enough participants</AlertTitle>
           <Typography>
-            Can't proceed to the next stage with {participants.length}{" "}
-            participant(s).
+            There must be at least 2 registered participant(s) in the '
+            {notEnoughParticipants.division}' division before proceeding to the
+            next stage.
           </Typography>
         </Alert>
       ) : null}
@@ -141,7 +159,7 @@ function DashPane({ children }) {
   const dispatch = useContext(DivisionDispatchContext);
 
   const handleDivisionChange = (event, name) => {
-    const id = divisions.findIndex(d => d.name === name);
+    const id = divisions.findIndex((d) => d.name === name);
     dispatch(id);
   };
 
