@@ -1,7 +1,6 @@
 import mongoose, { SchemaTypes } from "mongoose";
 
 const DivisionSchema = new mongoose.Schema({
-    tournament: SchemaTypes.ObjectId,
     name: String,
     rules: {
         type: String,
@@ -26,4 +25,4 @@ const DivisionSchema = new mongoose.Schema({
     toJSON: { virtuals: true },
 });
 
-export default mongoose.model("Division", DivisionSchema);
+export default DivisionSchema;

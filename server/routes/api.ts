@@ -26,7 +26,7 @@ router.delete("/tournaments/:id", tournaments.deleteOne);
 //DIVISIONS
 router.get("/tournaments/:id/divisions", divisions.readMany);
 router.post("/tournaments/:id/divisions", divisions.createOne);
-router.patch("/tournaments/:id/divisions/:divisionId", divisions.updateOne);
+router.put("/tournaments/:id/divisions/:divisionId", divisions.updateOne);
 
 router.use("/divisions/:id", divisionRouter); //avoid overly nested urls
 

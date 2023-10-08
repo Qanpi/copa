@@ -3,6 +3,7 @@ import relativeTime from "dayjs/plugin/relativeTime.js";
 import mongoose, { SchemaTypes } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import { romanize } from "../services/helpers.js";
+import DivisionSchema from "./division.js";
 
 dayjs.extend(relativeTime);
 
@@ -23,6 +24,7 @@ const TournamentSchema = new mongoose.Schema(
         enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
         default: "Registration",
     },
+    divisions: [DivisionSchema]
   },
   {
     toObject: { virtuals: true },
