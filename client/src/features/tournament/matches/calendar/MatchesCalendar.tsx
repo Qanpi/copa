@@ -25,6 +25,7 @@ import "./MatchesCalendar.css";
 
 import { TMatch } from "@backend/models/match.ts";
 import { Link } from "react-router-dom";
+import { useTournament } from "../../hooks.ts";
 
 // type MatchEvent = {
 //   matchId: ObjectId;
@@ -47,9 +48,11 @@ type MatchEvent = Omit<
 } & Partial<EventApi>;
 
 function MatchesCalendar() {
-  const { data: scheduledMatches, status: scheduledStatus } = useMatches({
-    scheduled: true, 
-  });
+  const { data: tournament } = useTournament("current");
+  const { data: scheduledMatches, status: scheduledStatus } = useMatches(tournament?.id,
+    {
+      scheduled: true,
+    });
 
   const updateMatch = useUpdateMatch();
 

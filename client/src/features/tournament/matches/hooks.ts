@@ -4,15 +4,17 @@ import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
 import { useParticipants } from "../../participant/hooks";
-import { useTournament } from "../hooks";
+import { tournamentKeys, useTournament } from "../hooks";
 import { QueryKeyFactory } from "../../../types";
 
 export const useUpdateMatch = () => {
+  //TODO: think abt this: currently only works with current tournament
+  const {data: tournament} = useTournament("current");
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (values: Partial<TMatch>) => {
-      const res = await axios.patch(`/api/matches/${values.id}`, values);
+      const res = await axios.patch(`/api/${tournamentKeys.all[0]}/${tournament.id}/matches/${values.id}`, values);
       return res.data;
     },
     onSuccess(data) {
@@ -24,7 +26,7 @@ export const useUpdateMatch = () => {
 
 export const useMatchScheduler = () => {
   const { data: tournament } = useTournament("current");
-  const { data: participants } = useParticipants();
+  const { data: participants } = useParticipants(tournament?.id);
   const updateMatch = useUpdateMatch();
 
   return (start: Dayjs, adminBlocked: Dayjs[], matches: any[]) => {
@@ -89,12 +91,13 @@ export const useMatch = (id: string) => {
 };
 
 export const useMatches = (
+  tournamentId: string,
   query?: Partial<TMatch> & { scheduled?: boolean }
 ) => {
   return useQuery({
     queryKey: ["matches", query],
     queryFn: async () => {
-      let url = `/api/matches`;
+      let url = `/api/${tournamentKeys.all[0]}/${tournamentId}/matches`;
 
       if (query) {
         url += "?";
@@ -106,5 +109,6 @@ export const useMatches = (
       const res = await axios.get(url);
       return res.data as TMatch[];
     },
+    enabled: Boolean(tournamentId)
   });
 };

@@ -5,11 +5,18 @@ import { useTournament } from "../../hooks.ts";
 import { useParticipants } from "../../../participant/hooks.ts";
 import { notStrictEqual } from "assert";
 import { TMatch } from "@backend/models/match.ts";
+import { useGroups } from "../../../group/hooks.ts";
+import { useStages } from "../../../stage/hooks.ts";
+import { useRounds } from "../../../round/hooks.ts";
 
 export const MatchesTable = () => {
   const { data: tournament } = useTournament("current");
-  const { data: matches } = useMatches();
-  const { data: participants } = useParticipants();
+  const { data: matches } = useMatches(tournament?.id);
+  const { data: participants } = useParticipants(tournament?.id);
+
+  const {data: groups} = useGroups(tournament?.id);
+  const {data: rounds} = useRounds(tournament?.id);
+  const {data: stages} = useStages(tournament?.id);
 
   const updateMatch = useUpdateMatch();
 
@@ -47,7 +54,7 @@ export const MatchesTable = () => {
       field: "group_id",
       headerName: "Group",
       valueGetter: (p) => {
-        const group = tournament?.groups.find((g) => g.id === p.value)
+        const group = groups?.find((g) => g.id === p.value)
         return group?.name;
       },
     },
@@ -55,7 +62,7 @@ export const MatchesTable = () => {
       field: "round_id",
       headerName: "Round",
       valueGetter: (p) => {
-        const round = tournament?.rounds.find((g) => g.id === p.value)
+        const round = rounds?.find((g) => g.id === p.value)
         return round?.number;
       }
     },
@@ -67,8 +74,8 @@ export const MatchesTable = () => {
       field: "stage_id",
       headerName: "Stage",
       valueGetter: (p) => {
-        const state = tournament?.stages.find((g) => g.id === p.value)
-        return state?.name;
+        const stage = stages?.find((g) => g.id === p.value)
+        return stage?.name;
       }
     },
   ];
