@@ -1,13 +1,11 @@
 import express, { Request, Response } from "express";
-import { query, body } from "express-validator";
 
-import * as teams from "../controllers/teamsController.js";
-import * as users from "../controllers/usersController.js";
-import * as participants from "../controllers/participationsController.js";
-import * as tournaments from "../controllers/tournamentsController.js";
-import * as divisions from "../controllers/divisionsController.js"
-import divisionRouter from "./division.js"
 import mongoose from "mongoose";
+import * as divisions from "../controllers/divisionsController.js";
+import * as teams from "../controllers/teamsController.js";
+import * as tournaments from "../controllers/tournamentsController.js";
+import * as users from "../controllers/usersController.js";
+import divisionRouter from "./division.js";
 
 const router = express.Router();
 
@@ -32,51 +30,25 @@ router.patch("/tournaments/:id/divisions/:divisionId", divisions.updateOne);
 
 router.use("/divisions/:id", divisionRouter); //avoid overly nested urls
 
-
+//TEAMS
 router.get("/teams", teams.getMultiple);
-
 router.post("/teams", teams.createOne);
-
 router.patch("/teams/:id", teams.updateOne);
-
 router.get("/teams/:id", teams.getById);
-
 router.get("/teams/:id/players", teams.getPlayersInTeam);
-
 router.delete("/teams/:teamId/players/:playerId", teams.removePlayerFromTeam);
-
 router.delete("/teams/:id", teams.removeById);
-
 router.get("/teams/:id/invite", teams.generateInviteToken);
-
 router.post("/teams/:id/join", teams.joinTeam);
 
-// router.get("/tournaments/:id/groups", tourn.getMultiple)
-
-// router.post("/tournaments/:id/groups", groups.createOne);
-
-// router.patch("/tournaments/:tournamentId/groups/:groupId", groups.updateOne)
-
-
-
-// router.get("/tournaments/:id/teams", tournaments.getRegisteredTeams);
-
-// router.post("/tournaments/:id/teams", tournaments.registerTeam);
-
-// router.delete("/tournaments/:tournamentId/teams/:teamId", tournaments.unregisterTeam);
-
-// router.get("/teams/:id/tournaments", teams.getTournaments);
-
+//USERS
 router.get("/users", users.getMultiple);
-
 router.get("/users/:id", users.getOneById);
-
 router.patch("/users/:id", users.updateOne);
-
 router.post("/users", users.createOne);
-
 router.delete("/users/:id", users.deleteOne);
 
+//FIXME: DEVELOPMEN ONLY
 router.delete("/", async (req: Request, res: Response) => {
   await mongoose.connection.dropDatabase();
   return res.status(204).send({});
