@@ -48,7 +48,7 @@ function RegistrationPage() {
     );
   }
 
-    //FIXME: manager context
+  //FIXME: manager context
   if (team?.manager === user.id) {
     return <RegistrationForm></RegistrationForm>;
   }
@@ -103,13 +103,17 @@ function RegistrationForm() {
           division: Yup.string().required(),
         })}
         onSubmit={(values) => {
-          updateTeam.mutate(values);
-
-          const selected = divisions.find((d) => d.name === values.division);
-
-          registerParticipant.mutate({
-            division: selected.id,
-            team: team.id,
+          updateTeam.mutate(values, {
+            onSuccess: (team) => {
+              const selected = divisions.find(
+                (d) => d.name === values.division
+              );
+              registerParticipant.mutate({
+                division: selected.id,
+                team: team.id,
+                name: team.name,
+              });
+            },
           });
         }}
       >
