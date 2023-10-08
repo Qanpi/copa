@@ -27,6 +27,7 @@ router.patch(
     "/stages/:stageId",
     stages.updateStage
 );
+router.get("/stages", stages.getMany);
 router.get("/stages/current", stages.getCurrentStage);
 router.get(
     "/stages/:stageId",
