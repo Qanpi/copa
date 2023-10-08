@@ -35,11 +35,13 @@ export const AdminContext = React.createContext(null);
 export const DivisionContext = React.createContext(null);
 export const DivisionDispatchContext = React.createContext(null);
 
-function divisionReducer(state, action: { type: "previous" | "next" }) {
-  if (action.type === "previous") {
+function divisionReducer(state, action: { type: "previous" | "next" | "specific", nId?: number }) {
+  if (action.type === "next") {
+    const nId = state.nId + 1;
     return {
       ...state,
-      selected: state.selected + 1
+      nId,
+      selectedDivision: state.divisions[nId]
     }
   }
 }
@@ -47,7 +49,7 @@ function divisionReducer(state, action: { type: "previous" | "next" }) {
 function App() {
   const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
-  const [divisionsContext, dispatch] = React.useReducer(divisionReducer, { divisions, selected: 0 });
+  const [divisionsContext, dispatch] = React.useReducer(divisionReducer, { divisions, nId: 0, selected: divisions?.[0] });
 
   const { data: user, status: userStatus } = useUser("me");
   if (userStatus !== "success") return;

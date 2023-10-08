@@ -21,9 +21,10 @@ import { useCurrentDivisions, useTournament, useUpdateTournament } from "../tour
 import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import { nextTick } from "process";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { isEmpty } from "lodash-es";
 import NumberCard from "./NumberCard.tsx";
+import { DivisionContext } from "../../index.tsx";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
@@ -169,7 +170,9 @@ function RegistrationStage({ next, prev }) {
 }
 
 function DashPane() {
-  const { data: participants } = useParticipants();
+  const context = useContext(DivisionContext);
+  console.log(context)
+  const { data: participants } = useParticipants(context.selectedDivision?.id);
 
   return (
     <NumberCard number={participants?.length}>team(s) registered</NumberCard>
