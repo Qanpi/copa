@@ -22,11 +22,6 @@ const TournamentSchema = new mongoose.Schema(
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
     virtuals: {
-      states: {
-        get() {
-          return this.schema.path("state").enumValues;
-        },
-      },
       name: {
         get() {
           return `Copa ${romanize(this.idx)}`;

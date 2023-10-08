@@ -26,6 +26,14 @@ const DivisionSchema = new mongoose.Schema({
         default: "Registration",
     },
 }, {
+    virtuals: {
+      states: {
+        get() {
+          const statePath = this.schema.path("state") as any;
+          return statePath.enumValues;
+        },
+      },
+    },
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
 });
