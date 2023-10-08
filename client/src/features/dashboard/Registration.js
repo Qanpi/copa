@@ -40,7 +40,7 @@ function RegistrationStage({ next, prev }) {
 
   const division = useContext(DivisionContext);
   const { data: participants } = useParticipants(tournament?.id, {
-    division: division.id
+    division: division?.id
   });
 
   const [isEarlyDialogOpen, setEarlyDialogOpen] = useState(false);

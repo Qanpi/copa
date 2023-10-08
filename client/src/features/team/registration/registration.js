@@ -116,7 +116,7 @@ function RegistrationForm() {
         <Form>
           <MyTextField name="name" label="name"></MyTextField>
           <MyTextField label="Phone number" name="phoneNumber"></MyTextField>
-          <MySelect name="division">
+          <MySelect label="Division" name="division">
             {divisions?.map((d) => (
               <MenuItem value={d.name} key={d.id}>
                 {d.name}
