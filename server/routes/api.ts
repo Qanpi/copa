@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import { query, body } from "express-validator";
 
 import * as teams from "../controllers/teamsController.js";
-import * as matches from "../controllers/matchesController.js";
 import * as users from "../controllers/usersController.js";
 import * as participants from "../controllers/participationsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
@@ -33,18 +32,6 @@ router.patch("/tournaments/:id/divisions/:divisionId", divisions.updateOne);
 
 router.use("/divisions/:id", divisionRouter); //avoid overly nested urls
 
-router.get(
-  "/matches",
-  matches.getMany
-);
-
-router.get("/matches/:id", matches.getOne)
-
-router.patch("/matches/:id", matches.updateOne);
-
-router.patch("/matches", matches.resetDates)
-
-router.delete("/matches", matches.deleteMany);
 
 router.get("/teams", teams.getMultiple);
 
