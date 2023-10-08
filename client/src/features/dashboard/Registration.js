@@ -17,7 +17,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
+import { useCurrentDivisions, useTournament, useUpdateTournament } from "../tournament/hooks.ts";
 import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import { nextTick } from "process";
@@ -35,8 +35,7 @@ function RegistrationStage({ next, prev }) {
   });
 
   const [isEarlyDialogOpen, setEarlyDialogOpen] = useState(false);
-  const [notEnoughParticipants, setNotEnoughParticipants] =
-    useState(false);
+  const [notEnoughParticipants, setNotEnoughParticipants] = useState(false);
 
   const handleClickNext = () => {
     if (participants.length < 2) {
@@ -46,7 +45,10 @@ function RegistrationStage({ next, prev }) {
 
     const now = new Date();
 
-    if (!tournament.registration?.to || new Date(tournament.registration.to) > now) {
+    if (
+      !tournament.registration?.to ||
+      new Date(tournament.registration.to) > now
+    ) {
       setEarlyDialogOpen(true);
       return;
     }
@@ -95,7 +97,8 @@ function RegistrationStage({ next, prev }) {
         <Alert severity="error">
           <AlertTitle>Error: Not enough participants</AlertTitle>
           <Typography>
-            Can't proceed to the next stage with {participants.length} participant(s).
+            Can't proceed to the next stage with {participants.length}{" "}
+            participant(s).
           </Typography>
         </Alert>
       ) : null}
@@ -125,7 +128,11 @@ function RegistrationStage({ next, prev }) {
           <Form>
             <div className="registration">
               <InputLabel>Open registration</InputLabel>
-              <MyDatePicker label="from 00:00 on" name="registration.from" disablePast/>
+              <MyDatePicker
+                label="from 00:00 on"
+                name="registration.from"
+                disablePast
+              />
               <MyDatePicker
                 disablePast
                 label="to 23:59 on"
@@ -138,25 +145,34 @@ function RegistrationStage({ next, prev }) {
             </div>
 
             <Button type="submit">Confirm</Button>
-            <NumberCard number={participants?.length}>team(s) registered</NumberCard>
-
-            <Button
-              onClick={async () => {
-                // //workaround because formik is dumb
-                // //see: https://github.com/jaredpalmer/formik/issues/1580
-                // await submitForm();
-                // const errors = await validateForm();
-
-                // if (isEmpty(errors))
-                handleClickNext();
-              }}
-            >
-              Next
-            </Button>
           </Form>
         )}
       </Formik>
+
+      <DashPane></DashPane>
+
+      <Button
+        onClick={async () => {
+          // //workaround because formik is dumb
+          // //see: https://github.com/jaredpalmer/formik/issues/1580
+          // await submitForm();
+          // const errors = await validateForm();
+
+          // if (isEmpty(errors))
+          handleClickNext();
+        }}
+      >
+        Next
+      </Button>
     </>
+  );
+}
+
+function DashPane() {
+  const { data: participants } = useParticipants();
+
+  return (
+    <NumberCard number={participants?.length}>team(s) registered</NumberCard>
   );
 }
 

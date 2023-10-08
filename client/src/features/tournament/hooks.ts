@@ -69,6 +69,17 @@ export const useDivision = (id: string) => {
   });
 }
 
+export const useDivisions = (tournamentId: string) => {
+  return useQuery({
+    queryKey: [divisionKeys.all],
+    queryFn: async () => {
+      const response = await axios.get(`/api/${tournamentKeys.all}/${tournamentId}/${divisionKeys.all}`);
+      return response.data;
+    },
+    enabled: Boolean(tournamentId)
+  });
+}
+
 export const finalRoundNames = (roundInfo: RoundNameInfo) => {
   if ("fractionOfFinal" in roundInfo) {
     switch (roundInfo.fractionOfFinal) {

@@ -6,6 +6,7 @@ import {
 import axios from "axios";
 import { ObjectId } from "mongodb";
 import { TParticipant } from "@backend/models/participant";
+import { divisionKeys } from "../tournament/hooks";
 
 export const participantKeys = {
   all: "participants",
@@ -25,12 +26,12 @@ export const useParticipant = (id?: ObjectId) => {
   });
 };
 
-export const useParticipants = (query?: Partial<TParticipant>) => {
+export const useParticipants = (division: string, query?: Partial<TParticipant>) => {
   return useQuery({
     queryKey: [participantKeys.query(query)],
 
     queryFn: async () => {
-      let url = `/api/${participantKeys.all}`;
+      let url = `/api/${divisionKeys.all}/${division}/${participantKeys.all}`;
 
       if (query) {
         url += "?";
