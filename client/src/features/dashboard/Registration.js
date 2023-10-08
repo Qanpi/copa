@@ -48,7 +48,7 @@ function RegistrationStage({ next, prev }) {
   const participants = allParticipants?.filter(
     (p) => p.division === division.id
   );
-  
+
   const participantsByDivision = groupBy(allParticipants, "division");
 
   const handleClickNext = () => {
@@ -171,7 +171,9 @@ function DashPane({ children }) {
         onChange={handleDivisionChange}
       >
         {divisions?.map((d) => (
-          <ToggleButton value={d.name}>{d.name}</ToggleButton>
+          <ToggleButton key={d.id} value={d.name}>
+            {d.name}
+          </ToggleButton>
         ))}
       </ToggleButtonGroup>
       {children}
