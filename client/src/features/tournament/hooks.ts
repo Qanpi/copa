@@ -61,7 +61,9 @@ export const useDivision = (id: string) => {
 export const useDivisions = (tournamentId: string) => {
   const { data: tournament } = useTournament(tournamentId);
 
-  return tournament?.divisions;
+  return {
+    data: tournament?.divisions
+  }
 }
 
 export const finalRoundNames = (roundInfo: RoundNameInfo) => {

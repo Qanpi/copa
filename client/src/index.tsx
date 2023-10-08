@@ -41,7 +41,7 @@ function divisionReducer(state, action: { nId: number }) {
 
 function App() {
   const { data: tournament } = useTournament("current");
-  const divisions = useDivisions(tournament?.id); 
+  const {data: divisions} = useDivisions(tournament?.id); 
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);
 
   const { data: user, status: userStatus } = useUser("me");
