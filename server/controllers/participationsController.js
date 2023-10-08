@@ -6,7 +6,10 @@ import { matchedData, validationResult } from "express-validator";
 
 export const getMany = expressAsyncHandler(async (req, res) => {
   //translateAliases because division = tournament_id;
-  const filter = Participant.translateAliases(req.query);
+  const filter = Participant.translateAliases({
+    ...req.query,
+    tournament: req.params.id,
+  });
   //TODO: refactor all other uses to checking role
   const participants =
     req.user?.role === "admin"
@@ -22,7 +25,7 @@ export const getOne = expressAsyncHandler(async (req, res) => {
 
 export const createOne = expressAsyncHandler(async (req, res) => {
   const participation = await new Participant(
-    Participant.translateAliases(req.body)
+    Participant.translateAliases({ ...req.body, tournament: req.params.id })
   ).save();
 
   res.send(participation);
