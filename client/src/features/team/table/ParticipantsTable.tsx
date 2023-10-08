@@ -25,14 +25,12 @@ function TeamsPage() {
   const { data: divisions } = useDivisions(tournament?.id);
   const unregisterTeam = useDeleteParticipant();
 
-  console.log(participants);
   const cols: GridColDef[] = [
     {
       field: "name",
       headerName: "Team name",
       width: 200,
       renderCell: (params) => {
-        console.log(params)
         return (
           <Link to={`/teams/${params.row.name}`}>{params.row.name}</Link>
         )
@@ -45,7 +43,7 @@ function TeamsPage() {
       type: "singleSelect",
       valueOptions: divisions?.map(d => d.name),
       valueGetter: ({value}) => {
-        return divisions.find(d => d.id === value).name;
+        return divisions?.find(d => d.id === value)?.name;
       },
     },
     {
