@@ -35,8 +35,8 @@ export const AdminContext = React.createContext(null);
 export const DivisionContext = React.createContext(null);
 export const DivisionDispatchContext = React.createContext(null);
 
-function divisionReducer(state, action: { nId: number }) {
-  return action.nId;
+function divisionReducer(state, nId: number) {
+  return nId;
 }
 
 function App() {
