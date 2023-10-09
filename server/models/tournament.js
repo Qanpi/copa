@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import mongoose, { SchemaTypes } from "mongoose";
-import { collections } from "../configs/db.config.js";
+import mongoose from "mongoose";
 import { romanize } from "../services/helpers.js";
 import DivisionSchema from "./division.js";
+import Metadata from "./metadata.js";
 
 dayjs.extend(relativeTime);
 
@@ -16,15 +16,15 @@ const TournamentSchema = new mongoose.Schema(
       phoneNumber: String,
     },
     registration: {
-        from: Date,
-        to: Date,
+      from: Date,
+      to: Date,
     },
     state: {
-        type: String,
-        enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
-        default: "Registration",
+      type: String,
+      enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
+      default: "Registration",
     },
-    divisions: [DivisionSchema]
+    divisions: [DivisionSchema],
   },
   {
     toObject: { virtuals: true },
@@ -44,6 +44,21 @@ const TournamentSchema = new mongoose.Schema(
     },
   }
 );
+
+TournamentSchema.pre("save", async function () {
+  if (this.isNew) {
+    let metadata = await Metadata.findOne({
+      model: this.constructor.modelName,
+    });
+    if (!metadata)
+      metadata = await Metadata.create({
+        model: this.constructor.modelName,
+      });
+
+    metadata.latest = this._id;
+    await metadata.save();
+  }
+});
 
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();

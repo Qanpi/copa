@@ -19,24 +19,28 @@ export const getMany = async (req: Request, res: Response) => {
   } else {
     const endFilter = req.query.end
       ? {
-          start: {
-            $lt: req.query.end,
-          },
-        }
+        start: {
+          $lt: req.query.end,
+        },
+      }
       : {};
 
     const startFilter = req.query.start
       ? {
-          start: {
-            $gte: req.query.start,
-          },
-        }
+        start: {
+          $gte: req.query.start,
+        },
+      }
       : {};
 
     query["$and"] = [startFilter, endFilter];
   }
 
-  const filter = {...req.query, scheduled: undefined, ...query};
+  const filter = {
+    ...req.query, scheduled: undefined,
+    tournament: req.params.id,
+    ...query
+  };
 
   const matches = await Match.find(filter);
   res.send(matches);
