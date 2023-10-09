@@ -21,8 +21,8 @@ dayjs.extend(relativeTime);
 function TeamPage() {
   const { name } = useParams();
 
-  const {data: user} = useUser("me");
-  const {data: team, status: teamStatus} = useTeam(name);
+  const { data: user } = useUser("me");
+  const { data: team, status: teamStatus } = useTeam(name);
 
   const {
     status: inviteStatus,
@@ -32,7 +32,7 @@ function TeamPage() {
     queryKey: ["invite"],
     queryFn: async () => {
       const invite = await axios.get(`/api/teams/${team.id}/invite`);
-      const {token, expiresAt} = invite.data;
+      const { token, expiresAt } = invite.data;
 
       return {
         //FIXME: localhost
@@ -50,24 +50,22 @@ function TeamPage() {
   };
 
   const updateUser = useUpdateUser();
-  const navigate = useNavigate();
+
   const handleLeaveTeam = () => {
-    updateUser.mutate({
-      id: user.id,
-      team: null
-    }, {
-      onSuccess: () => {
-        navigate(`/teams/none`);
+    updateUser.mutate(
+      {
+        id: user.id,
+        team: null,
       }
-    });
-  }
+    );
+  };
 
   if (teamStatus !== "success") {
     return <div>loadgi team profiel</div>;
   }
 
   const isManager = user?.id === team?.manager;
-
+  const isMember = user?.team?.id === team.id;
 
   return (
     <>
@@ -81,7 +79,7 @@ function TeamPage() {
             automatically expire {invite.countdown}.
           </Typography>
           <TextField
-          fullWidth
+            fullWidth
             disabled
             InputProps={{
               endAdornment: (
@@ -96,7 +94,7 @@ function TeamPage() {
           ></TextField>
         </Alert>
       ) : null}
-      <Button onClick={handleLeaveTeam}>Leave team</Button>
+      {isMember ? <Button onClick={handleLeaveTeam}>Leave team</Button> : null}
     </>
   );
 }

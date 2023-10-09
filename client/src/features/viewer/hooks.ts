@@ -4,7 +4,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
-import { Id, QueryKeyFactory } from "../../types";
+import { Id, QueryKeyFactory } from "../types";
 import { RoundNameInfo } from "ts-brackets-viewer";
 
 export const tournamentKeys = {
@@ -37,8 +37,6 @@ export const useUpdateTournament = (id: Id) => {
     },
   });
 };
-
-
 
 export const divisionKeys = {
   all: "divisions",
