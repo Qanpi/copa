@@ -29,7 +29,7 @@ export const getCurrent = expressAsyncHandler(async (req, res) => {
     //TODO: verify that only one not over is possible
     stage: { $ne: "Finished" },
   });
-  res.send(result);
+  res.send(result || {});
 });
 
 export const updateOne = expressAsyncHandler(async (req, res) => {

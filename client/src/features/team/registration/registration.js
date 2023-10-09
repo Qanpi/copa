@@ -33,7 +33,7 @@ function RegistrationPage() {
   const navigate = useNavigate();
   useLayoutEffect(() => {
     if (user && !user.team) {
-      return navigate(`/teams/none`);
+      return navigate(`/teams/none`); //TODO: redirect back frm here to registration
     }
   }, [user]);
 

@@ -64,8 +64,14 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>, selector: 
     return ref;
 }
 function GroupStagePage() {
+    const {data: tournament} = useTournament("current");
     const division = useContext(DivisionContext);
-    const { data: stageData } = useGroupStageData(division?.id);
+
+    const { data: stages } = useStages(tournament?.id, {
+        type: "single_elimination",
+        division: division?.id
+    })
+    const { data: stageData } = useStageData(stages?.[0]?.id);
 
     const bracketsRef = useBracketsViewer(stageData, "#group-stage");
 

@@ -11,7 +11,7 @@ function DashboardPage() {
   const { data: tournament } = useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
 
-  if (!tournament) return <CreateTournamentPage></CreateTournamentPage>;
+  if (!tournament?.id) return <CreateTournamentPage></CreateTournamentPage>;
 
   const currentSection = () => {
     switch (tournament.state) {
