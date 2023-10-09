@@ -7,14 +7,9 @@ import { useTournament } from "../../tournament/hooks";
 import MatchesCalendar from "../../tournament/matches/calendar/MatchesCalendar";
 import "./Home.css";
 
-function WinnerTribute() {
-  const { data: tournament } = useTournament("current");
-  const {data: stages} = useStages(tournament?.id, {
-    type: "single_elimination"
-  });
-
+function WinnerPane({ stage }) {
   //FIXME: needs to show all winners across divisions
-  const {data: standings} = useStandings(stages?.[0].id);
+  const { data: standings } = useStandings(stage.id);
 
   if (!standings) return <>Loading...</>;
 
@@ -22,9 +17,19 @@ function WinnerTribute() {
 
   return <>
     <Typography>
-      Congratulations to {winner.name} for winning {tournament.name}!
+      Congratulations to {winner.name} for winning !
     </Typography>
   </>
+}
+
+function WinnersTribute() {
+  const { data: tournament } = useTournament("current");
+  const { data: stages } = useStages(tournament?.id, {
+    type: "single_elimination"
+  });
+
+  return stages?.map(s => (<WinnerPane stage={s} key={s.id}></WinnerPane>))
+
 }
 
 function HomePage() {
@@ -32,8 +37,8 @@ function HomePage() {
 
   if (!tournament) return <>Loadng...</>
 
-  if (tournament.state === "Complete") 
-    return <WinnerTribute></WinnerTribute>
+  if (tournament.state === "Complete")
+    return <WinnersTribute></WinnersTribute>
 
   if (!tournament.registration?.from)
     return <>Registration will be starting soon.</>
