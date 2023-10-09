@@ -6,7 +6,6 @@ import { QueryKeyObject, queryKeyFactory } from "../types";
 
 export const userKeys = queryKeyFactory<TUser>("user");
 
-//TODO: refactr useMe to be abl to use id as queryKey
 export const useUser = (id: string) => {
   return useQuery({
     queryKey: userKeys.id(id),
