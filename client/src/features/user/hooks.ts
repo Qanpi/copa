@@ -14,7 +14,7 @@ export const useUser = (id: string) => {
         id === "me"
           ? await axios.get("/me")
           : await axios.get(`/api/${userKeys.all}/${id}`);
-      return res.data;
+      return res.data as TUser;
     },
   });
 };
@@ -26,9 +26,9 @@ export const useUpdateUser = () => {
   return useMutation({
     mutationFn: async (values: Partial<TUser>) => {
       const res = await axios.patch(`/api/users/${values.id}`, values);
-      return res.data;
+      return res.data as TUser;
     },
-    onSuccess(data: TUser) {
+    onSuccess(data) {
       if (me.id === data.id) queryClient.setQueryData(userKeys.id("me"), data);
 
       queryClient.setQueryData(userKeys.id(data.id), data);
