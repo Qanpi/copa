@@ -32,6 +32,8 @@ function DashboardPage() {
         return <GroupStage next={nextSection} prev={prevSection}></GroupStage>;
       case "Bracket":
         return <Bracket next={nextSection} prev={prevSection}></Bracket>;
+      case "Complete": 
+          return <>COngrats! You've completed {tournament.name}</>
       default:
         return <Typography>Unknown tournament state.</Typography>;
     }
