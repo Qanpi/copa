@@ -20,6 +20,7 @@ import LeaveTeamDialog from "../LeaveTeamDialog.tsx";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [errorAlert, setErrorAlert] = useState(false);
 
   const { data: user } = useUser("me");
 
@@ -39,6 +40,9 @@ function JoinTeamPage() {
       //TODO: updated user's team via queryClient
       // queryClient.invalidateQueries(userKeys.details("me"));
       navigate(`/teams/${team.name}`);
+    },
+    onError: () => {
+      setErrorAlert(true);
     }
   });
 
@@ -52,22 +56,22 @@ function JoinTeamPage() {
 
   if (!user) return <>Loadng...</>;
 
-  if (user.team) {
-    //TODO: trigger rerender using react-query on user team leave
-    return (
-      <LeaveTeamDialog
-        onLeave={() => joinTeam.mutate({ id, token })}
-        onStay={() => navigate(`/teams/${user.team.name || "none"}`)}
-      ></LeaveTeamDialog>
-    );
-  }
-
-  //TODO: is it fine to keep this as default?
+  //TODO: trigger rerender using react-query on user team leave
   return (
-    <Alert severity="error">
-      <AlertTitle>Invalid or expired token.</AlertTitle>
-      Please ask the team manager to resend invite link or contact support.
-    </Alert>
+    <>
+      {user.team && user.team.id !== id ? (
+        <LeaveTeamDialog
+          onLeave={() => joinTeam.mutate({ id, token })}
+          onStay={() => navigate(`/teams/${user.team.name || "none"}`)}
+        ></LeaveTeamDialog>
+      ) : null}
+      {errorAlert ? (
+        <Alert severity="error">
+          <AlertTitle>Invalid or expired token.</AlertTitle>
+          Please ask the team manager to resend invite link or contact support.
+        </Alert>
+      ) : null}
+    </>
   );
 }
 
