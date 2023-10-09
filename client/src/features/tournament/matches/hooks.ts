@@ -9,7 +9,7 @@ import { QueryKeyFactory } from "../../../types";
 
 export const useUpdateMatch = () => {
   //TODO: think abt this: currently only works with current tournament
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -109,6 +109,6 @@ export const useMatches = (
       const res = await axios.get(url);
       return res.data as TMatch[];
     },
-    enabled: Boolean(tournamentId)
+    enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
   });
 };
