@@ -15,12 +15,19 @@ import {
 } from "../../tournament/hooks.ts";
 import { useDeleteParticipant } from "../registration/registration.js";
 import MyDatePicker from "../../inputs/MyDatePicker.js";
+import DivisionPanel from "../../dashboard/DivisionPanel.tsx";
+import { useContext } from "react";
+import { DivisionContext } from "../../../index.tsx";
 
 function TeamsPage() {
   const { data: tournament, status: tournamentStatus } =
     useTournament("current");
+
+  const division = useContext(DivisionContext);
   const { data: participants, status: participantsStatus } = useParticipants(
-    tournament?.id
+    tournament?.id, {
+      division: division?.id
+    }
   );
   const { data: divisions } = useDivisions(tournament?.id);
   const unregisterTeam = useDeleteParticipant();
@@ -42,7 +49,7 @@ function TeamsPage() {
       editable: true,
       type: "singleSelect",
       valueOptions: divisions?.map(d => d.name),
-      valueGetter: ({value}) => {
+      valueGetter: ({ value }) => {
         return divisions?.find(d => d.id === value)?.name;
       },
     },
@@ -62,7 +69,7 @@ function TeamsPage() {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      getActions: ({row}) => {
+      getActions: ({ row }) => {
         return [
           <Tooltip title="Unregister">
             <GridActionsCellItem
@@ -92,18 +99,21 @@ function TeamsPage() {
     <div sx={{ width: "80%" }}>
       <Typography>Teams</Typography>
 
-      <DataGrid
-        editMode="row"
-        isCellEditable={(params) => params.row.tournament === tournament?.id}
-        autoheight
-        rows={participants}
-        columns={cols}
-        processRowUpdate={async (newRow, orig) => {
-          const res = await updateParticipation.mutateAsync(newRow);
-          return res;
-        }}
-        onProcessRowUpdateError={(err) => console.log(err)}
-      ></DataGrid>
+      <DivisionPanel>
+
+        <DataGrid
+          editMode="row"
+          isCellEditable={(params) => params.row.tournament === tournament?.id}
+          autoheight
+          rows={participants}
+          columns={cols}
+          processRowUpdate={async (newRow, orig) => {
+            const res = await updateParticipation.mutateAsync(newRow);
+            return res;
+          }}
+          onProcessRowUpdateError={(err) => console.log(err)}
+        ></DataGrid>
+      </DivisionPanel>
     </div>
   );
 }
