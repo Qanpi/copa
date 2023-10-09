@@ -6,8 +6,8 @@ import {
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { useDivisions, useTournament } from "../tournament/hooks.ts";
-import { useMatches } from "../tournament/matches/hooks.ts";
+import { useDivisions, useTournament } from "../viewer/hooks.ts";
+import { useMatches } from "../match/hooks.ts";
 import NumberCard from "./NumberCard.tsx";
 import { Status } from "brackets-model";
 import { groupBy } from "lodash";

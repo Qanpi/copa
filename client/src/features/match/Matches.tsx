@@ -13,14 +13,14 @@ import dayjs, { Dayjs } from "dayjs";
 import Weekday from "dayjs/plugin/weekday";
 import { Form, Formik, useField, useFormikContext } from "formik";
 import { useReducer, useState } from "react";
-import MyDatePicker from "../../inputs/MyDatePicker";
-import { MatchesTable } from "./table/MatchesTable";
+import MyDatePicker from "../inputs/MyDatePicker";
+import { MatchesTable } from "./MatchesTable";
 import { useMatches } from "./hooks";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { Popper } from "@mui/base";
 import { EventClickArg } from "@fullcalendar/core";
-import DateBlocker from "../../inputs/DateBlocker";
-import MatchesCalendar from "./calendar/MatchesCalendar";
+import DateBlocker from "../inputs/DateBlocker";
+import MatchesCalendar from "./MatchesCalendar";
 import { useMatchScheduler } from "./hooks";
 
 function MatchesPage() {

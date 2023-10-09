@@ -1,14 +1,14 @@
 import { useParams } from "react-router";
-import { useMatch, useMatches, useUpdateMatch } from "../hooks";
-import { useParticipant } from "../../../participant/hooks";
+import { useMatch, useMatches, useUpdateMatch } from "./hooks";
+import { useParticipant } from "../participant/hooks";
 import { useTimer } from "react-timer-hook";
 import dayjs from "dayjs";
 import { Button } from "@mui/base";
 import { useCallback, useContext, useEffect } from "react";
 import { NumberInput } from "@mui/base/Unstable_NumberInput/NumberInput";
 import { Formik, Form, useFormikContext } from "formik";
-import ScoreCounter from "../../../inputs/ScoreCounter";
-import { AdminContext } from "../../../..";
+import ScoreCounter from "../inputs/ScoreCounter";
+import { AdminContext } from "../..";
 
 const MatchTimer = ({ duration }: { duration: number }) => {
   console.log(duration)

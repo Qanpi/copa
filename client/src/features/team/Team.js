@@ -13,8 +13,8 @@ import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import { useNavigate, useParams } from "react-router-dom";
-import { useTeam } from "../hooks.ts";
-import { useUpdateUser, useUser } from "../../user/hooks.ts";
+import { useTeam } from "./hooks.ts";
+import { useUpdateUser, useUser } from "../user/hooks.ts";
 
 dayjs.extend(relativeTime);
 

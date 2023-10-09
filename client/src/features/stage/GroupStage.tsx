@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { finalRoundNames, useTournament } from "../hooks";
-import GroupStageStructure from "../../dashboard/GroupStage";
+import { finalRoundNames, useTournament } from "../viewer/hooks";
+import GroupStageStructure from "../dashboard/GroupStage";
 import axios from "axios";
 import { BracketsViewer, ViewerData } from "ts-brackets-viewer";
 import { useContext, useEffect, useLayoutEffect, useRef } from "react";
-import DrawPage from "../../dashboard/Draw";
+import DrawPage from "../dashboard/Draw";
 import { Id } from "brackets-model";
 import { DataTypes, ValueToArray } from "brackets-manager";
 import { useNavigate } from "react-router";
-import { DivisionContext } from "../../..";
-import { useGroupStageData, useStages } from "../../stage/hooks";
-import DivisionPanel from "../../dashboard/DivisionPanel";
+import { DivisionContext } from "../..";
+import { useGroupStageData, useStages } from "./hooks";
+import DivisionPanel from "../dashboard/DivisionPanel";
 
 const bracketsViewer = new BracketsViewer();
 

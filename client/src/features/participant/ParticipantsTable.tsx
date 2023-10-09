@@ -7,17 +7,17 @@ import dayjs from "dayjs";
 import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import { useParticipants } from "../../participant/hooks.ts";
+import { useParticipants } from "./hooks.ts";
 import {
   useDivisions,
   useTournament,
   useUpdateTournament,
-} from "../../tournament/hooks.ts";
-import { useDeleteParticipant } from "../registration/registration.js";
-import MyDatePicker from "../../inputs/MyDatePicker.js";
-import DivisionPanel from "../../dashboard/DivisionPanel.tsx";
+} from "../viewer/hooks.ts";
+import { useDeleteParticipant } from "./registration.js";
+import MyDatePicker from "../inputs/MyDatePicker.js";
+import DivisionPanel from "../dashboard/DivisionPanel.tsx";
 import { useContext } from "react";
-import { DivisionContext } from "../../../index.tsx";
+import { DivisionContext } from "../../index.tsx";
 
 function TeamsPage() {
   const { data: tournament, status: tournamentStatus } =

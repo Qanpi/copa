@@ -11,13 +11,13 @@ import {
   useEffect,
   useState
 } from "react";
-import { useTournament } from "../tournament/hooks";
+import { useTournament } from "../viewer/hooks";
 import { useParticipants } from "../participant/hooks";
 
 
 import "ts-brackets-viewer/dist/style.css";
 import axios from "axios";
-import { useStageData } from "../tournament/groupStage/GroupStage";
+import { useStageData } from "../stage/GroupStage";
 
 export const useCreateStage = () => {
   const { data: tournament } = useTournament("current");

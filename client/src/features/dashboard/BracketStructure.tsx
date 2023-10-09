@@ -20,7 +20,7 @@ import {
   useState
 } from "react";
 import { useParticipants } from "../participant/hooks.ts";
-import { useTournament } from "../tournament/hooks.ts";
+import { useTournament } from "../viewer/hooks.ts";
 
 import { BracketsViewer } from "ts-brackets-viewer";
 // import "ts-brackets-viewer/dist/style.css";
@@ -32,7 +32,7 @@ import { RoundNameInfo } from "ts-brackets-viewer";
 import { groupBy, flatten, create } from "lodash-es";
 import { isSeedingWithIds } from "brackets-manager/dist/helpers";
 import { useGroupedParticipants } from "./Draw.tsx";
-import { useMatches } from "../tournament/matches/hooks.ts";
+import { useMatches } from "../match/hooks.ts";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);

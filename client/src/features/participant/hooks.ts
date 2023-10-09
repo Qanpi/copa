@@ -6,7 +6,7 @@ import {
 import axios from "axios";
 import { ObjectId } from "mongodb";
 import { TParticipant } from "@backend/models/participant";
-import { divisionKeys, tournamentKeys } from "../tournament/hooks";
+import { divisionKeys, tournamentKeys } from "../viewer/hooks";
 
 export const participantKeys = {
   all: "participants",

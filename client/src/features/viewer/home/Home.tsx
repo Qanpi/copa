@@ -3,8 +3,8 @@ import * as dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../../dashboard/BracketStructure";
 import { useStages } from "../../stage/hooks";
-import { useTournament } from "../../tournament/hooks";
-import MatchesCalendar from "../../tournament/matches/calendar/MatchesCalendar";
+import { useTournament } from "../hooks";
+import MatchesCalendar from "../../match/MatchesCalendar";
 import "./Home.css";
 
 function WinnerPane({ stage }) {

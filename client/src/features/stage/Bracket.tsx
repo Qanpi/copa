@@ -1,11 +1,11 @@
 import { C } from "@fullcalendar/core/internal-common";
-import BracketStructure from "../../dashboard/BracketStructure";
-import { useBracketsViewer, useStageData } from "../groupStage/GroupStage";
-import { useTournament } from "../hooks";
-import { useStages } from "../../stage/hooks";
-import DivisionPanel from "../../dashboard/DivisionPanel";
+import BracketStructure from "../dashboard/BracketStructure";
+import { useBracketsViewer, useStageData } from "./GroupStage";
+import { useTournament } from "../viewer/hooks";
+import { useStages } from "./hooks";
+import DivisionPanel from "../dashboard/DivisionPanel";
 import { useContext } from "react";
-import { DivisionContext } from "../../..";
+import { DivisionContext } from "../..";
 
 function BracketPage() {
     const { data: tournament } = useTournament("current");

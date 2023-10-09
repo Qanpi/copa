@@ -19,13 +19,13 @@ import {
   useState
 } from "react";
 import "react-dragula/dist/dragula.css";
-import { useParticipant } from "../../../participant/hooks.ts";
-import { useMatches, useUpdateMatch } from "../hooks.ts";
+import { useParticipant } from "../participant/hooks.ts";
+import { useMatches, useUpdateMatch } from "./hooks.ts";
 import "./MatchesCalendar.css";
 
 import { TMatch } from "@backend/models/match.ts";
 import { Link } from "react-router-dom";
-import { useTournament } from "../../hooks.ts";
+import { useTournament } from "../viewer/hooks.ts";
 
 // type MatchEvent = {
 //   matchId: ObjectId;

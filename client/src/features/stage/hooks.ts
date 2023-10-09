@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { TMatch } from "brackets-mongo-db";
-import { tournamentKeys, useTournament } from "../tournament/hooks";
-import { useStageData } from "../tournament/groupStage/GroupStage";
+import { tournamentKeys, useTournament } from "../viewer/hooks";
+import { useStageData } from "./GroupStage";
 
 export const useStages = (
   tournamentId: string,

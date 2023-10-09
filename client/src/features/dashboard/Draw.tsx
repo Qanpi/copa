@@ -3,13 +3,13 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/re
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
-import { useTournament } from "../tournament/hooks.ts";
+import { useTournament } from "../viewer/hooks.ts";
 import { participantKeys, useParticipants } from "../participant/hooks.ts";
 import { groupBy, shuffle } from "lodash-es";
-import Group from "../team/group/Group.js";
+import Group from "../group/Group.js";
 import { DataGrid } from "@mui/x-data-grid";
 import GroupStageStructure from "./GroupStage.js";
-import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
+import { useStageData } from "../stage/GroupStage.tsx";
 import { divideGroups, useCreateStage } from "./GroupStageStructure.tsx";
 import DivisionPanel from "./DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";

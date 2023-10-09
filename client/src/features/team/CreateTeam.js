@@ -11,10 +11,10 @@ import axios from "axios";
 import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useUser } from "../../user/hooks.ts";
-import MyFileInput from "../../inputs/MyFileInput.js";
-import MyTextField from "../../inputs/mytextfield.js";
-import LeaveTeamDialog from "../LeaveTeamDialog.tsx";
+import { useUser } from "../user/hooks.ts";
+import MyFileInput from "../inputs/MyFileInput.js";
+import MyTextField from "../inputs/mytextfield.js";
+import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
 
 export const teamValidationSchema = {
   name: Yup.string().max(20).trim().required(),

@@ -3,14 +3,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
-import { useTeam, useUpdateTeam } from "../hooks.ts";
-import { useUser } from "../../user/hooks.ts";
-import { useDivisions, useTournament } from "../../tournament/hooks.ts";
-import MyTextField from "../../inputs/mytextfield.js";
-import MySelect from "../../inputs/mySelect.js";
-import { teamValidationSchema } from "../create/CreateTeam.js";
+import { useTeam, useUpdateTeam } from "../team/hooks.ts";
+import { useUser } from "../user/hooks.ts";
+import { useDivisions, useTournament } from "../viewer/hooks.ts";
+import MyTextField from "../inputs/mytextfield.js";
+import MySelect from "../inputs/mySelect.js";
+import { teamValidationSchema } from "../team/CreateTeam.js";
 import * as Yup from "yup";
-import { useParticipants } from "../../participant/hooks.ts";
+import { useParticipants } from "./hooks.ts";
 import { useContext, useEffect, useLayoutEffect } from "react";
 
 //team member -> ask manager
