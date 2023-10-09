@@ -10,8 +10,6 @@ import {
   DialogContentText,
   DialogTitle,
   InputLabel,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
@@ -31,7 +29,8 @@ import { nextTick } from "process";
 import { useContext, useState } from "react";
 import { groupBy, isEmpty, mapKeys } from "lodash-es";
 import NumberCard from "./NumberCard.tsx";
-import { DivisionContext, DivisionDispatchContext } from "../../index.tsx";
+import { DivisionContext } from "../../index.tsx";
+import DivisionPanel from "./DivisionPanel.tsx";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
@@ -126,11 +125,11 @@ function RegistrationStage({ next, prev }) {
         </Alert>
       ) : null}
 
-      <DashPane>
+      <DivisionPanel>
         <NumberCard number={participants?.length}>
           team(s) registered
         </NumberCard>
-      </DashPane>
+      </DivisionPanel>
 
       <RegistrationPane></RegistrationPane>
 
@@ -147,36 +146,6 @@ function RegistrationStage({ next, prev }) {
       >
         Next
       </Button>
-    </>
-  );
-}
-
-function DashPane({ children }) {
-  const { data: tournament } = useTournament("current");
-  const { data: divisions } = useDivisions(tournament?.id);
-
-  const division = useContext(DivisionContext);
-  const dispatch = useContext(DivisionDispatchContext);
-
-  const handleDivisionChange = (event, name) => {
-    const id = divisions.findIndex((d) => d.name === name);
-    dispatch(id);
-  };
-
-  return (
-    <>
-      <ToggleButtonGroup
-        exclusive
-        value={division?.name}
-        onChange={handleDivisionChange}
-      >
-        {divisions?.map((d) => (
-          <ToggleButton key={d.id} value={d.name}>
-            {d.name}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
-      {children}
     </>
   );
 }
