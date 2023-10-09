@@ -48,7 +48,6 @@ function DrawPage() {
   const { data: tournament } = useTournament("current");
 
   const division = useContext(DivisionContext);
-  console.log(division);
   const { data: participants, status: participantsStatus, refetch } = useQuery({
     queryKey: [participantKeys.all],
     queryFn: async () => {
