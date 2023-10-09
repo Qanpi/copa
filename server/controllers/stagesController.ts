@@ -11,7 +11,9 @@ export const createStage = async (req: Request, res: Response) => {
 };
 
 export const getMany = expressAsyncHandler(async (req, res) => {
-  const filter = req.body;
+  const filter = Stage.translateAliases({
+    ...req.query,
+  });
   const stages = await Stage.find(filter);
   res.send(stages);
 })

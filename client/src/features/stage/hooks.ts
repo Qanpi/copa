@@ -22,6 +22,6 @@ export const useStages = (
       const res = await axios.get(url);
       return res.data;
     },
-    enabled: Boolean(tournamentId)
+    enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
   });
 };
