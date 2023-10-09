@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { TMatch } from "brackets-mongo-db";
-import { tournamentKeys } from "../tournament/hooks";
+import { tournamentKeys, useTournament } from "../tournament/hooks";
+import { useStageData } from "../tournament/groupStage/GroupStage";
 
 export const useStages = (
   tournamentId: string,
@@ -25,3 +26,15 @@ export const useStages = (
     enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
   });
 };
+
+export const useGroupStageData = (divisionId: string) => {
+    const { data: tournament } = useTournament("current");
+
+    const { data: stages } = useStages(tournament?.id, {
+        division: divisionId,
+        type: "round_robin"
+    });
+    const groupStage = stages?.[0];
+
+    return useStageData(groupStage?.id);
+}

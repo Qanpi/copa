@@ -9,7 +9,7 @@ import { Id } from "brackets-model";
 import { DataTypes, ValueToArray } from "brackets-manager";
 import { useNavigate } from "react-router";
 import { DivisionContext } from "../../..";
-import { useStages } from "../../stage/hooks";
+import { useGroupStageData, useStages } from "../../stage/hooks";
 import DivisionPanel from "../../dashboard/DivisionPanel";
 
 const bracketsViewer = new BracketsViewer();
@@ -64,16 +64,8 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>, selector: 
     return ref;
 }
 function GroupStagePage() {
-    const { data: tournament } = useTournament("current");
     const division = useContext(DivisionContext);
-
-    const { data: stages } = useStages(tournament?.id, {
-        division: division?.id,
-        type: "round_robin"
-    });
-    const groupStage = stages?.[0];
-
-    const { data: stageData } = useStageData(groupStage?.id);
+    const { data: stageData } = useGroupStageData(division?.id);
 
     const bracketsRef = useBracketsViewer(stageData, "#group-stage");
 
