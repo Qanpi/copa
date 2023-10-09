@@ -9,7 +9,7 @@ const MetadataSchema = new mongoose.Schema(
     },
     idx: {
       type: Number,
-      default: 0,
+      default: 1,
     },
     latest: {
       type: SchemaTypes.ObjectId, //TODO: populate option

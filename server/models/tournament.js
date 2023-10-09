@@ -55,7 +55,11 @@ TournamentSchema.pre("save", async function () {
         model: this.constructor.modelName,
       });
 
+    this.idx = metadata.idx;
+
+    metadata.idx += 1;
     metadata.latest = this._id;
+
     await metadata.save();
   }
 });
