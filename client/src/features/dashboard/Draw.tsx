@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Container, Slider, Typography } from "@mui/material";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
 import { useTournament } from "../tournament/hooks.ts";
 import { participantKeys, useParticipants } from "../participant/hooks.ts";
@@ -11,6 +11,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import GroupStageStructure from "./GroupStage.js";
 import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
 import { divideGroups, useCreateStage } from "./GroupStageStructure.tsx";
+import DivisionPanel from "./DivisionPanel.tsx";
+import { DivisionContext } from "../../index.tsx";
+import { useGroupStageData, useStages } from "../stage/hooks.ts";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -33,7 +36,7 @@ function arrangeGroups(participants, groups) {
 
   let remainder = participants % groups;
 
-  for (let i=0; remainder>0; i++) {
+  for (let i = 0; remainder > 0; i++) {
     groupings[i] += 1;
     remainder--;
   }
@@ -45,40 +48,60 @@ function arrangeGroups(participants, groups) {
 function DrawPage() {
   const { data: tournament } = useTournament("current");
 
-  const { data: participants, status: participantsStatus } = useQuery({
+  const division = useContext(DivisionContext);
+
+  const { data: participants, status: participantsStatus, refetch } = useQuery({
     queryKey: [participantKeys.all],
     queryFn: async () => {
-      const res = await axios.get(`/api/participants`);
+      const res = await axios.get(`/api/tournaments/${tournament?.id}/participants?division=${division?.id}`);
       return res.data;
     },
+    enabled: Boolean(tournament) && Boolean(division?.id),
     staleTime: Infinity
   });
+
+  //TODO: better way to do this?
+  useEffect(() => {
+    if (division) refetch();
+  }, [division]);
 
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([]);
 
-  const { data: groupStage } = useStageData(tournament?.groupStage?.id);
+  const { data: stages } = useStages(tournament?.id, {
+    division: division?.id,
+    type: "round_robin"
+  });
+  const groupStage = stages?.[0];
+
   const createGroupStage = useCreateStage();
 
-  if (participantsStatus !== "success") return <>Loading...</>
+  if (!participants) return <>Loading...</>
+
+  if (tournament?.state !== "Group stage") return <>Tournament is not in the gorup stage.</>
 
   const groupSizes = arrangeGroups(participants.length, groupCount);
 
   const handleConfirmSeeding = () => {
     createGroupStage.mutate({
-      name: "Group Stage",
+      name: division.name,
       type: "round_robin",
-      //TODO: division: ""
+      division: division.id,
       settings: {
         groupCount,
         size: seeding.length,
       },
       seeding
+    }, {
+      onSuccess: () => {
+        setSeeding([]);
+      }
     });
   };
 
   const handleSkipWheel = () => {
-    setSeeding([...seeding, ...shuffle(participants)])
+    const unset = participants.filter(p => !seeding.some(s => s.id === p.id));
+    setSeeding([...seeding, ...shuffle(unset)])
   };
 
   const handleResetSeeding = () => {
@@ -90,53 +113,54 @@ function DrawPage() {
   }
 
   const groupless = participants?.filter(p => !seeding.some(s => s.id === p.id));
-
-  if (groupStage) return (
-    <>Sorry for now it's impossible to reset the draw. Contact support.</>
-  );
+  const groups = groupSizes.map((n, i) => {
+    return (
+      <Group
+        name={`Group ${alphabet[i]}`}
+        participants={seeding.filter((v, j) => (j % groupCount === i))}
+        disableHead
+        key={i}
+      ></Group>
+    );
+  })
 
   return (
-    <>
-      <Container>
-        <Typography>Number of groups</Typography>
+    <DivisionPanel>
+      {groupStage ?
+        <>Sorry can't reset an arleady made group stage yet. Contact support.</>
+        :
+        <>
+          <Container>
+            <Typography>Number of groups</Typography>
 
-        <Slider
-          value={groupCount}
-          onChange={(e, v: number) => {
-            setGroupCount(v);
-          }}
-          min={1}
-          max={participants.length}
-          step={1}
-          marks
-          valueLabelDisplay="on"
-        ></Slider>
-      </Container>
+            <Slider
+              value={groupCount}
+              onChange={(e, v: number) => {
+                setGroupCount(v);
+              }}
+              min={1}
+              max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
+              step={1}
+              marks
+              valueLabelDisplay="on"
+            ></Slider>
+          </Container>
 
-      {
-        groupSizes.map((n, i) => {
-          return (
-            <Group
-              name={`Group ${alphabet[i]}`}
-              participants={seeding.filter((v, j) => (j % groupCount === i))}
-              disableHead
-              key={i}
-            ></Group>
-          );
-        })
+          {groups}
+
+          <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+
+          <Button onClick={handleSkipWheel}>
+            Skip
+          </Button>
+          <Button onClick={handleResetSeeding}>Reset</Button>
+
+          <Button onClick={handleConfirmSeeding}>
+            Confirm
+          </Button>
+        </>
       }
-
-      <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
-
-      <Button onClick={handleSkipWheel}>
-        Skip
-      </Button>
-      <Button onClick={handleResetSeeding}>Reset</Button>
-
-      <Button onClick={handleConfirmSeeding}>
-        Confirm
-      </Button>
-    </>
+    </DivisionPanel>
   )
 }
 

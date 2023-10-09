@@ -17,36 +17,65 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
+import {
+  useCurrentDivisions,
+  useDivisions,
+  useTournament,
+  useUpdateTournament,
+} from "../tournament/hooks.ts";
 import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import { nextTick } from "process";
-import { useState } from "react";
-import { isEmpty } from "lodash-es";
+import { useContext, useState } from "react";
+import { groupBy, isEmpty, mapKeys } from "lodash-es";
 import NumberCard from "./NumberCard.tsx";
+import { DivisionContext } from "../../index.tsx";
+import DivisionPanel from "./DivisionPanel.tsx";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
   const updateTournament = useUpdateTournament(tournament?.id);
 
-  const { data: participants } = useParticipants({
-    tournament_id: tournament?.id,
-  });
-
   const [isEarlyDialogOpen, setEarlyDialogOpen] = useState(false);
-  const [notEnoughParticipants, setNotEnoughParticipants] =
-    useState(false);
+  const [notEnoughParticipants, setNotEnoughParticipants] = useState(null);
+
+  const { data: divisions } = useDivisions(tournament?.id);
+  const division = useContext(DivisionContext);
+  const { data: allParticipants } = useParticipants(tournament?.id);
+
+  const participants = allParticipants?.filter(
+    (p) => p.division === division.id
+  );
+
+  //TODO: potentially refactor server-side
+  const participantsByDivision = groupBy(allParticipants, "division");
 
   const handleClickNext = () => {
-    if (participants.length < 2) {
-      setNotEnoughParticipants(true);
-      return;
+    for (const division of divisions) {
+      const participants = participantsByDivision[division.id];
+      //FIXME: check all divisions
+      if (!participants) {
+        return setNotEnoughParticipants({
+          count: 0,
+          division: division.name,
+        });
+      } else if (participants.length < 2) {
+        setNotEnoughParticipants({
+          count: participants.length,
+          division: division.name,
+        });
+
+        return;
+      }
     }
 
     const now = new Date();
 
-    if (!tournament.registration?.to || new Date(tournament.registration.to) > now) {
+    if (
+      !tournament.registration?.to ||
+      new Date(tournament.registration.to) > now
+    ) {
       setEarlyDialogOpen(true);
       return;
     }
@@ -67,11 +96,6 @@ function RegistrationStage({ next, prev }) {
 
     setEarlyDialogOpen(false);
   };
-
-  if (tournamentStatus !== "success") return "bruh";
-
-  const to = tournament.registration?.to;
-  const from = tournament.registration?.from;
 
   return (
     <>
@@ -95,68 +119,93 @@ function RegistrationStage({ next, prev }) {
         <Alert severity="error">
           <AlertTitle>Error: Not enough participants</AlertTitle>
           <Typography>
-            Can't proceed to the next stage with {participants.length} participant(s).
+            There must be at least 2 registered participant(s) in the '
+            {notEnoughParticipants.division}' division before proceeding to the
+            next stage.
           </Typography>
         </Alert>
       ) : null}
 
-      <Formik
-        initialValues={{
-          registration: {
-            from: from ? dayjs(from) : null,
-            to: to ? dayjs(to) : null,
-          },
-        }}
-        validationSchema={Yup.object({
-          registration: Yup.object({
-            from: Yup.date().required(),
-            to: Yup.date()
-              .required()
-              .when(["from"], ([from], schema) => {
-                if (from) return schema.min(dayjs(from)); //can be on the same day, but not before
-              }),
-          }),
-        })}
-        onSubmit={(values) => {
-          updateTournament.mutate(values);
+      <DivisionPanel>
+        <NumberCard number={participants?.length}>
+          team(s) registered
+        </NumberCard>
+      </DivisionPanel>
+
+      <RegistrationPane></RegistrationPane>
+
+      <Button
+        onClick={async () => {
+          // //workaround because formik is dumb
+          // //see: https://github.com/jaredpalmer/formik/issues/1580
+          // await submitForm();
+          // const errors = await validateForm();
+
+          // if (isEmpty(errors))
+          handleClickNext();
         }}
       >
-        {({ values, setFieldValue, submitForm, validateForm, isValid }) => (
-          <Form>
-            <div className="registration">
-              <InputLabel>Open registration</InputLabel>
-              <MyDatePicker label="from 00:00 on" name="registration.from" disablePast/>
-              <MyDatePicker
-                disablePast
-                label="to 23:59 on"
-                name="registration.to"
-                minDate={values.registration.from}
-                onChange={(value) =>
-                  setFieldValue("registration.to", dayjs(value).endOf("day"))
-                }
-              />
-            </div>
-
-            <Button type="submit">Confirm</Button>
-            <NumberCard number={participants?.length}>team(s) registered</NumberCard>
-
-            <Button
-              onClick={async () => {
-                // //workaround because formik is dumb
-                // //see: https://github.com/jaredpalmer/formik/issues/1580
-                // await submitForm();
-                // const errors = await validateForm();
-
-                // if (isEmpty(errors))
-                handleClickNext();
-              }}
-            >
-              Next
-            </Button>
-          </Form>
-        )}
-      </Formik>
+        Next
+      </Button>
     </>
+  );
+}
+
+function RegistrationPane() {
+  const { status: tournamentStatus, data: tournament } =
+    useTournament("current");
+  const updateTournament = useUpdateTournament(tournament?.id);
+
+  if (tournamentStatus !== "success") return "bruh";
+
+  const to = tournament.registration?.to;
+  const from = tournament.registration?.from;
+  return (
+    <Formik
+      initialValues={{
+        registration: {
+          from: from ? dayjs(from) : null,
+          to: to ? dayjs(to) : null,
+        },
+      }}
+      validationSchema={Yup.object({
+        registration: Yup.object({
+          from: Yup.date().required(),
+          to: Yup.date()
+            .required()
+            .when(["from"], ([from], schema) => {
+              if (from) return schema.min(dayjs(from)); //can be on the same day, but not before
+            }),
+        }),
+      })}
+      onSubmit={(values) => {
+        updateTournament.mutate(values);
+      }}
+    >
+      {({ values, setFieldValue, submitForm, validateForm, isValid }) => (
+        <Form>
+          <div className="registration">
+            <InputLabel>Open registration</InputLabel>
+            <MyDatePicker
+              label="from 00:00 on"
+              name="registration.from"
+              disablePast
+            />
+            <MyDatePicker
+              disablePast
+              label="to 23:59 on"
+              name="registration.to"
+              minDate={values.registration.from}
+              onChange={(value) =>
+                setFieldValue("registration.to", dayjs(value).endOf("day"))
+              }
+            />
+          </div>
+
+          <Button type="submit">Confirm</Button>
+        </Form>
+      )}
+    </Formik>
   );
 }
 

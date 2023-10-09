@@ -1,21 +1,15 @@
-import { Link } from "react-router-dom";
-import { useTournament } from "../../tournament/hooks";
-import GameBoard from "./GameBoard/gameboard";
-import "./Home.css";
-import InstagramBoard from "./InstagramBoard/instagramboard";
-import * as dayjs from "dayjs";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useEffect, useLayoutEffect, useMemo } from "react";
-import { useMatches } from "../../tournament/matches/hooks";
-import MatchesCalendar from "../../tournament/matches/calendar/MatchesCalendar";
 import { Box, Typography } from "@mui/material";
-import { useStageData } from "../../tournament/groupStage/GroupStage";
+import * as dayjs from "dayjs";
+import { Link } from "react-router-dom";
 import { useStandings } from "../../dashboard/BracketStructure";
+import { useStages } from "../../stage/hooks";
+import { useTournament } from "../../tournament/hooks";
+import MatchesCalendar from "../../tournament/matches/calendar/MatchesCalendar";
+import "./Home.css";
 
-function WinnerTribute() {
-  const { data: tournament } = useTournament("current");
-  const {data: standings} = useStandings(tournament?.bracket?.id);
+function WinnerPane({ stage }) {
+  //FIXME: needs to show all winners across divisions
+  const { data: standings } = useStandings(stage.id);
 
   if (!standings) return <>Loading...</>;
 
@@ -23,21 +17,28 @@ function WinnerTribute() {
 
   return <>
     <Typography>
-      Congratulations to {winner.name} for winning Copa x.
+      Congratulations to {winner.name} for winning !
     </Typography>
   </>
+}
+
+function WinnersTribute() {
+  const { data: tournament } = useTournament("current");
+  const { data: stages } = useStages(tournament?.id, {
+    type: "single_elimination"
+  });
+
+  return stages?.map(s => (<WinnerPane stage={s} key={s.id}></WinnerPane>))
+
 }
 
 function HomePage() {
   const { data: tournament } = useTournament("current");
 
-  const startOfWeek = useMemo(() => dayjs().day(1), []);
-  const { data: matches } = useMatches({ start: startOfWeek.toDate() });
-
   if (!tournament) return <>Loadng...</>
 
-  if (tournament.state === "Complete") 
-    return <WinnerTribute></WinnerTribute>
+  if (tournament.state === "Complete")
+    return <WinnersTribute></WinnersTribute>
 
   if (!tournament.registration?.from)
     return <>Registration will be starting soon.</>

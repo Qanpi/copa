@@ -1,74 +1,16 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import mongoose from "mongoose";
-import { collections } from "../configs/db.config.js";
 import { romanize } from "../services/helpers.js";
-
-import { Tournament as BracketsTournament } from "brackets-mongo-db";
-
-import { GroupSchema, RoundSchema, StageSchema } from "brackets-mongo-db";
+import DivisionSchema from "./division.js";
+import Metadata from "./metadata.js";
 
 dayjs.extend(relativeTime);
-
-const CustomStageSchema = StageSchema.discriminator(
-  "Tournament", //name must match the discriminator of Tournament model because of how brackets-mongo-db works
-  new mongoose.Schema({}, { id: true })
-);
-
-const CustomRoundSchema = RoundSchema.discriminator(
-  "Tournament",
-  new mongoose.Schema({}, { id: true })
-);
-
-const CustomGroupSchema = GroupSchema.discriminator(
-  "Tournament",
-  new mongoose.Schema(
-    {},
-    {
-      id: true,
-      virtuals: {
-        name: {
-          get() {
-            const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
-
-            return `Group ${alphabet[this.number - 1]}`;
-          },
-        },
-      },
-    }
-  )
-);
-
-CustomGroupSchema.virtual("participants", {
-  ref: collections.participants.id,
-  localField: "_id",
-  foreignField: "group",
-});
-
-// export const Group = mongoose.model(collections.groups.id, GroupSchema);
 
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      default: function () {
-        return `Copa ${romanize(this.idx)}`;
-      },
-    },
-    settings: {
-      matchLength: {
-        type: Number,
-        default: 6,
-      },
-      playerCount: {
-        type: Number,
-        default: 4,
-      },
-    },
-    rules: {
-      type: String,
-    },
+    idx: Number,
     organizer: {
       name: String,
       phoneNumber: String,
@@ -77,20 +19,12 @@ const TournamentSchema = new mongoose.Schema(
       from: Date,
       to: Date,
     },
-    divisions: {
-      type: [String],
-      default: ["Men's", "Women's"],
-    },
-    groups: [CustomGroupSchema],
-    stages: [CustomStageSchema],
-    rounds: [CustomRoundSchema],
-
     state: {
       type: String,
       enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
       default: "Registration",
     },
-    end: Date,
+    divisions: [DivisionSchema],
   },
   {
     toObject: { virtuals: true },
@@ -98,32 +32,40 @@ const TournamentSchema = new mongoose.Schema(
     virtuals: {
       states: {
         get() {
-          return this.schema.path("state").enumValues;
+          const statePath = this.schema.path("state");
+          return statePath.enumValues;
+        },
+      },
+      name: {
+        get() {
+          return `Copa ${romanize(this.idx)}`;
         },
       },
     },
-    // statics: {
-    // async findLatest() {
-    //   const meta = await Metadata.findOne({
-    //     model: collections.tournaments.id,
-    //   });
-    //   const tournament = await this.findById(meta.latest);
-    //   return tournament;
-    // },
-    // },
   }
 );
 
+TournamentSchema.pre("save", async function () {
+  if (this.isNew) {
+    let metadata = await Metadata.findOne({
+      model: this.constructor.modelName,
+    });
+    if (!metadata)
+      metadata = await Metadata.create({
+        model: this.constructor.modelName,
+      });
+
+    this.idx = metadata.idx;
+
+    metadata.idx += 1;
+    metadata.latest = this._id;
+
+    await metadata.save();
+  }
+});
+
 TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
-});
-
-TournamentSchema.virtual("groupStage").get(function () {
-  return this.stages.find((s) => s.type === "round_robin"); //TODO: allow for multiple (divisions)
-});
-
-TournamentSchema.virtual("bracket").get(function () {
-  return this.stages.find((s) => s.type === "single_elimination"); //TODO: allow for multiple (divisions)
 });
 
 // TournamentSchema.pre("findOneAndDelete", async function () {
@@ -157,9 +99,6 @@ TournamentSchema.virtual("bracket").get(function () {
 //   }
 // });
 
-const Tournament = BracketsTournament.discriminator(
-  "Tournament",
-  TournamentSchema
-);
+const Tournament = mongoose.model("Tournament", TournamentSchema);
 
 export default Tournament;

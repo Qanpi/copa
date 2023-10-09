@@ -14,7 +14,8 @@
     "dev-server": "nodemon server/bin/www.ts --config nodemon.json",
     "dev-client": "cd client && npm start",
     "dev": "npm-run-all --parallel dev-server dev-client",
-    "test": "npx jest"
+    "test": "npx jest",
+    "newman": "newman run https://api.postman.com/collections/29609830-1607a99b-864d-4e2e-b779-31781f41738b?access_key=PMAT-01HBNF0GYSR4VMF5V8W0CZ5EE3"
   },
   "keywords": [],
   "author": "",
@@ -37,7 +38,7 @@
     "brackets-json-db": "^1.0.2",
     "brackets-manager": "^1.6.3",
     "brackets-model": "^1.5.0",
-    "brackets-mongo-db": "^1.7.8",
+    "brackets-mongo-db": "^2.0.0",
     "brackets-viewer": "^1.6.1",
     "cookie-parser": "~1.4.4",
     "cookie-session": "^2.0.0",

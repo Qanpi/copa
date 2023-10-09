@@ -17,28 +17,57 @@ import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
 import DrawPage from "./Draw.tsx";
 import GroupStageStructure from "./GroupStageStructure.tsx";
 import Scheduler from "./Scheduler.tsx";
-import { useTournament } from "../tournament/hooks.ts";
+import { useDivisions, useTournament } from "../tournament/hooks.ts";
 import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
 import NumberCard from "./NumberCard.tsx";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Status } from "brackets-model";
+import { DivisionContext } from "../../index.tsx";
+import DivisionPanel from "./DivisionPanel.tsx";
+import { useGroupStageData, useStages } from "../stage/hooks.ts";
+import { groupBy } from "lodash-es";
 
 function GroupStage({ next, prev }) {
   const { data: tournament } = useTournament("current");
 
-  const { data: matches } = useMatches({
-    stage_id: tournament?.groupStage?.id,
-  });
+  const division = useContext(DivisionContext);
+  const { data: divisions } = useDivisions(tournament?.id);
 
-  const scheduledMatches = matches?.filter((m) => !!m.start);
-  const completedMatches = matches?.filter(
-    (m) => m.status >= Status.Completed
-  );
+  const { data: stages } = useStages(tournament?.id, {
+    type: "round_robin",
+  });
+  const groupStage = stages?.find((s) => s.division === division.id);
+
+  const { data: allMatches } = useMatches(tournament?.id);
+  const matchesByStage = groupBy(allMatches, "stage_id");
+  const matches = matchesByStage[groupStage?.id];
+
+  const scheduledMatches = allMatches?.filter((m) => !!m.start);
+  const completedMatches = matches?.filter((m) => m.status >= Status.Completed);
 
   const [incompleteMatchesAlert, setIncompleteMatchesAlert] = useState(false);
+  const [noGroupStageAlert, setNoGroupStageAlert] = useState(false);
+
   const handleClickNext = () => {
-    if (matches.length - completedMatches.length !== 0) {
-      return setIncompleteMatchesAlert(true);
+    for (const division of divisions) {
+      const stage = stages.find((s) => s.division === division.id);
+
+      if (!stage) {
+        return setNoGroupStageAlert({
+          division: division.name,
+        });
+      }
+
+      const matches = matchesByStage[stage.id];
+      const completedMatches = matches?.filter(
+        (m) => m.status >= Status.Completed
+      );
+
+      if (!matches || matches.length - completedMatches.length !== 0) {
+        return setIncompleteMatchesAlert({
+          division: division.name,
+        });
+      }
     }
     next();
   };
@@ -49,27 +78,48 @@ function GroupStage({ next, prev }) {
 
   return (
     <>
+      {noGroupStageAlert ? (
+        <Alert severity="error">
+          <AlertTitle>
+            No group stage for the '{noGroupStageAlert.division}' name
+          </AlertTitle>
+          <Typography>
+            Please first draw teams using the wheel before proceeding to the
+            bracket.
+          </Typography>
+        </Alert>
+      ) : null}
       {incompleteMatchesAlert ? (
         <Alert severity="error">
-          <AlertTitle>Error: incomplete matches</AlertTitle>
+          <AlertTitle>
+            Error: incomplete matches in the group stage of the '
+            {incompleteMatchesAlert.division}' division.
+          </AlertTitle>
           <Typography>
             Can't proceed before all the matches in the group stage are
             complete. I you already know the results, enter them manually here.
           </Typography>
         </Alert>
       ) : null}
-      {!tournament?.groupStage ? (
-        <Link to="/tournament/draw">Draw teams</Link>
-      ) : (
-        <>
-          <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
-            matches scheduled
-          </NumberCard>
-          <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
-            matches complete
-          </NumberCard>
-        </>
-      )}
+
+      <DivisionPanel>
+        {!groupStage ? (
+          <Link to="/tournament/draw">Draw teams</Link>
+        ) : (
+          <>
+            <NumberCard
+              number={`${scheduledMatches?.length}/${matches?.length}`}
+            >
+              matches scheduled
+            </NumberCard>
+            <NumberCard
+              number={`${completedMatches?.length}/${matches?.length}`}
+            >
+              matches complete
+            </NumberCard>
+          </>
+        )}
+      </DivisionPanel>
 
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>

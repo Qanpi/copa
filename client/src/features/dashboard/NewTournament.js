@@ -1,25 +1,14 @@
 import {
   Button,
-  Container,
-  Step,
-  StepButton,
-  Stepper,
-  Typography,
+  Typography
 } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 import { Form, Formik } from "formik";
-import { useState } from "react";
 import * as Yup from "yup";
-import { useTournament } from "../tournament/hooks.ts";
-import MyFileInput from "../inputs/MyFileInput.js";
+import MyAutocomplete from "../inputs/MyAutocomplete.tsx";
 import MyNumberSlider from "../inputs/myNumberSlider.js";
 import MyTextField from "../inputs/mytextfield.js";
-import MyAutocomplete from "../inputs/MyAutocomplete.tsx";
-import { createTournament, useCreateTournament } from "../tournament/hooks.ts";
 
 function NewTournamentPage() {
-  const createTournament = useCreateTournament();
-
   return (
     <>
       <Formik
@@ -28,7 +17,6 @@ function NewTournamentPage() {
             playerCount: 4,
             matchLength: 6,
           },
-          divisions: ["Men's", "Women's"],
           rules: "",
           organizer: {
             name: "",
@@ -48,7 +36,7 @@ function NewTournamentPage() {
           rules: Yup.string(), 
         })}
         onSubmit={(values) => {
-          createTournament.mutate(values);
+          // createTournament.mutate(values);
         }}
       >
         <Form>

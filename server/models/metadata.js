@@ -1,3 +1,20 @@
-import Metadata from "brackets-mongo-db/dist/models/Increment.js"
+import mongoose, { SchemaTypes } from "mongoose";
 
-export default Metadata;
+const MetadataSchema = new mongoose.Schema(
+  {
+    model: {
+      type: String,
+      required: true,
+      index: { unique: true },
+    },
+    idx: {
+      type: Number,
+      default: 1,
+    },
+    latest: {
+      type: SchemaTypes.ObjectId, //TODO: populate option
+    },
+  },
+);
+
+export default mongoose.model("Metadata", MetadataSchema);

@@ -8,11 +8,11 @@ import {
 
 const ParticipantSchema = new mongoose.Schema(
   {
-    // tournament: {
-    //   type: mongoose.SchemaTypes.ObjectId,
-    //   ref: collections.tournaments.id,
-    //   // index: true,
-    // },
+    tournament: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: collections.tournaments.id,
+    },
+    //FIXME: remove
     group_id: {
       type: SchemaTypes.ObjectId,
     },

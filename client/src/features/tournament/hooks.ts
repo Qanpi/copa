@@ -1,7 +1,7 @@
 import {
-    useMutation,
-    useQuery,
-    useQueryClient
+  useMutation,
+  useQuery,
+  useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
 import { Id, QueryKeyFactory } from "../../types";
@@ -20,6 +20,7 @@ export const useTournament = (id: string) => {
       const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
       return response.data;
     },
+    enabled: Boolean(id)
   });
 };
 
@@ -37,19 +38,34 @@ export const useUpdateTournament = (id: Id) => {
   });
 };
 
-export const useCreateTournament = () => {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (body) => {
-      const res = await axios.post(`/api/tournaments/`, body);
-      return res.data;
-    },
-    onSuccess: (tournament) => {
-      queryClient.setQueryData(["tournament", "detail", "current"], tournament);
+
+export const divisionKeys = {
+  all: "divisions",
+  id: (id: Id) => [divisionKeys.all, id],
+  query: () => [divisionKeys.all, "detail"],
+};
+
+export const useDivision = (id: string) => {
+  const { data: tournament } = useTournament("current");
+
+  return useQuery({
+    queryKey: divisionKeys.id(id),
+    queryFn: async () => {
+      const response = await axios.get(`/api/${tournamentKeys.all}/${tournament.id}/${divisionKeys.all}/${id}`);
+      return response.data;
     },
   });
-};
+}
+
+export const useDivisions = (tournamentId: string) => {
+  const { data: tournament } = useTournament(tournamentId);
+
+  return {
+    data: tournament?.divisions
+  }
+}
+
 export const finalRoundNames = (roundInfo: RoundNameInfo) => {
   if ("fractionOfFinal" in roundInfo) {
     switch (roundInfo.fractionOfFinal) {

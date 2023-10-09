@@ -2,7 +2,7 @@ import { validationResult } from "express-validator";
 import Match from "../models/match.js";
 import { Request, Response } from "express";
 
-import { manager } from "./tournamentsController.js";
+import { bracketsManager } from "../services/bracketsManager.js";
 
 export const getMany = async (req: Request, res: Response) => {
   //FIXME: refactor this better
@@ -19,24 +19,30 @@ export const getMany = async (req: Request, res: Response) => {
   } else {
     const endFilter = req.query.end
       ? {
-          start: {
-            $lt: req.query.end,
-          },
-        }
+        start: {
+          $lt: req.query.end,
+        },
+      }
       : {};
 
     const startFilter = req.query.start
       ? {
-          start: {
-            $gte: req.query.start,
-          },
-        }
+        start: {
+          $gte: req.query.start,
+        },
+      }
       : {};
 
     query["$and"] = [startFilter, endFilter];
   }
 
-  const matches = await Match.find({ ...req.query, scheduled: undefined, ...query });
+  const filter = {
+    ...req.query, scheduled: undefined,
+    tournament: req.params.id,
+    ...query
+  };
+
+  const matches = await Match.find(filter);
   res.send(matches);
 };
 
@@ -52,13 +58,10 @@ export const deleteMany = async (req: Request, res: Response) => {
 
 export const updateOne = async (req: Request, res: Response) => {
   //TODO: if statement
-  await manager.update.match({ ...req.body, id: req.params.id });
+  await bracketsManager.update.match({ ...req.body, id: req.params.id });
+  const updated = await Match.findById(req.params.id);
 
-  // const match = await Match.findByIdAndUpdate(req.params.id, req.body, {
-  //   new: true,
-  // });
-
-  res.send({});
+  res.send(updated);
 };
 
 export const resetDates = async (req: Request, res: Response) => {

@@ -4,25 +4,18 @@ import Tournament from "../models/tournament.js";
 import Team from "../models/team.js";
 import { matchedData, validationResult } from "express-validator";
 
-export const getMultiple = expressAsyncHandler(async (req, res) => {
-  const result = validationResult(req);
-
-  if (result.isEmpty()) {
-    const data = matchedData(req);
-
-    const filters = {
-      group: data?.group === "none" ? null : data?.group,
-    };
-
-    //TODO: refactor all other uses to checking role
-    const participations =
-      req.user?.role === "admin"
-        ? await Participant.find(filters).select(["+team.phoneNumber"])
-        : await Participant.find(filters);
-    return res.send(participations);
-  }
-
-  res.send({ errors: result.array() });
+export const getMany = expressAsyncHandler(async (req, res) => {
+  //translateAliases because division = tournament_id;
+  const filter = Participant.translateAliases({
+    ...req.query,
+    tournament: req.params.id,
+  });
+  //TODO: refactor all other uses to checking role
+  const participants =
+    req.user?.role === "admin"
+      ? await Participant.find(filter).select(["+team.phoneNumber"])
+      : await Participant.find(filter);
+  return res.send(participants);
 });
 
 export const getOne = expressAsyncHandler(async (req, res) => {
@@ -31,14 +24,9 @@ export const getOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const createOne = expressAsyncHandler(async (req, res) => {
-  //TODO: remove unnecessary calls
-  const team = await Team.findById(req.body.teamId);
-
-  const participation = await new Participant({
-    team: team.id,
-    name: team.name,
-    tournament_id: req.body.tournamentId,
-  }).save();
+  const participation = await new Participant(
+    Participant.translateAliases({ ...req.body, tournament: req.params.id })
+  ).save();
 
   res.send(participation);
 });

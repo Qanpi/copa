@@ -1,10 +1,5 @@
-import {
-  Button,
-  InputLabel,
-  Tooltip,
-  Typography
-} from "@mui/material";
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import { Button, InputLabel, Tooltip, Typography } from "@mui/material";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -13,32 +8,50 @@ import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useParticipants } from "../../participant/hooks.ts";
-import { useTournament, useUpdateTournament } from "../../tournament/hooks.ts";
-import { useUnregisterTeam } from "../registration/registration.js";
+import {
+  useDivisions,
+  useTournament,
+  useUpdateTournament,
+} from "../../tournament/hooks.ts";
+import { useDeleteParticipant } from "../registration/registration.js";
 import MyDatePicker from "../../inputs/MyDatePicker.js";
+import DivisionPanel from "../../dashboard/DivisionPanel.tsx";
+import { useContext } from "react";
+import { DivisionContext } from "../../../index.tsx";
 
 function TeamsPage() {
-  const { data: participants, status: participantsStatus } = useParticipants();
-  const unregisterTeam = useUnregisterTeam();
   const { data: tournament, status: tournamentStatus } =
     useTournament("current");
 
-  const cols = [
+  const division = useContext(DivisionContext);
+  const { data: participants, status: participantsStatus } = useParticipants(
+    tournament?.id, {
+      division: division?.id
+    }
+  );
+  const { data: divisions } = useDivisions(tournament?.id);
+  const unregisterTeam = useDeleteParticipant();
+
+  const cols: GridColDef[] = [
     {
       field: "name",
       headerName: "Team name",
       width: 200,
-      //is encoding fine?
-      renderCell: (params) => (
-        <Link to={`/teams/${params.row.name}`}>{params.value}</Link>
-      ),
+      renderCell: (params) => {
+        return (
+          <Link to={`/teams/${params.row.name}`}>{params.row.name}</Link>
+        )
+      },
     },
     {
       field: "division",
       headerName: "Division",
       editable: true,
-      valueOptions: tournament?.divisions,
       type: "singleSelect",
+      valueOptions: divisions?.map(d => d.name),
+      valueGetter: ({ value }) => {
+        return divisions?.find(d => d.id === value)?.name;
+      },
     },
     {
       field: "phoneNumber",
@@ -56,11 +69,11 @@ function TeamsPage() {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      getActions: (params) => {
+      getActions: ({ row }) => {
         return [
           <Tooltip title="Unregister">
             <GridActionsCellItem
-              onClick={() => unregisterTeam.mutate({ id: params.row.id })}
+              onClick={() => unregisterTeam.mutate({ id: row.id })}
               icon={<CalendarIcon></CalendarIcon>}
               label="Revoke registration"
             ></GridActionsCellItem>
@@ -86,19 +99,21 @@ function TeamsPage() {
     <div sx={{ width: "80%" }}>
       <Typography>Teams</Typography>
 
+      <DivisionPanel>
 
-      <DataGrid
-        editMode="row"
-        isCellEditable={(params) => params.row.tournament === tournament?.id}
-        autoheight
-        rows={participants}
-        columns={cols}
-        processRowUpdate={async (newRow, orig) => {
-          const res = await updateParticipation.mutateAsync(newRow);
-          return res;
-        }}
-        onProcessRowUpdateError={(err) => console.log(err)}
-      ></DataGrid>
+        <DataGrid
+          editMode="row"
+          isCellEditable={(params) => params.row.tournament === tournament?.id}
+          autoheight
+          rows={participants}
+          columns={cols}
+          processRowUpdate={async (newRow, orig) => {
+            const res = await updateParticipation.mutateAsync(newRow);
+            return res;
+          }}
+          onProcessRowUpdateError={(err) => console.log(err)}
+        ></DataGrid>
+      </DivisionPanel>
     </div>
   );
 }

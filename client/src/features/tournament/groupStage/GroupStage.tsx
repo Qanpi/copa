@@ -3,11 +3,14 @@ import { finalRoundNames, useTournament } from "../hooks";
 import GroupStageStructure from "../../dashboard/GroupStage";
 import axios from "axios";
 import { BracketsViewer, ViewerData } from "ts-brackets-viewer";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef } from "react";
 import DrawPage from "../../dashboard/Draw";
 import { Id } from "brackets-model";
 import { DataTypes, ValueToArray } from "brackets-manager";
 import { useNavigate } from "react-router";
+import { DivisionContext } from "../../..";
+import { useGroupStageData, useStages } from "../../stage/hooks";
+import DivisionPanel from "../../dashboard/DivisionPanel";
 
 const bracketsViewer = new BracketsViewer();
 
@@ -42,7 +45,7 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>, selector: 
                 {
                     selector,
                     customRoundName: finalRoundNames,
-                    onMatchClick: (match) =>{
+                    onMatchClick: (match) => {
                         //TODO: maybe make popover and the link
                         navigate(`/tournament/matches/${match.id}`)
                     },
@@ -62,20 +65,26 @@ export const useBracketsViewer = (stageData: ValueToArray<DataTypes>, selector: 
 }
 function GroupStagePage() {
     const {data: tournament} = useTournament("current");
-    const { data: stageData } = useStageData(tournament?.groupStage?.id);
+    const division = useContext(DivisionContext);
+
+    const { data: stages } = useStages(tournament?.id, {
+        type: "round_robin",
+        division: division?.id
+    })
+    const { data: stageData } = useStageData(stages?.[0]?.id);
 
     const bracketsRef = useBracketsViewer(stageData, "#group-stage");
 
-    if (!stageData) return <>
-        Gro p stage not defined yet
-    </>
-
     return <>
-        <div
-            ref={bracketsRef}
-            className="brackets-viewer"
-            id="group-stage"
-        ></div>
+        <DivisionPanel>
+            {stageData ?
+                <div
+                    ref={bracketsRef}
+                    className="brackets-viewer"
+                    id="group-stage"
+                ></div>
+                : <>Group stage not defined yet.</>}
+        </DivisionPanel>
     </>
 }
 

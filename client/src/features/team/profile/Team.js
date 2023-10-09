@@ -12,9 +12,9 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTeam } from "../hooks.ts";
-import { useUser } from "../../user/hooks.ts";
+import { useUpdateUser, useUser } from "../../user/hooks.ts";
 
 dayjs.extend(relativeTime);
 
@@ -23,7 +23,6 @@ function TeamPage() {
 
   const {data: user} = useUser("me");
   const {data: team, status: teamStatus} = useTeam(name);
-
 
   const {
     status: inviteStatus,
@@ -46,15 +45,29 @@ function TeamPage() {
     staleTime: Infinity,
   });
 
-  const handleCopyText = () => {
+  const handleCopyInviteLink = () => {
     navigator.clipboard.writeText(invite.link);
   };
+
+  const updateUser = useUpdateUser();
+  const navigate = useNavigate();
+  const handleLeaveTeam = () => {
+    updateUser.mutate({
+      id: user.id,
+      team: null
+    }, {
+      onSuccess: () => {
+        navigate(`/teams/none`);
+      }
+    });
+  }
 
   if (teamStatus !== "success") {
     return <div>loadgi team profiel</div>;
   }
 
   const isManager = user?.id === team?.manager;
+
 
   return (
     <>
@@ -73,7 +86,7 @@ function TeamPage() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={handleCopyText}>
+                  <IconButton onClick={handleCopyInviteLink}>
                     <SpeedDialIcon></SpeedDialIcon>
                   </IconButton>
                 </InputAdornment>
@@ -83,6 +96,7 @@ function TeamPage() {
           ></TextField>
         </Alert>
       ) : null}
+      <Button onClick={handleLeaveTeam}>Leave team</Button>
     </>
   );
 }

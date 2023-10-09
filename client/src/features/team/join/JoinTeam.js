@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTeam, useTeamById } from "../hooks.ts";
@@ -20,6 +20,7 @@ import LeaveTeamDialog from "../LeaveTeamDialog.tsx";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [errorAlert, setErrorAlert] = useState(false);
 
   const { data: user } = useUser("me");
 
@@ -37,9 +38,12 @@ function JoinTeamPage() {
     },
     onSuccess: (team) => {
       //TODO: updated user's team via queryClient
-      queryClient.invalidateQueries(userKeys.details("me"));
+      // queryClient.invalidateQueries(userKeys.details("me"));
       navigate(`/teams/${team.name}`);
     },
+    onError: () => {
+      setErrorAlert(true);
+    }
   });
 
   const id = searchParams.get("id");
@@ -47,26 +51,27 @@ function JoinTeamPage() {
 
   useEffect(() => {
     if (!user.team) joinTeam.mutate({ id, token });
-  }, []);
+    else if (user.team.id === id) return navigate(`/teams/${user.team.name}`);
+  }, [user]);
 
-  if (user.team) {
-    if (user.team.id === id) {
-      navigate(`/teams/${user.team.name}`);
-    }
+  if (!user) return <>Loadng...</>;
 
-    return (
-      <LeaveTeamDialog
-        onLeave={() => joinTeam.mutate({ id, token })}
-        onStay={() => navigate(`/teams/none`)}
-      ></LeaveTeamDialog>
-    );
-  }
-
+  //TODO: trigger rerender using react-query on user team leave
   return (
-    <Alert severity="error">
-      <AlertTitle>Invalid or expired token.</AlertTitle>
-      Please ask the team manager to resend invite link or contact support.
-    </Alert>
+    <>
+      {user.team && user.team.id !== id ? (
+        <LeaveTeamDialog
+          onLeave={() => joinTeam.mutate({ id, token })}
+          onStay={() => navigate(`/teams/${user.team.name || "none"}`)}
+        ></LeaveTeamDialog>
+      ) : null}
+      {errorAlert ? (
+        <Alert severity="error">
+          <AlertTitle>Invalid or expired token.</AlertTitle>
+          Please ask the team manager to resend invite link or contact support.
+        </Alert>
+      ) : null}
+    </>
   );
 }
 
