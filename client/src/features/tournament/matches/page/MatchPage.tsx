@@ -60,7 +60,6 @@ const MatchTimer = ({ duration }: { duration: number }) => {
 function MatchPage() {
   const { id } = useParams();
   const { data: match, status } = useMatch(id);
-  console.log(match)
 
   //FIXME: auto-complete match if one of the articpns is BYE
   const { data: opp1 } = useParticipant(match?.opponent1?.id);

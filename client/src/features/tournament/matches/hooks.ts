@@ -80,10 +80,12 @@ const matchKeys: QueryKeyFactory<TMatch> = {
 };
 
 export const useMatch = (id: string) => {
+  const {data: tournament} = useTournament("current");
+
   return useQuery({
     queryKey: [matchKeys.id(id)],
     queryFn: async () => {
-      const url = `/api/${matchKeys.all}/${id}`;
+      const url = `/api/tournaments/${tournament?.id}/${matchKeys.all}/${id}`;
       const res = await axios.get(url);
       return res.data as TMatch;
     },

@@ -13,7 +13,7 @@ import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
 import { divideGroups, useCreateStage } from "./GroupStageStructure.tsx";
 import DivisionPanel from "./DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
-import { useGroupStageData } from "../stage/hooks.ts";
+import { useGroupStageData, useStages } from "../stage/hooks.ts";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -49,6 +49,7 @@ function DrawPage() {
   const { data: tournament } = useTournament("current");
 
   const division = useContext(DivisionContext);
+
   const { data: participants, status: participantsStatus, refetch } = useQuery({
     queryKey: [participantKeys.all],
     queryFn: async () => {
@@ -67,10 +68,17 @@ function DrawPage() {
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([]);
 
-  const { data: groupStage } = useGroupStageData(division?.id);
+  const { data: stages } = useStages(tournament?.id, {
+    division: division?.id,
+    type: "round_robin"
+  });
+  const groupStage = stages?.[0];
+
   const createGroupStage = useCreateStage();
 
-  if (participantsStatus !== "success") return <>Loading...</>
+  if (!participants) return <>Loading...</>
+
+  if (tournament?.state !== "Group stage") return <>Tournament is not in the gorup stage.</>
 
   const groupSizes = arrangeGroups(participants.length, groupCount);
 
