@@ -61,6 +61,7 @@ UserSchema.pre("findOneAndUpdate", async function () {
 
 const User = mongoose.model(collections.users.id, UserSchema);
 
-export type TUser = InferSchemaType<typeof UserSchema>;
+type TUserVirtuals = { id: string }
+export type TUser = InferSchemaType<typeof UserSchema> & TUserVirtuals;
 
 export default User;
