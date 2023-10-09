@@ -20,7 +20,7 @@ export const useUser = (id: string) => {
 };
 
 export const useUpdateUser = () => {
-  const {data: me} = useUser("me");
+  const { data: me } = useUser("me");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -29,9 +29,9 @@ export const useUpdateUser = () => {
       return res.data;
     },
     onSuccess(data: TUser) {
-      const id = me.id === data.id ? "me" : data.id;
-      queryClient.setQueryData(userKeys.id(id), data);
+      if (me.id === data.id) queryClient.setQueryData(userKeys.id("me"), data);
 
+      queryClient.setQueryData(userKeys.id(data.id), data);
       queryClient.setQueryData(userKeys.lists, (previous: TUser[]) => {
         return previous.map(user => user.id === data.id ? data : user)
       });
