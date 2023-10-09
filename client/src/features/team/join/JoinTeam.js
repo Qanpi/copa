@@ -51,7 +51,7 @@ function JoinTeamPage() {
 
   useEffect(() => {
     if (!user.team) joinTeam.mutate({ id, token });
-    else if (user.team.id === id) navigate(`/teams/${user.team.name}`);
+    else if (user.team.id === id) return navigate(`/teams/${user.team.name}`);
   }, [user]);
 
   if (!user) return <>Loadng...</>;
