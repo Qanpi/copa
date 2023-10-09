@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTeam, useTeamById } from "../hooks.ts";
@@ -37,7 +37,7 @@ function JoinTeamPage() {
     },
     onSuccess: (team) => {
       //TODO: updated user's team via queryClient
-      queryClient.invalidateQueries(userKeys.details("me"));
+      // queryClient.invalidateQueries(userKeys.details("me"));
       navigate(`/teams/${team.name}`);
     },
   });
@@ -47,13 +47,12 @@ function JoinTeamPage() {
 
   useEffect(() => {
     if (!user.team) joinTeam.mutate({ id, token });
-  }, []);
+    else if (user.team.id === id) navigate(`/teams/${user.team.name}`);
+  }, [user]);
+
+  if (!user) return <>Loadng...</>
 
   if (user.team) {
-    if (user.team.id === id) {
-      navigate(`/teams/${user.team.name}`);
-    }
-
     return (
       <LeaveTeamDialog
         onLeave={() => joinTeam.mutate({ id, token })}
