@@ -68,7 +68,7 @@ function GroupStagePage() {
     const division = useContext(DivisionContext);
 
     const { data: stages } = useStages(tournament?.id, {
-        type: "single_elimination",
+        type: "round_robin",
         division: division?.id
     })
     const { data: stageData } = useStageData(stages?.[0]?.id);

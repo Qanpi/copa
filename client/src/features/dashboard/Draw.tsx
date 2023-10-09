@@ -84,11 +84,16 @@ function DrawPage() {
         size: seeding.length,
       },
       seeding
+    }, {
+      onSuccess: () => {
+        setSeeding([]);
+      }
     });
   };
 
   const handleSkipWheel = () => {
-    setSeeding([...seeding, ...shuffle(participants)])
+    const unset = participants.filter(p => !seeding.some(s => s.id === p.id));
+    setSeeding([...seeding, ...shuffle(unset)])
   };
 
   const handleResetSeeding = () => {
@@ -126,7 +131,7 @@ function DrawPage() {
                 setGroupCount(v);
               }}
               min={1}
-              max={participants.length}
+              max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
               step={1}
               marks
               valueLabelDisplay="on"
