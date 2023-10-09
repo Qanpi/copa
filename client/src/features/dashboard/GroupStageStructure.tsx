@@ -25,8 +25,8 @@ export const useCreateStage = () => {
   return useMutation({
     mutationFn: async (values: any) => {
       await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        tournamentId: tournament.id,
-        ...values
+        ...values,
+        tournamentId: values.division,
       });
     }
   })

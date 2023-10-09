@@ -48,6 +48,7 @@ function RegistrationStage({ next, prev }) {
     (p) => p.division === division.id
   );
 
+  //TODO: potentially refactor server-side
   const participantsByDivision = groupBy(allParticipants, "division");
 
   const handleClickNext = () => {
