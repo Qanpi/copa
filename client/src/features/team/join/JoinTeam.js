@@ -39,7 +39,7 @@ function JoinTeamPage() {
       //TODO: updated user's team via queryClient
       // queryClient.invalidateQueries(userKeys.details("me"));
       navigate(`/teams/${team.name}`);
-    },
+    }
   });
 
   const id = searchParams.get("id");
@@ -50,17 +50,19 @@ function JoinTeamPage() {
     else if (user.team.id === id) navigate(`/teams/${user.team.name}`);
   }, [user]);
 
-  if (!user) return <>Loadng...</>
+  if (!user) return <>Loadng...</>;
 
   if (user.team) {
+    //TODO: trigger rerender using react-query on user team leave
     return (
       <LeaveTeamDialog
         onLeave={() => joinTeam.mutate({ id, token })}
-        onStay={() => navigate(`/teams/none`)}
+        onStay={() => navigate(`/teams/${user.team.name || "none"}`)}
       ></LeaveTeamDialog>
     );
   }
 
+  //TODO: is it fine to keep this as default?
   return (
     <Alert severity="error">
       <AlertTitle>Invalid or expired token.</AlertTitle>
