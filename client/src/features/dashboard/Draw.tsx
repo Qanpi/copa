@@ -13,6 +13,7 @@ import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
 import { divideGroups, useCreateStage } from "./GroupStageStructure.tsx";
 import DivisionPanel from "./DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
+import { useGroupStageData } from "../stage/hooks.ts";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -66,7 +67,7 @@ function DrawPage() {
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([]);
 
-  const { data: groupStage } = useStageData(tournament?.groupStage?.id);
+  const { data: groupStage } = useGroupStageData(division?.id);
   const createGroupStage = useCreateStage();
 
   if (participantsStatus !== "success") return <>Loading...</>
@@ -99,56 +100,54 @@ function DrawPage() {
   }
 
   const groupless = participants?.filter(p => !seeding.some(s => s.id === p.id));
-
-  if (groupStage) return (
-    <>Sorry for now it's impossible to reset the draw. Contact support.</>
-  );
+  const groups = groupSizes.map((n, i) => {
+    return (
+      <Group
+        name={`Group ${alphabet[i]}`}
+        participants={seeding.filter((v, j) => (j % groupCount === i))}
+        disableHead
+        key={i}
+      ></Group>
+    );
+  })
 
   return (
-    <>
-      <DivisionPanel >
+    <DivisionPanel>
+      {groupStage ?
+        <>Sorry can't reset an arleady made group stage yet. Contact support.</>
+        :
+        <>
+          <Container>
+            <Typography>Number of groups</Typography>
 
-        <Container>
-          <Typography>Number of groups</Typography>
+            <Slider
+              value={groupCount}
+              onChange={(e, v: number) => {
+                setGroupCount(v);
+              }}
+              min={1}
+              max={participants.length}
+              step={1}
+              marks
+              valueLabelDisplay="on"
+            ></Slider>
+          </Container>
 
-          <Slider
-            value={groupCount}
-            onChange={(e, v: number) => {
-              setGroupCount(v);
-            }}
-            min={1}
-            max={participants.length}
-            step={1}
-            marks
-            valueLabelDisplay="on"
-          ></Slider>
-        </Container>
+          {groups}
 
-        {
-          groupSizes.map((n, i) => {
-            return (
-              <Group
-                name={`Group ${alphabet[i]}`}
-                participants={seeding.filter((v, j) => (j % groupCount === i))}
-                disableHead
-                key={i}
-              ></Group>
-            );
-          })
-        }
+          <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
 
-        <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
-      </DivisionPanel>
+          <Button onClick={handleSkipWheel}>
+            Skip
+          </Button>
+          <Button onClick={handleResetSeeding}>Reset</Button>
 
-      <Button onClick={handleSkipWheel}>
-        Skip
-      </Button>
-      <Button onClick={handleResetSeeding}>Reset</Button>
-
-      <Button onClick={handleConfirmSeeding}>
-        Confirm
-      </Button>
-    </>
+          <Button onClick={handleConfirmSeeding}>
+            Confirm
+          </Button>
+        </>
+      }
+    </DivisionPanel>
   )
 }
 
