@@ -140,9 +140,8 @@ const useMockBracketsViewer = (seeding, bracketSize) => {
       );
     }
 
-    if (seeding && seeding.length !== 0) render();
-
     const local = ref.current;
+    if (local && seeding && seeding.length !== 0) render();
 
     return () => {
       if (local) local.innerHTML = "";
@@ -153,7 +152,7 @@ const useMockBracketsViewer = (seeding, bracketSize) => {
   return ref;
 }
 
-function BracketStructure({ prev, next }) {
+function BracketStructure() {
   const { data: tournament } = useTournament("current");
 
   const division = useContext(DivisionContext);
@@ -199,33 +198,42 @@ function BracketStructure({ prev, next }) {
     })
   }
 
-  if (participantsStatus !== "success" || stageStatus !== "success") return;
+  const { data: brackets } = useStages(tournament?.id, {
+    type: "single_elimination",
+    division: division?.id
+  })
+  const bracket = brackets?.[0];
+
+  if (participantsStatus !== "success" || stageStatus !== "success") return <>Loading</>;
 
   return (
     <DivisionPanel>
 
-      <div>
-        <Typography>Teams breaking from each group</Typography>
-        <Slider
-          value={teamsBreakingPerGroup}
-          onChange={handleSliderChange}
-          min={1}
-          max={Math.ceil(participants.length / groupCount)}
-          step={1}
-          marks
-          valueLabelDisplay="on"
-        ></Slider>
-      </div>
+      {bracket ? <>Bracket already exists</> :
+        <>
+          <div>
+            <Typography>Teams breaking from each group</Typography>
+            <Slider
+              value={teamsBreakingPerGroup}
+              onChange={handleSliderChange}
+              min={1}
+              max={Math.ceil(participants.length / groupCount)}
+              step={1}
+              marks
+              valueLabelDisplay="on"
+            ></Slider>
+          </div>
 
-      <div
-        ref={bracketsRef}
-        className="brackets-viewer"
-        id="mock-bracket"
-      ></div>
-      <Button type="submit" onClick={handleSaveBracket}>
-        Lock in
-      </ Button>
-      <Button onClick={prev}>Previous</Button>
+          <div
+            ref={bracketsRef}
+            className="brackets-viewer"
+            id="mock-bracket"
+          ></div>
+          <Button type="submit" onClick={handleSaveBracket}>
+            Lock in
+          </ Button>
+        </>
+      }
     </DivisionPanel>
   );
 }
