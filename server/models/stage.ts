@@ -22,5 +22,5 @@ StageSchema.pre("save", async function () {
 
 const Stage = BracketsStage.discriminator("Stage", StageSchema);
 
-export type TStage = InferSchemaType<typeof StageSchema> & TBracketsStage & { id: string };
+export type TStage = InferSchemaType<typeof StageSchema> & TBracketsStage & { id: string, division: string };
 export default Stage;
