@@ -118,9 +118,14 @@ export const useCreateStage = () => {
       return res.data;
     },
     onSuccess: (stage) => {
-      queryClient.setQueryData(stageKeys.id(stage.id), stage);
-      queryClient.setQueryData(stageKeys.lists, (previous: any[]) => {
-        return previous.map(prev => prev.id === stage.id ? stage : prev);
+      queryClient.setQueriesData({ queryKey: stageKeys.id(stage.id) }, stage);
+      queryClient.setQueriesData({
+        queryKey: stageKeys.list({
+          division: stage.tournament_id,
+          type: stage.type
+        })
+      }, (previous: any[]) => {
+        return previous.push(stage);
       })
     }
   });
