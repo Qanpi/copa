@@ -4,14 +4,10 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
-import { Id, QueryKeyFactory } from "../types";
+import { Id, QueryKeyFactory, queryKeyFactory } from "../types";
 import { RoundNameInfo } from "ts-brackets-viewer";
 
-export const tournamentKeys = {
-  all: ["tournaments"],
-  id: (id: Id) => [tournamentKeys.all, id],
-  query: () => [...tournamentKeys.all, "detail"],
-};
+export const tournamentKeys = queryKeyFactory("tournaments");
 
 export const useTournament = (id: string) => {
   return useQuery({
@@ -25,6 +21,7 @@ export const useTournament = (id: string) => {
 };
 
 export const useUpdateTournament = (id: Id) => {
+  const { data: current } = useTournament("current");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -32,17 +29,15 @@ export const useUpdateTournament = (id: Id) => {
       const res = await axios.patch(`/api/tournaments/${id}`, values);
       return res.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(tournamentKeys.id(id));
+    onSuccess: (tournament) => {
+      if (current.id === tournament.id) queryClient.setQueriesData(tournamentKeys.id("current"), tournament);
+      queryClient.setQueriesData(tournamentKeys.id(id), tournament);
+      //TODO: lists update
     },
   });
 };
 
-export const divisionKeys = {
-  all: "divisions",
-  id: (id: Id) => [divisionKeys.all, id],
-  query: () => [divisionKeys.all, "detail"],
-};
+export const divisionKeys = queryKeyFactory("divisions");
 
 export const useDivision = (id: string) => {
   const { data: tournament } = useTournament("current");
