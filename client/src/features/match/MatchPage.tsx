@@ -62,8 +62,8 @@ function MatchPage() {
   const { data: match, status } = useMatch(id);
 
   //FIXME: auto-complete match if one of the articpns is BYE
-  const { data: opp1 } = useParticipant(match?.opponent1?.id);
-  const { data: opp2 } = useParticipant(match?.opponent2?.id);
+  const { data: participant1 } = useParticipant(match?.opponent1?.id);
+  const { data: participant2 } = useParticipant(match?.opponent2?.id);
 
   const updateMatch = useUpdateMatch();
 
@@ -79,20 +79,20 @@ function MatchPage() {
         ...match,
         opponent1: {
           ...match.opponent1,
-          score: 0
+          score: match.opponent1.score || 0
         },
         opponent2: {
           ...match.opponent2,
-          score: 0
+          score: match.opponent2.score || 0
         }
       }}
       onSubmit={(values) => updateMatch.mutate(values)}
     >
       {({ values, submitForm, setFieldValue }) => (
         <Form>
-          <div>{opp1?.name}</div>
+          <div>{participant1?.name}</div>
           <ScoreCounter name="opponent1.score"></ScoreCounter>
-          <div>{opp2?.name}</div>
+          <div>{participant2?.name}</div>
           <ScoreCounter name="opponent2.score"></ScoreCounter>
           {values.elapsed}
           {isAdmin ? <Button onClick={
