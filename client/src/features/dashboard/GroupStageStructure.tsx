@@ -4,33 +4,17 @@ import {
   CardContent, Container, Slider, Typography
 } from "@mui/material";
 import {
-  useMutation,
   useQueryClient
 } from "@tanstack/react-query";
 import {
   useEffect,
   useState
 } from "react";
-import { useTournament } from "../viewer/hooks";
 import { useParticipants } from "../participant/hooks";
 
 
 import "ts-brackets-viewer/dist/style.css";
-import axios from "axios";
-import { useStageData } from "../stage/GroupStage";
-
-export const useCreateStage = () => {
-  const { data: tournament } = useTournament("current");
-
-  return useMutation({
-    mutationFn: async (values: any) => {
-      await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        ...values,
-        tournamentId: values.division,
-      });
-    }
-  })
-}
+import { useStageData } from "../stage/hooks";
 
 //workflow (deprecated)
 //1. create in memory tournament structure

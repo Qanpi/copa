@@ -18,7 +18,7 @@ import DrawPage from "./Draw.tsx";
 import GroupStageStructure from "./GroupStageStructure.tsx";
 import Scheduler from "./Scheduler.tsx";
 import { useDivisions, useTournament } from "../viewer/hooks.ts";
-import { useStageData } from "../stage/GroupStage.tsx";
+import { useStageData } from "../stage/hooks.ts";
 import NumberCard from "./NumberCard.tsx";
 import { useContext, useState } from "react";
 import { Status } from "brackets-model";

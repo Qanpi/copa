@@ -1,6 +1,7 @@
 import { C } from "@fullcalendar/core/internal-common";
 import BracketStructure from "../dashboard/BracketStructure";
-import { useBracketsViewer, useStageData } from "./GroupStage";
+import { useBracketsViewer } from "./hooks";
+import { useStageData } from "./hooks";
 import { useTournament } from "../viewer/hooks";
 import { useStages } from "./hooks";
 import DivisionPanel from "../dashboard/DivisionPanel";

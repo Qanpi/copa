@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import * as dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import { useStandings } from "../../dashboard/BracketStructure";
+import { useStandings } from "../../stage/hooks";
 import { useStages } from "../../stage/hooks";
 import { useTournament } from "../hooks";
 import MatchesCalendar from "../../match/MatchesCalendar";

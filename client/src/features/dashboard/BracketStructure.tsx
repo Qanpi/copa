@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import {
   useMutation,
-  useQuery,
   useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
@@ -33,6 +32,7 @@ import { groupBy, flatten, create } from "lodash-es";
 import { isSeedingWithIds } from "brackets-manager/dist/helpers";
 import { useGroupedParticipants } from "./Draw.tsx";
 import { useMatches } from "../match/hooks.ts";
+import { useStandings } from "../stage/hooks.ts";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
@@ -100,19 +100,6 @@ const finalRoundNames = (roundInfo: RoundNameInfo) => {
 
   return `Round ${roundInfo.roundNumber}`;
 };
-
-export const useStandings = (stageId: string) => {
-  const { data: tournament } = useTournament("current");
-
-  return useQuery({
-    queryKey: ["stndngs"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}/standings`);
-      return res.data;
-    },
-    enabled: Boolean(tournament) && Boolean(stageId)
-  });
-}
 
 function BracketStructure({ prev, next }) {
   const { data: tournament } = useTournament("current");
