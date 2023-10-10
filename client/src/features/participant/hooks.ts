@@ -26,11 +26,11 @@ export const useParticipant = (id?: ObjectId) => {
   });
 };
 
-export const useParticipants = (tournamentId: string, query?: Partial<TParticipant>) => {
+export const useParticipants = (tournamentId: string, query?: Partial<TParticipant>): UseQueryResult<TParticipant[]> => {
   return useQuery({
     queryKey: [participantKeys.query(query)],
 
-    queryFn: async () => {
+    queryFn: async (): Promise<TParticipant[]> => {
       let url = `/api/${tournamentKeys.all}/${tournamentId}/${participantKeys.all}`;
 
       if (query) {

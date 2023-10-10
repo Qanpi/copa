@@ -87,7 +87,7 @@ function DrawPage() {
     createGroupStage.mutate({
       name: division.name,
       type: "round_robin",
-      division: division.id,
+      tournamentId: division.id,
       settings: {
         groupCount,
         size: seeding.length,

@@ -1,13 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { UseMutationResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { DataTypes, FinalStandingsItem, ValueToArray } from "brackets-manager";
-import { Id } from "brackets-model";
+import { Id, InputStage } from "brackets-model";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { BracketsViewer } from "ts-brackets-viewer";
 import { finalRoundNames, tournamentKeys, useTournament } from "../viewer/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
-import {TStage} from "@backend/models/stage.ts"
+import { TStage } from "@backend/models/stage.ts"
 
 const stageKeys = {
   ...queryKeyFactory("stage"),
@@ -18,7 +18,7 @@ const stageKeys = {
 
 export const useStages = (
   tournamentId: string,
-  query?: Partial<TStage> & { scheduled?: boolean }
+  query?: Partial<TStage>
 ) => {
   return useQuery({
     queryKey: stageKeys.list(query),
@@ -33,7 +33,7 @@ export const useStages = (
       }
 
       const res = await axios.get(url);
-      return res.data as TStage;
+      return res.data as TStage[];
     },
     enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
   });
@@ -98,7 +98,7 @@ export const useStandings = (stageId: string) => {
     queryKey: stageKeys.detail(stageId, "standings"),
     queryFn: async () => {
       const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}/standings`);
-      return res.data as FinalStandingsItem[];
+      return res.data as FinalStandingsItem[] | FinalStandingsItem[][];
     },
     enabled: Boolean(tournament) && Boolean(stageId)
   });
@@ -109,24 +109,21 @@ export const useCreateStage = () => {
 
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (values: any) => {
-      const res = await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        ...values,
-        tournamentId: values.division,
-      });
+    mutationFn: async (variables: Partial<InputStage>) => {
+      const res = await axios.post(`/api/tournaments/${tournament.id}/stages`, variables);
 
       return res.data as TStage;
     },
-    onSuccess: (stage: TStage) => {
+    onSuccess: (stage) => {
       queryClient.setQueriesData({ queryKey: stageKeys.id(stage.id) }, stage);
-      queryClient.setQueriesData({
-        queryKey: stageKeys.list({
+      queryClient.setQueriesData(
+        stageKeys.list({
           division: stage.tournament_id,
           type: stage.type
         })
-      }, (previous: TStage[]) => {
-        return previous.push(stage);
-      })
+        , (previous: TStage[]) => {
+          return [...previous, stage];
+        })
     }
   });
 };
