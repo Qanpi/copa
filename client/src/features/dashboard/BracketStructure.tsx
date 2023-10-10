@@ -108,7 +108,6 @@ const useMockBracketsViewer = (seeding, bracketSize) => {
   const ref = useRef(null);
   const mockTournamentId = 0;
   const bracketsViewer = new BracketsViewer();
-  console.log("test")
 
   useEffect(() => {
     const render = async () => {
