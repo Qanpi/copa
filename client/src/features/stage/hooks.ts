@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { DataTypes, ValueToArray } from "brackets-manager";
+import { DataTypes, FinalStandingsItem, ValueToArray } from "brackets-manager";
 import { Id } from "brackets-model";
-import { TMatch } from "brackets-mongo-db";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { BracketsViewer } from "ts-brackets-viewer";
 import { finalRoundNames, tournamentKeys, useTournament } from "../viewer/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
+import {TStage} from "@backend/models/stage.ts"
 
 const stageKeys = {
   ...queryKeyFactory("stage"),
@@ -18,7 +18,7 @@ const stageKeys = {
 
 export const useStages = (
   tournamentId: string,
-  query?: Partial<TMatch> & { scheduled?: boolean }
+  query?: Partial<TStage> & { scheduled?: boolean }
 ) => {
   return useQuery({
     queryKey: stageKeys.list(query),
@@ -33,7 +33,7 @@ export const useStages = (
       }
 
       const res = await axios.get(url);
-      return res.data;
+      return res.data as TStage;
     },
     enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
   });
@@ -46,7 +46,7 @@ export const useStageData = (stageId: string) => {
     queryKey: stageKeys.detail(stageId, "data"),
     queryFn: async () => {
       const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}`);
-      return res.data;
+      return res.data as ValueToArray<DataTypes>;
     },
     enabled: Boolean(tournament) && Boolean(stageId)
   });
@@ -98,7 +98,7 @@ export const useStandings = (stageId: string) => {
     queryKey: stageKeys.detail(stageId, "standings"),
     queryFn: async () => {
       const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}/standings`);
-      return res.data;
+      return res.data as FinalStandingsItem[];
     },
     enabled: Boolean(tournament) && Boolean(stageId)
   });
@@ -115,16 +115,16 @@ export const useCreateStage = () => {
         tournamentId: values.division,
       });
 
-      return res.data;
+      return res.data as TStage;
     },
-    onSuccess: (stage) => {
+    onSuccess: (stage: TStage) => {
       queryClient.setQueriesData({ queryKey: stageKeys.id(stage.id) }, stage);
       queryClient.setQueriesData({
         queryKey: stageKeys.list({
           division: stage.tournament_id,
           type: stage.type
         })
-      }, (previous: any[]) => {
+      }, (previous: TStage[]) => {
         return previous.push(stage);
       })
     }
