@@ -18,7 +18,7 @@ export const useUpdateTeam = () => {
     onSuccess: (team) => {
       queryClient.setQueryData(teamKeys.id(team.name), team);
       queryClient.setQueryData(teamKeys.lists, (previous: TTeam[]) => {
-        return previous.map(t => t.name === team.name ? team : t);
+        return previous?.map(t => t.name === team.name ? team : t);
       })
     },
   });
@@ -49,7 +49,7 @@ export const useCreateTeam = () => {
     onSuccess: (newTeam) => {
       queryClient.setQueriesData(teamKeys.id(newTeam.id), newTeam);
       queryClient.setQueriesData(teamKeys.lists, (previous: TTeam[]) => {
-        return previous.map(p => p.id === newTeam.id ? newTeam : p);
+        return previous?.map(p => p.id === newTeam.id ? newTeam : p);
       })
       queryClient.invalidateQueries(userKeys.id("me"));
     },
