@@ -42,7 +42,7 @@ function GroupStage({ next, prev }) {
   const matchesByStage = groupBy(allMatches, "stage_id");
   const matches = matchesByStage[groupStage?.id];
 
-  const scheduledMatches = allMatches?.filter((m) => !!m.start);
+  const scheduledMatches = matches?.filter((m) => !!m.start);
   const completedMatches = matches?.filter((m) => m.status >= Status.Completed);
 
   const [incompleteMatchesAlert, setIncompleteMatchesAlert] = useState(false);
