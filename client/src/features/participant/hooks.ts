@@ -27,7 +27,7 @@ export const useParticipant = (participantId: string) => {
 
 export const useParticipants = (tournamentId: string, query?: Partial<TParticipant>): UseQueryResult<TParticipant[]> => {
   return useQuery({
-    queryKey: [participantKeys.query(query)],
+    queryKey: [participantKeys.list(query)],
 
     queryFn: async (): Promise<TParticipant[]> => {
       let url = `/api/${tournamentKeys.all}/${tournamentId}/${participantKeys.all}`;
