@@ -2,6 +2,8 @@ import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeyFactory } from "../types";
 import { TTeam } from "@backend/models/team";
+import { useNavigate } from "react-router-dom";
+import { userKeys } from "../user/hooks";
 
 export const teamKeys = queryKeyFactory<TTeam>("team");
 
@@ -32,4 +34,25 @@ export const useTeam = (name: string) => {
     enabled: Boolean(name),
   });
 };
+
+export const useCreateTeam = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (values: Partial<TTeam>) => {
+      const res = await axios.post("/api/teams", {
+        ...values,
+        name: values.name.trim(), //FIXME: encode uri?
+      });
+      return res.data as TTeam;
+    },
+    onSuccess: (newTeam) => {
+      queryClient.setQueriesData(teamKeys.id(newTeam.id), newTeam);
+      queryClient.setQueriesData(teamKeys.lists, (previous: TTeam[]) => {
+        return previous.map(p => p.id === newTeam.id ? newTeam : p);
+      })
+      queryClient.invalidateQueries(userKeys.id("me"));
+    },
+  });
+}
 

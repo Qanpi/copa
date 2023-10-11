@@ -15,6 +15,7 @@ import { useUser } from "../user/hooks.ts";
 import MyFileInput from "../inputs/MyFileInput.js";
 import MyTextField from "../inputs/mytextfield.js";
 import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
+import { useCreateTeam } from "./hooks.ts";
 
 export const teamValidationSchema = {
   name: Yup.string().max(20).trim().required(),
@@ -36,28 +37,13 @@ function NewTeamPage() {
   const { status: userStatus, data: user } = useUser("me");
 
   const navigate = useNavigate();
-
-  const queryClient = useQueryClient();
-
-  const createTeam = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.post("/api/teams", {
-        ...values,
-        name: values.name.trim(),
-      });
-      return res.data;
-    },
-    onSuccess: (newTeam) => {
-      queryClient.invalidateQueries(["teams"]);
-      queryClient.invalidateQueries(["user", "me"]);
-      navigate(`/teams/${newTeam.name}`);
-    },
-  });
+  const createTeam = useCreateTeam();
 
   if (userStatus !== "success") return <div>User loading.</div>;
 
   return (
     <>
+    {/* //FIXME: navigation */}
       <LeaveTeamDialog
         onLeave={() => navigate(`/teams/none`)}
         onStay={() => navigate(`/teams/none`)}
@@ -76,7 +62,11 @@ function NewTeamPage() {
         }}
         validationSchema={Yup.object(teamValidationSchema)}
         onSubmit={(values) => {
-          createTeam.mutate(values);
+          createTeam.mutate(values, {
+            onSuccess: (newTeam) => {
+              navigate(`/teams/${newTeam.name}`);
+            },
+          });
         }}
       >
         <Form>
@@ -86,10 +76,6 @@ function NewTeamPage() {
           <MyTextField label="PHone number" name="phoneNumber"></MyTextField>
 
           <MyTextField label="Instagram page" name="instagramUrl"></MyTextField>
-          {/* <MySelect name="division" label="Division">
-            <MenuItem value="Men's">Men's</MenuItem>
-            <MenuItem value="Women's">Women's</MenuItem>
-          </MySelect> */}
           <MyFileInput name="banner" label="Team banner"></MyFileInput>
           <MyFileInput name="picture" label="Team picture"></MyFileInput>
           <Button type="submit">Submit</Button>
