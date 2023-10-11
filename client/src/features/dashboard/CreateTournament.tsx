@@ -7,18 +7,11 @@ import MyTextField from "../inputs/mytextfield";
 import * as Yup from "yup"
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { tournamentKeys, useCreateTournament } from "../viewer/hooks";
 
 function CreateTournamentPage() {
     const queryClient = useQueryClient();
-    const createTournament = useMutation({
-        mutationFn: async (body) => {
-            const res = await axios.post(`/api/tournaments/`, body);
-            return res.data;
-        },
-        onSuccess: (tournament) => {
-            queryClient.setQueryData(["tournament", "detail", "current"], tournament);
-        },
-    });
+    const createTournament = useCreateTournament(); 
 
     return (
         <Formik
@@ -37,7 +30,7 @@ function CreateTournamentPage() {
                 divisions: Yup.array().min(1).required().of(Yup.string()),
             })}
             onSubmit={(values) => {
-                const divisions = values.divisions.map(d => ({name: d}));
+                const divisions = values.divisions.map(d => ({ name: d }));
 
                 createTournament.mutate({
                     ...values,

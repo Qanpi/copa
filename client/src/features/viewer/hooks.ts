@@ -6,6 +6,7 @@ import {
 import axios from "axios";
 import { Id, QueryKeyFactory, queryKeyFactory } from "../types";
 import { RoundNameInfo } from "ts-brackets-viewer";
+import { TTournament } from "@backend/models/tournament";
 
 export const tournamentKeys = queryKeyFactory("tournaments");
 
@@ -19,6 +20,21 @@ export const useTournament = (id: string) => {
     enabled: Boolean(id)
   });
 };
+
+export const useCreateTournament = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (body: Partial<TTournament>) => {
+      const res = await axios.post(`/api/tournaments/`, body);
+      return res.data as TTournament;
+    },
+    onSuccess: (tournament) => {
+      queryClient.setQueriesData(tournamentKeys.id("current"), tournament);
+      queryClient.setQueriesData(tournamentKeys.id(tournament.id), tournament);
+    },
+  });
+}
 
 export const useUpdateTournament = (id: Id) => {
   const { data: current } = useTournament("current");

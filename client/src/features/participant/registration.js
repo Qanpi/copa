@@ -30,6 +30,7 @@ function RegistrationPage() {
   });
   const participant = participants?.[0];
 
+  //FIXME: no redirect if the user is not logged in
   const navigate = useNavigate();
   useLayoutEffect(() => {
     if (user && !user.team) {
@@ -49,7 +50,7 @@ function RegistrationPage() {
   }
 
   //FIXME: manager context
-  if (team?.manager === user.id) {
+  if (team && team.manager === user.id) {
     return <RegistrationForm></RegistrationForm>;
   }
 
