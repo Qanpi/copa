@@ -19,6 +19,7 @@ import { useUpdateUser, useUser } from "../user/hooks.ts";
 dayjs.extend(relativeTime);
 
 function TeamPage() {
+  //FIXME: think about encoding and decoding practices
   const { name } = useParams();
 
   const { data: user } = useUser("me");

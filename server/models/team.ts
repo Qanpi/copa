@@ -38,7 +38,7 @@ const TeamSchema = new mongoose.Schema(
   },
   {
     toJSON: { virtuals: true, getters: true },
-    toObject: { virtuals: true },
+    toObject: { virtuals: true, getters: true },
     methods: {
       async passManagement() {
         //TODO: test this

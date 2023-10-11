@@ -41,7 +41,10 @@ function NewTeamPage() {
 
   const createTeam = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.post("/api/teams", values);
+      const res = await axios.post("/api/teams", {
+        ...values,
+        name: values.name.trim(),
+      });
       return res.data;
     },
     onSuccess: (newTeam) => {
