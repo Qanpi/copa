@@ -6,23 +6,22 @@ import {
 import axios from "axios";
 import { ObjectId } from "mongodb";
 import { TParticipant } from "@backend/models/participant";
-import { divisionKeys, tournamentKeys } from "../viewer/hooks";
+import { divisionKeys, tournamentKeys, useTournament } from "../viewer/hooks";
+import { queryKeyFactory } from "../types";
 
-export const participantKeys = {
-  all: "participants",
-  id: (id?: ObjectId) => [participantKeys.all, id?.toString()],
-  query: (query: Partial<TParticipant>) => [participantKeys.all, query],
-};
+export const participantKeys = queryKeyFactory("participants");
 
-export const useParticipant = (id?: ObjectId) => {
+export const useParticipant = (participantId: string) => {
+  const {data: tournament} = useTournament("current");
+
   return useQuery({
-    queryKey: [participantKeys.id(id)],
+    queryKey: [participantKeys.id(participantId)],
     queryFn: async () => {
-      const url = `/api/${tournamentKeys.all}/${id}`;
+      const url = `/api/${tournamentKeys.all}/${tournament.id}/participants/${participantId}`;
       const res = await axios.get(url);
       return res.data as TParticipant;
     },
-    enabled: !!id,
+    enabled: !!participantId,
   });
 };
 
