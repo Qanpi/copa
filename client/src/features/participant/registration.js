@@ -38,6 +38,10 @@ function RegistrationPage() {
     }
   }, [user]);
 
+  if (!user) {
+    return <>Please sign in to register.</>
+  }
+
   if (participant) {
     return (
       <>
