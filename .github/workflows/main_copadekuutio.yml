@@ -13,7 +13,7 @@ env:
   CI: ""
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,19 +24,22 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build, and test client
-        working-directory: ./client
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-
-      - name: npm install, build, and test server
+      - name: npm install, build, and test
         working-directory: ./server
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - uses: actions/checkout@v3
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
