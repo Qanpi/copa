@@ -12,7 +12,7 @@
     }
   },
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "../client/build",
     "module": "NodeNext",
     "allowSyntheticDefaultImports": true,
     "target": "ESNext",

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "ts-node server/bin/www.js",
-    "build": "cd ../client && npm install && npm run build",
+    "build": "tsc",
     "test": "",
     "dev-db": "start \"\" \"C:\\Program Files\\Azure Cosmos DB Emulator\\Microsoft.Azure.Cosmos.Emulator.exe\" /EnableMongoDbEndpoint=4.0",
     "dev-server": "nodemon bin/www.ts --config nodemon.json",
