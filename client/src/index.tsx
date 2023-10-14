@@ -30,9 +30,7 @@ import HomePage from "./features/viewer/Home.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import reportWebVitals from "./services/reportWebVitals";
-
-export const AdminContext = React.createContext(null);
-
+// 
 export const DivisionContext = React.createContext(null);
 export const DivisionDispatchContext = React.createContext(null);
 
@@ -50,7 +48,6 @@ function App() {
 
   return (
     <Router>
-      <AdminContext.Provider value={user.role === "admin" || user.name === "qanpi"}>
         <DivisionContext.Provider value={divisions?.[selected]}>
           <DivisionDispatchContext.Provider value={dispatch}>
 
@@ -135,7 +132,6 @@ function App() {
             </LocalizationProvider>
           </DivisionDispatchContext.Provider>
         </DivisionContext.Provider>
-      </AdminContext.Provider>
     </Router >
   );
 }

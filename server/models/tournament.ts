@@ -7,15 +7,15 @@ import Metadata from "./metadata.js";
 
 dayjs.extend(relativeTime);
 
-enum TournamentState {
-  Kickstart = 0,
-  Registration = 1,
-  Group = 2,
-  Bracket = 3,
-  Complete = 4
+enum TournamentStates {
+  Kickstart,
+  Registration,
+  Group,
+  Bracket,
+  Complete
 }
 
-export type TTournamentState = keyof typeof TournamentState;
+export type TTournamentState = keyof typeof TournamentStates;
 
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
@@ -31,7 +31,7 @@ const TournamentSchema = new mongoose.Schema(
     },
     state: {
       type: String,
-      enum: TournamentState,
+      enum: Object.values(TournamentStates).filter(v => (typeof v === "string")),
       default: "Registration",
     },
     divisions: [DivisionSchema],

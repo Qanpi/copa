@@ -1,17 +1,16 @@
-import { useParams } from "react-router";
-import { useMatch, useMatches, useUpdateMatch } from "./hooks";
-import { useParticipant } from "../participant/hooks";
-import { useTimer } from "react-timer-hook";
-import dayjs from "dayjs";
 import { Button } from "@mui/base";
-import { useCallback, useContext, useEffect } from "react";
-import { NumberInput } from "@mui/base/Unstable_NumberInput/NumberInput";
-import { Formik, Form, useFormikContext } from "formik";
+import dayjs from "dayjs";
+import { Form, Formik, useFormikContext } from "formik";
+import { useContext, useEffect } from "react";
+import { useParams } from "react-router";
+import { useTimer } from "react-timer-hook";
+import { RoleContext } from "../..";
 import ScoreCounter from "../inputs/ScoreCounter";
-import { AdminContext } from "../..";
+import { useParticipant } from "../participant/hooks";
+import { useMatch, useUpdateMatch } from "./hooks";
+import { useUser } from "../user/hooks";
 
 const MatchTimer = ({ duration }: { duration: number }) => {
-  console.log(duration)
   const getExpiryTimestamp = () => dayjs().add(duration, "seconds").toDate();
 
   const { minutes, seconds, start, pause, resume, restart, isRunning, totalSeconds } = useTimer({
@@ -32,7 +31,8 @@ const MatchTimer = ({ duration }: { duration: number }) => {
 
   }, [seconds])
 
-  const isAdmin = useContext(AdminContext);
+  const {data: user} = useUser("me");
+  const isAdmin = user?.role === "admin";
 
   const handleReset = () => {
     setFieldValue("elapsed", 0);
@@ -67,7 +67,8 @@ function MatchPage() {
 
   const updateMatch = useUpdateMatch();
 
-  const isAdmin = useContext(AdminContext);
+  const {data: user} = useUser("me");
+  const isAdmin = user?.role === "admin";
 
   if (status === "loading") return <div>Loading...</div>;
 

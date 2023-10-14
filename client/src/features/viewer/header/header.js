@@ -1,20 +1,17 @@
 import {
   Box,
-  Container,
   MenuItem,
   MenuList,
   Paper,
   Popper,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../../user/hooks.ts";
 import UserPanel from "../../user/userMenu/userpanel.js";
 import "./header.css";
-import { useContext, useRef, useState } from "react";
-import { AdminContext } from "../../../index.tsx";
 
 const SectionMenu = ({ title, children }) => {
   const [open, setOpen] = useState(false);
@@ -85,7 +82,8 @@ const SectionMenu = ({ title, children }) => {
 function Header() {
   const { pathname } = useLocation();
 
-  const isAdmin = useContext(AdminContext);
+  const {data: user} = useUser("me");
+  const isAdmin = user?.role === "admin";
 
   return (
     <header>
