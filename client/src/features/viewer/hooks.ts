@@ -7,6 +7,9 @@ import axios from "axios";
 import { Id, QueryKeyFactory, queryKeyFactory } from "../types";
 import { RoundNameInfo } from "ts-brackets-viewer";
 import { TTournament } from "@backend/models/tournament";
+// import { TournamentState } from "@backend/models/tournament";
+import { test } from "server/server";
+console.log(test)
 
 export const tournamentKeys = queryKeyFactory("tournaments");
 

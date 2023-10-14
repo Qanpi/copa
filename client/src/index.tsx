@@ -26,7 +26,7 @@ import SignInPage from "./features/user/SignInPage.tsx";
 import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
 import Header from "./features/viewer/header/header";
-import HomePage from "./features/viewer/home/Home";
+import HomePage from "./features/viewer/Home.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import reportWebVitals from "./services/reportWebVitals";
