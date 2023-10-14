@@ -9,7 +9,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import BracketStructure from "./features/dashboard/BracketStructure.tsx";
-import DashboardPage from "./features/dashboard/Dashboard.js";
+import DashboardPage from "./features/dashboard/Dashboard.tsx";
 import DrawPage from "./features/dashboard/Draw.tsx";
 import Scheduler from "./features/dashboard/Scheduler.tsx";
 import MatchPage from "./features/match/MatchPage.tsx";

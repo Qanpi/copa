@@ -15,7 +15,7 @@ export const useTournament = (id: string) => {
     queryKey: tournamentKeys.id(id),
     queryFn: async () => {
       const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
-      return response.data;
+      return response.data as TTournament;
     },
     enabled: Boolean(id)
   });
@@ -41,9 +41,9 @@ export const useUpdateTournament = (id: Id) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (values) => {
+    mutationFn: async (values: Partial<TTournament>) => {
       const res = await axios.patch(`/api/tournaments/${id}`, values);
-      return res.data;
+      return res.data as TTournament;
     },
     onSuccess: (tournament) => {
       if (current.id === tournament.id) queryClient.setQueriesData(tournamentKeys.id("current"), tournament);

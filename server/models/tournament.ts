@@ -15,8 +15,6 @@ enum TournamentStates {
   Complete
 }
 
-export type TTournamentState = keyof typeof TournamentStates;
-
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
   {
@@ -86,5 +84,5 @@ TournamentSchema.virtual("start").get(function () {
 
 const Tournament = mongoose.model("Tournament", TournamentSchema);
 
-export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string };
+export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[] };
 export default Tournament;
