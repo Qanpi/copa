@@ -5,7 +5,9 @@ import { Dayjs } from "dayjs";
 import _ from "lodash";
 import { useParticipants } from "../participant/hooks";
 import { tournamentKeys, useTournament } from "../viewer/hooks";
-import { QueryKeyFactory } from "../types";
+import { QueryKeyFactory, queryKeyFactory } from "../types";
+
+const matchKeys = queryKeyFactory("matches");
 
 export const useUpdateMatch = () => {
   //TODO: think abt this: currently only works with current tournament
@@ -18,8 +20,8 @@ export const useUpdateMatch = () => {
       return res.data;
     },
     onSuccess(data) {
-      queryClient.invalidateQueries([matchKeys.all])
-      // queryClient.setQueryData(matchKeys.id(data.id), data);
+      queryClient.setQueriesData(matchKeys.id(data.id), data);
+      queryClient.invalidateQueries(matchKeys.lists)
     },
   });
 };
@@ -73,17 +75,11 @@ export const useMatchScheduler = () => {
   };
 };
 
-const matchKeys: QueryKeyFactory<TMatch> = {
-  all: "matches",
-  id: (id) => [matchKeys.all, id],
-  query: (query) => [matchKeys.all, query],
-};
-
 export const useMatch = (id: string) => {
   const {data: tournament} = useTournament("current");
 
   return useQuery({
-    queryKey: [matchKeys.id(id)],
+    queryKey: matchKeys.id(id),
     queryFn: async () => {
       const url = `/api/tournaments/${tournament?.id}/${matchKeys.all}/${id}`;
       const res = await axios.get(url);
@@ -97,7 +93,7 @@ export const useMatches = (
   query?: Partial<TMatch> & { scheduled?: boolean }
 ) => {
   return useQuery({
-    queryKey: ["matches", query],
+    queryKey: matchKeys.list(query),
     queryFn: async () => {
       let url = `/api/${tournamentKeys.all[0]}/${tournamentId}/matches`;
 
