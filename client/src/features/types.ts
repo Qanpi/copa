@@ -17,3 +17,4 @@ export function queryKeyFactory<T>(key: string) {
         id: (id) => [key, "id", id]
     } as QueryKeyObject<T>
 }
+

@@ -9,9 +9,9 @@
       "@backend/*": [
         "../server/*"
       ],
-      "hello": [
-        "./src"
-      ]
+      "backend/*": [
+        "../server/*"
+      ],
     },
     "allowJs": true,
     "sourceMap": true,
@@ -24,6 +24,6 @@
   "ts-node": {
     "require": [
       "tsconfig-paths/register"
-    ]
+    ],
   },
 }

@@ -6,7 +6,7 @@ import { useStages } from "../stage/hooks";
 import { useTournament } from "./hooks";
 import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
-// import { TournamentState } from "@backend/models/tournament.ts";
+import { TTournamentState } from "backend/models/tournament";
 
 function WinnerPane({ stage }) {
   //FIXME: needs to show all winners across divisions
@@ -35,10 +35,11 @@ function WinnersTribute() {
 
 function HomePage() {
   const { data: tournament } = useTournament("current");
+  const state: TTournamentState = tournament?.state;
 
   if (!tournament) return <>Loadng...</>
 
-  if (tournament.state === "Complete")
+  if (state === "Complete")
     return <WinnersTribute></WinnersTribute>
 
   if (!tournament.registration?.from)

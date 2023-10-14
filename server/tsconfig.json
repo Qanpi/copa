@@ -4,7 +4,7 @@
     "esm": true,
     "compilerOptions": {
       "allowSyntheticDefaultImports": true,
-      "paths": {"@frontend/*": ["./client/*"]},
+      "paths": {"@frontend/*": ["../client/*"]},
       "allowImportingTsExtensions": true,
       "esModuleInterop": true,
     }
@@ -12,7 +12,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "target": "ESNext",
-    "paths": {"@frontend/*": ["./client/*"]},
+    "paths": {"@frontend/*": ["../client/*"]},
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
   },
