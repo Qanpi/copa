@@ -4,7 +4,7 @@ import { TUser } from "@backend/models/user.ts";
 import { useTeam, useUpdateTeam } from "../team/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
 
-export const userKeys = queryKeyFactory<TUser>("user");
+export const userKeys = queryKeyFactory<TUser>("users");
 
 export const useUser = (id: string) => {
   return useQuery({
