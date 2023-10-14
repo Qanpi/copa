@@ -1,6 +1,6 @@
 {
+  "extends": "@tsconfig/create-react-app/tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist/",
     "noImplicitAny": true,
     "module": "ESNext",
     "target": "es5",
@@ -9,16 +9,12 @@
       "@backend/*": [
         "../server/*"
       ],
-      "backend/*": [
-        "../server/*"
-      ],
     },
     "allowJs": true,
     "sourceMap": true,
     "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "noEmit": true,
     "allowImportingTsExtensions": true,
   },
   "ts-node": {

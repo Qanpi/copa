@@ -29,7 +29,6 @@
     "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.4.0",
-    "backend": "file:../server",
     "brackets-manager": "^1.6.3",
     "brackets-memory-db": "^1.0.4",
     "brackets-mongo-db": "^2.0.1",
@@ -79,6 +78,8 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@tsconfig/create-react-app": "^2.0.1",
     "@types/lodash-es": "^4.17.9",
     "@types/react-big-calendar": "^1.6.4",
     "@types/react-calendar-timeline": "^0.28.3",
