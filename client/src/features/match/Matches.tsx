@@ -1,8 +1,8 @@
 import { ThemeProvider } from "@emotion/react";
 
 import FullCalendar from "@fullcalendar/react";
-import type {} from "@mui/lab/themeAugmentation";
-import { Stack, Button, createTheme, Box } from "@mui/material";
+import type { } from "@mui/lab/themeAugmentation";
+import { Stack, Button, createTheme, Box, Container } from "@mui/material";
 import {
   DateCalendar,
   DateCalendarProps,
@@ -16,19 +16,23 @@ import { useReducer, useState } from "react";
 import MyDatePicker from "../inputs/MyDatePicker";
 import { MatchesTable } from "./MatchesTable";
 import { useMatches } from "./hooks";
-import type {} from "@mui/x-date-pickers/themeAugmentation";
+import type { } from "@mui/x-date-pickers/themeAugmentation";
 import { Popper } from "@mui/base";
 import { EventClickArg } from "@fullcalendar/core";
 import DateBlocker from "../inputs/DateBlocker";
 import MatchesCalendar from "./MatchesCalendar";
 import { useMatchScheduler } from "./hooks";
+import MatchesTimeline from "./MatchesTimeline";
 
 function MatchesPage() {
   return (
-    <div>
-      <MatchesCalendar></MatchesCalendar>
+    <>
+      <Container sx={{ width: "80%" }}>
+        <MatchesTimeline></MatchesTimeline>
+      </Container>
+      {/* <MatchesCalendar></MatchesCalendar> */}
       <MatchesTable></MatchesTable>
-    </div>
+    </>
   );
 }
 

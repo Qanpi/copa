@@ -81,6 +81,7 @@
   "devDependencies": {
     "@types/lodash-es": "^4.17.9",
     "@types/react-big-calendar": "^1.6.4",
+    "@types/react-calendar-timeline": "^0.28.3",
     "@types/react-date-range": "^1.4.5",
     "@types/react-dragula": "^1.1.0",
     "ts-loader": "^9.4.4",
