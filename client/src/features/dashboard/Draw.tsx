@@ -79,7 +79,7 @@ function DrawPage() {
 
   if (!participants) return <>Loading...</>
 
-  if (tournament?.state !== "Group stage") return <>Tournament is not in the gorup stage.</>
+  if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
 
   const groupSizes = arrangeGroups(participants.length, groupCount);
 
