@@ -10,7 +10,7 @@ dayjs.extend(relativeTime);
 enum TournamentStates {
   Kickstart,
   Registration,
-  Group,
+  Groups,
   Bracket,
   Complete
 }
