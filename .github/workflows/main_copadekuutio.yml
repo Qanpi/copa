@@ -9,9 +9,8 @@ on:
       - main
   workflow_dispatch:
 
-defaults:
-  run: 
-    working-directory: ./server
+env: 
+  CI: ""
 
 jobs:
   build:
@@ -25,17 +24,31 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build, and test
+      - name: npm install, build, and test client
+        working-directory: ./client
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
 
-      - name: Upload artifact for deployment job
+      - name: Upload client for deployment job
         uses: actions/upload-artifact@v2
         with:
-          name: node-app
-          path: .
+          name: client 
+          path: ./client/build
+
+      - name: npm install, build, and test server
+        working-directory: ./server
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if-present
+
+      - name: Upload server for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: server 
+          path: ./server/dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -45,10 +58,15 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
+      - name: Download client from build job
         uses: actions/download-artifact@v2
         with:
-          name: node-app
+          name: client 
+
+      - name: Download server from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: server 
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
