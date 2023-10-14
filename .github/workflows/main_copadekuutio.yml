@@ -46,4 +46,4 @@ jobs:
           app-name: 'copadekuutio'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ./client/build
+          package: .
