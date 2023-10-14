@@ -84,5 +84,5 @@ TournamentSchema.virtual("start").get(function () {
 
 const Tournament = mongoose.model("Tournament", TournamentSchema);
 
-export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[] };
+export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, name: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[] };
 export default Tournament;
