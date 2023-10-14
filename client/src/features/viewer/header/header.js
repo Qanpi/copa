@@ -1,83 +1,122 @@
-import { useLocation } from "react-router-dom";
-import {HashLink as Link} from "react-router-hash-link"
-import "./header.css"
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query"
-import axios from "axios"
-import UserPanel from "../../user/userMenu/userpanel";
-import { useUser } from "../../..";
+import {
+  Box,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Stack,
+  Typography
+} from "@mui/material";
+import { useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useUser } from "../../user/hooks.ts";
+import UserPanel from "../../user/userMenu/userpanel.js";
+import "./header.css";
 
-//TODO:
-//move route names to a config file
+const SectionMenu = ({ title, children }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
 
-//FIXME: repetitive and probably redundant way of storing headers
-const sublinks = {
-    "": [{
-        name: "This week",
-        to: "/#weekly"
-    }, {
-        name: "Group stage",
-        to: "/#test"
-    }, {
-        name: "Bracket",
-        to: "/#bracket"
-    }],
-    tables: [{
-        name: "Teams",
-        to: "/tables/teams",
-    }, {
-        name: "Matches",
-        to: "/tables/matches"
-    },{
-        name: "Gamblers",
-        to: "/tables/matches"
-    }],
-    admin: [
-        {name: "Scheduling"},
-        {name: "Settings"},
-        {name: "announcements"}
-    ]
-}
+  const handlePointerEnter = (e) => {
+    setOpen(true);
+  };
+
+  const handlePointerLeave = (e) => {
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <Box
+        onPointerLeave={handlePointerLeave}
+        onPointerEnter={handlePointerEnter}
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+        }}
+        ref={ref}
+      >
+        <Typography>{title}</Typography>
+
+        <Popper
+          open={open}
+          anchorEl={ref.current}
+          disablePortal
+          popperOptions={{
+            strategy: "fixed",
+          }}
+        >
+          <Stack alignItems="center">
+            <Box
+              sx={{
+                position: "absolute",
+                top: -5,
+                width: 0,
+                height: 0,
+                borderLeft: "5px solid transparent",
+                borderRight: "5px solid transparent",
+                borderBottom: "5px solid black",
+              }}
+            ></Box>
+
+            <Paper
+              elevation={0}
+              square
+              sx={{
+                bgcolor: "red",
+                minWidth: "150px",
+              }}
+            >
+              <MenuList>
+                {children}
+              </MenuList>
+            </Paper>
+          </Stack>
+        </Popper>
+      </Box>
+    </>
+  );
+};
 
 function Header() {
-    const {pathname} = useLocation();
-    const parentPath = pathname.split("/")[1];
+  const { pathname } = useLocation();
 
-    const {status: userStatus, data: user} = useUser("me");
+  const {data: user} = useUser("me");
+  const isAdmin = user?.role === "admin";
 
-    if (userStatus !== "success") return <div>Loading...</div>
-
-    const generateSublinks = (path) => {
-        switch(path) {
-            case "": return ["1"]
-            case "tables": return ["Teams", "Matches", "Group stage", "Bracket", "Gamblers"]
-            default: return []
-        }
-    }
-
-    return (
-        <header>
-                <div className="top-bar">
-                    <div className="links">
-                        <Link to="/">Home</Link>
-                        <Link to="/tables/teams">Tables</Link> 
-                        <span>All-time</span>
-                        <span>Fantasy</span>
-                        <span>About</span>
-                        {user ? <Link to="/admin/dashboard">Admin</Link> : null}
-                    </div>
-                    <UserPanel></UserPanel>
-                </div>
-
-                <div className="bottom-bar">
-                    <div className="weird-triangle">
-                    </div>
-                    <div className="sublinks">
-                        {generateSublinks(parentPath).map(p => <Link to={`${parentPath}/${p.toLowerCase()}`} key={p}>{p}</Link>)}
-                    </div>
-                </div>
-
-        </header>
-    )
+  return (
+    <header>
+      <div className="bar">
+        <div className="sections">
+          <Link to="/">Home</Link>
+          <SectionMenu title="Tournament">
+            <Link to="/tournament/teams">
+              <MenuItem>Teams</MenuItem>
+            </Link>
+            <Link to="/tournament/matches">
+              <MenuItem>Matches</MenuItem>
+            </Link>
+            <Link to="/tournament/groups">
+              <MenuItem>Group Stage</MenuItem>
+            </Link>
+            <Link to="/tournament/bracket">
+              <MenuItem>Bracket</MenuItem>
+            </Link>
+            <Link to="/tournament/gamblers">
+              <MenuItem>Gamblers</MenuItem>
+            </Link>
+          </SectionMenu>
+          {isAdmin ? <Link to="/tournament/dashboard">Dashboard</Link> : null}
+          <span>All-time</span>
+          <span>Fantasy</span>
+          <span>About</span>
+        </div>
+        <UserPanel></UserPanel>
+      </div>
+      <div className="extension"></div>
+    </header>
+  );
 }
 
-export default Header;  
+export default Header;

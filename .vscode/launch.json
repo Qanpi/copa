@@ -13,9 +13,13 @@
             "webRoot": "${workspaceFolder}",
             "pathMappings": [
                 {
+                    "url": "file:///C:/Users/aleks/OneDrive%20-%20Suomalaisen%20Yhteiskoulun%20Osakeyhti%C3%B6/Tiedostot/Coding/IA/client/src/features/viewer/home",
+                    "path": "${workspaceFolder}/client/src/features/viewer"
+                },
+                {
                     "url": "https://cdn.jsdelivr.net/npm",
                     "path": "${workspaceFolder}/node_modules"
-                },
+                }
             ]
         },
         {

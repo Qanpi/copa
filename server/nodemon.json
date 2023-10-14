@@ -1,0 +1,7 @@
+    {
+        "ignore": [
+            "./mock/**",
+            "./client/"
+        ],
+        "delay": 1000
+    }

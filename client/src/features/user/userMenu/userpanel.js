@@ -3,11 +3,11 @@ import axios from "axios";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { useUser, useTeam } from "../../..";
+import { useTeam } from "../../team/hooks.ts";
+import { useUser } from "../hooks.ts";
 
 function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");
-  const { data: team } = useTeam(user.team?.name);
   const queryClient = useQueryClient();
 
   const logout = useMutation({
@@ -27,19 +27,18 @@ function UserPanel() {
       </div>
       <div className="dropdown">
         <Link to={`/users/${user.id}`}>Profile</Link>
-        <Link to={team ? `/teams/${team.name}` : "/teams/join"}>My team</Link>
+        {user.team ? (
+          <Link to={`/teams/${user.team.name}`}>My team</Link>
+        ) : (
+          <Link to={`/teams/none`}>My team</Link>
+        )}
         <p>Settings</p>
         <p onClick={logout.mutate}>Log out</p>
       </div>
     </div>
   ) : (
-    <span onClick={handleSignIn}>{"Sign in"}</span>
+    <Link to={`/login`}>Sign in</Link>
   );
-}
-
-function handleSignIn() {
-  //axios.get("login/federated/google")
-  window.open("http://localhost:3001/login/federated/google", "_self");
 }
 
 export default UserPanel;

@@ -2,57 +2,45 @@ import { validationResult } from "express-validator";
 import Match from "../models/match.js";
 import { Request, Response } from "express";
 
-import MongooseForBrackets from "../services/brackets/index";
-const storage = new MongooseForBrackets();
-
-import { BracketsManager } from "brackets-manager";
-const manager = new BracketsManager(storage, true);
-
-
+import { bracketsManager } from "../services/bracketsManager.js";
+import Stage from "../models/stage.js";
 
 export const getMany = async (req: Request, res: Response) => {
-  const endFilter = req.query.end
-    ? {
-        date: {
-          $lt: req.query.end,
-        },
-      }
-    : {};
+  //FIXME: refactor this better
+  const { scheduled, start, state, ...rest } = req.query;
 
-  const startFilter = req.query.start
-    ? {
-        date: {
-          $gte: req.query.start,
-        },
-      }
-    : {};
-
-  const query: any = {
-    $and: [startFilter, endFilter],
-  };
-
-  switch (req.query.status) {
-    case "unscheduled":
-      query["date"] = {
-        $exists: false,
-      };
-      break;
-
-    case "scheduled":
-      query["date"] = {
-        $exists: true,
-      };
-      break;
+  const filter: any = {
+    ...rest,
+    tournament: req.params.id
   }
 
-  const matches = await Match.find(query);
+  if (scheduled) {
+    filter["start"] = {
+      $exists: scheduled === "true",
+    }
+  } else if (start) {
+    filter["start"] = {
+      $lt: req.query.end,
+    }
+  }
+
+  if (state) {
+    const stages = await Stage.find({
+      type: state === "Groups" ? "round_robin" : "single_elimination",
+    });
+    filter["stage_id"] = {
+      $in: stages.map(s => s.id),
+    }
+  }
+
+  const matches = await Match.find(filter);
   res.send(matches);
 };
 
-export const getOne = async(req: Request, res: Response) => {
+export const getOne = async (req: Request, res: Response) => {
   const match = await Match.findById(req.params.id);
   res.send(match);
-}
+};
 
 export const deleteMany = async (req: Request, res: Response) => {
   await Match.deleteMany({});
@@ -61,21 +49,18 @@ export const deleteMany = async (req: Request, res: Response) => {
 
 export const updateOne = async (req: Request, res: Response) => {
   //TODO: if statement
-  await manager.update.match({...req.body, id: req.params.id});
+  await bracketsManager.update.match({ ...req.body, id: req.params.id });
+  const updated = await Match.findById(req.params.id);
 
-  const match = await Match.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.send(match);
+  res.send(updated);
 };
 
-export const resetDates = async(req: Request, res: Response) => {
-  const matches = await Match.updateMany({}, {$unset: {start: ""}});
+export const resetDates = async (req: Request, res: Response) => {
+  const matches = await Match.updateMany({}, { $unset: { start: "" } });
   res.send(matches);
-}
+};
 
 export const reportResults = async (req: Request, res: Response) => {
-
   const updated = await Match.findById(req.body.id);
-  res.send(updated)
-}
+  res.send(updated);
+};

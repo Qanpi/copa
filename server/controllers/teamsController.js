@@ -8,21 +8,14 @@ import dayjs from "dayjs"
 export const createOne = expressAsyncHandler(async (req, res) => {
   const team = await new Team(req.body).save();
 
-  const manager = await User.findById(team.manager);
-  manager.team = team; //maybe refactor to a sep. function
-  await manager.save();
-
   res.send(team);
 });
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
-
-  const data = req.query;
   const filters = {
-    name: data?.name ? data.name : undefined,
+    ...req.query
   }
 
-  console.log(filters)
   const teams = await Team.find(filters);
   res.send(teams);
 });
@@ -64,10 +57,7 @@ export const joinTeam = expressAsyncHandler(async (req, res) => {
     const team = await Team.findById(req.params.id).select(["+invite.token", "+invite.expiresAt"]);
 
     if (team.invite.token === token && team.invite.expiresAt >= new Date()) {
-      const user = await User.findById(req.user.id);
-      user.team = team;
-      await user.save();
-
+      await User.findByIdAndJoinTeam(req.user.id, team);
       res.send(team);
     } else {
       res.status(403).send({});

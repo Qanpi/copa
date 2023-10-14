@@ -3,163 +3,136 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
 } from "@tanstack/react-query";
-import axios from "axios";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Header from "./features/viewer/header/header";
-import "./index.css";
-import DashboardPage from "./features/tournament/admin/dashboard/Dashboard";
-import CreateTeamPage from "./features/team/create/CreateTeam";
-import HomePage from "./features/viewer/home/Home";
+import BracketStructure from "./features/dashboard/BracketStructure.tsx";
+import DashboardPage from "./features/dashboard/Dashboard.tsx";
+import DrawPage from "./features/dashboard/Draw.tsx";
+import Scheduler from "./features/dashboard/Scheduler.tsx";
+import MatchPage from "./features/match/MatchPage.tsx";
+import MatchesPage from "./features/match/Matches.tsx";
+import TeamsPage from "./features/participant/ParticipantsTable.tsx";
+import RegistrationPage from "./features/participant/registration.js";
+import BracketPage from "./features/stage/Bracket.tsx";
+import GroupStagePage from "./features/stage/GroupStage.tsx";
+import NewTeamPage from "./features/team/CreateTeam.js";
+import JoinTeamPage from "./features/team/JoinTeam.js";
+import NoTeamPage from "./features/team/NoTeamPage.tsx";
+import TeamPage from "./features/team/Team.js";
+import SignInPage from "./features/user/SignInPage.tsx";
+import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
-import RegistrationPage from "./features/team/registration/registration";
-import TeamsPage from "./features/team/table/ParticipantsTable";
-import TeamPage from "./features/team/profile/Team";
-import JoinTeamPage from "./features/team/join/JoinTeam";
+import Header from "./features/viewer/header/header";
+import HomePage from "./features/viewer/Home.tsx";
+import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
+import "./index.css";
 import reportWebVitals from "./services/reportWebVitals";
-import DrawPage from "./features/team/admin/draw/Draw";
-import StructurePage from "./features/tournament/admin/structure/structure";
-import TournamentStructureDemo from "./features/tournament/admin/structure/structureDemo";
-import MatchesPage from "./features/tournament/matches/Matches";
-import MatchPage from "./features/tournament/matches/page/MatchPage";
+// 
+export const DivisionContext = React.createContext(null);
+export const DivisionDispatchContext = React.createContext(null);
 
-const userKeys = {
-  all: ["users"],
-  details: () => [...userKeys.all, "detail"],
-  detail: (id: string) => [...userKeys.details(), id],
-};
-
-export const useUser = (id: string) => {
-  return useQuery({
-    queryKey: userKeys.detail(id),
-    queryFn: async () => {
-      const res =
-        id === "me"
-          ? await axios.get("/me")
-          : await axios.get(`/api/${userKeys.all}/${id}`);
-      return res.data;
-    },
-  });
-};
-
-// export const useAuth = () => {
-//   return useQuery({
-//     queryKey: userKeys.detail("me"),
-//     queryFn: async () => {
-//       const res = await axios.get(`/me`);
-//       return res.data;
-//     }
-//   })
-// }
-
-export const tournamentKeys = {
-  all: ["tournaments"],
-  details: () => [...tournamentKeys.all, "detail"],
-  detail: (id: string) => [...tournamentKeys.details(), id],
-};
-
-export const useTournament = (id: string) => {
-  return useQuery({
-    queryKey: tournamentKeys.detail(id),
-    queryFn: async () => {
-      const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
-      return response.data;
-    },
-  });
-};
-
-export const teamKeys = {
-  all: ["teams"],
-  details: () => [teamKeys.all, "detail"],
-  detail: (id: string) => [...teamKeys.details(), id],
-};
-
-export const useTeam = (name: string, props: object) => {
-  return useQuery({
-    queryKey: teamKeys.detail(name),
-    queryFn: async () => {
-      const response = await axios.get(`/api/teams/?name=${name}`);
-      return response.data[0] || null; //FIXME: assuming the response is array; maybe do this validation on server?
-    },
-    ...props,
-  });
-};
+function divisionReducer(state, nId: number) {
+  return nId;
+}
 
 function App() {
+  const { data: tournament } = useTournament("current");
+  const { data: divisions } = useDivisions(tournament?.id);
+  const [selected, dispatch] = React.useReducer(divisionReducer, 0);
+
+  const { data: user, status: userStatus } = useUser("me");
+  if (userStatus !== "success") return;
+
   return (
     <Router>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Header></Header>
-        <div className="primary">
-          <Routes>
-            <Route path="/" element={<HomePage></HomePage>}></Route>
+        <DivisionContext.Provider value={divisions?.[selected]}>
+          <DivisionDispatchContext.Provider value={dispatch}>
 
-            <Route path="/tournament">
-              <Route
-                path="/tournament/register"
-                element={<RegistrationPage></RegistrationPage>}
-              ></Route>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Header></Header>
+              <div className="primary">
+                <Routes>
+                  <Route path="/" element={<HomePage></HomePage>}></Route>
 
-              <Route
-                path="/tournament/dashboard"
-                element={<DashboardPage></DashboardPage>}
-              ></Route>
+                  <Route path="/login" element={<SignInPage></SignInPage>}></Route>
 
-              <Route
-                path="/tournament/structure"
-                element={<StructurePage></StructurePage>}
-              ></Route>
+                  <Route path="/tournament">
+                    <Route
+                      path="/tournament/register"
+                      element={<RegistrationPage></RegistrationPage>}
+                    ></Route>
 
-              <Route path="/tournament/draw" element={<DrawPage></DrawPage>}></Route>
+                    <Route
+                      path="/tournament/dashboard"
+                      element={<DashboardPage></DashboardPage>}
+                    ></Route>
 
-              <Route
-                path="/tournament/teams"
-                element={<TeamsPage></TeamsPage>}
-              ></Route>
+                    <Route path="/tournament/groups"
+                      element={<GroupStagePage></GroupStagePage>}></Route>
 
-              <Route path="/tournament/matches">
-                <Route
-                  path="/tournament/matches/:id"
-                  element={<MatchPage></MatchPage>}
-                ></Route>
+                    <Route
+                      path="/tournament/bracket"
+                      element={<BracketPage></BracketPage>}
+                    ></Route>
 
-                <Route
-                  path="/tournament/matches"
-                  element={<MatchesPage></MatchesPage>}
-                ></Route>
-              </Route>
-            </Route>
+                    <Route path="/tournament/scheduler" element={<Scheduler></Scheduler>}></Route>
 
-            <Route path="/users">
-              <Route
-                path="/users/:id"
-                element={<ProfilePage></ProfilePage>}
-              ></Route>
-            </Route>
+                    <Route path="/tournament/draw" element={<DrawPage></DrawPage>}>RR</Route>
 
-            <Route path="/teams">
-              <Route
-                path="/teams/join"
-                element={<JoinTeamPage></JoinTeamPage>}
-              ></Route>
+                    <Route path="/tournament/structure" element={<BracketStructure></BracketStructure>}></Route>
 
-              <Route
-                path="/teams/new"
-                element={<CreateTeamPage></CreateTeamPage>}
-              ></Route>
+                    <Route
+                      path="/tournament/teams"
+                      element={<TeamsPage></TeamsPage>}
+                    ></Route>
 
-              <Route
-                path="/teams/:name"
-                element={<TeamPage></TeamPage>}
-              ></Route>
-            </Route>
-          </Routes>
-        </div>
-      </LocalizationProvider>
-    </Router>
+                    <Route path="/tournament/matches">
+                      <Route
+                        path="/tournament/matches/:id"
+                        element={<MatchPage></MatchPage>}
+                      ></Route>
+
+                      <Route
+                        path="/tournament/matches"
+                        element={<MatchesPage></MatchesPage>}
+                      ></Route>
+                    </Route>
+                  </Route>
+
+                  <Route path="/users">
+                    <Route
+                      path="/users/:id"
+                      element={<ProfilePage></ProfilePage>}
+                    ></Route>
+                  </Route>
+
+                  {/* //TODO: restrict possible team names */}
+                  <Route path="/teams">
+                    <Route path="/teams/none" element={<NoTeamPage></NoTeamPage>}></Route>
+                    <Route
+                      path="/teams/join"
+                      element={<JoinTeamPage></JoinTeamPage>}
+                    >R</Route>
+
+                    <Route
+                      path="/teams/new"
+                      element={<NewTeamPage></NewTeamPage>}
+                    ></Route>
+
+                    <Route
+                      path="/teams/:name"
+                      element={<TeamPage></TeamPage>}
+                    ></Route>
+                  </Route>
+                </Routes>
+              </div>
+            </LocalizationProvider>
+          </DivisionDispatchContext.Provider>
+        </DivisionContext.Provider>
+    </Router >
   );
 }
 
@@ -171,6 +144,7 @@ root.render(
     <React.StrictMode>
       <App></App>
     </React.StrictMode>
+    <ReactQueryDevtools></ReactQueryDevtools>
   </QueryClientProvider>
 );
 
