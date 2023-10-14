@@ -1,11 +1,19 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import { romanize } from "../services/helpers.js";
 import DivisionSchema from "./division.js";
 import Metadata from "./metadata.js";
 
 dayjs.extend(relativeTime);
+
+enum TournamentStates {
+  Kickstart,
+  Registration,
+  Groups,
+  Bracket,
+  Complete
+}
 
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
@@ -21,7 +29,7 @@ const TournamentSchema = new mongoose.Schema(
     },
     state: {
       type: String,
-      enum: ["Kickstart", "Registration", "Group stage", "Bracket", "Complete"],
+      enum: Object.values(TournamentStates).filter(v => (typeof v === "string")),
       default: "Registration",
     },
     divisions: [DivisionSchema],
@@ -32,7 +40,7 @@ const TournamentSchema = new mongoose.Schema(
     virtuals: {
       states: {
         get() {
-          const statePath = this.schema.path("state");
+          const statePath = this.schema.path("state") as any;
           return statePath.enumValues;
         },
       },
@@ -47,12 +55,14 @@ const TournamentSchema = new mongoose.Schema(
 
 TournamentSchema.pre("save", async function () {
   if (this.isNew) {
+    const name = (this.constructor as any).modelName;
+
     let metadata = await Metadata.findOne({
-      model: this.constructor.modelName,
+      model: name,
     });
     if (!metadata)
       metadata = await Metadata.create({
-        model: this.constructor.modelName,
+        model: name,
       });
 
     this.idx = metadata.idx;
@@ -72,33 +82,7 @@ TournamentSchema.virtual("start").get(function () {
 //   await Participant.deleteMany({tournament: this.id});
 // })
 
-// if (this.end) {
-//     return ;
-// } else if (this.start && now > this.start) {
-//     return "Tournament";
-// } else if (this.registration.end && now > this.registration.end) {
-//     return "Limbo";
-// } else if (this.registration.start && now > this.registration.start) {
-//     return "Registration";
-// } else {
-//     return "Announced";
-// }
-
-// TournamentSchema.virtual("countDown").get(function () {
-//   //announced: "Reg begins in x dyas"
-//   //reg: "Reg ends in x days"
-//   //limbo: "Tourn begins in x day"
-//   //tourn: "nothign"
-//   //finsihed: "nothing"
-//   const now = new Date();
-//   if (now >= this.currentStage.start) {
-//     return `${this.currentStage.name} ends in x days`
-//   } else {
-//     const nextStage = this.stages[this.getCurrentStageId()];
-//     return `${nextStage.name} begins in x days`
-//   }
-// });
-
 const Tournament = mongoose.model("Tournament", TournamentSchema);
 
+export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, name: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[] };
 export default Tournament;

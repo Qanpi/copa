@@ -5,8 +5,8 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Box, Button, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
-import { useMatchScheduler, useMatches } from '../tournament/matches/hooks';
-import { useTournament } from '../tournament/hooks';
+import { useMatchScheduler, useMatches } from '../match/hooks';
+import { useTournament } from '../viewer/hooks';
 
 const Scheduler = () => {
   const [ranges, setRanges] = useState({

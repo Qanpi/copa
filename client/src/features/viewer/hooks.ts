@@ -4,47 +4,56 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
-import { Id, QueryKeyFactory } from "../../types";
+import { Id, QueryKeyFactory, queryKeyFactory } from "../types";
 import { RoundNameInfo } from "ts-brackets-viewer";
+import { TTournament } from "@backend/models/tournament";
 
-export const tournamentKeys = {
-  all: ["tournaments"],
-  id: (id: Id) => [tournamentKeys.all, id],
-  query: () => [...tournamentKeys.all, "detail"],
-};
+export const tournamentKeys = queryKeyFactory("tournaments");
 
 export const useTournament = (id: string) => {
   return useQuery({
     queryKey: tournamentKeys.id(id),
     queryFn: async () => {
       const response = await axios.get(`/api/${tournamentKeys.all}/${id}`);
-      return response.data;
+      return response.data as TTournament;
     },
     enabled: Boolean(id)
   });
 };
 
-export const useUpdateTournament = (id: Id) => {
+export const useCreateTournament = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.patch(`/api/tournaments/${id}`, values);
-      return res.data;
+    mutationFn: async (body: Partial<TTournament>) => {
+      const res = await axios.post(`/api/tournaments/`, body);
+      return res.data as TTournament;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(tournamentKeys.id(id));
+    onSuccess: (tournament) => {
+      queryClient.setQueriesData(tournamentKeys.id("current"), tournament);
+      queryClient.setQueriesData(tournamentKeys.id(tournament.id), tournament);
+    },
+  });
+}
+
+export const useUpdateTournament = (id: Id) => {
+  const { data: current } = useTournament("current");
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (values: Partial<TTournament>) => {
+      const res = await axios.patch(`/api/tournaments/${id}`, values);
+      return res.data as TTournament;
+    },
+    onSuccess: (tournament) => {
+      if (current.id === tournament.id) queryClient.setQueriesData(tournamentKeys.id("current"), tournament);
+      queryClient.setQueriesData(tournamentKeys.id(id), tournament);
+      //TODO: lists update
     },
   });
 };
 
-
-
-export const divisionKeys = {
-  all: "divisions",
-  id: (id: Id) => [divisionKeys.all, id],
-  query: () => [divisionKeys.all, "detail"],
-};
+export const divisionKeys = queryKeyFactory("divisions");
 
 export const useDivision = (id: string) => {
   const { data: tournament } = useTournament("current");

@@ -3,14 +3,15 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/re
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
-import { useTournament } from "../tournament/hooks.ts";
+import { useTournament } from "../viewer/hooks.ts";
 import { participantKeys, useParticipants } from "../participant/hooks.ts";
 import { groupBy, shuffle } from "lodash-es";
-import Group from "../team/group/Group.js";
+import Group from "../group/Group.js";
 import { DataGrid } from "@mui/x-data-grid";
 import GroupStageStructure from "./GroupStage.js";
-import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
-import { divideGroups, useCreateStage } from "./GroupStageStructure.tsx";
+import { useStageData } from "../stage/hooks.ts";
+import { divideGroups } from "./GroupStageStructure.tsx";
+import { useCreateStage } from "../stage/hooks.ts";
 import DivisionPanel from "./DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
@@ -78,7 +79,7 @@ function DrawPage() {
 
   if (!participants) return <>Loading...</>
 
-  if (tournament?.state !== "Group stage") return <>Tournament is not in the gorup stage.</>
+  if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
 
   const groupSizes = arrangeGroups(participants.length, groupCount);
 
@@ -86,7 +87,7 @@ function DrawPage() {
     createGroupStage.mutate({
       name: division.name,
       type: "round_robin",
-      division: division.id,
+      tournamentId: division.id,
       settings: {
         groupCount,
         size: seeding.length,

@@ -1,5 +1,5 @@
-import { Stage } from "brackets-mongo-db";
-import mongoose, { SchemaTypes } from "mongoose";
+import { Stage as BracketsStage, TStage as TBracketsStage } from "brackets-mongo-db";
+import mongoose, { InferSchemaType, SchemaTypes } from "mongoose";
 import Tournament from "./tournament.js";
 import Metadata from "./metadata.js";
 
@@ -19,4 +19,8 @@ StageSchema.pre("save", async function () {
     }
 })
 
-export default Stage.discriminator("Stage", StageSchema);
+
+const Stage = BracketsStage.discriminator("Stage", StageSchema);
+
+export type TStage = InferSchemaType<typeof StageSchema> & TBracketsStage & { id: string, division: string };
+export default Stage;

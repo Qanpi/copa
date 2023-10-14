@@ -4,34 +4,33 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import DashboardPage from "./features/dashboard/Dashboard.js";
-import NewTeamPage from "./features/team/create/CreateTeam";
+import BracketStructure from "./features/dashboard/BracketStructure.tsx";
+import DashboardPage from "./features/dashboard/Dashboard.tsx";
 import DrawPage from "./features/dashboard/Draw.tsx";
-import JoinTeamPage from "./features/team/join/JoinTeam";
-import TeamPage from "./features/team/profile/Team";
-import RegistrationPage from "./features/team/registration/registration";
-import TeamsPage from "./features/team/table/ParticipantsTable";
-import BracketPage from "./features/tournament/bracket/Bracket.tsx";
-import GroupStagePage from "./features/tournament/groupStage/GroupStage.tsx";
-import MatchesPage from "./features/tournament/matches/Matches.tsx";
-import MatchPage from "./features/tournament/matches/page/MatchPage";
+import Scheduler from "./features/dashboard/Scheduler.tsx";
+import MatchPage from "./features/match/MatchPage.tsx";
+import MatchesPage from "./features/match/Matches.tsx";
+import TeamsPage from "./features/participant/ParticipantsTable.tsx";
+import RegistrationPage from "./features/participant/registration.js";
+import BracketPage from "./features/stage/Bracket.tsx";
+import GroupStagePage from "./features/stage/GroupStage.tsx";
+import NewTeamPage from "./features/team/CreateTeam.js";
+import JoinTeamPage from "./features/team/JoinTeam.js";
+import NoTeamPage from "./features/team/NoTeamPage.tsx";
+import TeamPage from "./features/team/Team.js";
+import SignInPage from "./features/user/SignInPage.tsx";
+import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
 import Header from "./features/viewer/header/header";
-import HomePage from "./features/viewer/home/Home";
+import HomePage from "./features/viewer/Home.tsx";
+import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import reportWebVitals from "./services/reportWebVitals";
-import { useUser } from "./features/user/hooks.ts";
-import SignInPage from "./features/user/SignInPage.tsx";
-import NoTeamPage from "./features/team/NoTeamPage.tsx";
-import Scheduler from "./features/dashboard/Scheduler.tsx";
-import BracketStructure from "./features/dashboard/BracketStructure.tsx";
-import { useDivisions, useTournament } from "./features/tournament/hooks.ts";
-
-export const AdminContext = React.createContext(null);
-
+// 
 export const DivisionContext = React.createContext(null);
 export const DivisionDispatchContext = React.createContext(null);
 
@@ -41,7 +40,7 @@ function divisionReducer(state, nId: number) {
 
 function App() {
   const { data: tournament } = useTournament("current");
-  const {data: divisions} = useDivisions(tournament?.id); 
+  const { data: divisions } = useDivisions(tournament?.id);
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);
 
   const { data: user, status: userStatus } = useUser("me");
@@ -49,7 +48,6 @@ function App() {
 
   return (
     <Router>
-      <AdminContext.Provider value={user.role === "admin" || user.name === "qanpi"}>
         <DivisionContext.Provider value={divisions?.[selected]}>
           <DivisionDispatchContext.Provider value={dispatch}>
 
@@ -134,7 +132,6 @@ function App() {
             </LocalizationProvider>
           </DivisionDispatchContext.Provider>
         </DivisionContext.Provider>
-      </AdminContext.Provider>
     </Router >
   );
 }
@@ -147,6 +144,7 @@ root.render(
     <React.StrictMode>
       <App></App>
     </React.StrictMode>
+    <ReactQueryDevtools></ReactQueryDevtools>
   </QueryClientProvider>
 );
 

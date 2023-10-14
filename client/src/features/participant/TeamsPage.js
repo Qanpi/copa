@@ -5,9 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import { useTournament } from "../../tournament/hooks";
-import { useParticipants } from "../../participant/hooks";
-import { useDeleteParticipant } from "../registration/registration";
+import { useTournament } from "../viewer/hooks";
+import { useParticipants } from "./hooks";
+import { useDeleteParticipant } from "./registration";
 import { NotEnoughParticipantsAlert } from "./ParticipantsTable";
 
 export function TeamsPage() {

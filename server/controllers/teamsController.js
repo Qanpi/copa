@@ -12,9 +12,8 @@ export const createOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
-  const data = req.query;
   const filters = {
-    name: data?.name ? data.name : undefined,
+    ...req.query
   }
 
   const teams = await Team.find(filters);

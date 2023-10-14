@@ -32,6 +32,11 @@ export const updateStage = async (req: Request, res: Response) => {
   res.send({});
 };
 
+export const deleteOne = expressAsyncHandler(async (req, res) => {
+  await bracketsManager.delete.stage(req.params.stageId);
+  res.status(204).send({});
+});
+
 export const getCurrentStage = async (req: Request, res: Response) => {
   const stage = await bracketsManager.get.currentStage(req.params.id);
   res.send(stage);

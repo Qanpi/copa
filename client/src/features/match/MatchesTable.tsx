@@ -1,13 +1,13 @@
 import { Typography } from "@mui/material";
+import { useMatches, useUpdateMatch } from "./hooks.ts";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useMatches, useUpdateMatch } from "../hooks.ts";
-import { useTournament } from "../../hooks.ts";
-import { useParticipants } from "../../../participant/hooks.ts";
+import { useTournament } from "../viewer/hooks.ts";
+import { useParticipants } from "../participant/hooks.ts";
 import { notStrictEqual } from "assert";
 import { TMatch } from "@backend/models/match.ts";
-import { useGroups } from "../../../group/hooks.ts";
-import { useStages } from "../../../stage/hooks.ts";
-import { useRounds } from "../../../round/hooks.ts";
+import { useGroups } from "../group/hooks.ts";
+import { useStages } from "../stage/hooks.ts";
+import { useRounds } from "../round/hooks.ts";
 
 export const MatchesTable = () => {
   const { data: tournament } = useTournament("current");

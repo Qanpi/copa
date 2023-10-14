@@ -8,11 +8,11 @@ import {
 } from "@mui/material";
 import {
   useMutation,
-  useQuery,
   useQueryClient
 } from "@tanstack/react-query";
 import axios from "axios";
 import {
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -20,7 +20,7 @@ import {
   useState
 } from "react";
 import { useParticipants } from "../participant/hooks.ts";
-import { useTournament } from "../tournament/hooks.ts";
+import { useTournament } from "../viewer/hooks.ts";
 
 import { BracketsViewer } from "ts-brackets-viewer";
 // import "ts-brackets-viewer/dist/style.css";
@@ -32,11 +32,13 @@ import { RoundNameInfo } from "ts-brackets-viewer";
 import { groupBy, flatten, create } from "lodash-es";
 import { isSeedingWithIds } from "brackets-manager/dist/helpers";
 import { useGroupedParticipants } from "./Draw.tsx";
-import { useMatches } from "../tournament/matches/hooks.ts";
+import { useMatches } from "../match/hooks.ts";
+import { useCreateStage, useStages, useStandings } from "../stage/hooks.ts";
+import { DivisionContext } from "../../index.tsx";
+import DivisionPanel from "./DivisionPanel.tsx";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
-const bracketsViewer = new BracketsViewer();
 
 //workflow
 //1. create in memory tournament structure
@@ -101,35 +103,11 @@ const finalRoundNames = (roundInfo: RoundNameInfo) => {
   return `Round ${roundInfo.roundNumber}`;
 };
 
-export const useStandings = (stageId: string) => {
-  const { data: tournament } = useTournament("current");
 
-  return useQuery({
-    queryKey: ["stndngs"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/tournaments/${tournament.id}/stages/${stageId}/standings`);
-      return res.data;
-    },
-    enabled: Boolean(tournament) && Boolean(stageId)
-  });
-}
-
-function BracketStructure({ prev, next }) {
-  const { data: tournament } = useTournament("current");
-  const { data: participants, status: participantsStatus } = useParticipants();
-
-  const groupCount = tournament?.groupStage.settings.groupCount;
-  const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
-
-  const bracketSize = groupCount * teamsBreakingPerGroup;
-
-  const { data: standings } = useStandings(tournament?.groupStage?.id); 
-
-  const standingParticipants = standings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
-  const breaking = standingParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
-  const seeding = breaking?.flat();
-
+const useMockBracketsViewer = (seeding, bracketSize) => {
+  const ref = useRef(null);
   const mockTournamentId = 0;
+  const bracketsViewer = new BracketsViewer();
 
   useEffect(() => {
     const render = async () => {
@@ -161,64 +139,101 @@ function BracketStructure({ prev, next }) {
       );
     }
 
-    if (seeding && seeding.length !== 0) render();
+    const local = ref.current;
+    if (local && seeding && seeding.length !== 0) render();
 
-    const local = bracketsRef.current;
     return () => {
       if (local) local.innerHTML = "";
       manager.delete.tournament(mockTournamentId);
     };
-  }, [seeding, bracketSize]);
+  }, [seeding, bracketSize, ref]);
+
+  return ref;
+}
+
+function BracketStructure() {
+  const { data: tournament } = useTournament("current");
+
+  const division = useContext(DivisionContext);
+  const { data: participants, status: participantsStatus } = useParticipants(tournament?.id, {
+    division: division?.id
+  });
+
+  const { data: groupStageList, status: stageStatus } = useStages(tournament?.id, {
+    type: "round_robin",
+    division: division?.id
+  });
+  const groupStage = groupStageList?.[0];
+
+  const groupCount = groupStage?.settings.groupCount;
+  const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
+  const bracketSize = groupCount * teamsBreakingPerGroup;
+
+  const { data: standings, status: standingsStatus } = useStandings(groupStage?.id);
+
+  const standingParticipants = standings?.map(group => group.map(ranking => participants?.find(p => ranking.id === p.id)));
+  const breaking = standingParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
+  const seeding = breaking?.flat();
+
+  const bracketsRef = useMockBracketsViewer(seeding, bracketSize);
 
   const handleSliderChange = async (_e, value) => {
     setTeamsBreakingPerGroup(value);
   }
 
-  const saveBracket = useMutation({
-    mutationFn: async () => {
-      await axios.post(`/api/tournaments/${tournament.id}/stages`, {
-        name: "Bracket",
-        tournamentId: tournament.id,
-        type: "single_elimination",
-        seeding,
-        settings: {
-          size: helpers.getNearestPowerOfTwo(bracketSize),
-          seedOrdering: ["inner_outer"],
-          balanceByes: true,
-        }
-      });
-    },
-  });
+  const createBracket = useCreateStage();
 
-  const bracketsRef = useRef(null);
+  const handleSaveBracket = () => {
+    createBracket.mutate({
+      name: division.name,
+      tournamentId: division.id,
+      type: "single_elimination",
+      seeding,
+      settings: {
+        size: helpers.getNearestPowerOfTwo(bracketSize),
+        seedOrdering: ["inner_outer"],
+        balanceByes: true,
+      }
+    })
+  }
 
-  if (participantsStatus !== "success") return;
+  const { data: brackets } = useStages(tournament?.id, {
+    type: "single_elimination",
+    division: division?.id
+  })
+  const bracket = brackets?.[0];
+
+  if (participantsStatus !== "success" || stageStatus !== "success") return <>Loading</>;
 
   return (
-    <>
-      <div>
-        <Typography>Teams breaking from each group</Typography>
-        <Slider
-          value={teamsBreakingPerGroup}
-          onChange={handleSliderChange}
-          min={2}
-          max={Math.ceil(participants.length / groupCount)}
-          step={1}
-          marks
-          valueLabelDisplay="on"
-        ></Slider>
-      </div>
+    <DivisionPanel>
 
-      <div
-        ref={bracketsRef}
-        className="brackets-viewer"
-        id="mock-bracket"
-      ></div>
-      <Button type="submit" onClick={() => saveBracket.mutate()}>
-        Lock in
-      </ Button>
-      <Button onClick={prev}>Previous</Button>
-    </>
+      {bracket ? <>Bracket already exists</> :
+        <>
+          <div>
+            <Typography>Teams breaking from each group</Typography>
+            <Slider
+              value={teamsBreakingPerGroup}
+              onChange={handleSliderChange}
+              min={1}
+              max={Math.ceil(participants.length / groupCount)}
+              step={1}
+              marks
+              valueLabelDisplay="on"
+            ></Slider>
+          </div>
+
+          <div
+            ref={bracketsRef}
+            className="brackets-viewer"
+            id="mock-bracket"
+          ></div>
+          <Button type="submit" onClick={handleSaveBracket}>
+            Lock in
+          </ Button>
+        </>
+      }
+    </DivisionPanel>
   );
 }
 

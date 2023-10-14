@@ -14,9 +14,9 @@ import axios from "axios";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link, useSearchParams } from "react-router-dom";
-import { useTeam, useTeamById } from "../hooks.ts";
-import { useUpdateUser, useUser, userKeys } from "../../user/hooks.ts";
-import LeaveTeamDialog from "../LeaveTeamDialog.tsx";
+import { useTeam, useTeamById } from "./hooks.ts";
+import { useUpdateUser, useUser, userKeys } from "../user/hooks.ts";
+import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();

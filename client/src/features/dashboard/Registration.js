@@ -22,7 +22,7 @@ import {
   useDivisions,
   useTournament,
   useUpdateTournament,
-} from "../tournament/hooks.ts";
+} from "../viewer/hooks.ts";
 import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import { nextTick } from "process";

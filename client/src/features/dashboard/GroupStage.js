@@ -13,12 +13,12 @@ import { Popper } from "@mui/base";
 import { EventClickArg } from "@fullcalendar/core";
 import DateBlocker from "../inputs/DateBlocker.tsx";
 import dayjs, { Dayjs } from "dayjs";
-import { useMatchScheduler, useMatches } from "../tournament/matches/hooks.ts";
+import { useMatchScheduler, useMatches } from "../match/hooks.ts";
 import DrawPage from "./Draw.tsx";
 import GroupStageStructure from "./GroupStageStructure.tsx";
 import Scheduler from "./Scheduler.tsx";
-import { useDivisions, useTournament } from "../tournament/hooks.ts";
-import { useStageData } from "../tournament/groupStage/GroupStage.tsx";
+import { useDivisions, useTournament } from "../viewer/hooks.ts";
+import { useStageData } from "../stage/hooks.ts";
 import NumberCard from "./NumberCard.tsx";
 import { useContext, useState } from "react";
 import { Status } from "brackets-model";
@@ -42,7 +42,7 @@ function GroupStage({ next, prev }) {
   const matchesByStage = groupBy(allMatches, "stage_id");
   const matches = matchesByStage[groupStage?.id];
 
-  const scheduledMatches = allMatches?.filter((m) => !!m.start);
+  const scheduledMatches = matches?.filter((m) => !!m.start);
   const completedMatches = matches?.filter((m) => m.status >= Status.Completed);
 
   const [incompleteMatchesAlert, setIncompleteMatchesAlert] = useState(false);

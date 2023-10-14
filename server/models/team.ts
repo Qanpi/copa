@@ -8,24 +8,18 @@ const TeamSchema = new mongoose.Schema(
       type: String,
       unique: true,
       index: true,
-      //do i even need the below? how would an attack vector look?
+      //TODO: do i even need the below? how would an attack vector look?
       set: encodeURIComponent,
       get: decodeURIComponent,
     },
     about: {
       type: String,
     },
-    //FIXME: different name on frontend
     instagramUrl: String,
     phoneNumber: String,
-    //one to many, store on the many side
+
     manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id },
-    // players: [
-    //   {
-    //     type: mongoose.SchemaTypes.ObjectId,
-    //     ref: collections.users.id,
-    //   },
-    // ],
+
     invite: {
       token: {
         type: String,
@@ -37,12 +31,6 @@ const TeamSchema = new mongoose.Schema(
       },
     },
 
-    matches: [
-      {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: collections.matches.id,
-      },
-    ],
     goals: {
       scored: { type: Number },
       conceded: { type: Number },
@@ -50,7 +38,7 @@ const TeamSchema = new mongoose.Schema(
   },
   {
     toJSON: { virtuals: true, getters: true },
-    toObject: { virtuals: true },
+    toObject: { virtuals: true, getters: true },
     methods: {
       async passManagement() {
         //TODO: test this
@@ -73,12 +61,7 @@ TeamSchema.pre("save", async function () {
   }
 });
 
-TeamSchema.virtual("members", {
-  ref: collections.users.id,
-  localField: "_id",
-  foreignField: "team",
-});
-
-export type TTeam = InferSchemaType<typeof TeamSchema>;
+type TTeamVirtuals = { id: string };
+export type TTeam = InferSchemaType<typeof TeamSchema> & TTeamVirtuals;
 
 export default mongoose.model(collections.teams.id, TeamSchema);

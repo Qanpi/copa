@@ -3,9 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
-import { useParticipants } from "../../participant/hooks";
-import { tournamentKeys, useTournament } from "../hooks";
-import { QueryKeyFactory } from "../../../types";
+import { useParticipants } from "../participant/hooks";
+import { tournamentKeys, useTournament } from "../viewer/hooks";
+import { QueryKeyFactory } from "../types";
 
 export const useUpdateMatch = () => {
   //TODO: think abt this: currently only works with current tournament

@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import NewTournamentPage from "./NewTournament.js";
 import RegistrationStage from "./Registration.js";
-import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
+import { useTournament, useUpdateTournament } from "../viewer/hooks.ts";
 import GroupStage from "./GroupStage.js";
 import BracketStructure from "./BracketStructure.tsx";
 import Bracket from "./Bracket.tsx";
@@ -19,7 +19,7 @@ function DashboardPage() {
 
   if (!tournament?.id) return <CreateTournamentPage></CreateTournamentPage>;
 
-  const currentSection = () => {
+  const currentSection = (): any => {
     switch (tournament.state) {
       case "Registration":
         return (
@@ -28,12 +28,12 @@ function DashboardPage() {
             prev={prevSection}
           ></RegistrationStage>
         );
-      case "Group stage":
-        return <GroupStage next={nextSection} prev={prevSection}></GroupStage>;
+      case "Groups":
+        return <GroupStage next={nextSection} prev={prevSection} ></GroupStage>;
       case "Bracket":
-        return <Bracket next={nextSection} prev={prevSection}></Bracket>;
-      case "Complete": 
-          return <>COngrats! You've completed {tournament.name}</>
+        return <Bracket next={nextSection} prev={prevSection} ></Bracket>;
+      case "Complete":
+        return <>COngrats! You've completed {tournament.name}</>
       default:
         return <Typography>Unknown tournament state.</Typography>;
     }
@@ -53,12 +53,14 @@ function DashboardPage() {
 
   return (
     <>
-      <Stepper activeStep={stateId} orientation="vertical">
-        {tournament.states.map((s, i) => (
-          <Step key={i}>
-            <StepLabel>{s}</StepLabel>
-          </Step>
-        ))}
+      <Stepper activeStep={stateId} orientation="vertical" >
+        {
+          tournament.states.map((s, i) => (
+            <Step key={i} >
+              <StepLabel>{s} </StepLabel>
+            </Step>
+          ))
+        }
       </Stepper>
 
       {currentSection()}

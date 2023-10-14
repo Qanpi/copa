@@ -1,17 +1,16 @@
-import { useParams } from "react-router";
-import { useMatch, useMatches, useUpdateMatch } from "../hooks";
-import { useParticipant } from "../../../participant/hooks";
-import { useTimer } from "react-timer-hook";
-import dayjs from "dayjs";
 import { Button } from "@mui/base";
-import { useCallback, useContext, useEffect } from "react";
-import { NumberInput } from "@mui/base/Unstable_NumberInput/NumberInput";
-import { Formik, Form, useFormikContext } from "formik";
-import ScoreCounter from "../../../inputs/ScoreCounter";
-import { AdminContext } from "../../../..";
+import dayjs from "dayjs";
+import { Form, Formik, useFormikContext } from "formik";
+import { useContext, useEffect } from "react";
+import { useParams } from "react-router";
+import { useTimer } from "react-timer-hook";
+import { RoleContext } from "../..";
+import ScoreCounter from "../inputs/ScoreCounter";
+import { useParticipant } from "../participant/hooks";
+import { useMatch, useUpdateMatch } from "./hooks";
+import { useUser } from "../user/hooks";
 
 const MatchTimer = ({ duration }: { duration: number }) => {
-  console.log(duration)
   const getExpiryTimestamp = () => dayjs().add(duration, "seconds").toDate();
 
   const { minutes, seconds, start, pause, resume, restart, isRunning, totalSeconds } = useTimer({
@@ -32,7 +31,8 @@ const MatchTimer = ({ duration }: { duration: number }) => {
 
   }, [seconds])
 
-  const isAdmin = useContext(AdminContext);
+  const {data: user} = useUser("me");
+  const isAdmin = user?.role === "admin";
 
   const handleReset = () => {
     setFieldValue("elapsed", 0);
@@ -62,12 +62,13 @@ function MatchPage() {
   const { data: match, status } = useMatch(id);
 
   //FIXME: auto-complete match if one of the articpns is BYE
-  const { data: opp1 } = useParticipant(match?.opponent1?.id);
-  const { data: opp2 } = useParticipant(match?.opponent2?.id);
+  const { data: participant1 } = useParticipant(match?.opponent1?.id);
+  const { data: participant2 } = useParticipant(match?.opponent2?.id);
 
   const updateMatch = useUpdateMatch();
 
-  const isAdmin = useContext(AdminContext);
+  const {data: user} = useUser("me");
+  const isAdmin = user?.role === "admin";
 
   if (status === "loading") return <div>Loading...</div>;
 
@@ -79,20 +80,20 @@ function MatchPage() {
         ...match,
         opponent1: {
           ...match.opponent1,
-          score: 0
+          score: match.opponent1.score || 0
         },
         opponent2: {
           ...match.opponent2,
-          score: 0
+          score: match.opponent2.score || 0
         }
       }}
       onSubmit={(values) => updateMatch.mutate(values)}
     >
       {({ values, submitForm, setFieldValue }) => (
         <Form>
-          <div>{opp1?.name}</div>
+          <div>{participant1?.name}</div>
           <ScoreCounter name="opponent1.score"></ScoreCounter>
-          <div>{opp2?.name}</div>
+          <div>{participant2?.name}</div>
           <ScoreCounter name="opponent2.score"></ScoreCounter>
           {values.elapsed}
           {isAdmin ? <Button onClick={

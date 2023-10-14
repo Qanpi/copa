@@ -1,18 +1,19 @@
 import {
-    Alert,
-    AlertTitle,
-    Button,
-    Typography
+  Alert,
+  AlertTitle,
+  Button,
+  Typography
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { useDivisions, useTournament } from "../tournament/hooks.ts";
-import { useMatches } from "../tournament/matches/hooks.ts";
+import { useDivisions, useTournament } from "../viewer/hooks.ts";
+import { useMatches } from "../match/hooks.ts";
 import NumberCard from "./NumberCard.tsx";
 import { Status } from "brackets-model";
 import { groupBy } from "lodash";
 import { DivisionContext } from "../../index.tsx";
 import { useStages } from "../stage/hooks.ts";
+import DivisionPanel from "./DivisionPanel.tsx";
 
 function Bracket({ next, prev }) {
   const { data: tournament } = useTournament("current");
@@ -91,18 +92,21 @@ function Bracket({ next, prev }) {
           </Typography>
         </Alert>
       ) : null}
-      {!bracket ? (
-        <Link to="/tournament/structure">Arrange bracket</Link>
-      ) : (
-        <>
-          <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
-            matches scheduled
-          </NumberCard>
-          <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
-            matches complete
-          </NumberCard>
-        </>
-      )}
+      <DivisionPanel>
+
+        {!bracket ? (
+          <Link to="/tournament/structure">Arrange bracket</Link>
+        ) : (
+          <>
+            <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
+              matches scheduled
+            </NumberCard>
+            <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
+              matches complete
+            </NumberCard>
+          </>
+        )}
+      </DivisionPanel>
 
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
