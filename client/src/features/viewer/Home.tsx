@@ -35,51 +35,52 @@ function HomePage() {
   const { data: tournament } = useTournament("current");
   if (!tournament) return <>Loadng...</>
 
-  if (tournament.state === "Complete")
-    return <WinnersTribute></WinnersTribute>
+  switch (tournament.state) {
+    case "Complete":
+      return <WinnersTribute></WinnersTribute>
+    case "Registration":
+      if (!tournament.registration?.from)
+        return <>Registration will be starting soon.</>
 
-  if (!tournament.registration?.from)
-    return <>Registration will be starting soon.</>
+      const now = new Date();
+      const from = new Date(tournament.registration.from);
+      const to = new Date(tournament.registration.to);
 
-  const now = new Date();
-  const from = new Date(tournament.registration.from);
-  const to = new Date(tournament.registration.to);
+      if (now <= from)
+        return (
+          <div>
+            Registration will begin {dayjs().to(tournament.registration.from)}.
+          </div>
+        )
+      else if (now <= to)
+        return (
+          <>
+            <div>
+              Registration closes {dayjs().to(tournament.registration.to)}.
+            </div>
+            <Link to="/tournament/register">Register</Link>
+          </>
+        );
+      else return <>Registration ended {dayjs().to(tournament.registration.to)} THe tournament will begin soon.</>
 
-  if (now <= from)
-    return (
-      <div>
-        Registration will begin {dayjs().to(tournament.registration.from)}.
-      </div>
-    );
+    default:
+      return (
+        <>
+          <div className="dashboard">
+            <MatchesCalendar></MatchesCalendar>
+            <Box sx={{
+              width: "700px",
+              height: "700px",
+              background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))"
+            }}></Box>
+          </div>
 
-  if (now <= to)
-    return (
-      <>
-        <div>
-          Registration closes {dayjs().to(tournament.registration.to)}.
-        </div>
-        <Link to="/tournament/register">Register</Link>
-      </>
-    );
-
-  return (
-    <>
-      <div className="dashboard">
-        <MatchesCalendar></MatchesCalendar>
-        <Box sx={{
-          width: "700px",
-          height: "700px",
-          background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))"
-        }}></Box>
-      </div>
-
-      <div className="group-stage" id="test">
-        <div className="brackets-viewer"></div>
-      </div>
-    </>
-  );
-
-
+          <div className="group-stage" id="test">
+            <div className="brackets-viewer"></div>
+          </div>
+        </>
+      );
+  }
 }
 
 export default HomePage;
