@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Alert,
   AlertTitle,
@@ -53,12 +54,10 @@ function TeamPage() {
   const updateUser = useUpdateUser();
 
   const handleLeaveTeam = () => {
-    updateUser.mutate(
-      {
-        id: user.id,
-        team: null,
-      }
-    );
+    updateUser.mutate({
+      id: user.id,
+      team: null,
+    });
   };
 
   if (teamStatus !== "success") {
@@ -72,6 +71,7 @@ function TeamPage() {
     <>
       <h1>{team.name}</h1>
       {isManager ? <Button onClick={() => fetchInvite()}>Invite</Button> : null}
+      {isManager ? <Link to={`/tournament/register`}>Register</Link> : null}
       {inviteStatus === "success" ? (
         <Alert>
           <AlertTitle>Generated invite link!</AlertTitle>
