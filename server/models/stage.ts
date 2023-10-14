@@ -6,7 +6,7 @@ import Metadata from "./metadata.js";
 const StageSchema = new mongoose.Schema({
     tournament: SchemaTypes.ObjectId
 }, {
-    _id: true
+    id: true
 })
 
 //TODO: test fo robustness

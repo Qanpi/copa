@@ -3,44 +3,35 @@ import Match from "../models/match.js";
 import { Request, Response } from "express";
 
 import { bracketsManager } from "../services/bracketsManager.js";
+import Stage from "../models/stage.js";
 
 export const getMany = async (req: Request, res: Response) => {
   //FIXME: refactor this better
-  const query: any = {};
+  const { scheduled, start, state, ...rest } = req.query;
 
-  if (req.query.scheduled === "true") {
-    query["start"] = {
-      $exists: true,
-    };
-  } else if (req.query.scheduled === "false") {
-    query["start"] = {
-      $exists: false,
-    };
-  } else {
-    const endFilter = req.query.end
-      ? {
-        start: {
-          $lt: req.query.end,
-        },
-      }
-      : {};
-
-    const startFilter = req.query.start
-      ? {
-        start: {
-          $gte: req.query.start,
-        },
-      }
-      : {};
-
-    query["$and"] = [startFilter, endFilter];
+  const filter: any = {
+    ...rest,
+    tournament: req.params.id
   }
 
-  const filter = {
-    ...req.query, scheduled: undefined,
-    tournament: req.params.id,
-    ...query
-  };
+  if (scheduled) {
+    filter["start"] = {
+      $exists: scheduled === "true",
+    }
+  } else if (start) {
+    filter["start"] = {
+      $lt: req.query.end,
+    }
+  }
+
+  if (state) {
+    const stages = await Stage.find({
+      type: state === "Groups" ? "round_robin" : "single_elimination",
+    });
+    filter["stage_id"] = {
+      $in: stages.map(s => s.id),
+    }
+  }
 
   const matches = await Match.find(filter);
   res.send(matches);
