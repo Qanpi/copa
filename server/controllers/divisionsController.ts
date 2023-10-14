@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import Division from "../models/division.ts";
+import Division from "../models/division.js";
 import Tournament from "../models/tournament.js";
 
 export const createOne = expressAsyncHandler(async (req, res) => {

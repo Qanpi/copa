@@ -1,4 +1,4 @@
-import Round from "../models/round.ts";
+import Round from "../models/round.js";
 import expressAsyncHandler from "express-async-handler";
 
 export const getMany = expressAsyncHandler(async (req, res) => {

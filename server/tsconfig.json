@@ -1,19 +1,29 @@
 {
-  "extends": "@tsconfig/create-react-app/tsconfig.json",
   "ts-node": {
     "esm": true,
     "compilerOptions": {
       "allowSyntheticDefaultImports": true,
-      "paths": {"@frontend/*": ["../client/*"]},
-      "allowImportingTsExtensions": true,
+      "paths": {
+        "@frontend/*": [
+          "../client/*"
+        ]
+      },
       "esModuleInterop": true,
     }
   },
   "compilerOptions": {
+    "outDir": "dist",
+    "module": "NodeNext",
     "allowSyntheticDefaultImports": true,
     "target": "ESNext",
-    "paths": {"@frontend/*": ["../client/*"]},
+    "paths": {
+      "@frontend/*": [
+        "../client/*"
+      ]
+    },
+    "skipDefaultLibCheck": true,
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
-    "allowImportingTsExtensions": true,
   },
+  "include": ["bin/www.ts"]
 }

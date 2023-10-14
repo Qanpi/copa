@@ -1,4 +1,4 @@
-import Group from "../models/group.ts";
+import Group from "../models/group.js";
 import expressAsyncHandler from "express-async-handler";
 
 export const getMany = expressAsyncHandler(async (req, res) => {
