@@ -1,15 +1,10 @@
-import "./userpanel.css";
-import axios from "axios";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { useContext } from "react";
-import { Link } from "react-router-dom";
-import { useTeam } from "../../team/hooks.ts";
-import { useUser } from "../hooks.ts";
-import { userKeys } from "../hooks.ts";
-import SignInButton from "../SignInPage.tsx";
-import { Button , Typography } from "@mui/material";
-import GoogleIcon from "../googleIcon.tsx";
 import { Google } from "@mui/icons-material";
+import { Button, Typography } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { useUser, userKeys } from "../hooks.ts";
+import "./userpanel.css";
 
 function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");
