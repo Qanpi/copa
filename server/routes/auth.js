@@ -61,11 +61,11 @@ router.get("/oauth2/redirect/google", (req, res, next) => {
   })(req, res, next);
 });
 
-router.post("/logout", (req, res, next) => {
+router.delete("/logout", (req, res, next) => {
   req.logOut((err) => {
     if (err) return next(err);
     req.session = null;
-    res.clearCookie("session").redirect(`/`);
+    res.clearCookie("session").status(204).send({});
   });
 });
 

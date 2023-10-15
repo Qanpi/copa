@@ -5,17 +5,18 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { useTeam } from "../../team/hooks.ts";
 import { useUser } from "../hooks.ts";
+import { userKeys } from "../hooks.ts";
 
 function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");
   const queryClient = useQueryClient();
 
   const logout = useMutation({
-    mutationFn: () => {
-      return axios.post("/logout");
+    mutationFn: async () => {
+      return await axios.delete("/logout");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.invalidateQueries(userKeys.id("me"));
     },
   });
 
