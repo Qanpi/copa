@@ -37,7 +37,10 @@ const theme = createTheme({
     mode: "dark",
     background: {
       default: "#242753"
-    }
+    },
+    // primary: {
+    //   main: "#4398B8"
+    // }
   },
   components: {
     //TODO: custom styled component

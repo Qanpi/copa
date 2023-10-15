@@ -4,7 +4,8 @@ import {
   Stack,
   Container,
   ToggleButton,
-  ToggleButtonGroup
+  ToggleButtonGroup,
+  useTheme
 } from "@mui/material";
 import {
   useDivisions,
@@ -25,8 +26,10 @@ function DivisionPanel({ children }) {
     dispatch(id);
   };
 
+  const theme = useTheme();
+
   return (
-    <Box sx={{padding: 2, border: "solid 1px red", borderRadius: 2}}>
+    <Box sx={{padding: 2, border: `1px solid ${theme.palette.primary.main}`, borderRadius: 2}}>
 
       <Stack spacing={2}>
 

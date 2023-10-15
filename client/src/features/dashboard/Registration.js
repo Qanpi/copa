@@ -139,19 +139,7 @@ function RegistrationStage({ next, prev }) {
           <RegistrationPane></RegistrationPane>
         </Stack>
 
-        <Button
-          onClick={async () => {
-            // //workaround because formik is dumb
-            // //see: https://github.com/jaredpalmer/formik/issues/1580
-            // await submitForm();
-            // const errors = await validateForm();
-
-            // if (isEmpty(errors))
-            handleClickNext();
-          }}
-        >
-          Next
-        </Button>
+        <Button onClick={handleClickNext}>Next</Button>
       </Container>
     </>
   );
@@ -188,27 +176,30 @@ function RegistrationPane() {
         updateTournament.mutate(values);
       }}
     >
-      {({ values, setFieldValue, submitForm, validateForm, isValid }) => (
+      {({ values, setFieldValue, submitForm, validateForm, isValid, touched }) => (
         <Form>
-          <InputLabel sx={{mb: 1}}>Open registration</InputLabel>
+          <InputLabel sx={{ mb: 1 }}>Open registration</InputLabel>
           <Stack direction="row" spacing={2}>
             <MyDatePicker
               label="from 00:00 on"
               name="registration.from"
-              disablePast
+              minDate={dayjs()}
+              onChange={(value) => {
+                setFieldValue("registration.from", dayjs(value).startOf("day"));
+                submitForm()
+              }}
             />
             <MyDatePicker
               disablePast
               label="to 23:59 on"
               name="registration.to"
               minDate={values.registration.from}
-              onChange={(value) =>
-                setFieldValue("registration.to", dayjs(value).endOf("day"))
-              }
+              onChange={async (value) => {
+                setFieldValue("registration.to", dayjs(value).endOf("day"));
+                submitForm() 
+              }}
             />
           </Stack>
-
-          <Button type="submit">Confirm</Button>
         </Form>
       )}
     </Formik>
