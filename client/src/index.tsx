@@ -22,7 +22,7 @@ import NewTeamPage from "./features/team/CreateTeam.js";
 import JoinTeamPage from "./features/team/JoinTeam.js";
 import NoTeamPage from "./features/team/NoTeamPage.tsx";
 import TeamPage from "./features/team/Team.js";
-import SignInPage from "./features/user/SignInPage.tsx";
+import SignInButtton from "./features/user/SignInPage.tsx";
 import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
 import HomePage from "./features/viewer/Home.tsx";
@@ -92,7 +92,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage></HomePage>}></Route>
 
-                <Route path="/login" element={<SignInPage></SignInPage>}></Route>
+                <Route path="/login" element={<SignInButtton></SignInButtton>}></Route>
 
                 <Route path="/tournament">
                   <Route

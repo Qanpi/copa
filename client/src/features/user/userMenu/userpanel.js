@@ -6,10 +6,18 @@ import { Link } from "react-router-dom";
 import { useTeam } from "../../team/hooks.ts";
 import { useUser } from "../hooks.ts";
 import { userKeys } from "../hooks.ts";
+import SignInButton from "../SignInPage.tsx";
+import { Button , Typography } from "@mui/material";
+import GoogleIcon from "../googleIcon.tsx";
+import { Google } from "@mui/icons-material";
 
 function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");
   const queryClient = useQueryClient();
+
+  const handleSignIn = () => {
+    window.open(`http://localhost:3001/login/federated/google`, "_self");
+  };
 
   const logout = useMutation({
     mutationFn: async () => {
@@ -38,7 +46,14 @@ function UserPanel() {
       </div>
     </div>
   ) : (
-    <Link to={`/login`}>Sign in</Link>
+    <Button
+      onClick={handleSignIn}
+      variant="outlined"
+      sx={{ padding: 0, paddingRight: 2, paddingLeft: 2, height: "70%"  }}
+      startIcon={<Google></Google>}
+    >
+      <Typography variant="button">Sign in with Google</Typography>
+    </Button>
   );
 }
 

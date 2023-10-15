@@ -1,16 +1,11 @@
-import { Button } from "@mui/base";
+import GoogleLogo from "./googleIcon.tsx"
+import { Button, Typography } from "@mui/material";
 
-function SignInPage() {
-    const handleSignIn = () => {
-        //axios.get("login/federated/google")
-        window.open(`http://localhost:3001/login/federated/google`, "_self");
-    }
+function SignInButtton() {
 
     return (
-        <>
-            <Button onClick={handleSignIn}>Login in with Google</Button>
-        </>
+        <></>
     )
 }
 
-export default SignInPage;
+export default SignInButtton;
