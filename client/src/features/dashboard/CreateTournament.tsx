@@ -1,5 +1,4 @@
-import { Button } from "@mui/base";
-import { Typography } from "@mui/material";
+import { Button, Container, Typography } from "@mui/material";
 import { Formik, Form } from "formik";
 import MyAutocomplete from "../inputs/MyAutocomplete";
 import MyNumberSlider from "../inputs/myNumberSlider";
@@ -7,11 +6,12 @@ import MyTextField from "../inputs/mytextfield";
 import * as Yup from "yup"
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { tournamentKeys, useCreateTournament } from "../viewer/hooks";
+import { tournamentKeys, useCreateTournament, useTournament } from "../viewer/hooks";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 function CreateTournamentPage() {
-    const queryClient = useQueryClient();
-    const createTournament = useCreateTournament(); 
+    const tournament = useTournament("current");
+    const createTournament = useCreateTournament();
 
     return (
         <Formik
@@ -24,7 +24,7 @@ function CreateTournamentPage() {
             }}
             validationSchema={Yup.object({
                 organizer: Yup.object({
-                    name: Yup.string().required(),
+                    name: Yup.string().required(""),
                     phoneNumber: Yup.string().notRequired(),
                 }),
                 divisions: Yup.array().min(1).required().of(Yup.string()),
@@ -39,23 +39,39 @@ function CreateTournamentPage() {
             }}
         >
             <Form>
-                <Typography variant="h3">KICKSTART COPA</Typography>
+                <Container sx={{ pt: 15 }} maxWidth="xs">
 
-                <MyTextField
-                    type="text"
-                    name="organizer.name"
-                    label="Organizer's name"
-                ></MyTextField>
-                <MyTextField
-                    type="tel"
-                    name="organizer.phoneNumber"
-                    label="Phone number"
-                ></MyTextField>
-                <MyAutocomplete name="divisions" />
+                    <Grid2 container spacing={2} alignItems={"center"} justifyContent="center">
+                        <Grid2 xs={12} justifyContent="center" alignItems="center" display="flex">
+                            <Typography variant="h3" fontWeight={600}>KICKSTART COPA{tournament.idx ? tournament.idx + 1 : ""} </Typography>
+                        </Grid2>
 
-                <Button type="submit">Submit</Button>
+                        <Grid2 xs={6}>
+                            <MyTextField
+                                type="text"
+                                name="organizer.name"
+                                label="Organizer's name"
+                            ></MyTextField>
+                        </Grid2>
+                        <Grid2 xs={6}>
+
+                            <MyTextField
+                                type="tel"
+                                name="organizer.phoneNumber"
+                                label="Phone number"
+                            ></MyTextField>
+                        </Grid2>
+                        <Grid2 xs={12}>
+                            <MyAutocomplete name="divisions" />
+                        </Grid2>
+                        <Grid2 xs={12} display={"flex"} justifyContent={"center"} gap={6}>
+                            <Button variant="outlined">Go back</Button>
+                            <Button type="submit" variant="contained">Create</Button>
+                        </Grid2>
+                    </Grid2>
+                </Container>
             </Form>
-        </Formik>
+        </Formik >
     )
 }
 

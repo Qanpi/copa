@@ -29,18 +29,23 @@ import HomePage from "./features/viewer/Home.tsx";
 import Header from "./features/viewer/header/header";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
-import { ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { TDivision } from "@backend/models/division.ts";
 
 const theme = createTheme({
-
+  palette: {
+    mode: "dark",
+    background: {
+      default: "#242753"
+    }
+  }
 });
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision>(null);
 export const DivisionDispatchContext = React.createContext<(prevId: number, newId: number) => void>(null);
 
-function divisionReducer(prevId:number, newId: number) {
+function divisionReducer(prevId: number, newId: number) {
   return newId;
 }
 
@@ -55,6 +60,7 @@ function App() {
   return (
     <Router>
       <ThemeProvider theme={theme}>
+        <CssBaseline></CssBaseline>
         <DivisionContext.Provider value={divisions?.[selected]}>
           <DivisionDispatchContext.Provider value={dispatch}>
 

@@ -11,7 +11,7 @@ const MyTextField = ({...props }) => {
 
   return (
     <TextField
-      error={meta.error && meta.touched}
+      error={meta.error !== undefined && meta.touched}
       helperText={meta.touched && meta.error}
       {...field}
       {...props}
