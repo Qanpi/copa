@@ -5,11 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/bin/www.js",
-    "build": "tsc && cd ../client && npm install && npm run build",
+    "start": "node server/bin/www.js",
+    "build": "tsc -p server/tsconfig.json",
+    "build:azure": "cd client && npm install && npm run build",
     "test": "",
     "dev-db": "start \"\" \"C:\\Program Files\\Azure Cosmos DB Emulator\\Microsoft.Azure.Cosmos.Emulator.exe\" /EnableMongoDbEndpoint=4.0",
-    "dev-server": "nodemon bin/www.ts --config nodemon.json",
+    "dev-server": "nodemon bin/www.ts --config server/nodemon.json",
     "dev-client": "cd ../client && npm start",
     "dev": "npm-run-all --parallel dev-server dev-client",
     "newman": "newman run https://api.postman.com/collections/29609830-1607a99b-864d-4e2e-b779-31781f41738b?access_key=PMAT-01HBNF0GYSR4VMF5V8W0CZ5EE3"

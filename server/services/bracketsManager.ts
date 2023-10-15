@@ -3,9 +3,9 @@ import MongooseForBrackets from "brackets-mongo-db";
 import Match from "../models/match.js";
 import MatchGame from "../models/matchGame.js";
 import Participant from "../models/participant.js";
-import Stage from "../models/stage.ts";
-import Round from "../models/round.ts";
-import Group from "../models/group.ts";
+import Stage from "../models/stage.js";
+import Round from "../models/round.js";
+import Group from "../models/group.js";
 
 const storage = new MongooseForBrackets(
   Participant,
