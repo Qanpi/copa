@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node bin/www.js",
     "build": "tsc",
-    "build:azure": "cd client && npm install && npm run build",
+    "build:dev": "tsc --noEmit",
     "test": "",
     "dev-db": "start \"\" \"C:\\Program Files\\Azure Cosmos DB Emulator\\Microsoft.Azure.Cosmos.Emulator.exe\" /EnableMongoDbEndpoint=4.0",
     "dev-server": "nodemon server/bin/www.ts --config server/nodemon.json",

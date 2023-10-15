@@ -11,7 +11,7 @@ connectMongoose(); //FIXME: await
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const reactPath = path.resolve(__dirname, "../client/build");
+const reactPath = path.resolve(__dirname, "build");
 
 import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
