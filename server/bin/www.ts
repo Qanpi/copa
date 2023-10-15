@@ -8,8 +8,7 @@ import { config } from "dotenv";
 config();
 
 import app from "../app.js"
-import _debugger from "debug"
-const debug = _debugger("server")
+import { debugHTTP } from "../services/debuggers.js";
 import http from "http"
 
 /**
@@ -90,5 +89,5 @@ function onListening() {
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr?.port;
-  debug('Listening on ' + bind);
+  debugHTTP('Listening on ' + bind);
 }

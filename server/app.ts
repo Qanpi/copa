@@ -5,8 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { fileURLToPath } from "url";
 import path from "path";
-import _debugger from "debug"
-const debug = _debugger("app:")
+
 connectMongoose(); //FIXME: await 
 
 const __filename = fileURLToPath(import.meta.url);

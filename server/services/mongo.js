@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
-import _debugger from "debug";
-const debug = _debugger("mongodb:");
+import { debugDB } from "./debuggers.js";
 
 export const connectMongoose = async () => {
   return await mongoose
     .connect(process.env["MONGODB_CONNECTION_STRING"], {
-      ignoreUndefined: true
+      ignoreUndefined: true,
     })
-    .then(() => debug("Connection to CosmosDB succesful."))
-    .catch(console.error);
+    .then(() => debugDB("Connected to Azure CosmosDB instance."))
+    .catch((err) => debugDB(err));
 };
 
 export const disconnectMongoose = async () => {
+  debugDB("Disconnecting from Azure CosmosDB instance...");
   return await mongoose.disconnect();
-}
+};

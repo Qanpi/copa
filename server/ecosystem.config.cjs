@@ -2,7 +2,7 @@ module.exports = {
     "apps": [
         {
             "name": "copa",
-            "script": "server/bin/www.js",
+            "script": "bin/www.js",
             "env_production": {
                 "NODE_ENV": "production"
             }

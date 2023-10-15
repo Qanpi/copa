@@ -26,8 +26,6 @@ export const getOne = expressAsyncHandler(async (req, res) => {
 export const getCurrent = expressAsyncHandler(async (req, res) => {
   //FIXME:
   const result = await Tournament.findOne({
-    //TODO: verify that only one not over is possible
-    stage: { $ne: "Finished" },
   });
   res.send(result || {});
 });
