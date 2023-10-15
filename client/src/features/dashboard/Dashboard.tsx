@@ -1,4 +1,7 @@
 import {
+  Box,
+  Container,
+  Stack,
   Step,
   StepButton,
   StepLabel,
@@ -52,19 +55,24 @@ function DashboardPage() {
   };
 
   return (
-    <>
-      <Stepper activeStep={stateId} orientation="vertical" >
-        {
-          tournament.states.map((s, i) => (
-            <Step key={i} >
-              <StepLabel>{s} </StepLabel>
-            </Step>
-          ))
-        }
-      </Stepper>
+    <Container sx={{ pt: 15 }}>
+      <Stack direction="row">
 
-      {currentSection()}
-    </>
+        <Box>
+          <Stepper activeStep={stateId} orientation="vertical" >
+            {
+              tournament.states.map((s, i) => (
+                <Step key={i} >
+                  <StepLabel>{s} </StepLabel>
+                </Step>
+              ))
+            }
+          </Stepper>
+        </Box>
+
+        {currentSection()}
+      </Stack>
+    </Container>
   );
 }
 

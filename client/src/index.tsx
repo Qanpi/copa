@@ -38,6 +38,17 @@ const theme = createTheme({
     background: {
       default: "#242753"
     }
+  },
+  components: {
+    //TODO: custom styled component
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          background: "#FDFDFD",
+          color: "black"
+        },
+      },
+    }
   }
 });
 

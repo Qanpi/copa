@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  Container,
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -77,7 +78,7 @@ function GroupStage({ next, prev }) {
   };
 
   return (
-    <>
+    <Container maxWidth="lg">
       {noGroupStageAlert ? (
         <Alert severity="error">
           <AlertTitle>
@@ -123,7 +124,7 @@ function GroupStage({ next, prev }) {
 
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
-    </>
+    </Container>
   );
 }
 

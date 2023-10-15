@@ -1,4 +1,8 @@
 import {
+  Paper,
+  Box,
+  Stack,
+  Container,
   ToggleButton,
   ToggleButtonGroup
 } from "@mui/material";
@@ -9,7 +13,7 @@ import {
 import { useContext } from "react";
 import { DivisionContext, DivisionDispatchContext } from "../../index.tsx";
 
-function DivisionPanel({ children  }) {
+function DivisionPanel({ children }) {
   const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
 
@@ -22,20 +26,26 @@ function DivisionPanel({ children  }) {
   };
 
   return (
-    <>
-      <ToggleButtonGroup
-        exclusive
-        value={division?.name}
-        onChange={handleDivisionChange}
-      >
-        {divisions?.map((d) => (
-          <ToggleButton key={d.id} value={d.name}>
-            {d.name}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
-      {children}
-    </>
+    <Box sx={{padding: 2, border: "solid 1px red", borderRadius: 2}}>
+
+      <Stack spacing={2}>
+
+        <ToggleButtonGroup
+          exclusive
+          value={division?.name}
+          onChange={handleDivisionChange}
+          sx={{ height: "45px" }}
+        >
+          {divisions?.map((d) => (
+            <ToggleButton key={d.id} value={d.name}>
+              {d.name}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+
+        {children}
+      </Stack>
+    </Box>
   );
 }
 

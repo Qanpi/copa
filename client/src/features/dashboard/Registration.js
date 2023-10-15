@@ -1,4 +1,5 @@
 import {
+  Container,
   Alert,
   AlertTitle,
   Button,
@@ -11,6 +12,7 @@ import {
   DialogTitle,
   InputLabel,
   Typography,
+  Stack,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -115,38 +117,42 @@ function RegistrationStage({ next, prev }) {
         </DialogActions>
       </Dialog>
 
-      {notEnoughParticipants ? (
-        <Alert severity="error">
-          <AlertTitle>Error: Not enough participants</AlertTitle>
-          <Typography>
-            There must be at least 2 registered participant(s) in the '
-            {notEnoughParticipants.division}' division before proceeding to the
-            next stage.
-          </Typography>
-        </Alert>
-      ) : null}
+      <Container maxWidth="sm">
+        {notEnoughParticipants ? (
+          <Alert severity="error">
+            <AlertTitle>Error: Not enough participants</AlertTitle>
+            <Typography>
+              There must be at least 2 registered participant(s) in the '
+              {notEnoughParticipants.division}' division before proceeding to
+              the next stage.
+            </Typography>
+          </Alert>
+        ) : null}
 
-      <DivisionPanel>
-        <NumberCard number={participants?.length}>
-          team(s) registered
-        </NumberCard>
-      </DivisionPanel>
+        <Stack spacing={5}>
+          <DivisionPanel>
+            <NumberCard number={participants?.length}>
+              team(s) registered
+            </NumberCard>
+          </DivisionPanel>
 
-      <RegistrationPane></RegistrationPane>
+          <RegistrationPane></RegistrationPane>
+        </Stack>
 
-      <Button
-        onClick={async () => {
-          // //workaround because formik is dumb
-          // //see: https://github.com/jaredpalmer/formik/issues/1580
-          // await submitForm();
-          // const errors = await validateForm();
+        <Button
+          onClick={async () => {
+            // //workaround because formik is dumb
+            // //see: https://github.com/jaredpalmer/formik/issues/1580
+            // await submitForm();
+            // const errors = await validateForm();
 
-          // if (isEmpty(errors))
-          handleClickNext();
-        }}
-      >
-        Next
-      </Button>
+            // if (isEmpty(errors))
+            handleClickNext();
+          }}
+        >
+          Next
+        </Button>
+      </Container>
     </>
   );
 }
@@ -184,8 +190,8 @@ function RegistrationPane() {
     >
       {({ values, setFieldValue, submitForm, validateForm, isValid }) => (
         <Form>
-          <div className="registration">
-            <InputLabel>Open registration</InputLabel>
+          <InputLabel sx={{mb: 1}}>Open registration</InputLabel>
+          <Stack direction="row" spacing={2}>
             <MyDatePicker
               label="from 00:00 on"
               name="registration.from"
@@ -200,7 +206,7 @@ function RegistrationPane() {
                 setFieldValue("registration.to", dayjs(value).endOf("day"))
               }
             />
-          </div>
+          </Stack>
 
           <Button type="submit">Confirm</Button>
         </Form>
