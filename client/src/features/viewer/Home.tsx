@@ -1,19 +1,20 @@
-import { Box, Typography } from "@mui/material";
-import * as dayjs from "dayjs";
+import { Box, Typography, Container, Stack } from "@mui/material";
+import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
 import { useStages } from "../stage/hooks";
 import { useTournament } from "./hooks";
 import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
-function WinnerPane({ stage }) {
+import { FinalStandingsItem } from "brackets-manager";
+
+function WinnerPane({ stageId }: { stageId: string }) {
   //FIXME: needs to show all winners across divisions
-  const { data: standings } = useStandings(stage.id);
+  const { data: standings } = useStandings(stageId);
 
   if (!standings) return <>Loading...</>;
 
-  const winner = standings[0];
-
+  const winner = (standings as FinalStandingsItem[])[0];
   return <>
     <Typography>
       Congratulations to {winner.name} for winning !
@@ -27,15 +28,14 @@ function WinnersTribute() {
     type: "single_elimination"
   });
 
-  return stages?.map(s => (<WinnerPane stage={s} key={s.id}></WinnerPane>))
+  return stages?.map(s => (<WinnerPane stageId={s.id} key={s.id}></WinnerPane>))
 
 }
 
 function HomePage() {
   const { data: tournament } = useTournament("current");
-  if (!tournament) return <>Loadng...</>
 
-  switch (tournament.state) {
+  switch (tournament?.state) {
     case "Complete":
       return <WinnersTribute></WinnersTribute>
     case "Registration":
@@ -44,7 +44,6 @@ function HomePage() {
 
       const now = new Date();
       const from = new Date(tournament.registration.from);
-      const to = new Date(tournament.registration.to);
 
       if (now <= from)
         return (
@@ -52,33 +51,36 @@ function HomePage() {
             Registration will begin {dayjs().to(tournament.registration.from)}.
           </div>
         )
-      else if (now <= to)
-        return (
-          <>
-            <div>
-              Registration closes {dayjs().to(tournament.registration.to)}.
-            </div>
-            <Link to="/tournament/register">Register</Link>
-          </>
-        );
+
+      if (!tournament.registration?.to)
+        return <>Hurry up! Registration will be closing soon.</>;
+
+      const to = new Date(tournament.registration.to);
+
+      if (now <= to) return (
+        <>
+          <div>
+            Registration closes {dayjs().to(tournament.registration.to)}.
+          </div>
+          <Link to="/tournament/register">Register</Link>
+        </>
+      );
+
       else return <>Registration ended {dayjs().to(tournament.registration.to)} THe tournament will begin soon.</>
 
     default:
       return (
-        <>
-          <div className="dashboard">
-            <MatchesCalendar></MatchesCalendar>
-            <Box sx={{
-              width: "700px",
-              height: "700px",
-              background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))"
-            }}></Box>
-          </div>
-
-          <div className="group-stage" id="test">
-            <div className="brackets-viewer"></div>
-          </div>
-        </>
+        <Stack direction="row" spacing={1}>
+          <MatchesCalendar></MatchesCalendar>
+          <Container maxWidth="md" sx={{
+            background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))",
+            height: "60vmin", width: "60vmin"
+          }}>
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100%">
+              <Typography>Imagine an instagram feed here.</Typography>
+            </Box>
+          </Container >
+        </Stack>
       );
   }
 }

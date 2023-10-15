@@ -17,7 +17,7 @@ const stageKeys = {
 };
 
 export const useStages = (
-  tournamentId: string,
+  tournamentId?: string,
   query?: Partial<TStage>
 ) => {
   return useQuery({

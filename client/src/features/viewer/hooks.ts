@@ -10,7 +10,7 @@ import { TTournament } from "@backend/models/tournament";
 
 export const tournamentKeys = queryKeyFactory("tournaments");
 
-export const useTournament = (id: string) => {
+export const useTournament = (id?: string) => {
   return useQuery({
     queryKey: tournamentKeys.id(id),
     queryFn: async () => {
@@ -67,7 +67,7 @@ export const useDivision = (id: string) => {
   });
 }
 
-export const useDivisions = (tournamentId: string) => {
+export const useDivisions = (tournamentId?: string) => {
   const { data: tournament } = useTournament(tournamentId);
 
   return {
