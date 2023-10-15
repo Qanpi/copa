@@ -92,8 +92,6 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage></HomePage>}></Route>
 
-                <Route path="/login" element={<SignInButtton></SignInButtton>}></Route>
-
                 <Route path="/tournament">
                   <Route
                     path="/tournament/register"
