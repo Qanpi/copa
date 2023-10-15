@@ -11,8 +11,9 @@ passport.use(
     {
       clientID: process.env["GOOGLE_CLIENT_ID"],
       clientSecret: process.env["GOOGLE_CLIENT_SECRET"],
-      callbackURL: "http://localhost:3001/oauth2/redirect/google",
+      callbackURL: "/oauth2/redirect/google",
       scope: ["profile"],
+      // passReqToCallback: true,
     },
     async function verify(accessToken, refreshToken, profile, cb) {
       const userData = {
@@ -21,7 +22,7 @@ passport.use(
         avatar: profile.photos[0].value,
       };
 
-      let user = await User.findOne({ googleId: profile.id }).populate("team");
+      let user = await User.findOne({ googleId: profile.id });
       if (!user) {
         user = await new User(userData).save();
       }
@@ -52,19 +53,19 @@ passport.deserializeUser(function (user, done) {
 const router = express.Router();
 
 router.get("/login/federated/google", passport.authenticate("google"));
-router.get("/oauth2/redirect/google", (req, res) => {
-  passport.authenticate("google", {
+router.get("/oauth2/redirect/google", (req, res, next) => {
+  return passport.authenticate("google", {
     failureRedirect: "/login",
     failureMessage: true,
-    successRedirect: `${req.protocol}://${req.get('host')}`,
-  });
+    successRedirect: "/",
+  })(req, res, next);
 });
 
-//TODO: refactor to controllers?
 router.post("/logout", (req, res, next) => {
   req.logOut((err) => {
     if (err) return next(err);
-    res.redirect(`${req.protocol}://${req.get('host')}`);
+    req.session = null;
+    res.clearCookie("session").redirect(`/`);
   });
 });
 
@@ -72,7 +73,7 @@ router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
     const updatedUser = await User.findById(req.user.id);
 
-    //skips serialization and assigns directly to req.user
+    //update user in case data changed
     req.login(updatedUser, function (err) {
       if (err) return next(err);
       res.send(req.user);

@@ -16,4 +16,4 @@ const storage = new MongooseForBrackets(
   Group
 );
 
-export const bracketsManager = new BracketsManager(storage, true);
+export const bracketsManager = new BracketsManager(storage);

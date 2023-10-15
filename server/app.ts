@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import { fileURLToPath } from "url";
 import path from "path";
+import "dotenv/config.js"
 
 connectMongoose(); //FIXME: await 
 
@@ -61,10 +62,14 @@ app.use(passport.session());
 app.use(express.static(reactPath));
 
 app.use("/api", apiRouter); // api request flow: route -> controller -> db service
-app.use("/", authRouter);
+app.use(authRouter);
 
 //home page
 app.get("/", (req, res) => {
+  //FIXME:!redirect to localhost if developing
+  if (process.env.NODE_ENV === "development") {
+    return res.redirect(process.env.REACT_LOCALHOST_DOMAIN);
+  }
   res.sendFile(reactPath + "/index.html");
 });
 
