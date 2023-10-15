@@ -3,7 +3,8 @@ import { Button } from "@mui/base";
 function SignInPage() {
     const handleSignIn = () => {
         //axios.get("login/federated/google")
-        window.open("http://localhost:3001/login/federated/google", "_self");
+        const domain = window.location.host;
+        window.open(`${domain}/login/federated/google`, "_self");
     }
 
     return (

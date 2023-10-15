@@ -25,11 +25,10 @@ import TeamPage from "./features/team/Team.js";
 import SignInPage from "./features/user/SignInPage.tsx";
 import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
-import Header from "./features/viewer/header/header";
 import HomePage from "./features/viewer/Home.tsx";
+import Header from "./features/viewer/header/header";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
-import reportWebVitals from "./services/reportWebVitals";
 // 
 export const DivisionContext = React.createContext(null);
 export const DivisionDispatchContext = React.createContext(null);

@@ -36,9 +36,9 @@ function TeamPage() {
       const invite = await axios.get(`/api/teams/${team.id}/invite`);
       const { token, expiresAt } = invite.data;
 
+      const domain = window.location.host;
       return {
-        //FIXME: localhost
-        link: `localhost:3000/teams/join?id=${team.id}&token=${token}`,
+        link: `${domain}/teams/join?id=${team.id}&token=${token}`,
         countdown: dayjs().to(expiresAt),
       };
     },

@@ -37,7 +37,7 @@ passport.serializeUser(function (user, done) {
     return done(null, {
       id: user?.id,
       name: user?.name,
-      role: user?.role
+      role: user?.role,
     });
   });
 });
@@ -51,23 +51,20 @@ passport.deserializeUser(function (user, done) {
 
 const router = express.Router();
 
-const LOCALHOST_SERVER_URL = "http://localhost:3000";
-
 router.get("/login/federated/google", passport.authenticate("google"));
-router.get(
-  "/oauth2/redirect/google",
+router.get("/oauth2/redirect/google", (req, res) => {
   passport.authenticate("google", {
     failureRedirect: "/login",
     failureMessage: true,
-    successRedirect: LOCALHOST_SERVER_URL,
-  })
-);
+    successRedirect: `${req.protocol}://${req.get('host')}`,
+  });
+});
 
 //TODO: refactor to controllers?
 router.post("/logout", (req, res, next) => {
   req.logOut((err) => {
     if (err) return next(err);
-    res.redirect(LOCALHOST_SERVER_URL);
+    res.redirect(`${req.protocol}://${req.get('host')}`);
   });
 });
 
@@ -76,10 +73,10 @@ router.get("/me", async (req, res, next) => {
     const updatedUser = await User.findById(req.user.id);
 
     //skips serialization and assigns directly to req.user
-    req.login(updatedUser, function(err) {
+    req.login(updatedUser, function (err) {
       if (err) return next(err);
       res.send(req.user);
-    })
+    });
   } else {
     res.send(req.user);
   }
