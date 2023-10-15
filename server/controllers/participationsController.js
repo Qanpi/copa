@@ -1,8 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
 import Participant from "../models/participant.js";
-import Tournament from "../models/tournament.js";
-import Team from "../models/team.js";
-import { matchedData, validationResult } from "express-validator";
 
 export const getMany = expressAsyncHandler(async (req, res) => {
   //translateAliases because division = tournament_id;

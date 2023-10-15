@@ -4,7 +4,7 @@ import GoogleStrategy from "passport-google-oauth20";
 import User from "../models/user.js";
 
 import { config } from "dotenv";
-config({ path: `.env.${process.env.NODE_ENV.toLowerCase()}.local` });
+config();
 
 passport.use(
   new GoogleStrategy(

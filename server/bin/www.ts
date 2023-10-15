@@ -5,10 +5,7 @@
  */
 
 import { config } from "dotenv";
-console.log(process.env.NODE_ENV)
-config({ path: `.env.${process.env.NODE_ENV.toLowerCase()}.local` });
-console.log(process.env)
-console.log("test")
+config();
 
 import app from "../app.js"
 import _debugger from "debug"
