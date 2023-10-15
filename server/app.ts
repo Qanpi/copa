@@ -17,7 +17,6 @@ import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
-import "dotenv/config.js"
 
 const app = express();
 

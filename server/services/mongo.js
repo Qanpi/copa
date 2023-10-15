@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import "dotenv/config";
 import _debugger from "debug";
 const debug = _debugger("mongodb:");
 

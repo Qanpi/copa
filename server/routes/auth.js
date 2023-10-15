@@ -1,8 +1,10 @@
 import express from "express";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
-import "dotenv/config.js";
 import User from "../models/user.js";
+
+import { config } from "dotenv";
+config({ path: `.env.${process.env.NODE_ENV.toLowerCase()}.local` });
 
 passport.use(
   new GoogleStrategy(
