@@ -1,4 +1,4 @@
-import { KeyboardArrowDownOutlined } from "@mui/icons-material";
+import { ArrowRight, ArrowLeft } from "@mui/icons-material";
 import {
   Alert,
   AlertTitle,
@@ -140,10 +140,10 @@ function RegistrationStage({ next, prev }) {
       </Stack>
 
       <Stack spacing={3} direction="row">
-        <Button startIcon={<KeyboardArrowDownOutlined></KeyboardArrowDownOutlined>} onClick={handleClickBack}>
+        <Button startIcon={<ArrowLeft></ArrowLeft>} onClick={handleClickBack}>
           Go back
         </Button>
-        <Button endIcon={<KeyboardArrowDownOutlined></KeyboardArrowDownOutlined>} onClick={handleClickNext}>
+        <Button endIcon={<ArrowRight></ArrowRight>} onClick={handleClickNext}>
           Proceed
         </Button>
       </Stack>
