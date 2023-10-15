@@ -49,7 +49,7 @@ type MatchEvent = Omit<
 
 function MatchesCalendar() {
   const { data: tournament } = useTournament("current");
-  const { data: scheduledMatches, status: scheduledStatus } = useMatches(tournament?.id,
+  const { data: scheduledMatches } = useMatches(tournament?.id,
     {
       scheduled: true,
     });
@@ -102,8 +102,6 @@ function MatchesCalendar() {
 
     updateMatch.mutate({ id: event.id, start: event.start });
   };
-
-  if (scheduledStatus !== "success") return <div>Loading</div>;
 
   return (
     <>
