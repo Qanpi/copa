@@ -1,4 +1,4 @@
-import mongoose, { SchemaTypes } from "mongoose";
+import mongoose, { InferSchemaType, SchemaTypes } from "mongoose";
 
 const DivisionSchema = new mongoose.Schema({
     name: String,
@@ -24,5 +24,7 @@ const DivisionSchema = new mongoose.Schema({
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
 });
+
+export type TDivision = InferSchemaType<typeof DivisionSchema>;
 
 export default DivisionSchema;
