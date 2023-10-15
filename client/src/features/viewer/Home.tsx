@@ -69,7 +69,7 @@ function HomePage() {
               flexShrink: 0
             }}>
               <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
-                <Typography variant="h1" fontWeight={800} sx={{fontSize: "10vw!important"}}>
+                <Typography variant="h1" fontWeight={800} sx={{fontSize: "10vw!important"}} noWrap>
                   {tournament.name.toUpperCase()}
                 </Typography>
                 <Typography sx={{
