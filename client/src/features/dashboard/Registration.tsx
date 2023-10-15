@@ -1,38 +1,34 @@
+import { KeyboardArrowDownOutlined } from "@mui/icons-material";
 import {
-  Container,
   Alert,
   AlertTitle,
   Button,
-  Card,
-  CardContent,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   InputLabel,
-  Typography,
   Stack,
+  Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import dayjs from "dayjs";
 import { Form, Formik } from "formik";
+import { groupBy } from "lodash-es";
+import { useContext, useState } from "react";
 import * as Yup from "yup";
+import { DivisionContext } from "../../index.tsx";
+import MyDatePicker from "../inputs/MyDatePicker.js";
+import { useParticipants } from "../participant/hooks.ts";
 import {
-  useCurrentDivisions,
   useDivisions,
   useTournament,
   useUpdateTournament,
 } from "../viewer/hooks.ts";
-import MyDatePicker from "../inputs/MyDatePicker.js";
-import { useParticipants } from "../participant/hooks.ts";
-import { nextTick } from "process";
-import { useContext, useState } from "react";
-import { groupBy, isEmpty, mapKeys } from "lodash-es";
-import NumberCard from "./NumberCard.tsx";
-import { DivisionContext } from "../../index.tsx";
 import DivisionPanel from "./DivisionPanel.tsx";
+import NumberCard from "./NumberCard.tsx";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
@@ -99,8 +95,12 @@ function RegistrationStage({ next, prev }) {
     setEarlyDialogOpen(false);
   };
 
+  const handleClickBack = () => {
+
+  }
+
   return (
-    <>
+    <Stack spacing={3} display="flex" justifyContent={"center"} alignItems={"center"}>
       <Dialog open={isEarlyDialogOpen} onClose={() => handleDialogClose(false)}>
         <DialogTitle>End registration early?</DialogTitle>
         <DialogContent>
@@ -117,7 +117,7 @@ function RegistrationStage({ next, prev }) {
         </DialogActions>
       </Dialog>
 
-      <Container maxWidth="sm">
+      <Stack spacing={5}>
         {notEnoughParticipants ? (
           <Alert severity="error">
             <AlertTitle>Error: Not enough participants</AlertTitle>
@@ -129,19 +129,25 @@ function RegistrationStage({ next, prev }) {
           </Alert>
         ) : null}
 
-        <Stack spacing={5}>
-          <DivisionPanel>
-            <NumberCard number={participants?.length}>
-              team(s) registered
-            </NumberCard>
-          </DivisionPanel>
+        <RegistrationPane></RegistrationPane>
 
-          <RegistrationPane></RegistrationPane>
-        </Stack>
+        <DivisionPanel>
+          <NumberCard number={participants?.length}>
+            team(s) registered
+          </NumberCard>
+        </DivisionPanel>
 
-        <Button onClick={handleClickNext}>Next</Button>
-      </Container>
-    </>
+      </Stack>
+
+      <Stack spacing={3} direction="row">
+        <Button startIcon={<KeyboardArrowDownOutlined></KeyboardArrowDownOutlined>} onClick={handleClickBack}>
+          Go back
+        </Button>
+        <Button endIcon={<KeyboardArrowDownOutlined></KeyboardArrowDownOutlined>} onClick={handleClickNext}>
+          Proceed
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
 
@@ -176,7 +182,14 @@ function RegistrationPane() {
         updateTournament.mutate(values);
       }}
     >
-      {({ values, setFieldValue, submitForm, validateForm, isValid, touched }) => (
+      {({
+        values,
+        setFieldValue,
+        submitForm,
+        validateForm,
+        isValid,
+        touched,
+      }) => (
         <Form>
           <InputLabel sx={{ mb: 1 }}>Open registration</InputLabel>
           <Stack direction="row" spacing={2}>
@@ -186,7 +199,7 @@ function RegistrationPane() {
               minDate={dayjs()}
               onChange={(value) => {
                 setFieldValue("registration.from", dayjs(value).startOf("day"));
-                submitForm()
+                submitForm();
               }}
             />
             <MyDatePicker
@@ -196,7 +209,7 @@ function RegistrationPane() {
               minDate={values.registration.from}
               onChange={async (value) => {
                 setFieldValue("registration.to", dayjs(value).endOf("day"));
-                submitForm() 
+                submitForm();
               }}
             />
           </Stack>

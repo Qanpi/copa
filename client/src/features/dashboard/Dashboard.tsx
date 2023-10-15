@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import NewTournamentPage from "./NewTournament.js";
-import RegistrationStage from "./Registration.js";
+import RegistrationStage from "./Registration.tsx";
 import { useTournament, useUpdateTournament } from "../viewer/hooks.ts";
 import GroupStage from "./GroupStage.js";
 import BracketStructure from "./BracketStructure.tsx";
@@ -55,11 +55,11 @@ function DashboardPage() {
   };
 
   return (
-    <Container sx={{ pt: 15 }}>
-      <Stack direction="row">
+    <Container sx={{ pt: 15 }} maxWidth="md">
+      <Stack direction="column" spacing={5}>
 
-        <Box>
-          <Stepper activeStep={stateId} orientation="vertical" >
+        <Container maxWidth="md">
+          <Stepper activeStep={stateId} orientation="horizontal" >
             {
               tournament.states.map((s, i) => (
                 <Step key={i} >
@@ -68,7 +68,7 @@ function DashboardPage() {
               ))
             }
           </Stepper>
-        </Box>
+        </Container>
 
         {currentSection()}
       </Stack>
