@@ -4,6 +4,7 @@ import { bracketsManager } from "../services/bracketsManager.js";
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import Stage from "../models/stage.js";
+import { Match } from "brackets-model";
 
 export const createStage = async (req: Request, res: Response) => {
   const stage = await bracketsManager.create.stage(req.body);
@@ -59,7 +60,7 @@ export const getStandings = async (req: Request, res: Response) => {
 
   if (stageData.stage[0].type === "round_robin") {
     const matches = stageData.match;
-    const groupedMatches = Object.values(groupBy(matches, "group_id"));
+    const groupedMatches = Object.values(groupBy(matches, "group_id")) as Match[][];
 
     const standings = groupedMatches.map((m) => getRanking(m));
     return res.send(standings);
