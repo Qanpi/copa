@@ -70,17 +70,19 @@ function HomePage() {
 
     default:
       return (
-        <Stack direction="row" spacing={1}>
-          <MatchesCalendar></MatchesCalendar>
-          <Container maxWidth="md" sx={{
-            background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))",
-            height: "60vmin", width: "60vmin"
-          }}>
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100%">
-              <Typography>Imagine an instagram feed here.</Typography>
-            </Box>
-          </Container >
-        </Stack>
+        <Container sx={{ pt: 15 }} maxWidth="lg">
+          <Stack direction={{ xs: "column-reverse", md: "row" }} spacing={5}>
+            <MatchesCalendar></MatchesCalendar>
+            <Container maxWidth="md" sx={{
+              background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))",
+              height: "60vh"
+            }} >
+              <Box display="flex" justifyContent="center" alignItems="center" minHeight="100%">
+                <Typography>Imagine an instagram feed here.</Typography>
+              </Box>
+            </Container >
+          </Stack>
+        </Container>
       );
   }
 }
