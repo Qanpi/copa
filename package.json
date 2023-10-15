@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node server/bin/www.js",
+    "start": "NODE_ENV=production && node server/bin/www.js",
     "build": "tsc -p server/tsconfig.json",
     "build:azure": "cd client && npm install && npm run build",
     "test": "",
