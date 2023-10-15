@@ -1,5 +1,6 @@
 import { ArrowRight, ArrowLeft } from "@mui/icons-material";
 import {
+  Box,
   Alert,
   AlertTitle,
   Button,
@@ -12,6 +13,7 @@ import {
   IconButton,
   InputLabel,
   Stack,
+  ThemeProvider,
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
@@ -19,7 +21,7 @@ import { Form, Formik } from "formik";
 import { groupBy } from "lodash-es";
 import { useContext, useState } from "react";
 import * as Yup from "yup";
-import { DivisionContext } from "../../index.tsx";
+import { DivisionContext, lightTheme } from "../../index.tsx";
 import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import {
@@ -100,7 +102,7 @@ function RegistrationStage({ next, prev }) {
   }
 
   return (
-    <Stack spacing={3} display="flex" justifyContent={"center"} alignItems={"center"}>
+    <Container maxWidth={"sm"}>
       <Dialog open={isEarlyDialogOpen} onClose={() => handleDialogClose(false)}>
         <DialogTitle>End registration early?</DialogTitle>
         <DialogContent>
@@ -119,14 +121,16 @@ function RegistrationStage({ next, prev }) {
 
       <Stack spacing={5}>
         {notEnoughParticipants ? (
-          <Alert severity="error">
-            <AlertTitle>Error: Not enough participants</AlertTitle>
-            <Typography>
-              There must be at least 2 registered participant(s) in the '
-              {notEnoughParticipants.division}' division before proceeding to
-              the next stage.
-            </Typography>
-          </Alert>
+          <ThemeProvider theme={lightTheme}>
+            <Alert severity="error">
+              <AlertTitle>Error: Not enough participants</AlertTitle>
+              <Typography variant="body1">
+                There must be at least 2 registered participant(s) in the '
+                {notEnoughParticipants.division}' division before proceeding to
+                the next stage.
+              </Typography>
+            </Alert>
+          </ThemeProvider>
         ) : null}
 
         <RegistrationPane></RegistrationPane>
@@ -137,17 +141,16 @@ function RegistrationStage({ next, prev }) {
           </NumberCard>
         </DivisionPanel>
 
+        <Stack spacing={3} direction="row" alignItems="center" justifyContent="center">
+          <Button startIcon={<ArrowLeft></ArrowLeft>} onClick={handleClickBack}>
+            Go back
+          </Button>
+          <Button endIcon={<ArrowRight></ArrowRight>} onClick={handleClickNext}>
+            Proceed
+          </Button>
+        </Stack>
       </Stack>
-
-      <Stack spacing={3} direction="row">
-        <Button startIcon={<ArrowLeft></ArrowLeft>} onClick={handleClickBack}>
-          Go back
-        </Button>
-        <Button endIcon={<ArrowRight></ArrowRight>} onClick={handleClickNext}>
-          Proceed
-        </Button>
-      </Stack>
-    </Stack>
+    </Container>
   );
 }
 
@@ -191,7 +194,7 @@ function RegistrationPane() {
         touched,
       }) => (
         <Form>
-          <InputLabel sx={{ mb: 1 }}>Open registration</InputLabel>
+          <InputLabel sx={{ mb: 2 }}>Open registration</InputLabel>
           <Stack direction="row" spacing={2}>
             <MyDatePicker
               label="from 00:00 on"

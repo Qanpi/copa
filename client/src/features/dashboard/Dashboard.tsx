@@ -55,11 +55,16 @@ function DashboardPage() {
   };
 
   return (
-    <Container sx={{ pt: 15 }} maxWidth="md">
-      <Stack direction="column" spacing={5}>
-
-        <Container maxWidth="md">
-          <Stepper activeStep={stateId} orientation="horizontal" >
+    <Box sx={{ pt: 7 }}>
+      <Box sx={{
+        background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))",
+        width: "100vw",
+        height: "100px",
+        marginBottom: 10,
+      }}>
+        <Stack spacing={10} direction="row" sx={{height: "100%" }} justifyContent={"center"} alignItems={"center"}>
+          <Typography variant="h2" fontWeight={800}>{tournament.name}</Typography>
+          <Stepper activeStep={stateId} orientation="horizontal">
             {
               tournament.states.map((s, i) => (
                 <Step key={i} >
@@ -68,11 +73,12 @@ function DashboardPage() {
               ))
             }
           </Stepper>
-        </Container>
-
+        </Stack>
+      </Box>
+      <Container>
         {currentSection()}
-      </Stack>
-    </Container>
+      </Container>
+    </Box>
   );
 }
 

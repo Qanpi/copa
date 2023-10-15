@@ -32,7 +32,7 @@ import "./index.css";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { TDivision } from "@backend/models/division.ts";
 
-const theme = createTheme({
+export const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
@@ -44,16 +44,25 @@ const theme = createTheme({
   },
   components: {
     //TODO: custom styled component
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          background: "#FDFDFD",
-          color: "black"
-        },
-      },
-    }
+    // MuiCard: {
+    //   styleOverrides: {
+    //     root: {
+    //       background: "#FDFDFD",
+    //       color: "black"
+    //     },
+    //   },
+    // },
+    // MuiAlert: {
+    //   styleOverrides: {
+    //     root: {
+    //       background: "#FDFDFD"
+    //     }
+    //   }
+    // }
   }
 });
+
+export const lightTheme = createTheme({});
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision>(null);
@@ -73,7 +82,7 @@ function App() {
 
   return (
     <Router>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={darkTheme}>
         <CssBaseline></CssBaseline>
         <DivisionContext.Provider value={divisions?.[selected]}>
           <DivisionDispatchContext.Provider value={dispatch}>
