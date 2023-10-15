@@ -1,4 +1,4 @@
-import { Button, Container, Typography } from "@mui/material";
+import { Button, Container, Tooltip, Typography, Box } from "@mui/material";
 import { Formik, Form } from "formik";
 import MyAutocomplete from "../inputs/MyAutocomplete";
 import MyNumberSlider from "../inputs/myNumberSlider";
@@ -25,9 +25,9 @@ function CreateTournamentPage() {
             validationSchema={Yup.object({
                 organizer: Yup.object({
                     name: Yup.string().required(""),
-                    phoneNumber: Yup.string().notRequired(),
+                    phoneNumber: Yup.string().matches(/^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/, "Incorrent format").required(""),
                 }),
-                divisions: Yup.array().min(1).required().of(Yup.string()),
+                divisions: Yup.array().min(1, "You must create at least one division.").required().of(Yup.string()),
             })}
             onSubmit={(values) => {
                 const divisions = values.divisions.map(d => ({ name: d }));
@@ -50,16 +50,20 @@ function CreateTournamentPage() {
                             <MyTextField
                                 type="text"
                                 name="organizer.name"
-                                label="Organizer's name"
+                                label="Organizer's name *"
                             ></MyTextField>
                         </Grid2>
                         <Grid2 xs={6}>
+                            <Tooltip arrow title="Your phone number will be visible to participants." placement="right">
+                                <Box>
 
-                            <MyTextField
-                                type="tel"
-                                name="organizer.phoneNumber"
-                                label="Phone number"
-                            ></MyTextField>
+                                    <MyTextField
+                                        type="tel"
+                                        name="organizer.phoneNumber"
+                                        label="Phone number *"
+                                    ></MyTextField>
+                                </Box>
+                            </Tooltip>
                         </Grid2>
                         <Grid2 xs={12}>
                             <MyAutocomplete name="divisions" />
