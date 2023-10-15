@@ -7,6 +7,7 @@ import { useTournament } from "./hooks";
 import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";
+import brush from "./brush.png";
 
 function WinnerPane({ stageId }: { stageId: string }) {
   //FIXME: needs to show all winners across divisions
@@ -47,9 +48,45 @@ function HomePage() {
 
       if (now <= from)
         return (
-          <div>
-            Registration will begin {dayjs().to(tournament.registration.from)}.
-          </div>
+          <Container sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pt: 10
+          }}>
+            <Box component="img" src={brush} sx={{
+              position: "absolute",
+              width: "80vw",
+              zIndex: -1,
+              rotate: "-2deg",
+            }}></Box>
+            <Stack sx={{
+              width: "60vw",
+              height: "70vmin",
+              backdropFilter: "blur(30px)",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0
+            }}>
+              <Stack direction="row" alignItems={"center"} minWidth="400px" spacing={0} justifyContent={"center"}>
+                <Typography variant="h1" fontWeight={800} sx={{fontSize: "10vw!important"}}>
+                  {tournament.name.toUpperCase()}
+                </Typography>
+                <Typography sx={{
+                  textOrientation: "upright",
+                  writingMode: "vertical-rl"
+                }}>
+                  {dayjs().year()}
+                </Typography>
+              </Stack>
+              {/* <Typography variant="subtitle1" sx={{mt: -2, mb: 5}}>is here!</Typography> */}
+
+              <Typography variant="subtitle1" >
+                Registration begins {dayjs().to(tournament.registration.from)}.
+              </Typography>
+            </Stack>
+          </Container>
+
         )
 
       if (!tournament.registration?.to)
@@ -70,7 +107,7 @@ function HomePage() {
 
     default:
       return (
-        <Container sx={{ pt: 15}} maxWidth="xl">
+        <Container sx={{ pt: 15 }} maxWidth="xl">
           <Stack direction={{ xs: "column-reverse", md: "row" }} spacing={10} display="flex" justifyContent="center">
             <MatchesCalendar></MatchesCalendar>
             <Box display="flex" justifyContent="center">

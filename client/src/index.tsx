@@ -29,10 +29,10 @@ import HomePage from "./features/viewer/Home.tsx";
 import Header from "./features/viewer/header/header";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material";
 import { TDivision } from "@backend/models/division.ts";
 
-export const darkTheme = createTheme({
+export const darkTheme = responsiveFontSizes(createTheme({
   palette: {
     mode: "dark",
     background: {
@@ -60,9 +60,9 @@ export const darkTheme = createTheme({
     //   }
     // }
   }
-});
+}));
 
-export const lightTheme = createTheme({});
+export const lightTheme = responsiveFontSizes(createTheme({}));
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision>(null);

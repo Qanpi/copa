@@ -60,7 +60,7 @@ function DashboardPage() {
         background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))",
         width: "100vw",
         height: "100px",
-        marginBottom: 10,
+        marginBottom: 7,
       }}>
         <Stack spacing={10} direction="row" sx={{height: "100%" }} justifyContent={"center"} alignItems={"center"}>
           <Typography variant="h2" fontWeight={800}>{tournament.name}</Typography>
