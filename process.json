@@ -1,0 +1,11 @@
+{
+    "apps": [
+        {
+            "name": "copa",
+            "script": "server/bin/www.js",
+            "env_production": {
+                "NODE_ENV": "production"
+            }
+        }
+    ]
+}
