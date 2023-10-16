@@ -234,8 +234,7 @@ function FortuneWheel({ participants, onSelected }) {
     return { option: trimmed, ...p };
   });
 
-  const isWheelVisible =
-    !participants || participants.length === 0;
+  const isWheelVisible = participants?.length !== 0;
 
   const handleSpinOver = () => {
     setMustSpin(false);
@@ -245,14 +244,15 @@ function FortuneWheel({ participants, onSelected }) {
   };
 
   const handleSpin = () => {
-    if (isWheelVisible || mustSpin) return;
+    if (!isWheelVisible || mustSpin) return;
 
     setMustSpin(true);
   };
 
+  if (!isWheelVisible) return;
+
   return (
     <>
-      {!isWheelVisible ? (
         <Wheel
           data={wheelOptions}
           prizeNumber={randomN}
@@ -260,13 +260,9 @@ function FortuneWheel({ participants, onSelected }) {
           onStopSpinning={handleSpinOver}
           spinDuration={0.00001} //TODO: fix later
         ></Wheel>
-      ) : (
-        <div>No more temas left</div>
-      )}
-
 
       {/* position is calculated so that it's in the center and on top of the wheel */}
-      <Button onClick={handleSpin} disabled={isWheelVisible} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
+      <Button onClick={handleSpin} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
         Spin
       </Button>
     </>
