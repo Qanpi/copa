@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import { useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useUser } from "../../user/hooks.ts";
-import UserPanel from "../../user/userMenu/userpanel.js";
+import { useUser } from "../user/hooks.ts";
+import UserPanel from "../user/userMenu/userpanel.js";
 // import "./header.css";
 
 const SectionMenu = ({ title, children }) => {
@@ -104,9 +104,10 @@ function Header() {
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "50px",
-      }} display="flex" alignItems={"center"} justifyContent={"space-around"}>
+        paddingLeft: "200px",
+        paddingRight: 5
+      }} display="flex" alignItems={"center"} justifyContent={"space-between"}>
         <Stack direction="row" spacing={5} sx={{
-          pl: 20,
           height: "100%"
         }} alignItems={"center"}>
           <Link to="/" > Home </Link>

@@ -26,7 +26,7 @@ import SignInButtton from "./features/user/SignInPage.tsx";
 import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
 import HomePage from "./features/viewer/Home.tsx";
-import Header from "./features/viewer/header/header";
+import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import { CssBaseline, ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material";
