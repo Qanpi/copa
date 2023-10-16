@@ -12,6 +12,7 @@ import { useDeleteParticipant } from "./registration.js";
 import { TParticipant } from "@backend/models/participant.ts";
 import { useContext } from "react";
 import { DivisionContext } from "../../index.tsx";
+import GradientTitle from "../viewer/gradientTitle.tsx";
 
 function TeamsPage() {
   const { data: tournament } =
@@ -29,7 +30,9 @@ function TeamsPage() {
   return (
     <Container sx={{ pt: 10 }} >
       <Stack spacing={3}>
-        <Typography variant="h2">Teams participating</Typography>
+        <GradientTitle padding={2}>
+          <Typography variant="h2">Teams participating</Typography>
+        </GradientTitle>
         <DivisionPanel>
           <Box sx={{
             display: "grid",

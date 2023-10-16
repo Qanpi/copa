@@ -59,7 +59,6 @@ function DashboardPage() {
     <Box sx={{ pt: 7 }}>
 
       <GradientTitle padding={3}>
-
         <Stack spacing={10} direction="row" sx={{ height: "100%" }} justifyContent={"center"} alignItems={"center"}>
           <Typography variant="h2" fontWeight={800}>{tournament.name}</Typography>
           <Stepper activeStep={stateId} orientation="horizontal">
