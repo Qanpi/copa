@@ -40,11 +40,11 @@ router.get("/teams", teams.getMultiple);
 router.post("/teams", isAuthenticated, teams.createOne);
 router.patch("/teams/:id", isAuthenticated, teams.updateOne);
 router.get("/teams/:id", teams.getById);
-router.get("/teams/:id/players", teams.getPlayersInTeam);
-router.delete("/teams/:teamId/players/:playerId", teams.removePlayerFromTeam);
-router.delete("/teams/:id", teams.removeById);
-router.get("/teams/:id/invite", teams.generateInviteToken);
-router.post("/teams/:id/join", teams.joinTeam);
+router.get("/teams/:id/users", teams.getUsersInTeam);
+router.delete("/teams/:teamId/users/:userId", isAuthenticated, teams.removeUserFromTeam);
+router.delete("/teams/:id", isAuthenticated, teams.removeById);
+router.get("/teams/:id/invite", isAuthenticated, teams.generateInviteToken);
+router.post("/teams/:id/users", isAuthenticated, teams.joinTeam);
 
 //USERS
 router.get("/users", users.getMultiple);
