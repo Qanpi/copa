@@ -9,7 +9,7 @@ import { groupBy, shuffle } from "lodash-es";
 import Group from "../group/Group.js";
 import { DataGrid } from "@mui/x-data-grid";
 import GroupStageStructure from "./GroupStage.js";
-import { useStageData } from "../stage/hooks.ts";
+import { useDeleteStage, useStageData } from "../stage/hooks.ts";
 import { divideGroups } from "./GroupStageStructure.tsx";
 import { useCreateStage } from "../stage/hooks.ts";
 import DivisionPanel from "./DivisionPanel.tsx";
@@ -83,6 +83,7 @@ function DrawPage() {
   const groupStage = stages?.[0];
 
   const createGroupStage = useCreateStage();
+  const resetDraw = useDeleteStage();
 
   if (!participants) return <>Loading...</>
 
@@ -147,8 +148,11 @@ function DrawPage() {
     setResetDialog(true);
   }
 
-  const handleDialogResponse = (choice: boolean) => {
+  const handleDialogResponse = async (choice: boolean) => {
     if (!choice) return setResetDialog(false);
+
+    if (groupStage) await resetDraw.mutateAsync(groupStage.id);
+    setResetDialog(false);
   }
 
   return (
@@ -162,8 +166,8 @@ function DrawPage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={() => handleDialogResponse(false)} variant="contained">No</Button>
           <Button onClick={() => handleDialogResponse(true)} variant="outlined">Yes</Button>
+          <Button autoFocus onClick={() => handleDialogResponse(false)} variant="contained">No</Button>
         </DialogActions>
       </Dialog>
 

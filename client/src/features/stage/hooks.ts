@@ -121,10 +121,32 @@ export const useCreateStage = () => {
           division: stage.tournament_id,
           type: stage.type
         })
-        , (previous: TStage[]) => {
-          return [...previous, stage];
+        , (previous?: TStage[]) => {
+          return [...(previous || []), stage];
         })
     }
   });
 };
+
+export const useDeleteStage = () => {
+  const {data: tournament} = useTournament("current");
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (stageId: string) => {
+      const res = await axios.delete(`/api/tournaments/${tournament!.id}/stages/${stageId}`);
+
+      return res.data as TStage;
+    },
+    onSuccess: (_, stageId) => {
+      queryClient.setQueriesData({ queryKey: stageKeys.id(stageId) }, null);
+      queryClient.setQueriesData(
+        stageKeys.lists
+        , (previous?: TStage[]) => {
+          return previous?.filter(s => s.id !== stageId);
+        })
+    }
+  });
+}
 
