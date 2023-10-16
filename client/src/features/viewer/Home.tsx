@@ -41,21 +41,21 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      pt: 10
+      mt: 5
     }}>
       <Box component="img" src={brush} sx={{
         position: "absolute",
-        width: "80vw",
+        width: "95vw",
         zIndex: -1,
         rotate: "-2deg",
       }}></Box>
       <Stack sx={{
-        width: "60vw",
-        height: "600px",
+        width: "80vw",
+        height: "700px",
         backdropFilter: "blur(30px)",
         alignItems: "center",
         justifyContent: "center",
-        flexShrink: 0,
+        padding: 2,
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "10vw!important" }} noWrap>
