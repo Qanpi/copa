@@ -129,7 +129,7 @@ function DrawPage() {
     //go through all participants in the current seeding
     //if their index (j) matches the index of the group, replace the placeholder with them
     //increment k to the positoin of next participant
-    for (let j=0; j<seeding.length; j++) {
+    for (let j = 0; j < seeding.length; j++) {
       if (j % groupCount === i) {
         placeholder[k] = seeding[j];
         k++;
@@ -142,7 +142,7 @@ function DrawPage() {
   })
 
   return (
-    <Box sx={{ overflow: "hidden", pt: 5, pl: { xs: "0", md: "70vmin" }, pb: { xs: "70vmin", md: "0" } }}>
+    <Box sx={{ overflow: "hidden", pt: 5, pl: { xs: "0", md: "60vmin" }, pb: { xs: "70vmin", md: "0" } }}>
 
       <Container maxWidth="md">
         <DivisionPanel>
@@ -174,17 +174,19 @@ function DrawPage() {
               </Box>
 
 
-              <Stack direction="row" spacing={2}>
-                <Button onClick={handleResetSeeding} variant="outlined">Reset</Button>
 
-                <Button onClick={handleSkipWheel} variant="outlined">
+              <Box justifyContent={"center"} display="flex" gap={1}>
+
+
+                <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
+                <Button onClick={handleSkipWheel} variant="outlined" sx={{mr: 3}}>
                   Skip
                 </Button>
 
-                <Button onClick={handleConfirmSeeding} variant="contained" sx={{ ml: "auto !important" }}>
+                <Button onClick={handleConfirmSeeding} variant="contained">
                   Confirm
                 </Button>
-              </Stack>
+              </Box>
             </>
           }
         </DivisionPanel>
@@ -206,15 +208,6 @@ function GroupTable({ name, participants }: { name: string, participants: TParti
               <Typography variant="h6">Group {name}</Typography>
             </TableCell>
           </TableRow>
-          {/* {!disableHead ? (
-            <TableRow>
-              <TableCell>Standing</TableCell>
-              <TableCell>Team name</TableCell>
-              <TableCell>W</TableCell>
-              <TableCell>L</TableCell>
-              <TableCell>D</TableCell>
-            </TableRow>
-          ) : null} */}
         </TableHead>
         <TableBody>
           {participants.map((p, i) => (
