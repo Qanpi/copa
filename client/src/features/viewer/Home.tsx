@@ -51,7 +51,7 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
       }}></Box>
       <Stack sx={{
         width: "60vw",
-        height: "70vmin",
+        height: "500px",
         backdropFilter: "blur(30px)",
         alignItems: "center",
         justifyContent: "center",
