@@ -11,10 +11,10 @@ import {
   useDivisions,
   useTournament
 } from "../viewer/hooks.ts";
-import { useContext } from "react";
+import { ReactNode, useContext } from "react";
 import { DivisionContext, DivisionDispatchContext } from "../../index.tsx";
 
-function DivisionPanel({ children }) {
+function DivisionPanel({ children }: {children?: ReactNode}) {
   const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
 

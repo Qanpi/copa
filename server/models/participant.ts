@@ -46,6 +46,6 @@ const Participant = BracketsParticipant.discriminator(
 );
 
 export type TParticipant = InferSchemaType<typeof ParticipantSchema> &
-  TBracketsParticipant;
+  TBracketsParticipant & {id: string};
 
 export default Participant;

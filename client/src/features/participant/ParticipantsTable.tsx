@@ -1,36 +1,41 @@
-import { Button, InputLabel, Tooltip, Typography } from "@mui/material";
+import { Container, Tooltip } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import dayjs from "dayjs";
-import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
-import * as Yup from "yup";
-import { useParticipants } from "./hooks.ts";
+import DivisionPanel from "../dashboard/DivisionPanel.tsx";
 import {
   useDivisions,
-  useTournament,
-  useUpdateTournament,
+  useTournament
 } from "../viewer/hooks.ts";
+import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.js";
-import MyDatePicker from "../inputs/MyDatePicker.js";
-import DivisionPanel from "../dashboard/DivisionPanel.tsx";
+import { TParticipant } from "@backend/models/participant.ts";
 import { useContext } from "react";
 import { DivisionContext } from "../../index.tsx";
 
 function TeamsPage() {
-  const { data: tournament, status: tournamentStatus } =
+  const { data: tournament } =
     useTournament("current");
 
   const division = useContext(DivisionContext);
+
   const { data: participants, status: participantsStatus } = useParticipants(
     tournament?.id, {
-      division: division?.id
-    }
+    division: division?.id
+  }
   );
-  const { data: divisions } = useDivisions(tournament?.id);
+
+  return (
+    <Container>
+      <DivisionPanel>
+      </DivisionPanel>
+    </Container>
+  );
+}
+
+function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
   const unregisterTeam = useDeleteParticipant();
+  const updateParticipant = useUpdateParticipant();
 
   const cols: GridColDef[] = [
     {
@@ -41,16 +46,6 @@ function TeamsPage() {
         return (
           <Link to={`/teams/${params.row.name}`}>{params.row.name}</Link>
         )
-      },
-    },
-    {
-      field: "division",
-      headerName: "Division",
-      editable: true,
-      type: "singleSelect",
-      valueOptions: divisions?.map(d => d.name),
-      valueGetter: ({ value }) => {
-        return divisions?.find(d => d.id === value)?.name;
       },
     },
     {
@@ -82,40 +77,21 @@ function TeamsPage() {
       },
     },
   ];
-  const updateTournament = useUpdateTournament(tournament?.id);
-
-  const updateParticipation = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.put(`/api/participations/${values.id}`, values);
-      return res.data;
-    },
-  });
-
-  if (participantsStatus !== "success") return <p>Loading...</p>;
-
-  if (tournamentStatus !== "success") return <p>Loading...</p>;
 
   return (
-    <div sx={{ width: "80%" }}>
-      <Typography>Teams</Typography>
-
-      <DivisionPanel>
-
-        <DataGrid
-          editMode="row"
-          isCellEditable={(params) => params.row.tournament === tournament?.id}
-          autoheight
-          rows={participants}
-          columns={cols}
-          processRowUpdate={async (newRow, orig) => {
-            const res = await updateParticipation.mutateAsync(newRow);
-            return res;
-          }}
-          onProcessRowUpdateError={(err) => console.log(err)}
-        ></DataGrid>
-      </DivisionPanel>
-    </div>
-  );
+    <DataGrid
+      editMode="row"
+      isCellEditable={(params) => params.row.tournament === tournament?.id}
+      autoHeight
+      rows={participants}
+      columns={cols}
+      processRowUpdate={async (newRow, orig) => {
+        const res = await updateParticipant.mutateAsync(newRow);
+        return res;
+      }}
+      onProcessRowUpdateError={(err) => console.log(err)}
+    ></DataGrid>
+  )
 }
 
 export default TeamsPage;

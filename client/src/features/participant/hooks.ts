@@ -1,6 +1,7 @@
 import {
   UseQueryOptions,
   UseQueryResult,
+  useMutation,
   useQuery,
 } from "@tanstack/react-query";
 import axios from "axios";
@@ -12,7 +13,7 @@ import { queryKeyFactory } from "../types";
 export const participantKeys = queryKeyFactory("participants");
 
 export const useParticipant = (participantId: string) => {
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
 
   return useQuery({
     queryKey: [participantKeys.id(participantId)],
@@ -44,3 +45,14 @@ export const useParticipants = (tournamentId: string, query?: Partial<TParticipa
     enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
   });
 };
+
+export const useUpdateParticipant = () => {
+  const {data: tournament} = useTournament("current");
+
+  return useMutation({
+    mutationFn: async (values: Partial<TParticipant>) => {
+      const res = await axios.put(`/api/tournaments/${tournament?.id}/participants/${values.id}`, values);
+      return res.data;
+    },
+  });
+}
