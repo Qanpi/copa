@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Stack, CircularProgress } from "@mui/material";
+import { Box, Typography, Container, Stack, CircularProgress, useTheme } from "@mui/material";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
@@ -51,11 +51,11 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
       }}></Box>
       <Stack sx={{
         width: "60vw",
-        height: "500px",
+        height: "600px",
         backdropFilter: "blur(30px)",
         alignItems: "center",
         justifyContent: "center",
-        flexShrink: 0
+        flexShrink: 0,
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "10vw!important" }} noWrap>
@@ -63,7 +63,7 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
           </Typography>
           <Typography sx={{
             textOrientation: "upright",
-            writingMode: "vertical-rl"
+            writingMode: "vertical-rl",
           }}>
             {dayjs().year()}
           </Typography>
@@ -94,7 +94,11 @@ function HomePage() {
       return <WinnersTribute></WinnersTribute>
     case "Registration":
       if (!tournament.registration?.from)
-        return <>Registration will be starting soon.</>
+        return <CopaBanner>
+          <Typography variant="subtitle1" >
+            Registration is just around the corner.
+          </Typography>
+        </CopaBanner>
 
       const now = new Date();
       const from = new Date(tournament.registration.from);

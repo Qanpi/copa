@@ -68,7 +68,7 @@ function CreateTournamentPage() {
                         <Grid2 xs={12}>
                             <MyAutocomplete name="divisions" />
                         </Grid2>
-                        <Grid2 xs={12} display={"flex"} justifyContent={"center"} gap={6}>
+                        <Grid2 xs={12} display={"flex"} justifyContent={"center"} gap={2} sx={{mt: 1}}>
                             <Button variant="outlined">Go back</Button>
                             <Button type="submit" variant="contained">Create</Button>
                         </Grid2>
