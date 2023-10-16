@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Container, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Backdrop, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -74,6 +74,8 @@ function DrawPage() {
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([]);
 
+  const [resetDialog, setResetDialog] = useState(false);
+
   const { data: stages } = useStages(tournament?.id, {
     division: division?.id,
     type: "round_robin"
@@ -141,56 +143,72 @@ function DrawPage() {
     )
   })
 
+  const handlePotentialReset = () => {
+    setResetDialog(true);
+  }
+
+  const handleDialogResponse = (choice: boolean) => {
+    if (!choice) return setResetDialog(false);
+  }
+
   return (
-    <Stack sx={{ overflow: "hidden", pt: 5 }} direction={{xs: "column", xl: "row"}} alignItems={"center"} justifyContent="center" spacing={3}>
+    <Stack  sx={{ overflow: "hidden", pt: 5 }} direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
+      <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}></Backdrop>
+      <Dialog open={resetDialog}>
+        <DialogTitle>Would you like to reset the draw?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            The draw for this division has already been made. Resetting it will delete all matches in the division up to this point.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={() => handleDialogResponse(false)} variant="contained">No</Button>
+          <Button onClick={() => handleDialogResponse(true)} variant="outlined">Yes</Button>
+        </DialogActions>
+      </Dialog>
+
       <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
         <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
       </Box>
       <Container maxWidth="md">
         <DivisionPanel>
-          {groupStage ?
-            <>Sorry can't reset an arleady made group stage yet. Contact support.</>
-            :
-            <>
-              <Container>
-                <InputLabel>Number of groups</InputLabel>
+          <Container>
+            <InputLabel>Number of groups</InputLabel>
 
-                <Slider
-                  value={groupCount}
-                  onChange={(e, v: number) => {
-                    setGroupCount(v);
-                  }}
-                  min={1}
-                  max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
-                  step={1}
-                  marks
-                  valueLabelDisplay="on"
-                ></Slider>
-              </Container>
+            <Slider
+              value={groupCount}
+              onChange={(e, v: number) => {
+                setGroupCount(v);
+              }}
+              min={1}
+              max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
+              step={1}
+              marks
+              valueLabelDisplay="on"
+            ></Slider>
+          </Container>
 
-              <Box display="grid" gap="10px"
-                gridTemplateColumns={"repeat(auto-fill, 250px)"}
-                justifyContent={"center"}
-              >
-                {groups}
-              </Box>
+          <Box display="grid" gap="10px"
+            gridTemplateColumns={"repeat(auto-fill, 250px)"}
+            justifyContent={"center"}
+          >
+            {groups}
+          </Box>
 
 
 
-              <Box justifyContent={"center"} display="flex" gap={1}>
+          <Box justifyContent={"center"} display="flex" gap={1}>
 
 
-                <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
-                <Button onClick={handleSkipWheel} variant="outlined" sx={{mr: 3}}>
-                  Skip
-                </Button>
+            <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
+            <Button onClick={handleSkipWheel} variant="outlined" sx={{ mr: 3 }}>
+              Skip
+            </Button>
 
-                <Button onClick={handleConfirmSeeding} variant="contained">
-                  Confirm
-                </Button>
-              </Box>
-            </>
-          }
+            <Button onClick={handleConfirmSeeding} variant="contained">
+              Confirm
+            </Button>
+          </Box>
         </DivisionPanel>
       </Container>
     </Stack>
@@ -221,7 +239,7 @@ function GroupTable({ name, participants }: { name: string, participants: TParti
   )
 }
 
-function FortuneWheel({ participants, onSelected }) {
+function FortuneWheel({ participants, onSelected }: { participants: TParticipant[] }) {
   const [mustSpin, setMustSpin] = useState(false);
 
   const randomN = Math.floor(Math.random() * participants.length);
@@ -253,13 +271,13 @@ function FortuneWheel({ participants, onSelected }) {
 
   return (
     <>
-        <Wheel
-          data={wheelOptions}
-          prizeNumber={randomN}
-          mustStartSpinning={mustSpin}
-          onStopSpinning={handleSpinOver}
-          spinDuration={0.00001} //TODO: fix later
-        ></Wheel>
+      <Wheel
+        data={wheelOptions}
+        prizeNumber={randomN}
+        mustStartSpinning={mustSpin}
+        onStopSpinning={handleSpinOver}
+        spinDuration={0.00001} //TODO: fix later
+      ></Wheel>
 
       {/* position is calculated so that it's in the center and on top of the wheel */}
       <Button onClick={handleSpin} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">

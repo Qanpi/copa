@@ -37,7 +37,7 @@ function DivisionPanel({ children }: {children?: ReactNode}) {
           exclusive
           value={division?.name}
           onChange={handleDivisionChange}
-          sx={{ height: "45px" }}
+          sx={{ height: "45px", zIndex: 11 }}
         >
           {divisions?.map((d) => (
             <ToggleButton key={d.id} value={d.name}>
