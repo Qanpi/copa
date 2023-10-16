@@ -121,6 +121,8 @@ function DrawPage() {
     setSeeding([...seeding, option]);
   }
 
+  //TODO: maybe assign group id to participants or somewhow query participants by group
+  //in order to display the made groups in here rather than just placeholders
   const groupless = participants?.filter(p => !seeding.some(s => s.id === p.id));
   const groups = groupSizes.map((n, i) => {
 
