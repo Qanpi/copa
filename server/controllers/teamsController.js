@@ -26,8 +26,11 @@ export const getById = expressAsyncHandler(async (req, res) => {
 });
 
 export const updateOne = expressAsyncHandler(async (req, res) => {
-  const team = await Team.findByIdAndUpdate(req.params.id, req.body, {new: true});
-  res.send(team);
+  const team = await Team.findById(req.params.id);
+  if (team.manager !== req.user.id) throw new Error("Unauthorized request.");
+
+  const updated = await team.updateOne(req.body, {new: true}).exec();
+  res.send(updated);
 })
 
 //is this necessary?

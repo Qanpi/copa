@@ -22,19 +22,23 @@ router.get(
 );
 router.post(
   "/tournaments",
-  body("divisions").isArray({min: 1, max: 10}),
+  isAdmin,
+  body("divisions").isArray({ min: 1, max: 10 }),
   reportValidationErrors,
   tournaments.createOne
 );
-router.patch("/tournaments/:id", tournaments.updateOne);
-router.delete("/tournaments/:id", tournaments.deleteOne);
+router.patch("/tournaments/:id",
+  isAdmin,
+  tournaments.updateOne);
+router.delete("/tournaments/:id", isAdmin,
+  tournaments.deleteOne);
 
 router.use("/tournaments/:id", tournamentRouter);
 
 //TEAMS
 router.get("/teams", teams.getMultiple);
-router.post("/teams", teams.createOne);
-router.patch("/teams/:id", teams.updateOne);
+router.post("/teams", isAuthenticated, teams.createOne);
+router.patch("/teams/:id", isAuthenticated, teams.updateOne);
 router.get("/teams/:id", teams.getById);
 router.get("/teams/:id/players", teams.getPlayersInTeam);
 router.delete("/teams/:teamId/players/:playerId", teams.removePlayerFromTeam);

@@ -6,6 +6,7 @@ export const isAuthenticated = expressAsyncHandler(async (req, res, next) => {
 }) 
 
 export const isAdmin = expressAsyncHandler(async (req, res, next) => {
+    if (req.isUnauthenticated()) throw new Error("Invalid credentials.");
     if (req.user.role !== "admin") throw new Error("Unauthorized request.")
     next();    
 })
