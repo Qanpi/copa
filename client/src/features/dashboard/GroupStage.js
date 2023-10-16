@@ -8,6 +8,7 @@ import {
   CardContent,
   Container,
   Typography,
+  Backdrop,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
@@ -115,22 +116,46 @@ function GroupStage({ next, prev }) {
           <NumberCard number={participants?.length}>
             team(s) registered
           </NumberCard>
-          <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
-            matches scheduled
-          </NumberCard>
-          <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
-            matches complete
-          </NumberCard>
-          <Box
-            display={"flex"}
-            width={"100%"}
-            alignItems="center"
-            justifyContent={"center"}
-          >
-            <Link to="/tournament/draw">
-              <Button variant="contained">Draw groups</Button>
-            </Link>
-          </Box>
+
+          {groupStage ? (
+            <>
+              <NumberCard
+                number={`${scheduledMatches?.length || ""}/${
+                  matches?.length || ""
+                }`}
+              >
+                matches scheduled
+              </NumberCard>
+              <NumberCard
+                number={`${completedMatches?.length || ""}/${
+                  matches?.length || ""
+                }`}
+              >
+                matches complete
+              </NumberCard>
+            </>
+          ) : (
+            <Stack
+              direction="column"
+              display={"flex"}
+              spacing={2}
+              alignItems="center"
+              justifyContent={"center"}
+              sx={{
+                border: "1px solid white",
+                padding: 3,
+                borderRadius: "3px"
+              }}
+            >
+              <Typography variant="body1">
+                The next step is to assign the registered teams into groups. You
+                can also do this together with the participants watching.
+              </Typography>
+              <Link to="/tournament/draw">
+                <Button variant="contained">Draw groups</Button>
+              </Link>
+            </Stack>
+          )}
         </Stack>
       </DivisionPanel>
       <Button onClick={handleClickPrev}>Previous</Button>
