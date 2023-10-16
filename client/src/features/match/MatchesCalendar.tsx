@@ -1,7 +1,8 @@
 import {
   EventApi,
   EventClickArg,
-  EventDropArg
+  EventDropArg,
+  EventInput
 } from "@fullcalendar/core";
 import interactionPlugin, {
   EventResizeDoneArg,
@@ -56,22 +57,21 @@ function MatchesCalendar() {
 
   const updateMatch = useUpdateMatch();
 
-  const events: MatchEvent[] = useMemo(
-    () =>
-      scheduledMatches?.map((m, i) => {
-        return {
-          //FIXME: type
-          id: m.id,
-          title: `Match ${i}`,
-          start: dayjs(m.start).toDate(),
-          end: dayjs(m.start).add(m.duration, "minute").toDate(),
-          opponent1: m.opponent1.id,
-          opponent2: m.opponent2.id,
-          group: m.group_id,
-          stage: m.stage_id,
-          round: m.round_id,
-        };
-      }),
+  const events: EventInput[] = useMemo(
+    () => scheduledMatches?.map((m, i) => {
+      return {
+        //FIXME: type
+        id: m.id,
+        title: `Match ${i}`,
+        start: dayjs(m.start).toDate(),
+        end: dayjs(m.start).add(m.duration, "minute").toDate(),
+        opponent1: m.opponent1.id,
+        opponent2: m.opponent2.id,
+        group: m.group_id,
+        stage: m.stage_id,
+        round: m.round_id,
+      };
+    }) || [],
     [scheduledMatches]
   );
 
@@ -130,10 +130,12 @@ function MatchesCalendar() {
         events={events}
         eventClick={handleEventClick}
         eventDrop={handleEventDrop}
+        slotMinTime={"10:00:00"}
+        slotMaxTime={"15:00:00"}
         scrollTime={"12:00:00"}
         nowIndicator
         snapDuration={1}
-        // expandRows
+        expandRows
         eventResize={handleEventResize}
         editable
         noEventsText="No matches scheduled for this week."

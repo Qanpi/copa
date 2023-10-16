@@ -42,7 +42,7 @@ export const useMatch = (id: string) => {
 };
 
 export const useMatches = (
-  tournamentId: string,
+  tournamentId?: string,
   query?: Partial<TMatch> & { scheduled?: string }
 ) => {
   return useQuery({

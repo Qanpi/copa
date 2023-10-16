@@ -26,13 +26,9 @@ import MatchesTimeline from "./MatchesTimeline";
 
 function MatchesPage() {
   return (
-    <>
-      <Container sx={{ width: "80%" }}>
-        <MatchesTimeline></MatchesTimeline>
-      </Container>
-      {/* <MatchesCalendar></MatchesCalendar> */}
-      <MatchesTable></MatchesTable>
-    </>
+    <Container sx={{pt: 15}}>
+      <MatchesCalendar></MatchesCalendar>
+    </Container >
   );
 }
 
