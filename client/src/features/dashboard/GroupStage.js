@@ -120,16 +120,16 @@ function GroupStage({ next, prev }) {
           {groupStage ? (
             <>
               <NumberCard
-                number={`${scheduledMatches?.length || ""}/${
-                  matches?.length || ""
-                }`}
+                number={`${
+                  scheduledMatches !== undefined ? scheduledMatches.length : ""
+                }/${matches !== undefined ? matches.length : ""}`}
               >
                 matches scheduled
               </NumberCard>
               <NumberCard
-                number={`${completedMatches?.length || ""}/${
-                  matches?.length || ""
-                }`}
+                number={`${
+                  completedMatches !== undefined ? completedMatches.length : ""
+                }/${matches !== undefined ? matches.length : ""}`}
               >
                 matches complete
               </NumberCard>
@@ -144,7 +144,7 @@ function GroupStage({ next, prev }) {
               sx={{
                 border: "1px solid white",
                 padding: 3,
-                borderRadius: "3px"
+                borderRadius: "3px",
               }}
             >
               <Typography variant="body1">

@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Stack } from "@mui/material";
+import { Box, Typography, Container, Stack, CircularProgress } from "@mui/material";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
@@ -59,7 +59,7 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "10vw!important" }} noWrap>
-            {tournament?.name.toUpperCase()}
+            {tournament?.name?.toUpperCase()}
           </Typography>
           <Typography sx={{
             textOrientation: "upright",
@@ -77,9 +77,19 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
 }
 
 function HomePage() {
-  const { data: tournament } = useTournament("current");
+  const { data: tournament, status } = useTournament("current");
 
-  switch (tournament?.state) {
+  if (status !== "success" || !tournament?.state) return <Container maxWidth="md" sx={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "50vh"
+  }}>
+    {tournament?.state ? <CircularProgress></CircularProgress> : <Typography>Hmm... I must've messed something up in code.</Typography>}
+  </Container>
+
+
+  switch (tournament.state) {
     case "Complete":
       return <WinnersTribute></WinnersTribute>
     case "Registration":
