@@ -142,8 +142,10 @@ function DrawPage() {
   })
 
   return (
-    <Box sx={{ overflow: "hidden", pt: 5, pl: { xs: "0", md: "60vmin" }, pb: { xs: "70vmin", md: "0" } }}>
-
+    <Stack sx={{ overflow: "hidden", pt: 5 }} direction={{xs: "column", xl: "row"}} alignItems={"center"} justifyContent="center" spacing={3}>
+      <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
+        <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+      </Box>
       <Container maxWidth="md">
         <DivisionPanel>
           {groupStage ?
@@ -191,10 +193,7 @@ function DrawPage() {
           }
         </DivisionPanel>
       </Container>
-      <Box sx={{ position: "fixed", bottom: "-30vmin", left: "-30vmin", height: "100vmin", width: "100vmin" }}>
-        <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
-      </Box>
-    </Box>
+    </Stack>
   )
 }
 
@@ -235,6 +234,7 @@ function FortuneWheel({ participants, onSelected }) {
   });
 
   const isWheelVisible = participants?.length !== 0;
+  console.log(participants)
 
   const handleSpinOver = () => {
     setMustSpin(false);
