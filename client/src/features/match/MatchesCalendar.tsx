@@ -28,26 +28,6 @@ import { TMatch } from "@backend/models/match.ts";
 import { Link } from "react-router-dom";
 import { useTournament } from "../viewer/hooks.ts";
 
-// type MatchEvent = {
-//   matchId: ObjectId;
-//   title: string;
-//   start: Date;
-//   end: Date;
-//   opponent1: ObjectId;
-//   opponent2: ObjectId;
-//   group: ObjectId;
-//   stage: ObjectId;
-//   round: ObjectId;
-// };
-
-type MatchEvent = Omit<
-  Partial<TMatch>,
-  "opponent1" | "opponent2" | "duration"
-> & {
-  opponent1: ObjectId;
-  opponent2: ObjectId;
-} & Partial<EventApi>;
-
 function MatchesCalendar() {
   const { data: tournament } = useTournament("current");
   const { data: scheduledMatches } = useMatches(tournament?.id,
@@ -65,8 +45,8 @@ function MatchesCalendar() {
         title: `Match ${i}`,
         start: dayjs(m.start).toDate(),
         end: dayjs(m.start).add(m.duration, "minute").toDate(),
-        opponent1: m.opponent1.id,
-        opponent2: m.opponent2.id,
+        opponent1: m.opponent1?.id,
+        opponent2: m.opponent2?.id,
         group: m.group_id,
         stage: m.stage_id,
         round: m.round_id,
@@ -129,15 +109,15 @@ function MatchesCalendar() {
         }}
         events={events}
         eventClick={handleEventClick}
-        eventDrop={handleEventDrop}
+        // eventDrop={handleEventDrop}
         slotMinTime={"10:00:00"}
         slotMaxTime={"15:00:00"}
         scrollTime={"12:00:00"}
         nowIndicator
-        snapDuration={1}
+        // snapDuration={1}
         expandRows
-        eventResize={handleEventResize}
-        editable
+        // eventResize={handleEventResize}
+        // editable
         noEventsText="No matches scheduled for this week."
       ></FullCalendar>
     </>

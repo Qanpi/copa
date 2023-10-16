@@ -13,6 +13,7 @@ import { TParticipant } from "@backend/models/participant.ts";
 import { useContext } from "react";
 import { DivisionContext } from "../../index.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
+import BannerPage from "../viewer/BannerPage.tsx";
 
 function TeamsPage() {
   const { data: tournament } =
@@ -28,48 +29,42 @@ function TeamsPage() {
 
 
   return (
-    <Box sx={{ pt: 10 }} >
-      <GradientTitle >
-        <Typography variant="h2">Participants</Typography>
-      </GradientTitle>
-      <Container>
-
-        <Stack spacing={3}>
-          <DivisionPanel>
-            <Box sx={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, 300px)",
-              gap: 2,
-              justifyContent: "center",
-              pt: 2
-            }}>
-              {
-                participants?.map(p => {
-                  return (
-                    <Card key={p.id} sx={{
-                      minHeight: 200, borderRadius: 3,
-                    }}>
-                      <Link to={`/teams/${p.name}`}>
-                        <CardActionArea sx={{
-                          height: "100%",
-                          display: "flex",
-                          alignItems: "flex-end",
-                          justifyContent: "left"
-                        }}>
-                          <CardContent>
-                            <Typography>{p.name}</Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Link>
-                    </Card>
-                  )
-                })
-              }
-            </Box>
-          </DivisionPanel>
-        </Stack>
-      </Container>
-    </Box>
+    <BannerPage title="Teams">
+      <Stack spacing={3}>
+        <DivisionPanel>
+          <Box sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, 300px)",
+            gap: 2,
+            justifyContent: "center",
+            pt: 2
+          }}>
+            {
+              participants?.map(p => {
+                return (
+                  <Card key={p.id} sx={{
+                    minHeight: 200, borderRadius: 3,
+                  }}>
+                    <Link to={`/teams/${p.name}`}>
+                      <CardActionArea sx={{
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "left"
+                      }}>
+                        <CardContent>
+                          <Typography>{p.name}</Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Link>
+                  </Card>
+                )
+              })
+            }
+          </Box>
+        </DivisionPanel>
+      </Stack>
+    </BannerPage>
   );
 }
 
