@@ -12,14 +12,14 @@ import {
   useMediaQuery,
   IconButton
 } from "@mui/material";
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../user/hooks.ts";
-import UserPanel from "../user/userMenu/userpanel.js";
+import UserPanel from "../user/userMenu/userpanel.tsx";
 import { Menu as MenuIcon } from "@mui/icons-material";
 // import "./header.css";
 
-const SectionMenu = ({ title, children }) => {
+export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -48,9 +48,9 @@ const SectionMenu = ({ title, children }) => {
           }}
           ref={ref}
         >
-          <Typography
-          >{title} </Typography>
+          {anchor}
         </Box>
+
 
         <Popper
           open={open}
@@ -113,12 +113,16 @@ function Header() {
       }} display="flex" alignItems={"center"}>
         {isMobile ?
           null
-          : <Stack direction="row" spacing={"9vw"} sx={{
+          : <Stack direction="row" spacing={"7vw"} sx={{
             height: "100%"
           }} alignItems={"center"}>
             <Link to="/" > Home </Link>
 
-            <SectionMenu title="Tournament" >
+            <DropdownMenu anchor={
+              <Typography>
+                Tournament
+              </Typography>
+            }>
               <Link to="/tournament/teams" >
                 <MenuItem>Teams </MenuItem>
               </Link>
@@ -134,7 +138,7 @@ function Header() {
               < Link to="/tournament/gamblers" >
                 <MenuItem>Gamblers </MenuItem>
               </Link>
-            </SectionMenu>
+            </DropdownMenu>
 
             <Link to="/all-time">
               <Typography>
@@ -148,8 +152,8 @@ function Header() {
             </Link>
           </Stack>
         }
-        <Box sx={{ ml: "auto", height: "70%" }}>
-          {isMobile ? <IconButton sx={{mr: 1}}>
+        <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex" }}>
+          {isMobile ? <IconButton sx={{ mr: 1 }}>
             <MenuIcon></MenuIcon>
           </IconButton> : null}
           <UserPanel></UserPanel>
@@ -169,7 +173,7 @@ function Header() {
       <div className="bar" >
         <div className="sections" >
           <Link to="/" > Home </Link>
-          < SectionMenu title="Tournament" >
+          < DropdownMenu title="Tournament" >
             <Link to="/tournament/teams" >
               <MenuItem>Teams </MenuItem>
             </Link>
@@ -185,7 +189,7 @@ function Header() {
             < Link to="/tournament/gamblers" >
               <MenuItem>Gamblers </MenuItem>
             </Link>
-          </SectionMenu>
+          </DropdownMenu>
           {
             isAdmin ? <Link to="/tournament/dashboard" > Dashboard </Link> : null}
           < span > All - time </span>
