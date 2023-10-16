@@ -7,18 +7,23 @@ import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
 import tournamentRouter from "./tournament.js";
 import { isAuthenticated, isAdmin } from "../middleware/auth.js";
+import { body, checkSchema } from "express-validator";
+import { reportValidationErrors } from "../middleware/validation.js";
 
 const router = express.Router();
 
 //TOURNAMENT
 router.get("/tournaments", tournaments.getMultiple);
 router.get("/tournaments/current", tournaments.getLatest);
+router.get("/tournaments/latest", tournaments.getLatest);
 router.get(
   "/tournaments/:id",
   tournaments.getOne
 );
 router.post(
   "/tournaments",
+  body("divisions").isArray({min: 1, max: 10}),
+  reportValidationErrors,
   tournaments.createOne
 );
 router.patch("/tournaments/:id", tournaments.updateOne);

@@ -30,12 +30,7 @@ function CreateTournamentPage() {
                 divisions: Yup.array().min(1, "You must create at least one division.").required().of(Yup.string()),
             })}
             onSubmit={(values) => {
-                const divisions = values.divisions.map(d => ({ name: d }));
-
-                createTournament.mutate({
-                    ...values,
-                    divisions
-                });
+                createTournament.mutate(values);
             }}
         >
             <Form>

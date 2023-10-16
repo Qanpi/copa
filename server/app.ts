@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import "dotenv/config.js"
 
-connectMongoose(); //FIXME: await 
+await connectMongoose();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,6 +17,7 @@ import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
+import { debugHTTP } from "./services/debuggers.js";
 
 const app = express();
 
@@ -81,15 +82,15 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   // set locals, only providing error in development
+  debugHTTP(err, err.cause);
   res.locals.message = err.message;
-  console.error(err);
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
   res.status(err.status || 500);
   res.send({
     message: err.message,
-    error: err,
+    error: err.cause,
   });
 });
 

@@ -4,10 +4,10 @@ import Tournament from "../models/tournament.js";
 import { bracketsManager } from "../services/bracketsManager.js";
 
 export const createOne = expressAsyncHandler(async (req, res) => {
-  const {divisions, ...tournamentData} = req.body;
+  const { divisions, ...tournamentData } = req.body;
 
   const newTournament = new Tournament(tournamentData);
-  newTournament.divisions.push(...divisions);
+  newTournament.divisions.push(...divisions.map((d) => ({ name: d })));
 
   await newTournament.save();
   res.send(newTournament);

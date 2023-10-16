@@ -1,9 +1,8 @@
+import crypto from "crypto";
+import dayjs from "dayjs";
 import expressAsyncHandler from "express-async-handler";
 import Team from "../models/team.js";
 import User from "../models/user.js";
-import { validate } from "../middleware/validation.js";
-import crypto from "crypto"
-import dayjs from "dayjs"
 
 export const createOne = expressAsyncHandler(async (req, res) => {
   const team = await new Team(req.body).save();
@@ -21,7 +20,6 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
 });
 
 export const getById = expressAsyncHandler(async (req, res) => {
-  validate(req, res);
 
   const team = await Team.findById(req.params.id);
   res.send(team);
