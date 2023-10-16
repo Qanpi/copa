@@ -29,7 +29,7 @@ function TeamsPage() {
 
   return (
     <Box sx={{ pt: 10 }} >
-      <GradientTitle paddingLeft={{xs: "10vw", md: "20vw"}}>
+      <GradientTitle >
         <Typography variant="h2">Participants</Typography>
       </GradientTitle>
       <Container>

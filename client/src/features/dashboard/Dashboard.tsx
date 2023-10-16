@@ -58,9 +58,9 @@ function DashboardPage() {
   return (
     <Box sx={{ pt: 7 }}>
 
-      <GradientTitle padding={3}>
-        <Stack spacing={10} direction="row" sx={{ height: "100%" }} justifyContent={"center"} alignItems={"center"}>
-          <Typography variant="h2" fontWeight={800}>{tournament.name}</Typography>
+      <GradientTitle>
+        <Stack direction="row" sx={{ height: "100%" }} justifyContent={"center"} alignItems={"center"}>
+          <Typography variant="h2" fontWeight={800} minWidth={"4em"}>{tournament.name}</Typography>
           <Stepper activeStep={stateId} orientation="horizontal">
             {
               tournament.states.map((s, i) => (
