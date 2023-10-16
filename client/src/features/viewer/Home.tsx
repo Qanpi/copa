@@ -33,6 +33,49 @@ function WinnersTribute() {
 
 }
 
+function CopaBanner({ children }: { children: React.ReactNode }) {
+  const { data: tournament } = useTournament("current");
+
+  return (
+    <Container sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      pt: 10
+    }}>
+      <Box component="img" src={brush} sx={{
+        position: "absolute",
+        width: "80vw",
+        zIndex: -1,
+        rotate: "-2deg",
+      }}></Box>
+      <Stack sx={{
+        width: "60vw",
+        height: "70vmin",
+        backdropFilter: "blur(30px)",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0
+      }}>
+        <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
+          <Typography variant="h1" fontWeight={800} sx={{ fontSize: "10vw!important" }} noWrap>
+            {tournament?.name.toUpperCase()}
+          </Typography>
+          <Typography sx={{
+            textOrientation: "upright",
+            writingMode: "vertical-rl"
+          }}>
+            {dayjs().year()}
+          </Typography>
+        </Stack>
+        {/* <Typography variant="subtitle1" sx={{mt: -2, mb: 5}}>is here!</Typography> */}
+
+        {children}
+      </Stack>
+    </Container>
+  )
+}
+
 function HomePage() {
   const { data: tournament } = useTournament("current");
 
@@ -48,57 +91,31 @@ function HomePage() {
 
       if (now <= from)
         return (
-          <Container sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            pt: 10
-          }}>
-            <Box component="img" src={brush} sx={{
-              position: "absolute",
-              width: "80vw",
-              zIndex: -1,
-              rotate: "-2deg",
-            }}></Box>
-            <Stack sx={{
-              width: "60vw",
-              height: "70vmin",
-              backdropFilter: "blur(30px)",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0
-            }}>
-              <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
-                <Typography variant="h1" fontWeight={800} sx={{fontSize: "10vw!important"}} noWrap>
-                  {tournament.name.toUpperCase()}
-                </Typography>
-                <Typography sx={{
-                  textOrientation: "upright",
-                  writingMode: "vertical-rl"
-                }}>
-                  {dayjs().year()}
-                </Typography>
-              </Stack>
-              {/* <Typography variant="subtitle1" sx={{mt: -2, mb: 5}}>is here!</Typography> */}
-
-              <Typography variant="subtitle1" >
-                Registration begins {dayjs().to(tournament.registration.from)}.
-              </Typography>
-            </Stack>
-          </Container>
-
+          <CopaBanner>
+            <Typography variant="subtitle1" >
+              Registration begins {dayjs().to(tournament.registration.from)}.
+            </Typography>
+          </CopaBanner>
         )
 
       if (!tournament.registration?.to)
-        return <>Hurry up! Registration will be closing soon.</>;
+        return (
+          <CopaBanner>
+            <Typography variant="subtitle1" >
+              Hurry up! There is still time to register.
+            </Typography>
+          </CopaBanner>
+        )
 
       const to = new Date(tournament.registration.to);
 
       if (now <= to) return (
         <>
-          <div>
-            Registration closes {dayjs().to(tournament.registration.to)}.
-          </div>
+          <CopaBanner>
+            <Typography variant="subtitle1" >
+              Registration closes {dayjs().to(tournament.registration.to)}.
+            </Typography>
+          </CopaBanner >
           <Link to="/tournament/register">Register</Link>
         </>
       );
