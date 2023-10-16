@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Container, Slider, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Container, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import DivisionPanel from "./DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
 import "./fortuneWheel.css"
+import { TParticipant } from "@backend/models/participant.ts";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -64,7 +65,10 @@ function DrawPage() {
 
   //TODO: better way to do this?
   useEffect(() => {
-    if (division) refetch();
+    if (division) {
+      setSeeding([]);
+      refetch();
+    }
   }, [division]);
 
   const [groupCount, setGroupCount] = useState(4);
@@ -116,18 +120,29 @@ function DrawPage() {
 
   const groupless = participants?.filter(p => !seeding.some(s => s.id === p.id));
   const groups = groupSizes.map((n, i) => {
+
+    //generate empty placeholder of size equals number of participants in group
+    const placeholder = new Array(n).fill({});
+
+    let k = 0; //participant number in the group
+
+    //go through all participants in the current seeding
+    //if their index (j) matches the index of the group, replace the placeholder with them
+    //increment k to the positoin of next participant
+    for (let j=0; j<seeding.length; j++) {
+      if (j % groupCount === i) {
+        placeholder[k] = seeding[j];
+        k++;
+      }
+    }
+
     return (
-      <Group
-        name={`Group ${alphabet[i]}`}
-        participants={seeding.filter((v, j) => (j % groupCount === i))}
-        disableHead
-        key={i}
-      ></Group>
-    );
+      <GroupTable name={`${alphabet[i]}`} participants={placeholder}></GroupTable>
+    )
   })
 
   return (
-    <Box sx={{ overflow: "hidden", pt: 5, pl: {xs: "0", md: "70vmin"}, pb: {xs: "70vmin", md: "0"} }}>
+    <Box sx={{ overflow: "hidden", pt: 5, pl: { xs: "0", md: "70vmin" }, pb: { xs: "70vmin", md: "0" } }}>
 
       <Container maxWidth="md">
         <DivisionPanel>
@@ -136,7 +151,7 @@ function DrawPage() {
             :
             <>
               <Container>
-                <Typography>Number of groups</Typography>
+                <InputLabel>Number of groups</InputLabel>
 
                 <Slider
                   value={groupCount}
@@ -151,7 +166,12 @@ function DrawPage() {
                 ></Slider>
               </Container>
 
-              {groups}
+              <Box display="grid" gap="10px"
+                gridTemplateColumns={"repeat(auto-fill, 250px)"}
+                justifyContent={"center"}
+              >
+                {groups}
+              </Box>
 
 
               <Stack direction="row" spacing={2}>
@@ -161,7 +181,7 @@ function DrawPage() {
                   Skip
                 </Button>
 
-                <Button onClick={handleConfirmSeeding} variant="contained" sx={{ml: "auto !important"}}>
+                <Button onClick={handleConfirmSeeding} variant="contained" sx={{ ml: "auto !important" }}>
                   Confirm
                 </Button>
               </Stack>
@@ -173,6 +193,39 @@ function DrawPage() {
         <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
       </Box>
     </Box>
+  )
+}
+
+function GroupTable({ name, participants }: { name: string, participants: TParticipant[] }) {
+  return (
+    <TableContainer component={Paper}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell colSpan={5} align="center">
+              <Typography variant="h6">Group {name}</Typography>
+            </TableCell>
+          </TableRow>
+          {/* {!disableHead ? (
+            <TableRow>
+              <TableCell>Standing</TableCell>
+              <TableCell>Team name</TableCell>
+              <TableCell>W</TableCell>
+              <TableCell>L</TableCell>
+              <TableCell>D</TableCell>
+            </TableRow>
+          ) : null} */}
+        </TableHead>
+        <TableBody>
+          {participants.map((p, i) => (
+            <TableRow key={i}>
+              <TableCell>{i + 1}.</TableCell>
+              <TableCell>{p.name}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   )
 }
 
