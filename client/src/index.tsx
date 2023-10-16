@@ -80,7 +80,7 @@ export const lightTheme = responsiveFontSizes(createTheme({
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision>(null);
-export const DivisionDispatchContext = React.createContext<(prevId: number, newId: number) => number>(null);
+export const DivisionDispatchContext = React.createContext<(newId: number) => number>(null);
 
 function divisionReducer(prevId: number, newId: number) {
   return newId;

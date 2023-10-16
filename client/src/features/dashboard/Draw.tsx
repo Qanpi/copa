@@ -85,7 +85,7 @@ function DrawPage() {
   const createGroupStage = useCreateStage();
   const resetDraw = useDeleteStage();
 
-  if (!participants) return <>Loading...</>
+  if (!stages) return <>Loading...</>
 
   if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
 
@@ -157,12 +157,13 @@ function DrawPage() {
 
   return (
     <Stack sx={{ overflow: "hidden", pt: 5 }} direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
-      <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}></Backdrop>
+      <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}>
+      </Backdrop>
       <Dialog open={resetDialog}>
         <DialogTitle>Would you like to reset the draw?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            The draw for this division has already been made. Resetting it will delete all matches in the division up to this point.
+            The draw for the "{division.name}" division has already been made. Resetting it will delete all matches in the division up to this point.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -255,7 +256,6 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
   });
 
   const isWheelVisible = participants?.length !== 0;
-  console.log(participants)
 
   const handleSpinOver = () => {
     setMustSpin(false);
@@ -267,6 +267,7 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
   const handleSpin = () => {
     if (!isWheelVisible || mustSpin) return;
 
+    console.log(mustSpin)
     setMustSpin(true);
   };
 

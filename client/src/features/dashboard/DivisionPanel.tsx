@@ -21,7 +21,9 @@ function DivisionPanel({ children }: {children?: ReactNode}) {
   const division = useContext(DivisionContext);
   const dispatch = useContext(DivisionDispatchContext);
 
-  const handleDivisionChange = (event, name) => {
+  const handleDivisionChange = (_, name: string) => {
+    if (!divisions || !name) return;
+
     const id = divisions.findIndex((d) => d.name === name);
     dispatch(id);
   };
@@ -40,7 +42,7 @@ function DivisionPanel({ children }: {children?: ReactNode}) {
           sx={{ height: "45px", zIndex: 11 }}
         >
           {divisions?.map((d) => (
-            <ToggleButton key={d.id} value={d.name}>
+            <ToggleButton key={d.id} value={d.name as string}>
               {d.name}
             </ToggleButton>
           ))}

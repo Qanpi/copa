@@ -100,7 +100,7 @@ function Header() {
   const theme = useTheme();
 
   return (
-    <Box sx={{ width: "100vw", position: "sticky" }}>
+    <Box sx={{ width: "100vw", position: "sticky", zIndex: 12 }}>
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "50px",
