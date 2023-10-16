@@ -28,45 +28,48 @@ function TeamsPage() {
 
 
   return (
-    <Container sx={{ pt: 10 }} >
-      <Stack spacing={3}>
-        <GradientTitle padding={2}>
-          <Typography variant="h2">Teams participating</Typography>
-        </GradientTitle>
-        <DivisionPanel>
-          <Box sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, 300px)",
-            gap: 2,
-            justifyContent: "center",
-            pt: 2
-          }}>
-            {
-              participants?.map(p => {
-                return (
-                  <Card key={p.id} sx={{
-                    minHeight: 200, borderRadius: 3,
-                  }}>
-                    <Link to={`/teams/${p.name}`}>
-                      <CardActionArea sx={{
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "flex-end",
-                        justifyContent: "left"
-                      }}>
-                        <CardContent>
-                          <Typography>{p.name}</Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Link>
-                  </Card>
-                )
-              })
-            }
-          </Box>
-        </DivisionPanel>
-      </Stack>
-    </Container>
+    <Box sx={{ pt: 10 }} >
+      <GradientTitle paddingLeft={{xs: "10vw", md: "20vw"}}>
+        <Typography variant="h2">Participants</Typography>
+      </GradientTitle>
+      <Container>
+
+        <Stack spacing={3}>
+          <DivisionPanel>
+            <Box sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, 300px)",
+              gap: 2,
+              justifyContent: "center",
+              pt: 2
+            }}>
+              {
+                participants?.map(p => {
+                  return (
+                    <Card key={p.id} sx={{
+                      minHeight: 200, borderRadius: 3,
+                    }}>
+                      <Link to={`/teams/${p.name}`}>
+                        <CardActionArea sx={{
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "flex-end",
+                          justifyContent: "left"
+                        }}>
+                          <CardContent>
+                            <Typography>{p.name}</Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Link>
+                    </Card>
+                  )
+                })
+              }
+            </Box>
+          </DivisionPanel>
+        </Stack>
+      </Container>
+    </Box>
   );
 }
 
