@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Container, Slider, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Container, Slider, Stack, Typography } from "@mui/material";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import { useCreateStage } from "../stage/hooks.ts";
 import DivisionPanel from "./DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
+import "./fortuneWheel.css"
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -126,42 +127,52 @@ function DrawPage() {
   })
 
   return (
-    <DivisionPanel>
-      {groupStage ?
-        <>Sorry can't reset an arleady made group stage yet. Contact support.</>
-        :
-        <>
-          <Container>
-            <Typography>Number of groups</Typography>
+    <Box sx={{ overflow: "hidden", pt: 5, pl: {xs: "0", md: "70vmin"}, pb: {xs: "70vmin", md: "0"} }}>
 
-            <Slider
-              value={groupCount}
-              onChange={(e, v: number) => {
-                setGroupCount(v);
-              }}
-              min={1}
-              max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
-              step={1}
-              marks
-              valueLabelDisplay="on"
-            ></Slider>
-          </Container>
+      <Container maxWidth="md">
+        <DivisionPanel>
+          {groupStage ?
+            <>Sorry can't reset an arleady made group stage yet. Contact support.</>
+            :
+            <>
+              <Container>
+                <Typography>Number of groups</Typography>
 
-          {groups}
+                <Slider
+                  value={groupCount}
+                  onChange={(e, v: number) => {
+                    setGroupCount(v);
+                  }}
+                  min={1}
+                  max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
+                  step={1}
+                  marks
+                  valueLabelDisplay="on"
+                ></Slider>
+              </Container>
 
-          <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+              {groups}
 
-          <Button onClick={handleSkipWheel}>
-            Skip
-          </Button>
-          <Button onClick={handleResetSeeding}>Reset</Button>
 
-          <Button onClick={handleConfirmSeeding}>
-            Confirm
-          </Button>
-        </>
-      }
-    </DivisionPanel>
+              <Stack direction="row" spacing={2}>
+                <Button onClick={handleResetSeeding} variant="outlined">Reset</Button>
+
+                <Button onClick={handleSkipWheel} variant="outlined">
+                  Skip
+                </Button>
+
+                <Button onClick={handleConfirmSeeding} variant="contained" sx={{ml: "auto !important"}}>
+                  Confirm
+                </Button>
+              </Stack>
+            </>
+          }
+        </DivisionPanel>
+      </Container>
+      <Box sx={{ position: "fixed", bottom: "-30vmin", left: "-30vmin", height: "100vmin", width: "100vmin" }}>
+        <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+      </Box>
+    </Box>
   )
 }
 
@@ -207,7 +218,9 @@ function FortuneWheel({ participants, onSelected }) {
         <div>No more temas left</div>
       )}
 
-      <Button onClick={handleSpin} disabled={isWheelVisible}>
+
+      {/* position is calculated so that it's in the center and on top of the wheel */}
+      <Button onClick={handleSpin} disabled={isWheelVisible} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
         Spin
       </Button>
     </>
