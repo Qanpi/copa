@@ -1,5 +1,5 @@
 import { Google } from "@mui/icons-material";
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, useMediaQuery } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -23,6 +23,8 @@ function UserPanel() {
     },
   });
 
+  const minified = useMediaQuery((theme) => theme.breakpoints.down("lg"));
+
   return user ? (
     <div className="user-panel">
       <div className="profile">
@@ -44,10 +46,20 @@ function UserPanel() {
     <Button
       onClick={handleSignIn}
       variant="outlined"
-      sx={{ padding: 0, paddingRight: 2, paddingLeft: 2, height: "70%"  }}
-      startIcon={<Google></Google>}
+      sx={{
+        padding: 0,
+        paddingRight: 1,
+        paddingLeft: 1,
+        height: "100%",
+        minWidth: "30px",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
     >
-      <Typography variant="button">Sign in with Google</Typography>
+      <Google></Google>
+      {minified ? null : (
+        <Typography variant="button" sx={{ml: 1}}>Sign in with Google</Typography>
+      )}
     </Button>
   );
 }

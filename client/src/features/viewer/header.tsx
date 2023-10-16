@@ -8,12 +8,15 @@ import {
   Stack,
   Typography,
   Menu,
-  useTheme
+  useTheme,
+  useMediaQuery,
+  IconButton
 } from "@mui/material";
 import { useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../user/hooks.ts";
 import UserPanel from "../user/userMenu/userpanel.js";
+import { Menu as MenuIcon } from "@mui/icons-material";
 // import "./header.css";
 
 const SectionMenu = ({ title, children }) => {
@@ -98,50 +101,59 @@ function Header() {
   const isAdmin = user?.role === "admin";
 
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
   return (
     <Box sx={{ width: "100vw", position: "sticky", zIndex: 12 }}>
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "50px",
-        paddingLeft: "300px",
-        paddingRight: 5
-      }} display="flex" alignItems={"center"} justifyContent={"space-between"}>
-        <Stack direction="row" spacing={10} sx={{
-          height: "100%"
-        }} alignItems={"center"}>
-          <Link to="/" > Home </Link>
+        paddingLeft: "270px",
+        paddingRight: 3
+      }} display="flex" alignItems={"center"}>
+        {isMobile ?
+          null
+          : <Stack direction="row" spacing={"9vw"} sx={{
+            height: "100%"
+          }} alignItems={"center"}>
+            <Link to="/" > Home </Link>
 
-          <SectionMenu title="Tournament" >
-            <Link to="/tournament/teams" >
-              <MenuItem>Teams </MenuItem>
-            </Link>
-            < Link to="/tournament/matches" >
-              <MenuItem>Matches </MenuItem>
-            </Link>
-            < Link to="/tournament/groups" >
-              <MenuItem>Group Stage </MenuItem>
-            </Link>
-            < Link to="/tournament/bracket" >
-              <MenuItem>Bracket </MenuItem>
-            </Link>
-            < Link to="/tournament/gamblers" >
-              <MenuItem>Gamblers </MenuItem>
-            </Link>
-          </SectionMenu>
+            <SectionMenu title="Tournament" >
+              <Link to="/tournament/teams" >
+                <MenuItem>Teams </MenuItem>
+              </Link>
+              < Link to="/tournament/matches" >
+                <MenuItem>Matches </MenuItem>
+              </Link>
+              < Link to="/tournament/groups" >
+                <MenuItem>Group Stage </MenuItem>
+              </Link>
+              < Link to="/tournament/bracket" >
+                <MenuItem>Bracket </MenuItem>
+              </Link>
+              < Link to="/tournament/gamblers" >
+                <MenuItem>Gamblers </MenuItem>
+              </Link>
+            </SectionMenu>
 
-          <Link to="/all-time">
-            <Typography>
-              All-time
-            </Typography>
-          </Link>
-          <Link to="/about">
-            <Typography>
-              About
-            </Typography>
-          </Link>
-        </Stack>
-        <UserPanel></UserPanel>
+            <Link to="/all-time">
+              <Typography>
+                All-time
+              </Typography>
+            </Link>
+            <Link to="/about">
+              <Typography>
+                About
+              </Typography>
+            </Link>
+          </Stack>
+        }
+        <Box sx={{ ml: "auto", height: "70%" }}>
+          {isMobile ? <IconButton sx={{mr: 1}}>
+            <MenuIcon></MenuIcon>
+          </IconButton> : null}
+          <UserPanel></UserPanel>
+        </Box>
       </Box>
       <Box sx={{
         background: "none",
