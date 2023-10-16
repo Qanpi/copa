@@ -1,4 +1,6 @@
 import {
+  Box,
+  Stack,
   Alert,
   AlertTitle,
   Button,
@@ -27,12 +29,17 @@ import { DivisionContext } from "../../index.tsx";
 import DivisionPanel from "./DivisionPanel.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
 import { groupBy } from "lodash-es";
+import { useParticipants } from "../participant/hooks.ts";
 
 function GroupStage({ next, prev }) {
   const { data: tournament } = useTournament("current");
 
   const division = useContext(DivisionContext);
   const { data: divisions } = useDivisions(tournament?.id);
+
+  const { data: participants } = useParticipants(tournament?.id, {
+    division: division?.id,
+  });
 
   const { data: stages } = useStages(tournament?.id, {
     type: "round_robin",
@@ -78,7 +85,7 @@ function GroupStage({ next, prev }) {
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="sm">
       {noGroupStageAlert ? (
         <Alert severity="error">
           <AlertTitle>
@@ -104,24 +111,30 @@ function GroupStage({ next, prev }) {
       ) : null}
 
       <DivisionPanel>
-        {!groupStage ? (
-          <Link to="/tournament/draw">Draw teams</Link>
-        ) : (
-          <>
-            <NumberCard
-              number={`${scheduledMatches?.length}/${matches?.length}`}
-            >
-              matches scheduled
-            </NumberCard>
-            <NumberCard
-              number={`${completedMatches?.length}/${matches?.length}`}
-            >
-              matches complete
-            </NumberCard>
-          </>
-        )}
+        <Stack direction={{xs: "column", md: "row"}} spacing={2}>
+          <NumberCard number={participants?.length}>
+            team(s) registered
+          </NumberCard>
+          {groupStage ? (
+            <>
+              <NumberCard
+                number={`${scheduledMatches?.length}/${matches?.length}`}
+              >
+                matches scheduled
+              </NumberCard>
+              <NumberCard
+                number={`${completedMatches?.length}/${matches?.length}`}
+              >
+                matches complete
+              </NumberCard>
+            </>
+          ) : (
+            <Box display={"flex"} width={"100%"} alignItems="center" justifyContent={"center"}>
+              <Link to="/tournament/draw">Draw teams</Link>
+            </Box>
+          )}
+        </Stack>
       </DivisionPanel>
-
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
     </Container>

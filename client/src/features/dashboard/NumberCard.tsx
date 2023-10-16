@@ -4,9 +4,14 @@ import { lightTheme } from "../..";
 const NumberCard = ({ number, children, ...rest }: { number: number } & CardProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
-      <Card {...rest}>
+      <Card sx={{
+        minWidth: 200, 
+        minHeight: 150,
+        display: "flex",
+        alignItems: "end"
+      }} {...rest}>
         <CardContent>
-          <Typography variant="h2">{number}</Typography>
+          <Typography variant="h1">{number}</Typography>
           {children}
         </CardContent>
       </Card>
