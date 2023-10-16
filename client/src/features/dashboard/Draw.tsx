@@ -152,7 +152,7 @@ function DrawPage() {
   }
 
   return (
-    <Stack  sx={{ overflow: "hidden", pt: 5 }} direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
+    <Stack sx={{ overflow: "hidden", pt: 5 }} direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
       <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}></Backdrop>
       <Dialog open={resetDialog}>
         <DialogTitle>Would you like to reset the draw?</DialogTitle>
@@ -167,9 +167,8 @@ function DrawPage() {
         </DialogActions>
       </Dialog>
 
-      <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
-        <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
-      </Box>
+      <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+
       <Container maxWidth="md">
         <DivisionPanel>
           <Container>
@@ -211,7 +210,7 @@ function DrawPage() {
           </Box>
         </DivisionPanel>
       </Container>
-    </Stack>
+    </Stack >
   )
 }
 
@@ -270,7 +269,7 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
   if (!isWheelVisible) return;
 
   return (
-    <>
+    <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
       <Wheel
         data={wheelOptions}
         prizeNumber={randomN}
@@ -283,7 +282,7 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
       <Button onClick={handleSpin} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
         Spin
       </Button>
-    </>
+    </Box >
   );
 }
 
