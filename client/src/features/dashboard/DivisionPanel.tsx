@@ -5,7 +5,8 @@ import {
   Container,
   ToggleButton,
   ToggleButtonGroup,
-  useTheme
+  useTheme,
+  Typography
 } from "@mui/material";
 import {
   useDivisions,
@@ -14,8 +15,8 @@ import {
 import { ReactNode, useContext } from "react";
 import { DivisionContext, DivisionDispatchContext } from "../../index.tsx";
 
-function DivisionPanel({ children }: {children?: ReactNode}) {
-  const { data: tournament } = useTournament("current");
+function DivisionPanel({ children }: { children?: ReactNode }) {
+  const { data: tournament, status } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
 
   const division = useContext(DivisionContext);
@@ -30,8 +31,12 @@ function DivisionPanel({ children }: {children?: ReactNode}) {
 
   const theme = useTheme();
 
+  if (status === "success" && !divisions) return <Container sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "10vh"}}>
+    <Typography>Come back here when the tournament begins.</Typography>
+  </Container>;
+
   return (
-    <Box sx={{padding: 2, border: `1px solid ${theme.palette.primary.main}`, borderRadius: 2}}>
+    <Box sx={{ padding: 2, border: `1px solid ${theme.palette.primary.main}`, borderRadius: 2 }}>
 
       <Stack spacing={2}>
 

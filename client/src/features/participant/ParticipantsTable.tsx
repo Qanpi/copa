@@ -1,4 +1,4 @@
-import { Container, Stack, Tooltip, Box, Typography, Card, CardContent, CardActionArea, CardActions, Button } from "@mui/material";
+import {Skeleton, Container, Stack, Tooltip, Box, Typography, Card, CardContent, CardActionArea, CardActions, Button } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { Link, Navigate } from "react-router-dom";
@@ -21,12 +21,11 @@ function TeamsPage() {
 
   const division = useContext(DivisionContext);
 
-  const { data: participants, status: participantsStatus } = useParticipants(
+  const { data: participants, status} = useParticipants(
     tournament?.id, {
     division: division?.id
   }
   );
-
 
   return (
     <BannerPage title="Teams">
@@ -59,7 +58,9 @@ function TeamsPage() {
                     </Link>
                   </Card>
                 )
-              })
+              }) || Array.from(Array(9)).map(_ => {
+                return <Skeleton width={300} height={200} key={_} variant="rounded"></Skeleton> 
+              }) 
             }
           </Box>
         </DivisionPanel>
