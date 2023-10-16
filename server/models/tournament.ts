@@ -50,6 +50,14 @@ const TournamentSchema = new mongoose.Schema(
         },
       },
     },
+    statics: {
+      async getLatest() {
+        const metadata = await Metadata.findOne({
+          model: (this.constructor as any).modelName,
+        })
+        return await this.findById(metadata.latest);
+      }
+    }
   }
 );
 

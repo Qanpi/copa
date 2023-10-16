@@ -7,7 +7,7 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   const {divisions, ...tournamentData} = req.body;
 
   const newTournament = new Tournament(tournamentData);
-  if (divisions) newTournament.divisions.push(...divisions);
+  newTournament.divisions.push(...divisions);
 
   await newTournament.save();
   res.send(newTournament);
@@ -23,10 +23,9 @@ export const getOne = expressAsyncHandler(async (req, res) => {
   res.send(result);
 });
 
-export const getCurrent = expressAsyncHandler(async (req, res) => {
+export const getLatest = expressAsyncHandler(async (req, res) => {
   //FIXME:
-  const result = await Tournament.findOne({
-  });
+  const result = await Tournament.getLatest();
   res.send(result || {});
 });
 
