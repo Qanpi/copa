@@ -1,5 +1,6 @@
 {
   "ts-node": {
+    "files": true,
     "esm": true,
     "compilerOptions": {
       "allowSyntheticDefaultImports": true,
@@ -9,7 +10,8 @@
         ]
       },
       "esModuleInterop": true,
-    }
+      "listFiles": true
+    },
   },
   "compilerOptions": {
     "module": "NodeNext",
@@ -24,4 +26,5 @@
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
   },
+
 }

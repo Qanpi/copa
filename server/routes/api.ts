@@ -6,6 +6,7 @@ import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
 import tournamentRouter from "./tournament.js";
+import { isAuthenticated, isAuthorized } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -13,17 +14,17 @@ const router = express.Router();
 router.get("/tournaments", tournaments.getMultiple);
 router.get("/tournaments/current", tournaments.getCurrent);
 router.get(
-    "/tournaments/:id",
-    tournaments.getOne
+  "/tournaments/:id",
+  tournaments.getOne
 );
 router.post(
-    "/tournaments",
-    tournaments.createOne
+  "/tournaments",
+  tournaments.createOne
 );
 router.patch("/tournaments/:id", tournaments.updateOne);
 router.delete("/tournaments/:id", tournaments.deleteOne);
 
-router.use("/tournaments/:id", tournamentRouter); 
+router.use("/tournaments/:id", tournamentRouter);
 
 //TEAMS
 router.get("/teams", teams.getMultiple);
@@ -44,7 +45,7 @@ router.post("/users", users.createOne);
 router.delete("/users/:id", users.deleteOne);
 
 //FIXME: DEVELOPMEN ONLY
-router.delete("/", async (req: Request, res: Response) => {
+router.delete("/", isAuthenticated, isAuthorized, async (req: Request, res: Response) => {
   await mongoose.connection.dropDatabase();
   return res.status(204).send({});
 })
