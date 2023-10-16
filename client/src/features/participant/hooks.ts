@@ -10,7 +10,7 @@ import { TParticipant } from "@backend/models/participant";
 import { divisionKeys, tournamentKeys, useTournament } from "../viewer/hooks";
 import { queryKeyFactory } from "../types";
 
-export const participantKeys = queryKeyFactory("participants");
+export const participantKeys = queryKeyFactory<TParticipant>("participants");
 
 export const useParticipant = (participantId: string) => {
   const { data: tournament } = useTournament("current");
@@ -28,7 +28,7 @@ export const useParticipant = (participantId: string) => {
 
 export const useParticipants = (tournamentId?: string, query?: Partial<TParticipant>): UseQueryResult<TParticipant[]> => {
   return useQuery({
-    queryKey: [participantKeys.list(query)],
+    queryKey: participantKeys.list(query),
 
     queryFn: async (): Promise<TParticipant[]> => {
       let url = `/api/${tournamentKeys.all}/${tournamentId}/${participantKeys.all}`;

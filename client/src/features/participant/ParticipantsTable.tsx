@@ -1,7 +1,7 @@
-import { Container, Tooltip } from "@mui/material";
+import { Container, Stack, Tooltip, Box, Typography, Card, CardContent, CardActionArea, CardActions, Button } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import DivisionPanel from "../dashboard/DivisionPanel.tsx";
 import {
   useDivisions,
@@ -25,10 +25,44 @@ function TeamsPage() {
   }
   );
 
+
   return (
-    <Container>
-      <DivisionPanel>
-      </DivisionPanel>
+    <Container sx={{ pt: 10 }} >
+      <Stack spacing={3}>
+        <Typography variant="h2">Teams participating</Typography>
+        <DivisionPanel>
+          <Box sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, 300px)",
+            gap: 2,
+            justifyContent: "center",
+            pt: 2
+          }}>
+            {
+              participants?.map(p => {
+                return (
+                  <Card key={p.id} sx={{
+                    minHeight: 200, borderRadius: 3,
+                  }}>
+                    <Link to={`/teams/${p.name}`}>
+                      <CardActionArea sx={{
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "left"
+                      }}>
+                        <CardContent>
+                          <Typography>{p.name}</Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Link>
+                  </Card>
+                )
+              })
+            }
+          </Box>
+        </DivisionPanel>
+      </Stack>
     </Container>
   );
 }
