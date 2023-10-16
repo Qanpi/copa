@@ -25,6 +25,6 @@ const DivisionSchema = new mongoose.Schema({
     toJSON: { virtuals: true },
 });
 
-export type TDivision = InferSchemaType<typeof DivisionSchema>;
+export type TDivision = InferSchemaType<typeof DivisionSchema> & {id: string};
 
 export default DivisionSchema;

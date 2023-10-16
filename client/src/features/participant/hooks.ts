@@ -26,7 +26,7 @@ export const useParticipant = (participantId: string) => {
   });
 };
 
-export const useParticipants = (tournamentId: string, query?: Partial<TParticipant>): UseQueryResult<TParticipant[]> => {
+export const useParticipants = (tournamentId?: string, query?: Partial<TParticipant>): UseQueryResult<TParticipant[]> => {
   return useQuery({
     queryKey: [participantKeys.list(query)],
 
