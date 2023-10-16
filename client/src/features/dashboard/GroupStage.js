@@ -85,7 +85,7 @@ function GroupStage({ next, prev }) {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       {noGroupStageAlert ? (
         <Alert severity="error">
           <AlertTitle>
@@ -111,28 +111,26 @@ function GroupStage({ next, prev }) {
       ) : null}
 
       <DivisionPanel>
-        <Stack direction={{xs: "column", md: "row"}} spacing={2}>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
           <NumberCard number={participants?.length}>
             team(s) registered
           </NumberCard>
-          {groupStage ? (
-            <>
-              <NumberCard
-                number={`${scheduledMatches?.length}/${matches?.length}`}
-              >
-                matches scheduled
-              </NumberCard>
-              <NumberCard
-                number={`${completedMatches?.length}/${matches?.length}`}
-              >
-                matches complete
-              </NumberCard>
-            </>
-          ) : (
-            <Box display={"flex"} width={"100%"} alignItems="center" justifyContent={"center"}>
-              <Link to="/tournament/draw">Draw teams</Link>
-            </Box>
-          )}
+          <NumberCard number={`${scheduledMatches?.length}/${matches?.length}`}>
+            matches scheduled
+          </NumberCard>
+          <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
+            matches complete
+          </NumberCard>
+          <Box
+            display={"flex"}
+            width={"100%"}
+            alignItems="center"
+            justifyContent={"center"}
+          >
+            <Link to="/tournament/draw">
+              <Button variant="contained">Draw groups</Button>
+            </Link>
+          </Box>
         </Stack>
       </DivisionPanel>
       <Button onClick={handleClickPrev}>Previous</Button>

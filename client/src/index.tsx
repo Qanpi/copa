@@ -70,7 +70,13 @@ export const darkTheme = responsiveFontSizes(createTheme({
   }
 }));
 
-export const lightTheme = responsiveFontSizes(createTheme({}));
+export const lightTheme = responsiveFontSizes(createTheme({
+  typography: {
+    h2: {
+      fontWeight: 600
+    }
+  },
+}));
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision>(null);

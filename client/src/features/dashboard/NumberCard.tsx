@@ -5,13 +5,13 @@ const NumberCard = ({ number, children, ...rest }: { number: number } & CardProp
   return (
     <ThemeProvider theme={lightTheme}>
       <Card sx={{
-        minWidth: 200, 
+        minWidth: 190, 
         minHeight: 150,
         display: "flex",
         alignItems: "end"
       }} {...rest}>
         <CardContent>
-          <Typography variant="h1">{number}</Typography>
+          <Typography variant="h2">{number}</Typography>
           {children}
         </CardContent>
       </Card>
