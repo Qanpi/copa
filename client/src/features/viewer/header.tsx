@@ -104,10 +104,10 @@ function Header() {
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "50px",
-        paddingLeft: "200px",
+        paddingLeft: "300px",
         paddingRight: 5
       }} display="flex" alignItems={"center"} justifyContent={"space-between"}>
-        <Stack direction="row" spacing={5} sx={{
+        <Stack direction="row" spacing={10} sx={{
           height: "100%"
         }} alignItems={"center"}>
           <Link to="/" > Home </Link>
