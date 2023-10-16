@@ -15,7 +15,7 @@ import GroupStage from "./GroupStage.js";
 import BracketStructure from "./BracketStructure.tsx";
 import Bracket from "./Bracket.tsx";
 import CreateTournamentPage from "./CreateTournament.tsx";
-import GradientTitle from "../viewer/title.tsx";
+import GradientTitle from "../viewer/gradientTitle.tsx";
 
 function DashboardPage() {
   const { data: tournament } = useTournament("current");
@@ -58,7 +58,7 @@ function DashboardPage() {
   return (
     <Box sx={{ pt: 7 }}>
 
-      <GradientTitle>
+      <GradientTitle padding={3}>
 
         <Stack spacing={10} direction="row" sx={{ height: "100%" }} justifyContent={"center"} alignItems={"center"}>
           <Typography variant="h2" fontWeight={800}>{tournament.name}</Typography>
