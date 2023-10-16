@@ -45,6 +45,11 @@ export const darkTheme = responsiveFontSizes(createTheme({
       main: "#E12B69"
     },
   },
+  typography: {
+    h2: {
+      fontWeight: 600
+    }
+  },
   components: {
     //TODO: custom styled component
     // MuiCard: {
