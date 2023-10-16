@@ -38,9 +38,12 @@ export const darkTheme = responsiveFontSizes(createTheme({
     background: {
       default: "#242753"
     },
-    // primary: {
-    //   main: "#4398B8"
-    // }
+    primary: {
+      main: "#4398B8"
+    },
+    secondary: {
+      main: "#E12B69"
+    },
   },
   components: {
     //TODO: custom styled component
