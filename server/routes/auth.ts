@@ -20,12 +20,18 @@ passport.use(
         googleId: profile.id,
         name: profile.displayName,
         avatar: profile.photos[0].value,
+        role: undefined,
       };
+
+      if (process.env.NODE_ENV === "development" && userData.name === "qanpi") {
+        userData.role = "admin";
+      }
 
       let user = await User.findOne({ googleId: profile.id });
       if (!user) {
         user = await new User(userData).save();
       }
+
 
       return cb(null, user);
     }
@@ -37,7 +43,7 @@ passport.serializeUser(function (user, done) {
   const serialized = {
     id: user?.id,
     name: user?.name,
-    team: user?.team?.id,
+    team: user?.team,
     role: user?.role,
   };
 
@@ -98,12 +104,8 @@ router.get("/me", async (req, res, next) => {
     //this is useful for postman tests
     if (!user) user = await User.create(req.user);
 
-    if (process.env.NODE_ENV === "development" && user.name === "qanpi") {
-      user.role = "admin";
-    }
-
     //update user in case data changed
-    req.login(user, function (err) {
+    req.login(user.toObject(), function (err) {
       if (err) return next(err);
       res.send(req.user);
     });

@@ -1,4 +1,4 @@
     {
         "delay": 1000,
-        "ignore": ["test"]
+        "ignore": ["test/"]
     }

@@ -54,9 +54,13 @@ router.post("/users", isAuthorized, users.createOne);
 router.delete("/users/:id", isAuthenticated, users.deleteOne);
 
 //FIXME: DEVELOPMEN ONLY
-router.delete("/", isAuthenticated, isAuthorized, async (req: Request, res: Response) => {
-  await mongoose.connection.dropDatabase();
-  return res.status(204).send({});
+router.delete("/", async (req: Request, res: Response) => {
+  if (process.env.NODE_ENV === "development") {
+    await mongoose.connection.dropDatabase();
+    return res.status(204).send({});
+  }
+
+  res.send({})
 })
 
 export default router;

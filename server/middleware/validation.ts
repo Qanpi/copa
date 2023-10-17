@@ -27,7 +27,7 @@ export const isManagerOrAdmin = (user: Express.User, managerId: Types.ObjectId |
 };
 
 export const isInTeam = (user: Express.User, teamId: Types.ObjectId | string) => {
-  return user.team === teamId;
+  return user.team.id === teamId;
 }
 
 export const validateObjectIdInBody = (fieldName: string) => {
