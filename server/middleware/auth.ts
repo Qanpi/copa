@@ -2,12 +2,19 @@ import expressAsyncHandler from "express-async-handler";
 import { isAdmin } from "./validation.js";
 
 export const isAuthenticated = expressAsyncHandler(async (req, res, next) => {
-    if (req.isUnauthenticated()) throw new Error("Invalid credentials.");
-    next();
+    if (req.isUnauthenticated()) {
+        throw new Error("Invalid credentials.");
+    }
+    next ? next() : null;
 }) 
 
 export const isAuthorized = expressAsyncHandler(async (req, res, next) => {
-    if (req.isUnauthenticated()) throw new Error("Invalid credentials.");
-    if (!isAdmin(req.user)) throw new Error("Unauthorized request.")
+    isAuthenticated(req, res, undefined);
+
+    if (!isAdmin(req.user)) {
+        res.status(403);
+        throw new Error("Unauthorized request.")
+    }
+
     next();    
 })
