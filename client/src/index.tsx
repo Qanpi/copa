@@ -78,8 +78,8 @@ export const lightTheme = responsiveFontSizes(createTheme({
 }));
 
 //allow users to change between divisions in view
-export const DivisionContext = React.createContext<TDivision>(null);
-export const DivisionDispatchContext = React.createContext<(newId: number) => number>(null);
+export const DivisionContext = React.createContext<TDivision | null>(null);
+export const DivisionDispatchContext = React.createContext<React.Dispatch<number> | null>(null);
 
 function divisionReducer(prevId: number, newId: number) {
   return newId;
@@ -91,92 +91,93 @@ function App() {
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);
 
   const { data: user, status: userStatus } = useUser("me");
+
   if (userStatus !== "success") return;
 
   return (
     <Router>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline></CssBaseline>
-        <DivisionContext.Provider value={divisions?.[selected]}>
-          <DivisionDispatchContext.Provider value={dispatch}>
+          <DivisionContext.Provider value={divisions?.[selected]}>
+            <DivisionDispatchContext.Provider value={dispatch}>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Header></Header>
-              <Routes>
-                <Route path="/" element={<HomePage></HomePage>}></Route>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Header></Header>
+                <Routes>
+                  <Route path="/" element={<HomePage></HomePage>}></Route>
 
-                <Route path="/tournament">
-                  <Route
-                    path="/tournament/register"
-                    element={<RegistrationPage></RegistrationPage>}
-                  ></Route>
-
-                  <Route
-                    path="/tournament/dashboard"
-                    element={<DashboardPage></DashboardPage>}
-                  ></Route>
-
-                  <Route path="/tournament/groups"
-                    element={<GroupStagePage></GroupStagePage>}></Route>
-
-                  <Route
-                    path="/tournament/bracket"
-                    element={<BracketPage></BracketPage>}
-                  ></Route>
-
-                  <Route path="/tournament/scheduler" element={<Scheduler></Scheduler>}></Route>
-
-                  <Route path="/tournament/draw" element={<DrawPage></DrawPage>}>RR</Route>
-
-                  <Route path="/tournament/structure" element={<BracketStructure></BracketStructure>}></Route>
-
-                  <Route
-                    path="/tournament/teams"
-                    element={<TeamsPage></TeamsPage>}
-                  ></Route>
-
-                  <Route path="/tournament/matches">
+                  <Route path="/tournament">
                     <Route
-                      path="/tournament/matches/:id"
-                      element={<MatchPage></MatchPage>}
+                      path="/tournament/register"
+                      element={<RegistrationPage></RegistrationPage>}
                     ></Route>
 
                     <Route
-                      path="/tournament/matches"
-                      element={<MatchesPage></MatchesPage>}
+                      path="/tournament/dashboard"
+                      element={<DashboardPage></DashboardPage>}
+                    ></Route>
+
+                    <Route path="/tournament/groups"
+                      element={<GroupStagePage></GroupStagePage>}></Route>
+
+                    <Route
+                      path="/tournament/bracket"
+                      element={<BracketPage></BracketPage>}
+                    ></Route>
+
+                    <Route path="/tournament/scheduler" element={<Scheduler></Scheduler>}></Route>
+
+                    <Route path="/tournament/draw" element={<DrawPage></DrawPage>}>RR</Route>
+
+                    <Route path="/tournament/structure" element={<BracketStructure></BracketStructure>}></Route>
+
+                    <Route
+                      path="/tournament/teams"
+                      element={<TeamsPage></TeamsPage>}
+                    ></Route>
+
+                    <Route path="/tournament/matches">
+                      <Route
+                        path="/tournament/matches/:id"
+                        element={<MatchPage></MatchPage>}
+                      ></Route>
+
+                      <Route
+                        path="/tournament/matches"
+                        element={<MatchesPage></MatchesPage>}
+                      ></Route>
+                    </Route>
+                  </Route>
+
+                  <Route path="/users">
+                    <Route
+                      path="/users/:id"
+                      element={<ProfilePage></ProfilePage>}
                     ></Route>
                   </Route>
-                </Route>
 
-                <Route path="/users">
-                  <Route
-                    path="/users/:id"
-                    element={<ProfilePage></ProfilePage>}
-                  ></Route>
-                </Route>
+                  {/* //TODO: restrict possible team names */}
+                  <Route path="/teams">
+                    <Route path="/teams/none" element={<NoTeamPage></NoTeamPage>}></Route>
+                    <Route
+                      path="/teams/join"
+                      element={<JoinTeamPage></JoinTeamPage>}
+                    >R</Route>
 
-                {/* //TODO: restrict possible team names */}
-                <Route path="/teams">
-                  <Route path="/teams/none" element={<NoTeamPage></NoTeamPage>}></Route>
-                  <Route
-                    path="/teams/join"
-                    element={<JoinTeamPage></JoinTeamPage>}
-                  >R</Route>
+                    <Route
+                      path="/teams/create"
+                      element={<NewTeamPage></NewTeamPage>}
+                    ></Route>
 
-                  <Route
-                    path="/teams/create"
-                    element={<NewTeamPage></NewTeamPage>}
-                  ></Route>
-
-                  <Route
-                    path="/teams/:name"
-                    element={<TeamProfilePage></TeamProfilePage>}
-                  ></Route>
-                </Route>
-              </Routes>
-            </LocalizationProvider>
-          </DivisionDispatchContext.Provider>
-        </DivisionContext.Provider>
+                    <Route
+                      path="/teams/:name"
+                      element={<TeamProfilePage></TeamProfilePage>}
+                    ></Route>
+                  </Route>
+                </Routes>
+              </LocalizationProvider>
+            </DivisionDispatchContext.Provider>
+          </DivisionContext.Provider>
       </ThemeProvider>
     </Router >
   );

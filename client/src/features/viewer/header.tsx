@@ -1,24 +1,23 @@
+import { Menu as MenuIcon } from "@mui/icons-material";
 import {
+  Backdrop,
+  BackdropProps,
   Box,
-  Container,
+  CircularProgress,
+  IconButton,
   MenuItem,
   MenuList,
   Paper,
   Popper,
   Stack,
   Typography,
-  Menu,
-  useTheme,
   useMediaQuery,
-  IconButton,
-  Backdrop,
-  CircularProgress
+  useTheme
 } from "@mui/material";
 import { ReactNode, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useUser } from "../user/hooks.ts";
 import UserPanel from "../user/userMenu/userpanel.tsx";
-import { Menu as MenuIcon } from "@mui/icons-material";
 import { useTournament } from "./hooks.ts";
 
 export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children: ReactNode }) => {
@@ -97,11 +96,13 @@ export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children
 };
 
 function Header() {
-  const {data: tournament} = useTournament("current");
-  const { data: user } = useUser("me");
+  const { data: tournament } = useTournament("current");
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
+
+  const { data: user } = useUser("me");
+  console.log(user);
 
   return (
     <Box sx={{ width: "100vw", position: "sticky", zIndex: 12 }}>
@@ -138,7 +139,15 @@ function Header() {
               < Link to="/tournament/gamblers" >
                 <MenuItem>Gamblers </MenuItem>
               </Link>
-            </DropdownMenu> : null} 
+            </DropdownMenu> : null}
+
+            {user?.role === "admin" ?
+              (
+                <Link to="/tournament/dashboard">
+                  <Typography>Dashboard</Typography>
+                </Link>
+              ) : null
+            }
 
             <Link to="/all-time">
               <Typography>
@@ -169,8 +178,8 @@ function Header() {
   )
 }
 
-export const LoadingBackdrop = ({open} : {open: boolean}) => {
-  return <Backdrop open={open} sx={{ zIndex: 11}}>
+export const LoadingBackdrop = (props: BackdropProps) => {
+  return <Backdrop sx={{ zIndex: 11 }} {...props}>
     <CircularProgress></CircularProgress>
   </Backdrop>
 }

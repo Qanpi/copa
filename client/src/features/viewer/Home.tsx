@@ -8,6 +8,7 @@ import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";
 import brush from "./brush.png";
+import { LoadingBackdrop } from "./header";
 
 function WinnerPane({ stageId }: { stageId: string }) {
   //FIXME: needs to show all winners across divisions
@@ -79,17 +80,21 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
 function HomePage() {
   const { data: tournament, status } = useTournament("current");
 
-  if (status !== "success" || !tournament?.state) return <Container maxWidth="md" sx={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "500px"
-  }}>
-    {tournament?.state ? <CircularProgress></CircularProgress> : <Typography>Hmm... I must've messed something up in code.</Typography>}
-  </Container>
-
+  if (status !== "success") {
+    return <LoadingBackdrop open={true} sx={{zIndex: 20}}></LoadingBackdrop> 
+  }
 
   switch (tournament.state) {
+    case undefined:
+      return <Container maxWidth="md" sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "500px"
+      }}>
+        <Typography>Hmm... I must've messed something up in code.</Typography>
+      </Container>
+
     case "Complete":
       return <WinnersTribute></WinnersTribute>
     case "Registration":

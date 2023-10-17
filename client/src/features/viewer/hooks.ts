@@ -7,6 +7,7 @@ import axios, { AxiosError } from "axios";
 import { Id, QueryKeyFactory, queryKeyFactory } from "../types";
 import { RoundNameInfo } from "ts-brackets-viewer";
 import { TTournament } from "@backend/models/tournament";
+import { TDivision } from "@backend/models/division";
 
 export const tournamentKeys = queryKeyFactory<TTournament>("tournaments");
 
@@ -83,7 +84,7 @@ export const useDivisions = (tournamentId?: string) => {
   const { data: tournament } = useTournament(tournamentId);
 
   return {
-    data: tournament?.divisions
+    data: tournament?.divisions as TDivision[]
   }
 }
 
