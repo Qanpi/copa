@@ -34,13 +34,15 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   //TODO: maybe add encryption later on
+  const serialized = {
+    id: user?.id,
+    name: user?.name,
+    team: user?.team?.id,
+    role: user?.role,
+  };
+
   process.nextTick(() => {
-    return done(null, {
-      id: user?.id,
-      name: user?.name,
-      team: user?.team?.id,
-      role: user?.role,
-    });
+    return done(null, serialized);
   });
 });
 
@@ -67,8 +69,9 @@ router.post(
   "/oauth2/redirect/google",
   (req, res, next) => {
     req.url += "?code=" + req.body.code;
-    req.url += "&scope=profile https://www.googleapis.com/auth/userinfo.profile"
-    next()
+    req.url +=
+      "&scope=profile https://www.googleapis.com/auth/userinfo.profile";
+    next();
   },
   (req, res, next) => {
     return passport.authenticate("google", {
@@ -90,10 +93,14 @@ router.delete("/logout", (req, res, next) => {
 router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
     let user = await User.findById(req.user.id);
-    
+
     //create a user if the session is valid but one isn't in db
     //this is useful for postman tests
     if (!user) user = await User.create(req.user);
+
+    if (process.env.NODE_ENV === "development" && user.name === "qanpi") {
+      user.role = "admin";
+    }
 
     //update user in case data changed
     req.login(user, function (err) {

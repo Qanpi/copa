@@ -17,7 +17,7 @@ export const isLoggedInAsUser = (user: Express.User, userId: string) => {
   return user?.id === userId;
 };
 export const isAdmin = (user?: Express.User) => {
-  return user?.role === "admin" || (process.env.NODE_ENV === "development" && user?.name === "qanpi");
+  return user?.role === "admin";
 };
 export const isManager = (user: Express.User, managerId: Types.ObjectId | string): boolean => {
   return managerId.toString() === user?.id;
