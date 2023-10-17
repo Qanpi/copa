@@ -26,6 +26,7 @@ import GradientTitle from "../viewer/gradientTitle.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Camera } from "@mui/icons-material";
+import { PromptContainer } from "../participant/registration.tsx";
 
 export const teamValidationSchema = {
   name: Yup.string().max(20).trim().required(),
@@ -54,8 +55,7 @@ function NewTeamPage() {
   return (
     <BannerPage title="This is where it begins">
       <LeaveTeamDialog
-        onLeave={() => navigate(`/teams/none`)}
-        onStay={() => navigate(`/teams/none`)}
+        onStay={(u) => navigate(`/teams/${u.team.name}`)}
       ></LeaveTeamDialog>
 
       <Formik
@@ -79,9 +79,9 @@ function NewTeamPage() {
         }}
       >
         <Form>
-          <Container maxWidth="md">
-            <Stack direction="row" spacing={2}>
-              <Stack direction="column" spacing={1}>
+          <PromptContainer sx={{gap: 7}} maxWidth="sm">
+            <Stack direction="row" spacing={5} sx={{width: "100%", justifyContent: "center"}}>
+              <Stack direction="column" spacing={2}>
                 <MyTextField label="Team name *" name="name"></MyTextField>
                 <MyTextField label="Slogan" name="about" variant="standard"></MyTextField>
 
@@ -96,11 +96,8 @@ function NewTeamPage() {
               </Card>
             </Stack>
 
-
-            <MyFileInput name="banner" label="Team banner"></MyFileInput>
-            <MyFileInput name="picture" label="Team picture"></MyFileInput>
-            <Button type="submit">Submit</Button>
-          </Container>
+            <Button type="submit" variant="contained" sx={{width: "50%"}}>Submit</Button>
+          </PromptContainer>
         </Form>
       </Formik>
     </BannerPage >

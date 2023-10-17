@@ -22,9 +22,9 @@ import BannerPage from "../viewer/BannerPage.tsx";
 //teamless -> join/create team
 //registered -> alr registered
 export const PromptContainer = (props: ContainerProps) => {
-  const { children, ...rest } = props;
+  const { children, sx: propsSx, ...rest } = props;
 
-  return <Container sx={{ minHeight: "400px", justifyContent: "center", alignItems: "center", display: "flex" }} maxWidth="md" {...rest}>
+  return <Container sx={{ minHeight: "400px", justifyContent: "center", alignItems: "center", display: "flex", flexDirection: "column", ...propsSx }} maxWidth="md" {...rest}>
     {children}
   </Container>
 }

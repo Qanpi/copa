@@ -10,19 +10,24 @@ import {
     Typography,
 } from "@mui/material";
 import { useUpdateUser, useUser } from "../user/hooks";
+import { TUser } from "@backend/models/user";
+import { useRemoveUserFromTeam } from "./hooks";
+import { TTeam } from "@backend/models/team";
 
-function LeaveTeamDialog({ onLeave, onStay}) {
-    const {data: user} = useUser("me");
-    const updateUser = useUpdateUser();
+function LeaveTeamDialog({ onLeave, onStay }: { onLeave?: (user: TUser) => void, onStay?: (user: TUser) => void }) {
+    const { data: user } = useUser("me");
+    const removeUserFromTeam = useRemoveUserFromTeam();
 
     const handleDialog = async (choice: boolean) => {
-        if (choice) {
-            await updateUser.mutateAsync({ id: user.id, team: null });
-            if (onLeave) onLeave();
+        if (choice && user?.team?.id) {
+            await removeUserFromTeam.mutateAsync({ userId: user.id, teamId: user.team.id.toString() });
+            if (onLeave) onLeave(user);
         } else {
-            if (onStay) onStay();
+            if (onStay) onStay(user);
         }
     };
+
+    if (!user) return <>Loading</>
 
     return (
         <Dialog open={!!user.team}>
