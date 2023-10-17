@@ -19,7 +19,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../user/hooks.ts";
 import UserPanel from "../user/userMenu/userpanel.tsx";
 import { Menu as MenuIcon } from "@mui/icons-material";
-// import "./header.css";
+import { useTournament } from "./hooks.ts";
 
 export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children: ReactNode }) => {
   const [open, setOpen] = useState(false);
@@ -97,10 +97,8 @@ export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children
 };
 
 function Header() {
-  const { pathname } = useLocation();
-
+  const {data: tournament} = useTournament("current");
   const { data: user } = useUser("me");
-  const isAdmin = user?.role === "admin";
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
@@ -120,7 +118,7 @@ function Header() {
           }} alignItems={"center"}>
             <Link to="/" > Home </Link>
 
-            <DropdownMenu anchor={
+            {tournament?.state ? <DropdownMenu anchor={
               <Typography>
                 Tournament
               </Typography>
@@ -140,7 +138,7 @@ function Header() {
               < Link to="/tournament/gamblers" >
                 <MenuItem>Gamblers </MenuItem>
               </Link>
-            </DropdownMenu>
+            </DropdownMenu> : null} 
 
             <Link to="/all-time">
               <Typography>
@@ -169,40 +167,6 @@ function Header() {
       }}></Box>
     </Box >
   )
-
-  return (
-    <header>
-      <div className="bar" >
-        <div className="sections" >
-          <Link to="/" > Home </Link>
-          < DropdownMenu title="Tournament" >
-            <Link to="/tournament/teams" >
-              <MenuItem>Teams </MenuItem>
-            </Link>
-            < Link to="/tournament/matches" >
-              <MenuItem>Matches </MenuItem>
-            </Link>
-            < Link to="/tournament/groups" >
-              <MenuItem>Group Stage </MenuItem>
-            </Link>
-            < Link to="/tournament/bracket" >
-              <MenuItem>Bracket </MenuItem>
-            </Link>
-            < Link to="/tournament/gamblers" >
-              <MenuItem>Gamblers </MenuItem>
-            </Link>
-          </DropdownMenu>
-          {
-            isAdmin ? <Link to="/tournament/dashboard" > Dashboard </Link> : null}
-          < span > All - time </span>
-          < span > Fantasy </span>
-          < span > About </span>
-        </div>
-        < UserPanel > </UserPanel>
-      </div>
-      < div className="extension" > </div>
-    </header>
-  );
 }
 
 export const LoadingBackdrop = ({open} : {open: boolean}) => {
