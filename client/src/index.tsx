@@ -17,7 +17,7 @@ import Scheduler from "./features/dashboard/Scheduler.tsx";
 import MatchPage from "./features/match/MatchPage.tsx";
 import MatchesPage from "./features/match/Matches.tsx";
 import TeamsPage from "./features/participant/ParticipantsTable.tsx";
-import RegistrationPage from "./features/participant/registration.js";
+import RegistrationPage from "./features/participant/registration.tsx";
 import BracketPage from "./features/stage/Bracket.tsx";
 import GroupStagePage from "./features/stage/GroupStage.tsx";
 import NewTeamPage from "./features/team/CreateTeam.tsx";

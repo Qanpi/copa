@@ -1,4 +1,4 @@
-import { Button, MenuItem, Typography } from "@mui/material";
+import { Button, Container, MenuItem, Typography } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
@@ -39,7 +39,26 @@ function RegistrationPage() {
   }, [user]);
 
   if (!user) {
-    return <>Please sign in to register.</>
+    return <>Please sign in to register.</>;
+  }
+
+  const from = tournament?.registration?.from;
+  const to = tournament?.registration?.to;
+
+  if (!from || from > new Date()) {
+    return (
+      <Container sx={{ minHeight: "60vw", justifyContent: "center", alignItems: "center" }}>
+        <Typography>Slow down. Registration hasn't begun yet.</Typography>
+      </Container>
+    );
+  }
+
+  if (to && to < new Date()) {
+    return (
+      <Container sx={{ minHeight: "60vw", justifyContent: "center", alignItems: "center" }}>
+        <Typography>Dang, the registration has ended. You can try contacting the organizer.</Typography>
+      </Container>
+    );
   }
 
   if (participant) {
@@ -117,7 +136,7 @@ function RegistrationForm() {
                 division: selected.id,
                 team: team.id,
                 name: team.name,
-                phoneNumber: team.phoneNumber
+                phoneNumber: team.phoneNumber,
               });
             },
           });

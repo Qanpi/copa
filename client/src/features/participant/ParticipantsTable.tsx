@@ -1,19 +1,17 @@
-import { Skeleton, Container, Stack, Tooltip, Box, Typography, Card, CardContent, CardActionArea, CardActions, Button } from "@mui/material";
+import { TParticipant } from "@backend/models/participant.ts";
+import { Box, Card, CardActionArea, CardContent, Container, Stack, Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
-import { Link, Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { Link } from "react-router-dom";
+import { DivisionContext } from "../../index.tsx";
 import DivisionPanel from "../dashboard/DivisionPanel.tsx";
+import BannerPage from "../viewer/BannerPage.tsx";
 import {
-  useDivisions,
   useTournament
 } from "../viewer/hooks.ts";
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
-import { useDeleteParticipant } from "./registration.js";
-import { TParticipant } from "@backend/models/participant.ts";
-import { useContext } from "react";
-import { DivisionContext } from "../../index.tsx";
-import GradientTitle from "../viewer/gradientTitle.tsx";
-import BannerPage from "../viewer/BannerPage.tsx";
+import { useDeleteParticipant } from "./registration.tsx";
 
 function TeamsPage() {
   const { data: tournament } =
