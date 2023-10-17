@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import Team from "../models/team.js";
 import expressAsyncHandler from "express-async-handler";
+import { isAdmin, isLoggedInAsUser } from "../middleware/validation.js";
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
   // validate(req, res);
@@ -15,6 +16,9 @@ export const createOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const updateOne = expressAsyncHandler(async (req, res) => {
+  if (!isLoggedInAsUser(req.user, req.params.id) && !isAdmin(req.user))
+    throw new Error("Unauthorized request.") 
+
   const user = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
@@ -23,11 +27,17 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const deleteOne = expressAsyncHandler(async (req, res) => {
+  if (!isLoggedInAsUser(req.user, req.params.id) && !isAdmin(req.user))
+    throw new Error("Unauthorized request.") 
+
   await User.findByIdAndDelete(req.params.id);
   res.status(204).send({});
 });
 
 export const getOneById = expressAsyncHandler(async (req, res) => {
+  if (!isLoggedInAsUser(req.user, req.params.id) && !isAdmin(req.user))
+    throw new Error("Unauthorized request.")
+
   const user = await User.findById(req.params.id);
   res.send(user);
 });
