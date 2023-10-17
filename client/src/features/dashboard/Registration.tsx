@@ -200,8 +200,8 @@ function RegistrationPane() {
               label="from 00:00 on"
               name="registration.from"
               minDate={dayjs()}
-              onChange={(value) => {
-                setFieldValue("registration.from", dayjs(value).startOf("day"));
+              onChange={async (value) => {
+                await setFieldValue("registration.from", dayjs(value).startOf("day"));
                 submitForm();
               }}
             />
@@ -211,7 +211,7 @@ function RegistrationPane() {
               name="registration.to"
               minDate={values.registration.from}
               onChange={async (value) => {
-                setFieldValue("registration.to", dayjs(value).endOf("day"));
+                await setFieldValue("registration.to", dayjs(value).endOf("day"));
                 submitForm();
               }}
             />

@@ -52,7 +52,7 @@ function TeamsPage() {
         <DivisionPanel>
           {participants?.length === 0 ?
             <Container sx={{ minHeight: "60vw", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Typography>You could be the first team here!</Typography>
+              <Typography>Nothing to see here yet.</Typography>
             </Container> :
             <Box sx={{
               display: "grid",
