@@ -46,6 +46,7 @@ export const darkTheme = responsiveFontSizes(createTheme({
   },
   typography: {
     h2: {
+      fontSize: "4rem",
       fontWeight: 600
     }
   },

@@ -3,11 +3,11 @@ import { ReactNode } from "react";
 import MatchesCalendar from "../match/MatchesCalendar";
 import GradientTitle from "./gradientTitle";
 
-function BannerPage({title, children }: {title: string, children: ReactNode }) {
+function BannerPage({title, header, children }: {title?: string, header?: ReactNode, children: ReactNode }) {
     return (
         <Box sx={{ pt: 5 }}>
             <GradientTitle>
-                <Typography variant="h2">{title}</Typography>
+                {title ? <Typography variant="h2">{title}</Typography> : header} 
             </GradientTitle>
             <Container>
                 {children}

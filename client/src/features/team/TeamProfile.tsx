@@ -2,10 +2,13 @@ import { Link } from "react-router-dom";
 import {
   Alert,
   AlertTitle,
+  Box,
   Button,
+  Container,
   IconButton,
   InputAdornment,
   SpeedDialIcon,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,6 +19,8 @@ import relativeTime from "dayjs/plugin/relativeTime.js";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRemoveUserFromTeam, useTeam } from "./hooks.ts";
 import { useUpdateUser, useUser } from "../user/hooks.ts";
+import BannerPage from "../viewer/BannerPage.tsx";
+import GradientTitle from "../viewer/gradientTitle.tsx";
 
 dayjs.extend(relativeTime);
 
@@ -64,35 +69,45 @@ function TeamProfilePage() {
   const isMember = user?.team?.id === team.id;
 
   return (
-    <>
-      <h1>{team.name}</h1>
-      {isManager ? <Button onClick={() => fetchInvite()}>Invite</Button> : null}
-      {isManager ? <Link to={`/tournament/register`}>Register</Link> : null}
-      {inviteStatus === "success" ? (
-        <Alert>
-          <AlertTitle>Generated invite link!</AlertTitle>
-          <Typography>
-            Only share this link with players you trust. The invite will
-            automatically expire {invite.countdown}.
-          </Typography>
-          <TextField
-            fullWidth
-            disabled
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleCopyInviteLink}>
-                    <SpeedDialIcon></SpeedDialIcon>
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            value={invite.link}
-          ></TextField>
-        </Alert>
-      ) : null}
-      {isMember ? <Button onClick={handleLeaveTeam}>Leave team</Button> : null}
-    </>
+    <Box sx={{mt: -6}}>
+      <GradientTitle justifyContent={"left"} paddingLeft={"20vw"}>
+        <Box component={"img"}>
+
+        </Box>
+        <Stack spacing={-1} direction="column">
+          <Typography variant="h5">THIS IS</Typography>
+          <Typography variant="h2">{team.name.toUpperCase()}</Typography>
+        </Stack>
+      </GradientTitle>
+      <Container maxWidth="md">
+        {isManager ? <Button onClick={() => fetchInvite()}>Invite</Button> : null}
+        {isManager ? <Link to={`/tournament/register`}>Register</Link> : null}
+        {inviteStatus === "success" ? (
+          <Alert>
+            <AlertTitle>Generated invite link!</AlertTitle>
+            <Typography>
+              Only share this link with players you trust. The invite will
+              automatically expire {invite.countdown}.
+            </Typography>
+            <TextField
+              fullWidth
+              disabled
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleCopyInviteLink}>
+                      <SpeedDialIcon></SpeedDialIcon>
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              value={invite.link}
+            ></TextField>
+          </Alert>
+        ) : null}
+        {isMember ? <Button onClick={handleLeaveTeam}>Leave team</Button> : null}
+      </Container>
+    </Box>
   );
 }
 
