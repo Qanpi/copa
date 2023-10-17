@@ -19,7 +19,7 @@ const TeamSchema = new mongoose.Schema(
     instagramUrl: String,
     phoneNumber: String,
 
-    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v: Types.ObjectId) => v.toString(), required: true },
+    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v?: Types.ObjectId) => v?.toString() },
 
     invite: {
       token: {
@@ -75,7 +75,7 @@ TeamSchema.pre("deleteOne", async function (this: TTeam) {
   }
 })
 
-type TTeamVirtuals = { id: string, manager: string };
+type TTeamVirtuals = { id: string, manager?: string };
 export type TTeam = InferSchemaType<typeof TeamSchema> & TTeamVirtuals;
 
 export default mongoose.model(collections.teams.id, TeamSchema);

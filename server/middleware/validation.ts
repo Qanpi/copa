@@ -19,11 +19,11 @@ export const isLoggedInAsUser = (user: Express.User, userId: string) => {
 export const isAdmin = (user?: Express.User) => {
   return user?.role === "admin" || (process.env.NODE_ENV === "development" && user?.name === "qanpi");
 };
-export const isManager = (user: Express.User, team: { manager: Types.ObjectId | string; }): boolean => {
-  return team.manager.toString() === user?.id;
+export const isManager = (user: Express.User, managerId: Types.ObjectId | string): boolean => {
+  return managerId.toString() === user?.id;
 };
-export const isManagerOrAdmin = (user: Express.User, team: { manager: Types.ObjectId | string; }): boolean => {
-  return isAdmin(user) || isManager(user, team);
+export const isManagerOrAdmin = (user: Express.User, managerId: Types.ObjectId | string): boolean => {
+  return isAdmin(user) || isManager(user, managerId);
 };
 
 export const isInTeam = (user: Express.User, teamId: Types.ObjectId | string) => {

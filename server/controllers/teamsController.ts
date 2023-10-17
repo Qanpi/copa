@@ -30,7 +30,7 @@ export const getById = expressAsyncHandler(async (req, res) => {
 export const updateOne = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.params.id);
 
-  if (!isManagerOrAdmin(req.user, team))
+  if (!isManagerOrAdmin(req.user, team.manager))
     throw new Error("Unauthorized request.");
 
   const updated = await team.updateOne(req.body, { new: true }).exec();
@@ -49,11 +49,11 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
     throw new Error("Unauthorized request.");
 
   const team = await Team.findById(req.params.teamId);
-  if (userId === team.manager.toString()) {
+  if (userId === team.manager?.toString()) {
     await team.passManagement();
   }
 
-  User.findByIdAndUpdate(userId, { team: null });
+  await User.findByIdAndUpdate(userId, { team: null });
   res.status(204).send({});
 });
 
@@ -79,7 +79,7 @@ export const joinTeam = expressAsyncHandler(async (req, res) => {
 export const generateInviteToken = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.params.id);
 
-  if (!isManagerOrAdmin(req.user, team))
+  if (!isManagerOrAdmin(req.user, team.manager))
     throw new Error("Unauthorized request");
 
   const random = crypto.randomBytes(16);
@@ -97,7 +97,7 @@ export const generateInviteToken = expressAsyncHandler(async (req, res) => {
 export const removeById = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.params.id);
 
-  if (!isManagerOrAdmin(req.user, team))
+  if (!isManagerOrAdmin(req.user, team.manager))
     throw new Error("Unauthorized request.");
 
   await team.deleteOne();
