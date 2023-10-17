@@ -7,14 +7,14 @@ import * as divisions from "../controllers/divisionsController.js";
 import * as participants from "../controllers/participationsController.js";
 import express from "express";
 import { isAuthenticated, isAuthorized } from "../middleware/auth.js";
-import { createObjectIdValidator, reportValidationErrors } from "../middleware/validation.js";
+import { validateObjectIdInBody, reportValidationErrors } from "../middleware/validation.js";
 
 const router = express.Router({ mergeParams: true });
 
 //PARTICIPANTS
 router.get("/participants", participants.getMany);
 router.get("/participants/:id", participants.getOne)
-router.post("/participants", isAuthenticated, createObjectIdValidator("team"), createObjectIdValidator("division"), reportValidationErrors, participants.createOne);
+router.post("/participants", isAuthenticated, validateObjectIdInBody("team"), validateObjectIdInBody("division"), reportValidationErrors, participants.createOne);
 router.delete("/participants/:id", isAuthenticated, participants.deleteOne);
 router.patch("/participants/:id", isAuthenticated, participants.updateOne);
 

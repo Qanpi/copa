@@ -30,7 +30,7 @@ export const isInTeam = (user: Express.User, teamId: Types.ObjectId | string) =>
   return user.team === teamId;
 }
 
-export const createObjectIdValidator = (fieldName: string) => {
+export const validateObjectIdInBody = (fieldName: string) => {
   return body(fieldName).custom(value => {
     return isValidObjectId(value)
   })
