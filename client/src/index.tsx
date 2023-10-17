@@ -165,7 +165,7 @@ function App() {
                   >R</Route>
 
                   <Route
-                    path="/teams/new"
+                    path="/teams/create"
                     element={<NewTeamPage></NewTeamPage>}
                   ></Route>
 

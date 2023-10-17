@@ -6,7 +6,7 @@ import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
 import tournamentRouter from "./tournament.js";
-import { isAuthenticated, isAdmin } from "../middleware/auth.js";
+import { isAuthenticated, isAuthorized } from "../middleware/auth.js";
 import { body, checkSchema } from "express-validator";
 import { reportValidationErrors } from "../middleware/validation.js";
 
@@ -22,15 +22,15 @@ router.get(
 );
 router.post(
   "/tournaments",
-  isAdmin,
+  isAuthorized,
   body("divisions").isArray({ min: 1, max: 10 }),
   reportValidationErrors,
   tournaments.createOne
 );
 router.patch("/tournaments/:id",
-  isAdmin,
+  isAuthorized,
   tournaments.updateOne);
-router.delete("/tournaments/:id", isAdmin,
+router.delete("/tournaments/:id", isAuthorized,
   tournaments.deleteOne);
 
 router.use("/tournaments/:id", tournamentRouter);
@@ -47,14 +47,14 @@ router.get("/teams/:id/invite", isAuthenticated, teams.generateInviteToken);
 router.post("/teams/:id/users", isAuthenticated, teams.joinTeam);
 
 //USERS
-router.get("/users", users.getMultiple);
-router.get("/users/:id", users.getOneById);
-router.patch("/users/:id", users.updateOne);
-router.post("/users", users.createOne);
-router.delete("/users/:id", users.deleteOne);
+router.get("/users", isAuthorized, users.getMultiple);
+router.get("/users/:id", isAuthenticated, users.getOneById);
+router.patch("/users/:id", isAuthenticated, users.updateOne);
+router.post("/users", isAuthorized, users.createOne);
+router.delete("/users/:id", isAuthenticated, users.deleteOne);
 
 //FIXME: DEVELOPMEN ONLY
-router.delete("/", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+router.delete("/", isAuthenticated, isAuthorized, async (req: Request, res: Response) => {
   await mongoose.connection.dropDatabase();
   return res.status(204).send({});
 })
