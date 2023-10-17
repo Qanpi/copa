@@ -28,17 +28,14 @@ const ParticipantSchema = new mongoose.Schema(
   },
   {
     id: true,
-    virtuals: {
-      createdAt: {
-        get() {
-          return this._id.getTimestamp();
-        },
-      },
-    },
     toJSON: { virtuals: true, getters: true },
     toObject: { virtuals: true, getters: true },
   }
 );
+
+ParticipantSchema.virtual("createdAd").get(function () {
+  return this._id.getTimestamp();
+})
 
 const Participant = BracketsParticipant.discriminator(
   "Participant",

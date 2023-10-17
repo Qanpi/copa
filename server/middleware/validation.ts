@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import { validationResult, body } from "express-validator"
-import { Types } from "mongoose";
+import { Types, isValidObjectId } from "mongoose";
 
 export const reportValidationErrors = expressAsyncHandler(async (req, res, next) => {
     const result = validationResult(req);
@@ -19,9 +19,19 @@ export const isLoggedInAsUser = (user: Express.User, userId: string) => {
 export const isAdmin = (user: Express.User) => {
   return user.role === "admin" || user.name === "Aleksei Terin";
 };
-const isManager = (user: Express.User, team: { manager: Types.ObjectId | string; }): boolean => {
+export const isManager = (user: Express.User, team: { manager: Types.ObjectId | string; }): boolean => {
   return team.manager.toString() === user.id;
 };
 export const isManagerOrAdmin = (user: Express.User, team: { manager: Types.ObjectId | string; }): boolean => {
   return isAdmin(user) || isManager(user, team);
 };
+
+export const isInTeam = (user: Express.User, teamId: Types.ObjectId | string) => {
+  return user.team === teamId;
+}
+
+export const createObjectIdValidator = (fieldName: string) => {
+  return body(fieldName).custom(value => {
+    return isValidObjectId(value)
+  })
+}
