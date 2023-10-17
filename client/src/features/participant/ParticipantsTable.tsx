@@ -36,7 +36,8 @@ function TeamsPage() {
             gridTemplateColumns: "repeat(auto-fill, 300px)",
             gap: 2,
             justifyContent: "center",
-            pt: 2
+            pt: 2,
+            minHeight: "60vw"
           }}>
             {
               participants?.map(p => {
