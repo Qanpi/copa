@@ -1,8 +1,8 @@
-import { Button, Container, MenuItem, Typography } from "@mui/material";
+import { Button, Container, ContainerOwnProps, ContainerProps, MenuItem, Typography } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import MySelect from "../inputs/mySelect.js";
@@ -12,15 +12,26 @@ import { useTeam, useUpdateTeam } from "../team/hooks.ts";
 import { useUser } from "../user/hooks.ts";
 import { useDivisions, useTournament } from "../viewer/hooks.ts";
 import { useParticipants } from "./hooks.ts";
+import { LoadingBackdrop } from "../viewer/header.tsx";
+import { GoogleSignInButton } from "../user/userMenu/userpanel.tsx";
+import NoTeamPage from "../team/NoTeamPage.tsx";
+import BannerPage from "../viewer/BannerPage.tsx";
 
 //team member -> ask manager
 //team manager -> register
 //teamless -> join/create team
 //registered -> alr registered
+export const PromptContainer = (props: ContainerProps) => {
+  const { children, ...rest } = props;
+
+  return <Container sx={{ minHeight: "400px", justifyContent: "center", alignItems: "center", display: "flex" }} maxWidth="md" {...rest}>
+    {children}
+  </Container>
+}
 
 function RegistrationPage() {
   const { data: tournament } = useTournament("current");
-  const { data: user } = useUser("me");
+  const { data: user, status: userStatus } = useUser("me");
   const { data: team } = useTeam(user?.team?.name);
 
   const unregisterTeam = useDeleteParticipant();
@@ -30,55 +41,61 @@ function RegistrationPage() {
   });
   const participant = participants?.[0];
 
-  //FIXME: no redirect if the user is not logged in
-  const navigate = useNavigate();
-  useLayoutEffect(() => {
-    if (user && !user.team) {
-      return navigate(`/teams/none`); //TODO: redirect back frm here to registration
+  // const navigate = useNavigate();
+  // useEffect(() => {
+  //   if (userStatus === "success" && !user)
+  //     return navigate(`/login`)
+
+  //   if (userStatus === "success" && !user?.team) {
+  //     return navigate(`/teams/none`); //TODO: redirect back frm here to registration
+  //   }
+  // }, [user]);
+  const getActivePrompt = () => {
+    const from = tournament?.registration?.from;
+    const to = tournament?.registration?.to;
+
+    if (!from || from > new Date()) {
+      return (
+        <PromptContainer>
+
+          <Typography>Slow down. Registration hasn't begun yet.</Typography>
+        </PromptContainer>
+      );
     }
-  }, [user]);
 
-  if (!user) {
-    return <>Please sign in to register.</>;
-  }
+    if (to && to < new Date()) {
+      return (
+        <PromptContainer>
+          <Typography>Dang, the registration has ended. You can try contacting the organizer.</Typography>
+        </PromptContainer>
+      );
+    }
 
-  const from = tournament?.registration?.from;
-  const to = tournament?.registration?.to;
+    if (userStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>;
 
-  if (!from || from > new Date()) {
-    return (
-      <Container sx={{ minHeight: "60vw", justifyContent: "center", alignItems: "center" }}>
-        <Typography>Slow down. Registration hasn't begun yet.</Typography>
-      </Container>
-    );
-  }
+    if (!user) return <PromptContainer>
+      <Typography>Please sign in to proceed.</Typography>
+    </PromptContainer>
 
-  if (to && to < new Date()) {
-    return (
-      <Container sx={{ minHeight: "60vw", justifyContent: "center", alignItems: "center" }}>
-        <Typography>Dang, the registration has ended. You can try contacting the organizer.</Typography>
-      </Container>
-    );
-  }
+    if (!user.team) return <NoTeamPage></NoTeamPage>;
 
-  if (participant) {
-    return (
-      <>
-        <div>Congratulations! Your team is already registered.</div>
-        <Button onClick={() => unregisterTeam.mutate({ id: participant.id })}>
-          Unregister
-        </Button>
-      </>
-    );
-  }
+    if (participant) {
+      return (
+        <>
+          <div>Congratulations! Your team is already registered.</div>
+          <Button onClick={() => unregisterTeam.mutate({ id: participant.id })}>
+            Unregister
+          </Button>
+        </>
+      );
+    }
 
-  //FIXME: manager context
-  if (team && team.manager === user.id) {
-    return <RegistrationForm></RegistrationForm>;
-  }
+    //FIXME: manager context
+    if (team.manager === user.id) {
+      return <RegistrationForm></RegistrationForm>;
+    }
 
-  return (
-    <>
+    return <>
       <div>
         <p>You are currently a member of {user?.team?.name}</p>
         <p>Please ask the leader of your team to register.</p>
@@ -88,6 +105,12 @@ function RegistrationPage() {
         </p>
       </div>
     </>
+  }
+
+  return (
+    <BannerPage title={"Register"}>
+      {getActivePrompt()}
+    </BannerPage>
   );
 }
 

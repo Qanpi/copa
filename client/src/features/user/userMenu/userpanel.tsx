@@ -1,5 +1,5 @@
 import { Google } from "@mui/icons-material";
-import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu } from "@mui/material";
+import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, Breakpoint, ButtonProps } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -11,9 +11,6 @@ function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");
   const queryClient = useQueryClient();
 
-  const handleSignIn = () => {
-    window.open(`http://localhost:3001/login/federated/google`, "_self");
-  };
 
   const logout = useMutation({
     mutationFn: async () => {
@@ -61,25 +58,33 @@ function UserPanel() {
     //   </div>
     // </div>
   ) : (
-    <Button
-      onClick={handleSignIn}
-      variant="outlined"
-      sx={{
-        padding: 0,
-        paddingRight: 1,
-        paddingLeft: 1,
-        height: "70%",
-        minWidth: "30px",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Google></Google>
-      {minified ? null : (
-        <Typography variant="button" sx={{ ml: 1 }}>Sign in with Google</Typography>
-      )}
-    </Button>
+    <GoogleSignInButton breakpoint={"md"}></GoogleSignInButton>
   );
+}
+
+export const GoogleSignInButton = ({ breakpoint, ...props } : { breakpoint?: Breakpoint | number } & ButtonProps) => {
+  const handleSignIn = () => {
+    window.open(`http://localhost:3001/login/federated/google`, "_self");
+  };
+
+  const minified = useMediaQuery((theme: Theme) => theme.breakpoints.down(breakpoint || 0));
+
+  return <Button
+    onClick={handleSignIn}
+    variant="outlined"
+    sx={{
+      padding: 1,
+      minWidth: "30px",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+    {...props}
+  >
+    <Google></Google>
+    {minified ? null : (
+      <Typography variant="button" sx={{ ml: 1 }}>Sign in with Google</Typography>
+    )}
+  </Button>
 }
 
 export default UserPanel;

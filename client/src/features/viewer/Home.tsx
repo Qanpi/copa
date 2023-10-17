@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Stack, CircularProgress, useTheme } from "@mui/material";
+import { Box, Typography, Container, Stack, CircularProgress, useTheme, Button } from "@mui/material";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
@@ -9,6 +9,7 @@ import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";
 import brush from "./brush.png";
 import { LoadingBackdrop } from "./header";
+import { ArrowDropDown } from "@mui/icons-material";
 
 function WinnerPane({ stageId }: { stageId: string }) {
   //FIXME: needs to show all winners across divisions
@@ -81,7 +82,7 @@ function HomePage() {
   const { data: tournament, status } = useTournament("current");
 
   if (status !== "success") {
-    return <LoadingBackdrop open={true} sx={{zIndex: 20}}></LoadingBackdrop> 
+    return <LoadingBackdrop open={true} sx={{ zIndex: 20 }}></LoadingBackdrop>
   }
 
   switch (tournament.state) {
@@ -134,8 +135,15 @@ function HomePage() {
             <Typography variant="subtitle1" >
               Registration closes {dayjs().to(tournament.registration.to)}.
             </Typography>
+            <Link to="/tournament/register">
+              <Box sx={{ display: "flex", position: "relative", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                <Button variant="contained" sx={{ mt: 3, }} color="secondary">
+                  Register
+                </Button>
+                <ArrowDropDown color="secondary"></ArrowDropDown>
+              </Box>
+            </Link>
           </CopaBanner >
-          <Link to="/tournament/register">Register</Link>
         </>
       );
 

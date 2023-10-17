@@ -4,6 +4,7 @@ import { useTeam } from "./hooks";
 import { Stack, Box, Button, Container, Typography, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { PromptContainer } from "../participant/registration";
 
 function NoTeamPage() {
     const { data: user } = useUser("me");
@@ -14,7 +15,7 @@ function NoTeamPage() {
         if (team) navigate(`/teams/${team.name}`);
     }, [team])
 
-    return <Container sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "70vh" }}>
+    return <PromptContainer>
         <Box>
             <Typography>You are not currently part of a team.</Typography>
             <Stack direction="row" spacing={1} display="flex" alignItems="center" justifyContent={"center"} sx={{ mt: 2 }}>
@@ -26,7 +27,7 @@ function NoTeamPage() {
                 </Tooltip>
             </Stack>
         </Box>
-    </Container>
+    </PromptContainer>
 }
 
 export default NoTeamPage;
