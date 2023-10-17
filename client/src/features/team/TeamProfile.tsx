@@ -14,12 +14,12 @@ import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import { useNavigate, useParams } from "react-router-dom";
-import { useTeam } from "./hooks.ts";
+import { useRemoveUserFromTeam, useTeam } from "./hooks.ts";
 import { useUpdateUser, useUser } from "../user/hooks.ts";
 
 dayjs.extend(relativeTime);
 
-function TeamPage() {
+function TeamProfilePage() {
   //FIXME: think about encoding and decoding practices
   const { name } = useParams();
 
@@ -48,16 +48,12 @@ function TeamPage() {
   });
 
   const handleCopyInviteLink = () => {
-    navigator.clipboard.writeText(invite.link);
+    navigator.clipboard.writeText(invite?.link);
   };
 
-  const updateUser = useUpdateUser();
-
+  const removeUserFromTeam = useRemoveUserFromTeam();
   const handleLeaveTeam = () => {
-    updateUser.mutate({
-      id: user.id,
-      team: null,
-    });
+    removeUserFromTeam.mutate({ userId: user.id, teamId: team.id });
   };
 
   if (teamStatus !== "success") {
@@ -100,4 +96,4 @@ function TeamPage() {
   );
 }
 
-export default TeamPage;
+export default TeamProfilePage;

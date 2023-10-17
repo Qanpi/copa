@@ -32,8 +32,8 @@ export const useUpdateUser = () => {
       if (me.id === data.id) queryClient.setQueryData(userKeys.id("me"), data);
 
       queryClient.setQueryData(userKeys.id(data.id), data);
-      queryClient.setQueryData(userKeys.lists, (previous: TUser[]) => {
-        return previous.map(user => user.id === data.id ? data : user)
+      queryClient.setQueryData(userKeys.lists, (previous?: TUser[]) => {
+        return previous?.map(user => user.id === data.id ? data : user)
       });
     },
   });

@@ -72,6 +72,7 @@ function NewTeamPage() {
         onSubmit={(values) => {
           createTeam.mutate(values, {
             onSuccess: (newTeam) => {
+              console.log(newTeam);
               navigate(`/teams/${newTeam.name}`);
             },
           });

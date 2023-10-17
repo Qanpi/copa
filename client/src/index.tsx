@@ -23,7 +23,7 @@ import GroupStagePage from "./features/stage/GroupStage.tsx";
 import NewTeamPage from "./features/team/CreateTeam.tsx";
 import JoinTeamPage from "./features/team/JoinTeam.js";
 import NoTeamPage from "./features/team/NoTeamPage.tsx";
-import TeamPage from "./features/team/Team.js";
+import TeamProfilePage from "./features/team/TeamProfile.tsx";
 import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
 import HomePage from "./features/viewer/Home.tsx";
@@ -170,7 +170,7 @@ function App() {
 
                   <Route
                     path="/teams/:name"
-                    element={<TeamPage></TeamPage>}
+                    element={<TeamProfilePage></TeamProfilePage>}
                   ></Route>
                 </Route>
               </Routes>
