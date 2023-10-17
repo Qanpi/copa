@@ -2,7 +2,7 @@ import { Button, Container, Tooltip, Typography, Box } from "@mui/material";
 import { Formik, Form } from "formik";
 import MyAutocomplete from "../inputs/MyAutocomplete";
 import MyNumberSlider from "../inputs/myNumberSlider";
-import MyTextField from "../inputs/mytextfield";
+import MyTextField from "../inputs/myTextField";
 import * as Yup from "yup"
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";

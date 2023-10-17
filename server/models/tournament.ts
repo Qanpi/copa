@@ -55,7 +55,7 @@ const TournamentSchema = new mongoose.Schema(
         const metadata = await Metadata.findOne({
           model: (this.constructor as any).modelName,
         })
-        return await this.findById(metadata.latest);
+        return await this.findById(metadata?.latest);
       }
     }
   }

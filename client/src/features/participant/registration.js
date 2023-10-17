@@ -1,17 +1,17 @@
 import { Button, MenuItem, Typography } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { useLayoutEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import MySelect from "../inputs/mySelect.js";
+import MyTextField from "../inputs/myTextField.tsx";
+import { teamValidationSchema } from "../team/CreateTeam.tsx";
 import { useTeam, useUpdateTeam } from "../team/hooks.ts";
 import { useUser } from "../user/hooks.ts";
 import { useDivisions, useTournament } from "../viewer/hooks.ts";
-import MyTextField from "../inputs/mytextfield.js";
-import MySelect from "../inputs/mySelect.js";
-import { teamValidationSchema } from "../team/CreateTeam.js";
-import * as Yup from "yup";
 import { useParticipants } from "./hooks.ts";
-import { useContext, useEffect, useLayoutEffect } from "react";
 
 //team member -> ask manager
 //team manager -> register

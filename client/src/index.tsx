@@ -1,3 +1,5 @@
+import { TDivision } from "@backend/models/division.ts";
+import { CssBaseline, ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
@@ -18,19 +20,16 @@ import TeamsPage from "./features/participant/ParticipantsTable.tsx";
 import RegistrationPage from "./features/participant/registration.js";
 import BracketPage from "./features/stage/Bracket.tsx";
 import GroupStagePage from "./features/stage/GroupStage.tsx";
-import NewTeamPage from "./features/team/CreateTeam.js";
+import NewTeamPage from "./features/team/CreateTeam.tsx";
 import JoinTeamPage from "./features/team/JoinTeam.js";
 import NoTeamPage from "./features/team/NoTeamPage.tsx";
 import TeamPage from "./features/team/Team.js";
-import SignInButtton from "./features/user/SignInPage.tsx";
 import { useUser } from "./features/user/hooks.ts";
 import ProfilePage from "./features/user/profile/Profile";
 import HomePage from "./features/viewer/Home.tsx";
 import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
-import { CssBaseline, ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material";
-import { TDivision } from "@backend/models/division.ts";
 
 export const darkTheme = responsiveFontSizes(createTheme({
   palette: {

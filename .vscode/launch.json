@@ -13,6 +13,10 @@
             "webRoot": "${workspaceFolder}",
             "pathMappings": [
                 {
+                    "url": "file:///C:/Users/aleks/OneDrive%20-%20Suomalaisen%20Yhteiskoulun%20Osakeyhti%C3%B6/Tiedostot/Coding/IA/client/node_modules/@mui/base/unstable_useNumberInput/utils.js",
+                    "path": "${workspaceFolder}/server/node_modules/passport-oauth2/lib/utils.js"
+                },
+                {
                     "url": "file:///C:/Users/aleks/OneDrive%20-%20Suomalaisen%20Yhteiskoulun%20Osakeyhti%C3%B6/Tiedostot/Coding/IA/client/src/features/viewer/home",
                     "path": "${workspaceFolder}/client/src/features/viewer"
                 },
