@@ -7,6 +7,8 @@ import { useStages } from "./hooks";
 import DivisionPanel from "../dashboard/DivisionPanel";
 import { useContext } from "react";
 import { DivisionContext } from "../..";
+import BannerPage from "../viewer/BannerPage";
+import { Container, Typography } from "@mui/material";
 
 function BracketPage() {
     const { data: tournament } = useTournament("current");
@@ -20,17 +22,19 @@ function BracketPage() {
 
     const bracketsRef = useBracketsViewer(stageData, "#bracket");
 
-    return <>
+    return <BannerPage title={"Bracket"}>
+
         <DivisionPanel>
             {stageData ?
                 <div
                     ref={bracketsRef}
                     className="brackets-viewer"
                     id="bracket"
-                ></div> : <>
-                    Bracket not defined yet</>}
+                ></div> : <Container sx={{ minHeight: "60vw", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Typography>Hang on, we're not there yet.</Typography>
+                </Container>}
         </DivisionPanel>
-    </>
+    </BannerPage>
 }
 
 export default BracketPage;

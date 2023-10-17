@@ -1,4 +1,4 @@
-import {Skeleton, Container, Stack, Tooltip, Box, Typography, Card, CardContent, CardActionArea, CardActions, Button } from "@mui/material";
+import { Skeleton, Container, Stack, Tooltip, Box, Typography, Card, CardContent, CardActionArea, CardActions, Button } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { Link, Navigate } from "react-router-dom";
@@ -21,54 +21,60 @@ function TeamsPage() {
 
   const division = useContext(DivisionContext);
 
-  const { data: participants, status} = useParticipants(
+  const { data: participants, status } = useParticipants(
     tournament?.id, {
     division: division?.id
   }
   );
 
+  const gridParticipants = participants?.map(p => {
+    return (
+      <Card key={p.id} sx={{
+        minHeight: 200, borderRadius: 3,
+      }}>
+        <Link to={`/teams/${p.name}`}>
+          <CardActionArea sx={{
+            height: "100%",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "left"
+          }}>
+            <CardContent>
+              <Typography>{p.name}</Typography>
+            </CardContent>
+          </CardActionArea>
+        </Link>
+      </Card>
+    )
+  })
+
   return (
     <BannerPage title="Teams">
       <Stack spacing={3}>
         <DivisionPanel>
-          <Box sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, 300px)",
-            gap: 2,
-            justifyContent: "center",
-            pt: 2,
-            minHeight: "60vw"
-          }}>
-            {
-              participants?.map(p => {
-                return (
-                  <Card key={p.id} sx={{
-                    minHeight: 200, borderRadius: 3,
-                  }}>
-                    <Link to={`/teams/${p.name}`}>
-                      <CardActionArea sx={{
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "flex-end",
-                        justifyContent: "left"
-                      }}>
-                        <CardContent>
-                          <Typography>{p.name}</Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Link>
-                  </Card>
-                )
-              }) || Array.from(Array(9)).map(_ => {
-                return <Skeleton width={300} height={200} key={_} variant="rounded"></Skeleton> 
-              }) 
-            }
-          </Box>
+          {participants?.length === 0 ?
+            <Container sx={{ minHeight: "60vw", display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Typography>You could be the first team here!</Typography>
+            </Container> :
+            <Box sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, 300px)",
+              gap: 2,
+              justifyContent: "center",
+              pt: 2,
+              minHeight: "60vw"
+            }}>
+              {gridParticipants}
+            </Box>
+          }
         </DivisionPanel>
       </Stack>
     </BannerPage>
   );
 }
+// || Array.from(Array(9)).map(_ => {
+//                 return <Skeleton width={300} height={200} key={_} variant="rounded"></Skeleton> 
+//               }) 
 
 function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
   const unregisterTeam = useDeleteParticipant();
