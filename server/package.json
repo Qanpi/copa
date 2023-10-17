@@ -50,6 +50,7 @@
     "lodash-es": "^4.17.21",
     "mongodb": "^5.6.0",
     "mongoose": "^7.3.1",
+    "mongoose-unique-validator": "^4.0.0",
     "morgan": "~1.9.1",
     "passport": "^0.6.0",
     "passport-google-oauth": "^2.0.0",

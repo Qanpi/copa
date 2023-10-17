@@ -14,13 +14,13 @@ export const reportValidationErrors = expressAsyncHandler(async (req, res, next)
 export const isGoodName = (field) => body(field).trim().isAscii().notEmpty().escape();
 
 export const isLoggedInAsUser = (user: Express.User, userId: string) => {
-  return user.id === userId;
+  return user?.id === userId;
 };
-export const isAdmin = (user: Express.User) => {
-  return user.role === "admin" || user.name === "Aleksei Terin";
+export const isAdmin = (user?: Express.User) => {
+  return user?.role === "admin" || (process.env.NODE_ENV === "development" && user?.name === "qanpi");
 };
 export const isManager = (user: Express.User, team: { manager: Types.ObjectId | string; }): boolean => {
-  return team.manager.toString() === user.id;
+  return team.manager.toString() === user?.id;
 };
 export const isManagerOrAdmin = (user: Express.User, team: { manager: Types.ObjectId | string; }): boolean => {
   return isAdmin(user) || isManager(user, team);
@@ -34,4 +34,13 @@ export const validateObjectIdInBody = (fieldName: string) => {
   return body(fieldName).custom(value => {
     return isValidObjectId(value)
   })
+}
+
+export class StatusError extends Error {
+  status: number;
+
+  constructor (message: string, status?: number, options?: ErrorOptions) {
+    super(message, options);
+    this.status = status;
+  }
 }

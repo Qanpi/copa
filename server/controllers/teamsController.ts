@@ -6,8 +6,8 @@ import User, { TUser } from "../models/user.js";
 import { Request } from "express";
 import { isManagerOrAdmin, isLoggedInAsUser, isAdmin } from "../middleware/validation.js";
 
-export const createOne = expressAsyncHandler(async (req, res) => {
-  const team = await new Team(req.body).save();
+export const createOne = expressAsyncHandler(async (req, res, next) => {
+  const team = await Team.create(req.body);
 
   res.send(team);
 });

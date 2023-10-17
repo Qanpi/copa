@@ -37,19 +37,6 @@ const UserSchema = new mongoose.Schema(
 //member, manager
 //admin
 
-//FIXME: garbage code
-UserSchema.pre("findOneAndUpdate", async function () {
-  const update = this.getUpdate();
-  // const query = this.getQuery();
-
-  if (update && "team" in update && update.team === null) {
-    const user = await this.model.findOne(this.getQuery());
-    const team = await Team.findById(user.team.id);
-
-    if (team?.manager?.equals(user._id)) team?.passManagement();
-  }
-});
-
 const User = mongoose.model(collections.users.id, UserSchema);
 
 type TUserVirtuals = { id: string }

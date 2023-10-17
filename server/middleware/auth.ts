@@ -12,7 +12,6 @@ export const isAuthorized = expressAsyncHandler(async (req, res, next) => {
     isAuthenticated(req, res, undefined);
 
     if (!isAdmin(req.user)) {
-        res.status(403);
         throw new Error("Unauthorized request.")
     }
 

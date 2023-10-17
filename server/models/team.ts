@@ -1,6 +1,7 @@
 import mongoose, { InferSchemaType, Types } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
+import uniqueValidator from "mongoose-unique-validator";
 
 const TeamSchema = new mongoose.Schema(
   {
@@ -55,9 +56,11 @@ const TeamSchema = new mongoose.Schema(
   }
 );
 
+TeamSchema.plugin(uniqueValidator);
+
 TeamSchema.pre("save", async function () {
   if (this.isNew) {
-    User.findByIdAndUpdate(this.manager, {
+    await User.findByIdAndUpdate(this.manager, {
       team: this
     });
   }
