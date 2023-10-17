@@ -1,4 +1,4 @@
-import { Button, Container, Tooltip, Typography, Box } from "@mui/material";
+import { Button, Container, Tooltip, Typography, Box, Backdrop, CircularProgress, Snackbar, Alert } from "@mui/material";
 import { Formik, Form } from "formik";
 import MyAutocomplete from "../inputs/MyAutocomplete";
 import MyNumberSlider from "../inputs/myNumberSlider";
@@ -8,6 +8,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { tournamentKeys, useCreateTournament, useTournament } from "../viewer/hooks";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { LoadingBackdrop } from "../viewer/header";
 
 function CreateTournamentPage() {
     const tournament = useTournament("current");
@@ -25,7 +26,7 @@ function CreateTournamentPage() {
             validationSchema={Yup.object({
                 organizer: Yup.object({
                     name: Yup.string().required(""),
-                    phoneNumber: Yup.string().matches(/^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/, "Incorrent format").required(""),
+                    phoneNumber: Yup.string().matches(/^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/, "Incorrect format").required(""),
                 }),
                 divisions: Yup.array().min(1, "You must create at least one division.").required().of(Yup.string()),
             })}
@@ -34,8 +35,13 @@ function CreateTournamentPage() {
             }}
         >
             <Form>
+                <Snackbar open={createTournament.isError} anchorOrigin={{vertical: "top", horizontal: "center"}}>
+                    <Alert severity="error" sx={{width: "100%"}}>
+                        {createTournament.error?.message}
+                    </Alert>
+                </Snackbar>
+                <LoadingBackdrop open={createTournament.isLoading}></LoadingBackdrop>
                 <Container sx={{ pt: 15 }} maxWidth="xs">
-
                     <Grid2 container spacing={2} alignItems={"center"} justifyContent="center">
                         <Grid2 xs={12} justifyContent="center" alignItems="center" display="flex">
                             <Typography variant="h3" fontWeight={600}>KICKSTART COPA{tournament.idx ? tournament.idx + 1 : ""} </Typography>
@@ -63,9 +69,9 @@ function CreateTournamentPage() {
                         <Grid2 xs={12}>
                             <MyAutocomplete name="divisions" />
                         </Grid2>
-                        <Grid2 xs={12} display={"flex"} justifyContent={"center"} gap={2} sx={{mt: 1}}>
-                            <Button variant="outlined">Go back</Button>
-                            <Button type="submit" variant="contained">Create</Button>
+                        <Grid2 xs={12} display={"flex"} justifyContent={"center"} gap={2} sx={{ mt: 1 }}>
+                            <Button variant="outlined" fullWidth>Go back</Button>
+                            <Button type="submit" variant="contained" fullWidth>Create</Button>
                         </Grid2>
                     </Grid2>
                 </Container>

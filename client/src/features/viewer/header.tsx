@@ -10,7 +10,9 @@ import {
   Menu,
   useTheme,
   useMediaQuery,
-  IconButton
+  IconButton,
+  Backdrop,
+  CircularProgress
 } from "@mui/material";
 import { ReactNode, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -201,6 +203,12 @@ function Header() {
       < div className="extension" > </div>
     </header>
   );
+}
+
+export const LoadingBackdrop = ({open} : {open: boolean}) => {
+  return <Backdrop open={open} sx={{ zIndex: 11}}>
+    <CircularProgress></CircularProgress>
+  </Backdrop>
 }
 
 export default Header;
