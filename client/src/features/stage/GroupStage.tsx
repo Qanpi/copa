@@ -8,9 +8,11 @@ import { useGroupStageData, useStages } from "./hooks";
 import DivisionPanel from "../dashboard/DivisionPanel";
 import { useStageData } from "./hooks";
 import { useBracketsViewer } from "./hooks";
+import { Container, Typography } from "@mui/material";
+import BannerPage from "../viewer/BannerPage";
 
 function GroupStagePage() {
-    const {data: tournament} = useTournament("current");
+    const { data: tournament } = useTournament("current");
     const division = useContext(DivisionContext);
 
     const { data: stages } = useStages(tournament?.id, {
@@ -21,7 +23,7 @@ function GroupStagePage() {
 
     const bracketsRef = useBracketsViewer(stageData, "#group-stage");
 
-    return <>
+    return <BannerPage title={"Groups"}>
         <DivisionPanel>
             {stageData ?
                 <div
@@ -29,9 +31,11 @@ function GroupStagePage() {
                     className="brackets-viewer"
                     id="group-stage"
                 ></div>
-                : <>Group stage not defined yet.</>}
+                : <Container sx={{ minHeight: "60vw", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Typography>Groups will appear here once we get there.</Typography>
+                </Container>}
         </DivisionPanel>
-    </>
+    </BannerPage>
 }
 
 export default GroupStagePage;
