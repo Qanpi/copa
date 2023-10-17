@@ -42,15 +42,14 @@ const TeamSchema = new mongoose.Schema(
     toObject: { virtuals: true, getters: true },
     methods: {
       async passManagement() {
-        //TODO: test this
         const newManager = await User.findOne({
-          team: this.id,
-          id: { $ne: this.manager },
+          "team.id": this.id,
+          _id: { $ne: this.manager },
         });
-        this.manager = newManager ? newManager.id : undefined;
+        this.manager = newManager ? newManager.id : null;
         //TODO: document the fact this doesn't delete the team
 
-        return this.save();
+        return await this.save();
       },
     },
   }

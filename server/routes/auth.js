@@ -89,10 +89,14 @@ router.delete("/logout", (req, res, next) => {
 
 router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
-    const updatedUser = await User.findById(req.user.id);
+    let user = await User.findById(req.user.id);
+    
+    //create a user if the session is valid but one isn't in db
+    //this is useful for postman tests
+    if (!user) user = await User.create(req.user);
 
     //update user in case data changed
-    req.login(updatedUser, function (err) {
+    req.login(user, function (err) {
       if (err) return next(err);
       res.send(req.user);
     });

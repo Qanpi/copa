@@ -10,7 +10,7 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   newTournament.divisions.push(...divisions.map((d) => ({ name: d })));
 
   await newTournament.save();
-  res.send(newTournament);
+  res.status(201).send(newTournament);
 });
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {

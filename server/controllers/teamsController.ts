@@ -22,8 +22,15 @@ export const getMultiple = expressAsyncHandler(async (req, res) => {
 });
 
 export const getById = expressAsyncHandler(async (req, res) => {
+  let query = Team.findById(req.params.id);
 
-  const team = await Team.findById(req.params.id);
+  if (isAdmin(req.user)) {
+    const team = await query.select("+invite.token +invite.expiresAt +phoneNumber");
+    res.send(team);
+    return
+  }
+
+  const team = await query.exec();
   res.send(team);
 });
 
