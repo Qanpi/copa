@@ -83,7 +83,7 @@ function HomePage() {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "50vh"
+    height: "500px"
   }}>
     {tournament?.state ? <CircularProgress></CircularProgress> : <Typography>Hmm... I must've messed something up in code.</Typography>}
   </Container>
