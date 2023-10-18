@@ -1,5 +1,5 @@
 import { TParticipant } from "@backend/models/participant.ts";
-import { Box, Card, CardActionArea, CardContent, Container, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, CardProps, Container, Stack, Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
@@ -13,6 +13,28 @@ import {
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.tsx";
 
+const ParticipantCard = ({ name, ...props }: CardProps & { name?: string }) => {
+  return (
+    <Card key={name} sx={{
+      minHeight: 200, borderRadius: 3,
+      maxHeight: "300px"
+    }} {...props}>
+      <Link to={`/teams/${name}`}>
+        <CardActionArea sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "left",
+        }}>
+          <CardContent>
+            <Typography>{name}</Typography>
+          </CardContent>
+        </CardActionArea>
+      </Link>
+    </Card>
+  )
+}
+
 function TeamsPage() {
   const { data: tournament } =
     useTournament("current");
@@ -25,34 +47,13 @@ function TeamsPage() {
   }
   );
 
-  const gridParticipants = participants?.map(p => {
-    return (
-      <Card key={p.id} sx={{
-        minHeight: 200, borderRadius: 3,
-      }}>
-        <Link to={`/teams/${p.name}`}>
-          <CardActionArea sx={{
-            height: "100%",
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "left"
-          }}>
-            <CardContent>
-              <Typography>{p.name}</Typography>
-            </CardContent>
-          </CardActionArea>
-        </Link>
-      </Card>
-    )
-  })
-
   return (
     <BannerPage title="Teams">
       <Stack spacing={3}>
         <DivisionPanel>
           {participants?.length === 0 ?
             <Container sx={{ minHeight: "60vw", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Typography>Nothing to see here yet.</Typography>
+              <Typography>Nothing in this division at least.</Typography>
             </Container> :
             <Box sx={{
               display: "grid",
@@ -62,7 +63,24 @@ function TeamsPage() {
               pt: 2,
               minHeight: "60vw"
             }}>
-              {gridParticipants}
+              {participants?.map(p => <ParticipantCard name={p?.name}></ParticipantCard>)}
+              {tournament?.state === "Registration" ? <Card sx={{
+                minHeight: 200, borderRadius: 3,
+                maxHeight: "300px"
+              }}>
+                <Link to="/tournament/register">
+                  <CardActionArea sx={{
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}>
+                    <CardContent>
+                      <Typography>Your team could be here</Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Link>
+              </Card> : null}
             </Box>
           }
         </DivisionPanel>
