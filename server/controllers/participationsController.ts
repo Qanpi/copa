@@ -3,6 +3,7 @@ import Participant, { TParticipant } from "../models/participant.js";
 import { isAdmin, isInTeam, isManagerOrAdmin } from "../middleware/validation.js";
 import Team from "../models/team.js";
 import { Document, HydratedDocument, Types } from "mongoose";
+import Tournament from "../models/tournament.js";
 
 export const getMany = expressAsyncHandler(async (req, res) => {
   //translateAliases because division = tournament_id;
@@ -27,11 +28,20 @@ export const getOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const createOne = expressAsyncHandler(async (req, res) => {
+  const team = await Team.findById(req.body.team).exec();
+
+  if (!isInTeam(req.user, team.id) && !isAdmin(req.user))
+    throw new Error("User is not in team and is not admin.")
+
+  const tournament = await Tournament.getLatest();
+  if (!tournament.divisions.some(d => d.id === req.body.division))
+    throw new Error("The division does not exist in the latest tournament.")
+
   const participation = await new Participant(
     Participant.translateAliases({ ...req.body, tournament: req.params.id })
   ).save();
 
-  res.send(participation);
+  res.status(201).send(participation);
 });
 
 export const deleteOne = expressAsyncHandler(async (req, res) => {

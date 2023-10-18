@@ -9,7 +9,7 @@ import { isManagerOrAdmin, isLoggedInAsUser, isAdmin } from "../middleware/valid
 export const createOne = expressAsyncHandler(async (req, res, next) => {
   const team = await Team.create(req.body);
 
-  res.send(team);
+  res.status(201).send(team);
 });
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
@@ -64,7 +64,7 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
   res.status(204).send({});
 });
 
-export const joinTeam = expressAsyncHandler(async (req, res) => {
+export const addUserToTeam = expressAsyncHandler(async (req, res) => {
   const token = req.body.token;
   const userId = req.body.userId;
 

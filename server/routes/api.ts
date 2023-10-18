@@ -44,7 +44,7 @@ router.get("/teams/:id/users", teams.getUsersInTeam);
 router.delete("/teams/:teamId/users/:userId", isAuthenticated, teams.removeUserFromTeam);
 router.delete("/teams/:id", isAuthenticated, teams.removeById);
 router.get("/teams/:id/invite", isAuthenticated, teams.generateInviteToken);
-router.post("/teams/:id/users", isAuthenticated, teams.joinTeam);
+router.post("/teams/:id/users", isAuthenticated, teams.addUserToTeam);
 
 //USERS
 router.get("/users", isAuthorized, users.getMultiple);

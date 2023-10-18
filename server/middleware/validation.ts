@@ -19,15 +19,15 @@ export const isLoggedInAsUser = (user: Express.User, userId: string) => {
 export const isAdmin = (user?: Express.User) => {
   return user?.role === "admin";
 };
-export const isManager = (user: Express.User, managerId: Types.ObjectId | string): boolean => {
+export const isManager = (user: Express.User, managerId: string): boolean => {
   return managerId.toString() === user?.id;
 };
-export const isManagerOrAdmin = (user: Express.User, managerId: Types.ObjectId | string): boolean => {
+export const isManagerOrAdmin = (user: Express.User, managerId: string): boolean => {
   return isAdmin(user) || isManager(user, managerId);
 };
 
-export const isInTeam = (user: Express.User, teamId: Types.ObjectId | string) => {
-  return user.team.id === teamId;
+export const isInTeam = (user: Express.User, teamId: string) => {
+  return user?.team.id === teamId;
 }
 
 export const validateObjectIdInBody = (fieldName: string) => {

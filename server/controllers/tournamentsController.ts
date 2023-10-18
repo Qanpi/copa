@@ -4,6 +4,10 @@ import Tournament from "../models/tournament.js";
 import { bracketsManager } from "../services/bracketsManager.js";
 
 export const createOne = expressAsyncHandler(async (req, res) => {
+  const latest = await Tournament.getLatest();
+  if (latest && latest.state !== "Complete")
+    throw new Error("An uncompleted tournament already exists.");
+
   const { divisions, ...tournamentData } = req.body;
 
   const newTournament = new Tournament(tournamentData);

@@ -79,7 +79,7 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   // set locals, only providing error in development
-  debugHTTP(err, err.cause);
+  debugHTTP(err.message, err.cause);
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 

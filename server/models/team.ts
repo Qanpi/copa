@@ -19,7 +19,7 @@ const TeamSchema = new mongoose.Schema(
     instagramUrl: String,
     phoneNumber: String,
 
-    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v?: Types.ObjectId) => v?.toString() },
+    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v?: Types.ObjectId) => v?.toString(), unique: true },
 
     invite: {
       token: {
@@ -55,7 +55,7 @@ const TeamSchema = new mongoose.Schema(
   }
 );
 
-// TeamSchema.plugin(mongooseUniqueValidator);
+TeamSchema.plugin(mongooseUniqueValidator);
 
 TeamSchema.pre("save", async function () {
   if (this.isNew) {
@@ -74,7 +74,7 @@ TeamSchema.pre("deleteOne", async function (this: TTeam) {
   }
 })
 
-type TTeamVirtuals = { id: string, manager?: string, passManagement: () => Promise<void> };
+type TTeamVirtuals = { id?: string, manager?: string, passManagement: () => Promise<void> };
 export type TTeam = InferSchemaType<typeof TeamSchema> & TTeamVirtuals;
 
-export default mongoose.model<TTeam>(collections.teams.id, TeamSchema);
+export default mongoose.model(collections.teams.id, TeamSchema);
