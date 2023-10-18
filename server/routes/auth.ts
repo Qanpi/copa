@@ -137,7 +137,7 @@ router.get("/me", async (req, res, next) => {
     //update user in case data changed
     req.login({ ...user.toObject() as TUser, team: user.team?.id }, function (err) {
       if (err) return next(err);
-      res.send(req.user);
+      res.send(user);
     });
   } else {
     res.send(req.user);
