@@ -1,4 +1,4 @@
-import {Box, Stack, Button, Container, ContainerOwnProps, ContainerProps, MenuItem, Typography } from "@mui/material";
+import { Box, Stack, Button, Container, ContainerOwnProps, ContainerProps, MenuItem, Typography } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
@@ -10,8 +10,8 @@ import MyTextField from "../inputs/myTextField.tsx";
 import { teamValidationSchema } from "../team/CreateTeam.tsx";
 import { useTeam, useUpdateTeam } from "../team/hooks.ts";
 import { useUser } from "../user/hooks.ts";
-import { useDivisions, useTournament } from "../viewer/hooks.ts";
-import { useParticipants } from "./hooks.ts";
+import { divisionKeys, useDivisions, useTournament } from "../viewer/hooks.ts";
+import { participantKeys, useParticipants } from "./hooks.ts";
 import { LoadingBackdrop } from "../viewer/header.tsx";
 import { GoogleSignInButton } from "../user/userMenu/userpanel.tsx";
 import NoTeamPage from "../team/NoTeamPage.tsx";
@@ -136,10 +136,13 @@ function RegistrationForm() {
         values
       );
 
-      return res.data;
+      return res.data as TParticipant;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["participation"]);
+    onSuccess: (data) => {
+      //TODO: convert to optimistic updates
+      queryClient.invalidateQueries(participantKeys.id(data.id));
+      queryClient.invalidateQueries(participantKeys.list({team: data.team }));
+      queryClient.invalidateQueries(participantKeys.list({division: data.division }));
     },
   });
 
@@ -173,7 +176,7 @@ function RegistrationForm() {
       >
         <Form>
           <Typography variant="h6" sx={{ mb: 1 }}>Please verify the information below</Typography>
-          <Stack direction="column" spacing={0}>
+          <Stack direction="column" spacing={1}>
             <MyTextField name="name" label="team name"></MyTextField>
             <MyTextField label="phone number" name="phoneNumber"></MyTextField>
           </Stack>
@@ -194,18 +197,20 @@ function RegistrationForm() {
 }
 
 export const useDeleteParticipant = () => {
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (values: {id: string}) => {
+    mutationFn: async (values: { id: string }) => {
       const res = await axios.delete(
         `/api/tournaments/${tournament.id}/participants/${values.id}`
       );
       return res.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["participations"]);
+    onSuccess: (data, variables) => {
+      //TODO: optimistic updates
+      queryClient.invalidateQueries(participantKeys.id(variables.id));
+      queryClient.invalidateQueries(participantKeys.lists);
     },
   });
 };
