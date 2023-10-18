@@ -10,6 +10,7 @@ import { useStageData } from "./hooks";
 import { useBracketsViewer } from "./hooks";
 import { Container, Typography } from "@mui/material";
 import BannerPage from "../viewer/BannerPage";
+import "ts-brackets-viewer/dist/style.css"
 
 function GroupStagePage() {
     const { data: tournament } = useTournament("current");

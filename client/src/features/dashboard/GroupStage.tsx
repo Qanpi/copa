@@ -1,36 +1,22 @@
 import {
-  Box,
-  Stack,
   Alert,
   AlertTitle,
   Button,
-  Card,
-  CardContent,
   Container,
-  Typography,
-  Backdrop,
+  Stack,
+  Typography
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { Formik, Form } from "formik";
-import MyDatePicker from "../inputs/MyDatePicker.js";
-import { Popper } from "@mui/base";
-import { EventClickArg } from "@fullcalendar/core";
-import DateBlocker from "../inputs/DateBlocker.tsx";
-import dayjs, { Dayjs } from "dayjs";
-import { useMatchScheduler, useMatches } from "../match/hooks.ts";
-import DrawPage from "./Draw.tsx";
-import GroupStageStructure from "./GroupStageStructure.tsx";
-import Scheduler from "./Scheduler.tsx";
-import { useDivisions, useTournament } from "../viewer/hooks.ts";
-import { useStageData } from "../stage/hooks.ts";
-import NumberCard from "./NumberCard.tsx";
-import { useContext, useState } from "react";
 import { Status } from "brackets-model";
-import { DivisionContext } from "../../index.tsx";
-import DivisionPanel from "./DivisionPanel.tsx";
-import { useGroupStageData, useStages } from "../stage/hooks.ts";
 import { groupBy } from "lodash-es";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { DivisionContext } from "../../index.tsx";
+import { useMatches } from "../match/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
+import { useStages } from "../stage/hooks.ts";
+import { useDivisions, useTournament } from "../viewer/hooks.ts";
+import DivisionPanel from "./DivisionPanel.tsx";
+import NumberCard from "./NumberCard.tsx";
 
 function GroupStage({ next, prev }) {
   const { data: tournament } = useTournament("current");
@@ -152,7 +138,7 @@ function GroupStage({ next, prev }) {
                 can also do this together with the participants watching.
               </Typography>
               <Link to="/tournament/draw">
-                <Button variant="contained">Draw groups</Button>
+                <Button variant="contained" color="secondary">Draw groups</Button>
               </Link>
             </Stack>
           )}

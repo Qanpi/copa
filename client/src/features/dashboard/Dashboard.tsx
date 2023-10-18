@@ -11,7 +11,7 @@ import {
 import NewTournamentPage from "./NewTournament.js";
 import RegistrationStage from "./Registration.tsx";
 import { useTournament, useUpdateTournament } from "../viewer/hooks.ts";
-import GroupStage from "./GroupStage.js";
+import GroupStage from "./GroupStage.tsx";
 import BracketStructure from "./BracketStructure.tsx";
 import Bracket from "./Bracket.tsx";
 import CreateTournamentPage from "./CreateTournament.tsx";

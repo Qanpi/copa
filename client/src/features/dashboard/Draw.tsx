@@ -1,4 +1,4 @@
-import { Backdrop, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Backdrop, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -174,7 +174,7 @@ function DrawPage() {
         </DialogActions>
       </Dialog>
 
-      <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+      {!groupStage ? <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel> : null}
 
       <Container maxWidth="md">
         <DivisionPanel>
@@ -253,7 +253,7 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
   const wheelOptions = participants?.map((p) => {
     const l = 10;
     const trimmed =
-      p.name.length > l ? p.name.substring(0, l - 3) + "..." : p.name;
+      p.name?.length > l ? p.name?.substring(0, l - 3) + "..." : p.name;
     return { option: trimmed, ...p };
   });
 
@@ -273,6 +273,8 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
     setMustSpin(true);
   };
 
+  const theme = useTheme();
+
   if (!isWheelVisible) return;
 
   return (
@@ -283,6 +285,7 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
         mustStartSpinning={mustSpin}
         onStopSpinning={handleSpinOver}
         spinDuration={0.00001} //TODO: fix later
+        // fontSize={theme.typography.body1.fontSize}
       ></Wheel>
 
       {/* position is calculated so that it's in the center and on top of the wheel */}
