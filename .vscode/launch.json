@@ -5,6 +5,42 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Jest",
+            "type": "node",
+            "request": "launch",
+            "env": {
+                "NODE_ENV": "test"
+            },
+            "args": [
+                "./server",
+                "--colors",
+                "--config=${workspaceFolder}\\server\\jest.config.cjs",
+            ],
+            "runtimeArgs": [
+                "--nolazy",
+                "--experimental-vm-modules"
+            ],
+            "windows": {
+                "program": "${workspaceFolder}/server/node_modules/jest/bin/jest",
+            },
+            "outputCapture": "std",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest current file",
+            "program": "${workspaceFolder}/server/node_modules/jest-cli/bin/jest",
+            "args": [
+                "${fileBasename}",
+                "--verbose",
+                "-i",
+                "--no-cache",
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
@@ -40,5 +76,4 @@
             "type": "node"
         }
     ],
-  
 }
