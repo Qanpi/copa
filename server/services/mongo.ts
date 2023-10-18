@@ -3,7 +3,7 @@ import { debugDB } from "./debuggers.js";
 
 export const connectMongoose = async () => {
   return await mongoose
-    .connect(process.env["MONGODB_CONNECTION_STRING"], {
+    .connect(process.env.MONGODB_CONNECTION_STRING!, {
       ignoreUndefined: true,
     })
     .then(() => debugDB("Connected to Azure CosmosDB instance."))

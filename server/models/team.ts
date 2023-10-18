@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType, Types } from "mongoose";
+import mongoose, { InferSchemaType, ObtainSchemaGeneric, Types } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
 import mongooseUniqueValidator from "mongoose-unique-validator";
@@ -52,6 +52,7 @@ const TeamSchema = new mongoose.Schema(
         return await this.save();
       },
     },
+    id: true,
   }
 );
 
@@ -65,16 +66,15 @@ TeamSchema.pre("save", async function () {
   }
 });
 
-TeamSchema.pre("deleteOne", async function (this: TTeam) {
-  const members = await User.find({ team: this.id });
+TeamSchema.pre("deleteOne", async function () {
+  const members = await User.find({ team: this.getFilter()._id });
 
   for (const m of members) {
-    m.team = null;
+    m.team = undefined;
     await m.save();
   }
 })
 
-type TTeamVirtuals = { id?: string, manager?: string, passManagement: () => Promise<void> };
-export type TTeam = InferSchemaType<typeof TeamSchema> & TTeamVirtuals;
+export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods">;
 
-export default mongoose.model(collections.teams.id, TeamSchema);
+export default mongoose.model<TTeam>(collections.teams.id, TeamSchema);

@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import Tournament from "../models/tournament.js";
+import Tournament, { TTournament } from "../models/tournament.js";
 
 import { bracketsManager } from "../services/bracketsManager.js";
 
@@ -8,7 +8,7 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   if (latest && latest.state !== "Complete")
     throw new Error("An uncompleted tournament already exists.");
 
-  const { divisions, ...tournamentData } = req.body;
+  const { divisions, ...tournamentData }: { divisions: string[], tournamentData: Partial<TTournament> } = req.body;
 
   const newTournament = new Tournament(tournamentData);
   newTournament.divisions.push(...divisions.map((d) => ({ name: d })));
@@ -48,7 +48,7 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
   res.status(204).send({});
 });
 
-export const getTournamentDataById = async (req, res) => {
+export const getTournamentDataById = expressAsyncHandler(async (req, res) => {
   const data = await bracketsManager.get.tournamentData(req.params.id);
   res.send(data);
-};
+});

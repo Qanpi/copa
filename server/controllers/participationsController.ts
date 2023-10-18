@@ -30,6 +30,9 @@ export const getOne = expressAsyncHandler(async (req, res) => {
 export const createOne = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.body.team).exec();
 
+  if (!team)
+    throw new Error("Provided team does not exist.")
+
   if (!isInTeam(req.user, team.id) && !isAdmin(req.user))
     throw new Error("User is not in team and is not admin.")
 

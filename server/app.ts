@@ -66,7 +66,7 @@ app.use(authRouter);
 app.get("/", (req, res) => {
   //FIXME:!redirect to localhost if developing
   if (process.env.NODE_ENV === "development") {
-    return res.redirect(process.env.REACT_LOCALHOST_DOMAIN);
+    return res.redirect(process.env.REACT_LOCALHOST_DOMAIN!);
   }
   res.sendFile(reactPath + "/index.html");
 });

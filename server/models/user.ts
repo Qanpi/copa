@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema(
       id: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: collections.teams.id,
+        get: (v?: Types.ObjectId) => v?.toString()
       },
       name: String,
     },
@@ -38,7 +39,7 @@ const UserSchema = new mongoose.Schema(
 //admin
 
 
-type TUserVirtuals = { id: string }
+type TUserVirtuals = { id: string, team?: {id?: string} }
 export type TUser = InferSchemaType<typeof UserSchema> & TUserVirtuals;
 
 const User = mongoose.model<TUser>(collections.users.id, UserSchema);

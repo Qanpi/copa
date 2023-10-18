@@ -1,4 +1,4 @@
-export function romanize(num) {
+export function romanize(num: number) {
   if (isNaN(num)) return NaN;
   var digits = String(+num).split(""),
     key = [
@@ -35,26 +35,6 @@ export function romanize(num) {
     ],
     roman = "",
     i = 3;
-  while (i--) roman = (key[+digits.pop() + i * 10] || "") + roman;
+  while (i--) roman = (key[+digits.pop()! + i * 10] || "") + roman;
   return Array(+digits.join("") + 1).join("M") + roman;
-}
-
-export function getSeason() {
-  const seasons = [
-    "Winter",
-    "Winter",
-    "Spring",
-    "Spring",
-    "Spring",
-    "Summer",
-    "Summer",
-    "Summer",
-    "Autumn",
-    "Autumn",
-    "Summer",
-    "Winter",
-  ];
-  const month = new Date().getMonth();
-
-  return seasons[month];
 }

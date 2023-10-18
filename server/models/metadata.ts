@@ -1,4 +1,4 @@
-import mongoose, { SchemaTypes } from "mongoose";
+import mongoose, { InferSchemaType, SchemaTypes } from "mongoose";
 
 const MetadataSchema = new mongoose.Schema(
   {
@@ -17,4 +17,6 @@ const MetadataSchema = new mongoose.Schema(
   },
 );
 
-export default mongoose.model("Metadata", MetadataSchema);
+export type TMetadata = InferSchemaType<typeof MetadataSchema>;
+
+export default mongoose.model<TMetadata>("Metadata", MetadataSchema);

@@ -41,10 +41,10 @@ router.post("/teams", isAuthenticated, validateObjectIdInBody("manager"), report
 router.patch("/teams/:id", isAuthenticated, teams.updateOne);
 router.get("/teams/:id", teams.getById);
 router.get("/teams/:id/users", teams.getUsersInTeam);
-router.delete("/teams/:teamId/users/:userId", isAuthenticated, teams.removeUserFromTeam);
+router.delete("/teams/:teamId/users/:userId", isAuthenticated, validateObjectIdInBody("userId"), reportValidationErrors, teams.removeUserFromTeam);
 router.delete("/teams/:id", isAuthenticated, teams.removeById);
 router.get("/teams/:id/invite", isAuthenticated, teams.generateInviteToken);
-router.post("/teams/:id/users", isAuthenticated, teams.addUserToTeam);
+router.post("/teams/:id/users", isAuthenticated, body("token").isBase64(), validateObjectIdInBody("userId"), reportValidationErrors, teams.addUserToTeam);
 
 //USERS
 router.get("/users", isAuthorized, users.getMultiple);

@@ -46,7 +46,7 @@ const TournamentSchema = new mongoose.Schema(
       },
       name: {
         get() {
-          return `Copa ${romanize(this.idx)}`;
+          return `Copa ${romanize(this.idx || 0)}`;
         },
       },
     },

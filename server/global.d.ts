@@ -5,14 +5,8 @@ declare global {
         interface User {
             id?: string,
             name?: string,
-            team?: {
-                id: string,
-                name: string,
-            },
+            team?: string,
             role?: string
-        }
-        interface Request {
-            user?: User
         }
     }
 }

@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
-import GoogleStrategy from "passport-google-oauth20";
-import LocalStrategy from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as LocalStrategy } from "passport-local";
 import User from "../models/user.js";
 
 import { config } from "dotenv";
@@ -11,8 +11,8 @@ config();
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env["GOOGLE_CLIENT_ID"],
-      clientSecret: process.env["GOOGLE_CLIENT_SECRET"],
+      clientID: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       callbackURL: "/oauth2/redirect/google",
       scope: ["profile"],
       // passReqToCallback: true,
@@ -21,28 +21,27 @@ passport.use(
       const userData = {
         googleId: profile.id,
         name: profile.displayName,
-        avatar: profile.photos[0].value,
-        role: undefined,
+        avatar: profile.photos?.[0].value,
+        role: (process.env.NODE_ENV === "development" && profile.displayName === "qanpi") ? "admin" : undefined,
       };
 
-      if (process.env.NODE_ENV === "development" && userData.name === "qanpi") {
-        userData.role = "admin";
-      }
 
       let user = await User.findOne({ googleId: profile.id });
       if (!user) {
         user = await new User(userData).save();
       }
 
-
-      return cb(null, user);
+      return cb(null, {
+        ...user.toObject(),
+        team: user.team?.id
+      });
     }
   )
 );
 
 passport.serializeUser(function (user, done) {
   //TODO: maybe add encryption later on
-  const serialized = {
+  const serialized: Express.User = {
     id: user?.id,
     name: user?.name,
     team: user?.team,
@@ -54,7 +53,7 @@ passport.serializeUser(function (user, done) {
   });
 });
 
-passport.deserializeUser(function (user, done) {
+passport.deserializeUser(function (user: Express.User, done) {
   //TODO: maybe hit the db here?
   //TODO: maybe add common info to cookie
   process.nextTick(() => {
@@ -68,13 +67,17 @@ const router = express.Router();
 if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
   passport.use(new LocalStrategy({
   },
-    async function (username, password, done) {
+    async function (username: string, password: string, done) {
       if (!username) return done(new Error("no username"), false);
 
       let user = await User.findOne({ name: username });
-      if (!user) user = await User.create({ name: username, role: username === "admin" ? username : undefined })
+      if (!user)
+        user = await User.create({ name: username, role: username === "admin" ? username : undefined })
 
-      return done(null, user);
+      return done(null, {
+        ...user.toObject(),
+        team: user.team?.id
+      });
     }
   ))
 
