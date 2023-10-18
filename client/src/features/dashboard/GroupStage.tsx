@@ -4,13 +4,14 @@ import {
   Button,
   Container,
   Stack,
+  ThemeProvider,
   Typography
 } from "@mui/material";
 import { Status } from "brackets-model";
 import { groupBy } from "lodash-es";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { DivisionContext } from "../../index.tsx";
+import { DivisionContext, lightTheme } from "../../index.tsx";
 import { useMatches } from "../match/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
 import { useStages } from "../stage/hooks.ts";
@@ -85,39 +86,39 @@ function GroupStage({ next, prev }) {
         </Alert>
       ) : null}
       {incompleteMatchesAlert ? (
-        <Alert severity="error">
-          <AlertTitle>
-            Error: incomplete matches in the group stage of the '
-            {incompleteMatchesAlert.division}' division.
-          </AlertTitle>
-          <Typography>
-            Can't proceed before all the matches in the group stage are
-            complete. I you already know the results, enter them manually here.
-          </Typography>
-        </Alert>
+        <ThemeProvider theme={lightTheme}>
+          <Alert severity="error" sx={{ mb: 5 }}>
+            <AlertTitle>
+              Error: incomplete matches in the group stage of the '
+              {incompleteMatchesAlert.division}' division.
+            </AlertTitle>
+            <Typography>
+              Can't proceed before all the matches in the group stage are
+              complete. I you already know the results, enter them manually here.
+            </Typography>
+          </Alert>
+        </ThemeProvider>
       ) : null}
 
       <DivisionPanel>
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-          <NumberCard number={participants?.length}>
-            team(s) registered
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2} display="flex" justifyContent="center">
+          <NumberCard number={participants?.length} sx={{ flexGrow: 1 }}>
+            <Typography>team(s) registered</Typography>
           </NumberCard>
 
           {groupStage ? (
             <>
               <NumberCard
-                number={`${
-                  scheduledMatches !== undefined ? scheduledMatches.length : ""
-                }/${matches !== undefined ? matches.length : ""}`}
+                number={`${scheduledMatches !== undefined ? scheduledMatches.length : ""
+                  }/${matches !== undefined ? matches.length : ""}`}
               >
-                matches scheduled
+                <Typography>matches scheduled</Typography>
               </NumberCard>
               <NumberCard
-                number={`${
-                  completedMatches !== undefined ? completedMatches.length : ""
-                }/${matches !== undefined ? matches.length : ""}`}
+                number={`${completedMatches !== undefined ? completedMatches.length : ""
+                  }/${matches !== undefined ? matches.length : ""}`}
               >
-                matches complete
+                <Typography>matches complete</Typography>
               </NumberCard>
             </>
           ) : (
