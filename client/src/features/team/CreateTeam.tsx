@@ -53,7 +53,9 @@ function NewTeamPage() {
   if (userStatus !== "success") return <div>User loading.</div>;
 
   return (
-    <BannerPage title="This is where it begins">
+    <BannerPage header={
+      <Typography variant="h2" sx={{fontWeight: 500}}>This is where it begins</Typography>
+    }>
       <LeaveTeamDialog
         onStay={(u) => navigate(`/teams/${u.team.name}`)}
       ></LeaveTeamDialog>
@@ -79,8 +81,8 @@ function NewTeamPage() {
         }}
       >
         <Form>
-          <PromptContainer sx={{gap: 7}} maxWidth="sm">
-            <Stack direction="row" spacing={5} sx={{width: "100%", justifyContent: "center"}}>
+          <PromptContainer sx={{ gap: 7 }} maxWidth="sm">
+            <Stack direction="row" spacing={5} sx={{ width: "100%", justifyContent: "center" }}>
               <Stack direction="column" spacing={2}>
                 <MyTextField label="Team name *" name="name"></MyTextField>
                 <MyTextField label="Slogan" name="about" variant="standard"></MyTextField>
@@ -96,7 +98,7 @@ function NewTeamPage() {
               </Card>
             </Stack>
 
-            <Button type="submit" variant="contained" sx={{width: "50%"}}>Submit</Button>
+            <Button type="submit" variant="contained" sx={{ width: "50%" }}>Submit</Button>
           </PromptContainer>
         </Form>
       </Formik>
