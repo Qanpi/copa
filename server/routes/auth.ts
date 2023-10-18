@@ -134,10 +134,13 @@ router.get("/me", async (req, res, next) => {
     //this is useful for postman tests
     if (!user) user = await User.create(req.user);
 
+    //pull out any sensitive fields
+    const {googleId, ...sanitized} = user.toObject();
+
     //update user in case data changed
     req.login({ ...user.toObject() as TUser, team: user.team?.id }, function (err) {
       if (err) return next(err);
-      res.send(user);
+      res.send(sanitized);
     });
   } else {
     res.send(req.user);
