@@ -54,6 +54,7 @@ function RegistrationPage() {
   const getActivePrompt = () => {
     console.log(tournament)
     if (!tournament?.registration?.isOpen) {
+      //FIXME: make sure the types checkout (Date and string)
       const from = tournament?.registration?.from;
       const to = tournament?.registration?.to;
 
