@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import mongoose, { InferSchemaType } from "mongoose";
+import mongoose, { InferSchemaType, ObtainSchemaGeneric } from "mongoose";
 import { romanize } from "../services/helpers.js";
 import DivisionSchema from "./division.js";
 import Metadata from "./metadata.js";
@@ -86,13 +86,17 @@ TournamentSchema.virtual("start").get(function () {
   return this._id.getTimestamp();
 });
 
+TournamentSchema.virtual("registration.isOpen").get(function () {
+  return this.registration?.from && this.registration.from <= new Date() && (this.registration?.to ? this.registration.to >= new Date() : true)
+})
+
 // TournamentSchema.pre("findOneAndDelete", async function () {
 //   await Participant.deleteMany({tournament: this.id});
 // })
 
 
-export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, name: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[] };
+export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, name: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[] } & ObtainSchemaGeneric<typeof TournamentSchema, "TVirtuals">;
 
 const Tournament = mongoose.model<TTournament>("Tournament", TournamentSchema);
-export default Tournament as typeof Tournament & {getLatest: () => Promise<TTournament>};
- 
+export default Tournament as typeof Tournament & { getLatest: () => Promise<TTournament> };
+

@@ -51,6 +51,8 @@ describe("Teams management logic", function () {
     expect(team.name).toStrictEqual(encodeURIComponent(name.trim()))
   })
 
+  it.todo("test for reserved names for the urls in react")
+
   it.todo("should not allow a different manager unless user is admin")
 
   it("should not allow identical names", async function () {

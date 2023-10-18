@@ -78,6 +78,8 @@ function RegistrationPage() {
 
     if (!user.team) return <NoTeamPage></NoTeamPage>;
 
+    if (!team) return <LoadingBackdrop open={true}></LoadingBackdrop>
+
     //FIXME: manager context
     if (team.manager === user.id) {
       return <RegistrationForm></RegistrationForm>;
@@ -95,7 +97,7 @@ function RegistrationPage() {
     </>
   }
 
-  if (userStatus !== "success" || teamStatus !== "success" || participantStatus !== "success" || !tournament) return <LoadingBackdrop open={true}></LoadingBackdrop>
+  if (userStatus !== "success" || !tournament) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (participant) {
     const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]

@@ -22,12 +22,15 @@ import { useUpdateUser, useUser } from "../user/hooks.ts";
 import BannerPage from "../viewer/BannerPage.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
 import { PromptContainer } from "../participant/registration.tsx";
+import { useTournament } from "../viewer/hooks.ts";
 
 dayjs.extend(relativeTime);
 
 function TeamProfilePage() {
   //FIXME: think about encoding and decoding practices
   const { name } = useParams();
+
+  const { data: tournament } = useTournament("current");
 
   const { data: user } = useUser("me");
   const { data: team, status: teamStatus } = useTeam(name);
@@ -72,9 +75,12 @@ function TeamProfilePage() {
 
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
+  console.log(tournament)
+  //FIXME: refactor to model
+  // const isRegistration = tournament?.registration?.from && tournament?.registration?.from >= new Date() && (tournament?.registration?.to ? tournament?.registration?.to <= new Date() : true);
 
   return (
-    <Box sx={{mt: -6}}>
+    <Box sx={{ mt: -6 }}>
       <GradientTitle justifyContent={"left"} paddingLeft={"20vw"}>
         <Box component={"img"}>
 
@@ -86,7 +92,8 @@ function TeamProfilePage() {
       </GradientTitle>
       <Container maxWidth="md">
         {isManager ? <Button onClick={() => fetchInvite()}>Invite</Button> : null}
-        {isManager ? <Link to={`/tournament/register`}>Register</Link> : null}
+        {isManager && tournament?.registration?.isOpen ? <Link to={`/tournament/register`}>
+          <Button>Register</Button></Link> : null}
         {inviteStatus === "success" ? (
           <Alert>
             <AlertTitle>Generated invite link!</AlertTitle>
