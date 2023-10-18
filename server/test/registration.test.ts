@@ -64,6 +64,47 @@ describe("Registration stage", () => {
     expect(res.body).toHaveProperty("id");
   });
 
+  it("should find participant based on team and tournament", async () => {
+    const { body: og } = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[1],
+      });
+
+    const res = await auth
+      .get(`/api/tournaments/${tournamentId}/participants`)
+      .query({
+        team: teamId,
+        division: divisionIds[0],
+      });
+
+    expect(res.body[0].id).toEqual(og.id);
+  });
+
+  it("should unregister participant", async () => {
+    const { body: og } = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[1],
+      });
+
+    const res = await auth.delete(
+      `/api/tournaments/${tournamentId}/participants/${og.id}`
+    );
+    expect(res.status).toEqual(204);
+
+    const check = await auth
+      .get(`/api/tournaments/${tournamentId}/participants`)
+      .query({
+        team: teamId,
+        division: divisionIds[1],
+      });
+
+    expect(check.body).toHaveLength(0);
+  });
+
   it("should reject duplicate registration by team", async () => {
     const res = await auth
       .post(`/api/tournaments/${tournamentId}/participants`)
@@ -73,10 +114,12 @@ describe("Registration stage", () => {
       });
     expect(res.status).toEqual(201);
 
-    const res2 = await auth.post(`/api/tournaments/${tournamentId}/participants`).send({
-      team: teamId,
-      divisionIds: divisionIds[0],
-    });
+    const res2 = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        divisionIds: divisionIds[0],
+      });
 
     expect(res2.status).toEqual(500);
   });
