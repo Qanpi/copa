@@ -94,7 +94,7 @@ function RegistrationPage() {
     </>
   }
 
-  if (userStatus !== "success" || teamStatus !== "success" || participantStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
+  if (userStatus !== "success" || teamStatus !== "success" || participantStatus !== "success" || !tournament) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (participant) {
     const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]
@@ -194,11 +194,11 @@ function RegistrationForm() {
 }
 
 export const useDeleteParticipant = () => {
-  const tournament = useTournament("current");
+  const {data: tournament} = useTournament("current");
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (values) => {
+    mutationFn: async (values: {id: string}) => {
       const res = await axios.delete(
         `/api/tournaments/${tournament.id}/participants/${values.id}`
       );
