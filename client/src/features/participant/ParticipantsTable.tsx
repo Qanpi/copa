@@ -57,13 +57,12 @@ function TeamsPage() {
             </Container> :
             <Box sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, 300px)",
+              gridTemplateColumns: "repeat(auto-fill, 250px)",
               gap: 2,
               justifyContent: "center",
               pt: 2,
               minHeight: "60vw"
             }}>
-              {participants?.map(p => <ParticipantCard name={p?.name}></ParticipantCard>)}
               {tournament?.state === "Registration" ? <Card sx={{
                 minHeight: 200, borderRadius: 3,
                 maxHeight: "300px"
@@ -81,6 +80,7 @@ function TeamsPage() {
                   </CardActionArea>
                 </Link>
               </Card> : null}
+              {participants?.map(p => <ParticipantCard name={p?.name}></ParticipantCard>)}
             </Box>
           }
         </DivisionPanel>
