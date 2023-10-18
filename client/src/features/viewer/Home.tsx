@@ -143,14 +143,14 @@ function HomePage() {
 
     default:
       return (
-        <Container sx={{ pt: 10 }} maxWidth="xl">
-          <Stack direction={{ xs: "column-reverse", md: "row" }} spacing={5} display="flex" justifyContent="center">
+        <Container sx={{ p: 5, pt: 10 }} maxWidth="xl">
+          <Stack direction={{ xs: "column", md: "row" }} spacing={5} display="flex" justifyContent="center">
             <MatchesCalendar></MatchesCalendar>
             <Box display="flex" justifyContent="center">
               <Box sx={{
                 background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))",
-                height: { xs: "70vh", md: "70vmin" },
-                width: { xs: "100%", md: "70vmin" },
+                height: { xs: "90vmin", md: "65vmin" },
+                width: { xs: "90vmin", md: "65vmin" },
               }}
 
                 display="flex" justifyContent="center" alignItems="center" minHeight="100%"
