@@ -51,10 +51,6 @@ function TeamsPage() {
     <BannerPage title="Teams">
       <Stack spacing={3}>
         <DivisionPanel>
-          {participants?.length === 0 ?
-            <Container sx={{ minHeight: "60vw", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Typography>Nothing in this division at least.</Typography>
-            </Container> :
             <Box sx={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, 250px)",
@@ -82,7 +78,6 @@ function TeamsPage() {
               </Card> : null}
               {participants?.map(p => <ParticipantCard name={p?.name}></ParticipantCard>)}
             </Box>
-          }
         </DivisionPanel>
       </Stack>
     </BannerPage>
