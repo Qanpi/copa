@@ -44,7 +44,7 @@ router.get("/teams/:id/users", teams.getUsersInTeam);
 router.delete("/teams/:teamId/users/:userId", isAuthenticated, validateObjectIdInBody("userId"), reportValidationErrors, teams.removeUserFromTeam);
 router.delete("/teams/:id", isAuthenticated, teams.removeById);
 router.get("/teams/:id/invite", isAuthenticated, teams.generateInviteToken);
-router.post("/teams/:id/users", isAuthenticated, body("token").isBase64(), validateObjectIdInBody("userId"), reportValidationErrors, teams.addUserToTeam);
+router.post("/teams/:id/join", isAuthenticated, body("token").isBase64({urlSafe: true}), reportValidationErrors, teams.joinViaInviteToken);
 
 //USERS
 router.get("/users", isAuthorized, users.getMultiple);

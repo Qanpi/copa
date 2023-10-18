@@ -71,25 +71,28 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
   res.status(204).send({});
 });
 
-export const addUserToTeam = expressAsyncHandler(async (req, res) => {
+export const joinViaInviteToken = expressAsyncHandler(async (req, res) => {
   const token = req.body.token as string;
-  const userId = req.body.userId as string;
-
-  if (!isLoggedInAsUser(req.user, userId) && !isAdmin(req.user))
-    throw new Error("Unauthorized request.")
 
   const team = await Team.findById(req.params.id).select(["+invite.token", "+invite.expiresAt"]);
 
   if (!team)
     throw new Error("Invalid team.")
 
+  //this is to please typescript, there isAuth middleware checking the session
+  if (!req.user)
+    throw new Error("Strange... no auth.")
+
+  if(req.user?.team) 
+    throw new Error("User is already in a team.")
+
   if (team.invite?.token === token && team.invite.expiresAt && team.invite.expiresAt >= new Date()) {
-    const updated = await User.findByIdAndUpdate(userId, {
+    const updated = await User.findByIdAndUpdate(req.user.id, {
       team
     });
-    res.send(updated);
+    res.status(201).send(updated);
   } else {
-    res.status(403).send({ error: "invalid token" });
+    throw new Error("Invalid token.")
   }
 })
 
@@ -118,7 +121,7 @@ export const removeById = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.params.id);
 
   if (!isManagerOrAdmin(req.user, team?.manager?.toString()))
-    throw new Error("Unauthorized request.");
+    throw new Error("Neither manager nor admin of team.");
 
   await team?.deleteOne();
   res.status(204).send();

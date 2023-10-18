@@ -17,6 +17,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "module": "NodeNext",
+    "target": "ESNext",
     "paths": {
       "@frontend/*": [
         "../client/*"

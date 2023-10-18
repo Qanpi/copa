@@ -5,7 +5,7 @@ import { Types, isValidObjectId } from "mongoose";
 export const reportValidationErrors = expressAsyncHandler(async (req, res, next) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    throw new Error("Validation error.");
+    throw new Error("Validation error.", {cause: result.array()});
   }
 
   next();
