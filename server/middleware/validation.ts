@@ -5,7 +5,7 @@ import { Types, isValidObjectId } from "mongoose";
 export const reportValidationErrors = expressAsyncHandler(async (req, res, next) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        throw new Error("Validation error.", {cause: result.array()});
+        throw new Error("Validation error.");
     }
 
     next();
@@ -34,13 +34,4 @@ export const validateObjectIdInBody = (fieldName: string) => {
   return body(fieldName).custom(value => {
     return isValidObjectId(value)
   })
-}
-
-export class StatusError extends Error {
-  status: number;
-
-  constructor (message: string, status?: number, options?: ErrorOptions) {
-    super(message, options);
-    this.status = status;
-  }
 }

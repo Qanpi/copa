@@ -3,6 +3,7 @@
     "files": true,
     "esm": true,
     "compilerOptions": {
+      "module": "NodeNext",
       "allowSyntheticDefaultImports": true,
       "paths": {
         "@frontend/*": [
@@ -14,17 +15,15 @@
     },
   },
   "compilerOptions": {
-    "module": "NodeNext",
     "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
+    "module": "NodeNext",
     "paths": {
       "@frontend/*": [
         "../client/*"
       ]
     },
     "skipDefaultLibCheck": true,
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
+    "skipLibCheck": true
   },
 
 }

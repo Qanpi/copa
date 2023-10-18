@@ -7,18 +7,13 @@ import { fileURLToPath } from "url";
 import path from "path";
 import "dotenv/config.js"
 
-await connectMongoose();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const reactPath = path.resolve(__dirname, "build");
-
 import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
 import { debugHTTP } from "./services/debuggers.js";
 
+connectMongoose();
 const app = express();
 
 app.use(logger("dev"));
@@ -60,6 +55,8 @@ app.use(passport.session());
 
 //static react
 //TODO: move up to avoid user deserialization?
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const reactPath = path.resolve(__dirname, "build");
 app.use(express.static(reactPath));
 
 app.use("/api", apiRouter); // api request flow: route -> controller -> db service

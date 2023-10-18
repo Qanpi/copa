@@ -1,9 +1,11 @@
 import express from "express";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
+import LocalStrategy from "passport-local";
 import User from "../models/user.js";
 
 import { config } from "dotenv";
+import mongoose from "mongoose";
 config();
 
 passport.use(
@@ -61,6 +63,31 @@ passport.deserializeUser(function (user, done) {
 });
 
 const router = express.Router();
+
+//for testing
+if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
+  passport.use(new LocalStrategy({
+  },
+    async function (username, password, done) {
+      if (!username) return done(new Error("no username"), false);
+
+      let user = await User.findOne({ name: username });
+      if (!user) user = await User.create({ name: username, role: username === "admin" ? username : undefined })
+
+      return done(null, user);
+    }
+  ))
+
+  router.post("/login/tests", passport.authenticate("local", { failureRedirect: "/login/tests" }),
+    function (req, res) {
+      res.send(req.user);
+    })
+
+  router.delete("/", async (req, res) => {
+    await mongoose.connection.dropDatabase();
+    res.status(204).send({})
+  })
+}
 
 router.get("/login/federated/google", passport.authenticate("google"));
 router.get("/oauth2/redirect/google", (req, res, next) => {

@@ -60,7 +60,7 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
     await team.passManagement();
   }
 
-  await User.findByIdAndUpdate(userId, { team: null });
+  await User.findByIdAndUpdate(userId, { "$unset": { "team": "" } });
   res.status(204).send({});
 });
 

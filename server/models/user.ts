@@ -37,9 +37,9 @@ const UserSchema = new mongoose.Schema(
 //member, manager
 //admin
 
-const User = mongoose.model(collections.users.id, UserSchema);
 
 type TUserVirtuals = { id: string }
 export type TUser = InferSchemaType<typeof UserSchema> & TUserVirtuals;
 
+const User = mongoose.model<TUser>(collections.users.id, UserSchema);
 export default User;

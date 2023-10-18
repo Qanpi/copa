@@ -8,7 +8,7 @@ import * as users from "../controllers/usersController.js";
 import tournamentRouter from "./tournament.js";
 import { isAuthenticated, isAuthorized } from "../middleware/auth.js";
 import { body, checkSchema } from "express-validator";
-import { reportValidationErrors } from "../middleware/validation.js";
+import { reportValidationErrors, validateObjectIdInBody } from "../middleware/validation.js";
 
 const router = express.Router();
 
@@ -37,7 +37,7 @@ router.use("/tournaments/:id", tournamentRouter);
 
 //TEAMS
 router.get("/teams", teams.getMultiple);
-router.post("/teams", isAuthenticated, teams.createOne);
+router.post("/teams", isAuthenticated, validateObjectIdInBody("manager"), reportValidationErrors, teams.createOne);
 router.patch("/teams/:id", isAuthenticated, teams.updateOne);
 router.get("/teams/:id", teams.getById);
 router.get("/teams/:id/users", teams.getUsersInTeam);
@@ -52,15 +52,5 @@ router.get("/users/:id", isAuthenticated, users.getOneById);
 router.patch("/users/:id", isAuthenticated, users.updateOne);
 router.post("/users", isAuthorized, users.createOne);
 router.delete("/users/:id", isAuthenticated, users.deleteOne);
-
-//FIXME: DEVELOPMEN ONLY
-router.delete("/", async (req: Request, res: Response) => {
-  if (process.env.NODE_ENV === "development") {
-    await mongoose.connection.dropDatabase();
-    return res.status(204).send({});
-  }
-
-  res.send({})
-})
 
 export default router;

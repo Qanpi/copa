@@ -1,7 +1,7 @@
 import mongoose, { InferSchemaType, Types } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
-import uniqueValidator from "mongoose-unique-validator";
+import mongooseUniqueValidator from "mongoose-unique-validator";
 
 const TeamSchema = new mongoose.Schema(
   {
@@ -55,7 +55,7 @@ const TeamSchema = new mongoose.Schema(
   }
 );
 
-TeamSchema.plugin(uniqueValidator);
+// TeamSchema.plugin(mongooseUniqueValidator);
 
 TeamSchema.pre("save", async function () {
   if (this.isNew) {
@@ -74,7 +74,7 @@ TeamSchema.pre("deleteOne", async function (this: TTeam) {
   }
 })
 
-type TTeamVirtuals = { id: string, manager?: string };
+type TTeamVirtuals = { id: string, manager?: string, passManagement: () => Promise<void> };
 export type TTeam = InferSchemaType<typeof TeamSchema> & TTeamVirtuals;
 
-export default mongoose.model(collections.teams.id, TeamSchema);
+export default mongoose.model<TTeam>(collections.teams.id, TeamSchema);
