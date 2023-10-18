@@ -2,7 +2,7 @@ import express from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
-import User from "../models/user.js";
+import User, { TUser } from "../models/user.js";
 
 import { config } from "dotenv";
 import mongoose from "mongoose";
@@ -32,7 +32,7 @@ passport.use(
       }
 
       return cb(null, {
-        ...user.toObject(),
+        ...user.toObject() as TUser,
         team: user.team?.id
       });
     }
@@ -75,7 +75,7 @@ if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
         user = await User.create({ name: username, role: username === "admin" ? username : undefined })
 
       return done(null, {
-        ...user.toObject(),
+        ...user.toObject() as TUser,
         team: user.team?.id
       });
     }
@@ -135,7 +135,7 @@ router.get("/me", async (req, res, next) => {
     if (!user) user = await User.create(req.user);
 
     //update user in case data changed
-    req.login({ ...user.toObject(), team: user.team?.id }, function (err) {
+    req.login({ ...user.toObject() as TUser, team: user.team?.id }, function (err) {
       if (err) return next(err);
       res.send(req.user);
     });
