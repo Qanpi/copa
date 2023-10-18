@@ -82,10 +82,14 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
 });
 
 export const updateOne = expressAsyncHandler(async (req, res) => {
-  const participant = await Participant.findById(req.params.id) as any;
+  const participant = await Participant.findById(req.params.id);
 
-  if (isAdmin(req.user) || isInTeam(req.user, participant.team)) {
-    const participation = await participant.updateOne(
+  if (!participant?.team)
+    throw new Error("Invalid team or participant.")
+
+  if (isAdmin(req.user) || isInTeam(req.user, participant.team.toString())) {
+    const participation = await Participant.findByIdAndUpdate(
+      req.params.id,
       req.body,
       { new: true }
     );

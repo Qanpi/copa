@@ -44,7 +44,7 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
   if (!isManagerOrAdmin(req.user, team.manager?.toString()))
     throw new Error("Unauthorized request.");
 
-  const updated = await team.updateOne(req.body, { new: true }).exec();
+  const updated = await Team.findByIdAndUpdate(req.params.id, req.body, {new: true}).exec();
   res.send(updated);
 })
 

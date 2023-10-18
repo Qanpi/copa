@@ -1,11 +1,11 @@
-import { Button, Container, ContainerOwnProps, ContainerProps, MenuItem, Typography } from "@mui/material";
+import {Box, Stack, Button, Container, ContainerOwnProps, ContainerProps, MenuItem, Typography } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
 import { useEffect, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import MySelect from "../inputs/mySelect.js";
+import MySelect from "../inputs/mySelect.tsx";
 import MyTextField from "../inputs/myTextField.tsx";
 import { teamValidationSchema } from "../team/CreateTeam.tsx";
 import { useTeam, useUpdateTeam } from "../team/hooks.ts";
@@ -32,11 +32,11 @@ export const PromptContainer = (props: ContainerProps) => {
 function RegistrationPage() {
   const { data: tournament } = useTournament("current");
   const { data: user, status: userStatus } = useUser("me");
-  const { data: team } = useTeam(user?.team?.name);
+  const { data: team, status: teamStatus } = useTeam(user?.team?.name);
 
   const unregisterTeam = useDeleteParticipant();
 
-  const { data: participants } = useParticipants(tournament?.id, {
+  const { data: participants, status: participantStatus } = useParticipants(tournament?.id, {
     team: user?.team?.id,
   });
   const participant = participants?.[0];
@@ -71,24 +71,11 @@ function RegistrationPage() {
       );
     }
 
-    if (userStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>;
-
     if (!user) return <PromptContainer>
       <Typography>Please sign in to proceed.</Typography>
     </PromptContainer>
 
     if (!user.team) return <NoTeamPage></NoTeamPage>;
-
-    if (participant) {
-      return (
-        <>
-          <div>Congratulations! Your team is already registered.</div>
-          <Button onClick={() => unregisterTeam.mutate({ id: participant.id })}>
-            Unregister
-          </Button>
-        </>
-      );
-    }
 
     //FIXME: manager context
     if (team.manager === user.id) {
@@ -105,6 +92,25 @@ function RegistrationPage() {
         </p>
       </div>
     </>
+  }
+
+  if (userStatus !== "success" || teamStatus !== "success" || participantStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
+
+  if (participant) {
+    const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]
+    const random = Math.floor(Math.random() * terms.length);
+
+    return (
+      <BannerPage title={"Congratulations!"}>
+        <PromptContainer>
+          <Box>img</Box>
+          <Typography variant="h5">{team.name} is already registered.</Typography>
+          <Button sx={{ mt: 3 }} variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
+            {terms[random]}
+          </Button>
+        </PromptContainer>
+      </BannerPage>
+    );
   }
 
   return (
@@ -138,8 +144,7 @@ function RegistrationForm() {
   });
 
   return (
-    <>
-      <Typography variant="h6">Please verify the information below</Typography>
+    <PromptContainer>
       <Formik
         initialValues={{
           ...team,
@@ -155,6 +160,7 @@ function RegistrationForm() {
               const selected = divisions.find(
                 (d) => d.name === values.division
               );
+              console.log(team, selected);
               registerParticipant.mutate({
                 division: selected.id,
                 team: team.id,
@@ -166,22 +172,24 @@ function RegistrationForm() {
         }}
       >
         <Form>
-          <MyTextField name="name" label="name"></MyTextField>
-          <MyTextField label="Phone number" name="phoneNumber"></MyTextField>
-          <MySelect label="Division" name="division">
-            {divisions?.map((d) => (
-              <MenuItem value={d.name} key={d.id}>
-                {d.name}
-              </MenuItem>
-            ))}
-          </MySelect>
-          <Typography>
-            To update more info, head over to your team profile.
-          </Typography>
-          <Button type="submit">Register</Button>
+          <Typography variant="h6" sx={{ mb: 1 }}>Please verify the information below</Typography>
+          <Stack direction="column" spacing={0}>
+            <MyTextField name="name" label="team name"></MyTextField>
+            <MyTextField label="phone number" name="phoneNumber"></MyTextField>
+          </Stack>
+          <Stack direction="row" sx={{ width: "100%", mt: 5 }} display={"flex"} justifyContent={"space-between"} alignItems="center">
+            <MySelect label="Division" name="division" sx={{ mr: 3, flexGrow: 1 }}>
+              {divisions?.map((d) => (
+                <MenuItem value={d.name} key={d.id}>
+                  {d.name}
+                </MenuItem>
+              ))}
+            </MySelect>
+            <Button type="submit" variant='contained' sx={{ height: "100%" }}>Register</Button>
+          </Stack>
         </Form>
       </Formik>
-    </>
+    </PromptContainer >
   );
 }
 
