@@ -73,12 +73,12 @@ describe("Registration stage", () => {
       });
     expect(res.status).toEqual(201);
 
-    await auth.post(`/api/tournaments/${tournamentId}/participants`).send({
+    const res2 = await auth.post(`/api/tournaments/${tournamentId}/participants`).send({
       team: teamId,
       divisionIds: divisionIds[0],
     });
 
-    expect(res.status).toEqual(500);
+    expect(res2.status).toEqual(500);
   });
 
   it("should reject registration with invalid team", async () => {

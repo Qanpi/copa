@@ -37,12 +37,13 @@ ParticipantSchema.virtual("createdAd").get(function () {
   return this._id.getTimestamp();
 })
 
-const Participant = BracketsParticipant.discriminator(
-  "Participant",
-  ParticipantSchema
-);
 
 export type TParticipant = InferSchemaType<typeof ParticipantSchema> &
   TBracketsParticipant & {id: string, division: string};
+
+const Participant = BracketsParticipant.discriminator<TParticipant>(
+  "Participant",
+  ParticipantSchema
+);
 
 export default Participant;
