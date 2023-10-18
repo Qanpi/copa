@@ -21,6 +21,7 @@ import { useRemoveUserFromTeam, useTeam } from "./hooks.ts";
 import { useUpdateUser, useUser } from "../user/hooks.ts";
 import BannerPage from "../viewer/BannerPage.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
+import { PromptContainer } from "../participant/registration.tsx";
 
 dayjs.extend(relativeTime);
 
@@ -64,6 +65,10 @@ function TeamProfilePage() {
   if (teamStatus !== "success") {
     return <div>loadgi team profiel</div>;
   }
+
+  if (!team) return <PromptContainer>
+    <Typography>404 not found. Sorry, we went looking for this page but we couldn't find who asked.</Typography>
+  </PromptContainer>
 
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
