@@ -52,24 +52,26 @@ function RegistrationPage() {
   //   }
   // }, [user]);
   const getActivePrompt = () => {
-    const from = tournament?.registration?.from;
-    const to = tournament?.registration?.to;
+    console.log(tournament)
+    if (!tournament?.registration?.isOpen) {
+      const from = tournament?.registration?.from;
+      const to = tournament?.registration?.to;
 
-    if (!from || from > new Date()) {
-      return (
-        <PromptContainer>
+      if (!from || new Date(from) > new Date()) {
+        return (
+          <PromptContainer>
+            <Typography>Slow down. Registration hasn't begun yet.</Typography>
+          </PromptContainer>
+        );
+      }
 
-          <Typography>Slow down. Registration hasn't begun yet.</Typography>
-        </PromptContainer>
-      );
-    }
-
-    if (to && to < new Date()) {
-      return (
-        <PromptContainer>
-          <Typography>Dang, the registration has ended. You can try contacting the organizer.</Typography>
-        </PromptContainer>
-      );
+      if (to && new Date(to) < new Date()) {
+        return (
+          <PromptContainer>
+            <Typography>Dang, the registration has ended. You can try contacting the organizer.</Typography>
+          </PromptContainer>
+        );
+      }
     }
 
     if (!user) return <PromptContainer>
@@ -77,6 +79,22 @@ function RegistrationPage() {
     </PromptContainer>
 
     if (!user.team) return <NoTeamPage></NoTeamPage>;
+
+    if (participantStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
+
+    if (participant) {
+      const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]
+      const random = Math.floor(Math.random() * terms.length);
+
+      return (
+        <PromptContainer>
+          <Typography variant="h5">Congratulations! {team.name} is already registered.</Typography>
+          <Button sx={{ mt: 3 }} variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
+            {terms[random]}
+          </Button>
+        </PromptContainer>
+      );
+    }
 
     if (!team) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
@@ -98,23 +116,6 @@ function RegistrationPage() {
   }
 
   if (userStatus !== "success" || !tournament) return <LoadingBackdrop open={true}></LoadingBackdrop>
-
-  if (participant) {
-    const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]
-    const random = Math.floor(Math.random() * terms.length);
-
-    return (
-      <BannerPage title={"Congratulations!"}>
-        <PromptContainer>
-          <Box>img</Box>
-          <Typography variant="h5">{team.name} is already registered.</Typography>
-          <Button sx={{ mt: 3 }} variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
-            {terms[random]}
-          </Button>
-        </PromptContainer>
-      </BannerPage>
-    );
-  }
 
   return (
     <BannerPage title={"Register"}>
@@ -144,8 +145,8 @@ function RegistrationForm() {
     onSuccess: (data) => {
       //TODO: convert to optimistic updates
       queryClient.invalidateQueries(participantKeys.id(data.id));
-      queryClient.invalidateQueries(participantKeys.list({team: data.team }));
-      queryClient.invalidateQueries(participantKeys.list({division: data.division }));
+      queryClient.invalidateQueries(participantKeys.list({ team: data.team }));
+      queryClient.invalidateQueries(participantKeys.list({ division: data.division }));
     },
   });
 

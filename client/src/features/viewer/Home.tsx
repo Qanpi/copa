@@ -125,7 +125,7 @@ function HomePage() {
         <>
           <CopaBanner>
             <Typography variant="subtitle1" >
-              {to ? `Registration closes ${dayjs().to(tournament.registration.to)}` : "Hurry up! There is still time to register"}
+              {to ? `Registration closes ${dayjs().to(tournament.registration.to)}!` : "Hurry up! There is still time to register"}
             </Typography>
             <Link to="/tournament/register">
               <Box sx={{ display: "flex", position: "relative", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
