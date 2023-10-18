@@ -16,6 +16,7 @@ import { LoadingBackdrop } from "../viewer/header.tsx";
 import { GoogleSignInButton } from "../user/userMenu/userpanel.tsx";
 import NoTeamPage from "../team/NoTeamPage.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
+import { TParticipant } from "@backend/models/participant.ts";
 
 //team member -> ask manager
 //team manager -> register
@@ -130,7 +131,7 @@ function RegistrationForm() {
 
   const queryClient = useQueryClient();
   const registerParticipant = useMutation({
-    mutationFn: async (values) => {
+    mutationFn: async (values: Partial<TParticipant>) => {
       const res = await axios.post(
         `/api/tournaments/${tournament.id}/participants`,
         values
@@ -163,7 +164,8 @@ function RegistrationForm() {
               const selected = divisions.find(
                 (d) => d.name === values.division
               );
-              console.log(team, selected);
+
+              //TODO: error handling
               registerParticipant.mutate({
                 division: selected.id,
                 team: team.id,
