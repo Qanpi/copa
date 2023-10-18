@@ -118,22 +118,14 @@ function HomePage() {
           </CopaBanner>
         )
 
-      if (!tournament.registration?.to)
-        return (
-          <CopaBanner>
-            <Typography variant="subtitle1" >
-              Hurry up! There is still time to register.
-            </Typography>
-          </CopaBanner>
-        )
 
-      const to = new Date(tournament.registration.to);
+      const to = tournament.registration?.to && new Date(tournament.registration.to);
 
-      if (now <= to) return (
+      if (!to || now <= to) return (
         <>
           <CopaBanner>
             <Typography variant="subtitle1" >
-              Registration closes {dayjs().to(tournament.registration.to)}.
+              {to ? `Registration closes ${dayjs().to(tournament.registration.to)}` : "Hurry up! There is still time to register"}
             </Typography>
             <Link to="/tournament/register">
               <Box sx={{ display: "flex", position: "relative", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
