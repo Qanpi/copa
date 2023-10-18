@@ -43,6 +43,10 @@ describe("Registration stage", () => {
       manager: manager.id,
     });
 
+    await auth.get("/me"); //necessary to update req.user object
+    //TODO: perhaps do this in deserialization
+    //but that's too many requests
+
     teamId = resTeam.body.id;
   });
 
