@@ -15,6 +15,7 @@ import {
   Stack,
   ThemeProvider,
   Typography,
+  Snackbar,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { Form, Formik } from "formik";
@@ -157,7 +158,9 @@ function RegistrationStage({ next, prev }) {
 function RegistrationPane() {
   const { status: tournamentStatus, data: tournament } =
     useTournament("current");
+
   const updateTournament = useUpdateTournament(tournament?.id);
+  const [updateSnackbar, setUpdateSnackbar] = useState(false);
 
   if (tournamentStatus !== "success") return "bruh";
 
@@ -167,22 +170,29 @@ function RegistrationPane() {
     <Formik
       initialValues={{
         registration: {
-          from: from ? dayjs(from) : null,
-          to: to ? dayjs(to) : null,
+          from: from ? dayjs(from) : undefined,
+          to: to ? dayjs(to) : undefined,
         },
       }}
       validationSchema={Yup.object({
         registration: Yup.object({
           from: Yup.date().required(),
           to: Yup.date()
-            .required()
             .when(["from"], ([from], schema) => {
               if (from) return schema.min(dayjs(from)); //can be on the same day, but not before
             }),
         }),
       })}
       onSubmit={(values) => {
-        updateTournament.mutate(values);
+        updateTournament.mutate({
+          ...values,
+          registration: {
+            from: values.registration.from?.toDate(),
+            to: values.registration.to?.toDate()
+          }
+        }, {
+          onSuccess: () => setUpdateSnackbar(true)
+        });
       }}
     >
       {({
@@ -194,6 +204,11 @@ function RegistrationPane() {
         touched,
       }) => (
         <Form>
+          <Snackbar open={updateSnackbar} anchorOrigin={{ horizontal: "right", vertical: "bottom" }} onClose={() => setUpdateSnackbar(false)} autoHideDuration={3000}>
+            <Alert severity="success">
+              Your changes have been saved.
+            </Alert>
+          </Snackbar>
           <InputLabel sx={{ mb: 2 }}>Open registration</InputLabel>
           <Stack direction="row" spacing={2}>
             <MyDatePicker
