@@ -51,6 +51,7 @@ function TeamsPage() {
     <BannerPage title="Teams">
       <Stack spacing={3}>
         <DivisionPanel>
+          <Box sx={{minHeight: "600px"}}>
             <Box sx={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, 250px)",
@@ -77,6 +78,7 @@ function TeamsPage() {
               </Card> : null}
               {participants?.map(p => <ParticipantCard name={p?.name}></ParticipantCard>)}
             </Box>
+          </Box>
         </DivisionPanel>
       </Stack>
     </BannerPage>
