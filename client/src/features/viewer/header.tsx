@@ -102,7 +102,6 @@ function Header() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
   const { data: user } = useUser("me");
-  console.log(user);
 
   return (
     <Box sx={{ width: "100vw", position: "sticky", zIndex: 12 }}>
@@ -119,9 +118,9 @@ function Header() {
           }} alignItems={"center"}>
             <Link to="/" > Home </Link>
 
-            {tournament?.state ? <DropdownMenu anchor={
+            <DropdownMenu anchor={
               <Typography>
-                Tournament
+                {tournament?.name || "Tournament"}
               </Typography>
             }>
               <Link to="/tournament/teams" >
@@ -139,7 +138,7 @@ function Header() {
               < Link to="/tournament/gamblers" >
                 <MenuItem>Gamblers </MenuItem>
               </Link>
-            </DropdownMenu> : null}
+            </DropdownMenu>
 
             {user?.role === "admin" ?
               (
