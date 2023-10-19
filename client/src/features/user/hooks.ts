@@ -6,7 +6,7 @@ import { QueryKeyObject, queryKeyFactory } from "../types";
 
 export const userKeys = queryKeyFactory<TUser>("users");
 
-export const useUser = (id: string) => {
+export const useUser = (id?: string) => {
   return useQuery({
     queryKey: userKeys.id(id),
     queryFn: async () => {
@@ -16,6 +16,7 @@ export const useUser = (id: string) => {
           : await axios.get(`/api/${userKeys.all}/${id}`);
       return res.data as TUser;
     },
+    enabled: !!id
   });
 };
 

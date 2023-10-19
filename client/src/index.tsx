@@ -25,7 +25,7 @@ import JoinTeamPage from "./features/team/JoinTeam.js";
 import NoTeamPage from "./features/team/NoTeamPage.tsx";
 import TeamProfilePage from "./features/team/TeamProfile.tsx";
 import { useUser } from "./features/user/hooks.ts";
-import ProfilePage from "./features/user/profile/Profile";
+import ProfilePage from "./features/user/Profile.tsx";
 import HomePage from "./features/viewer/Home.tsx";
 import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
