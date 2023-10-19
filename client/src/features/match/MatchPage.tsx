@@ -107,10 +107,10 @@ function MatchPage() {
   const opp2 = match.opponent2;
 
   return (
-    <Container maxWidth="md" sx={{ p: { xs: 5, md: 10 } }}>
-      <Stack direction="column" spacing={10}>
-        <Stack sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }} direction={{ xs: "column", md: "row" }} spacing={10}>
-          <Stack direction={{ xs: "column-reverse", md: "column", maxWidth: "45vmin" }}>
+    <Container sx={{ p: { xs: 5, md: 10 } }}>
+      <Stack direction={{xs: "row", md: "column"}} sx={{ display: "flex",  alignItems: "center"}} spacing={5}>
+        <Stack sx={{ position: "relative" }} direction={{ xs: "column", md: "row" }} spacing={10}>
+          <Stack direction={{ xs: "column-reverse", md: "column"}} justifyContent={"center"}>
             <Box sx={{ width: "45vmin", height: "45vmin", background: "lightblue" }}>
               img
             </Box>
@@ -126,7 +126,8 @@ function MatchPage() {
             <Typography variant="subtitle1">{opp2?.name || "BYE"}</Typography>
           </Box>
         </Stack>
-        <LinearProgress variant="determinate" value={100} sx={{ transform: "scaleX(-1)" }}></LinearProgress>
+        {/* FIXME: make vertical on mobile */}
+        <LinearProgress variant="determinate" value={10} sx={{ transform: {xs: "rotate(90deg)", md: "scaleX(-1)"}, height: 5, width: "80vmin"}}></LinearProgress>
       </Stack>
     </Container >
   )
