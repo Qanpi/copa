@@ -33,6 +33,15 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
       },
     },
     {
+      field: "duration",
+      headerName: "Duration (min)",
+      type: "number",
+      valueGetter(p) {
+        if (!p.row?.end || !p.row?.start) return;
+        return dayjs(p.row.end).diff(p.row.start, "minutes");
+      }
+    },
+    {
       field: "opponent1",
       headerName: "Home",
       valueGetter: (p) => {
@@ -101,7 +110,6 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
       const stage = stages?.find((g) => g.id === newRow.stage_id?.toString())
       const division = divisions.find(d => d.id === stage?.division);
       const duration = division?.settings?.matchLength;
-      console.log(stage, division, duration)
 
       if (!duration) throw new Error("Failed to set end date for match.")
       end = dayjs(newRow.start).add(duration, "seconds").toDate();

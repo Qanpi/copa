@@ -63,8 +63,7 @@ const useMatchScheduler = () => {
 
 const Scheduler = () => {
   const { data: tournament } = useTournament("current");
-  const { data: unscheduledMatches } = useMatches(tournament?.id, {
-    scheduled: "false",
+  const { data: matches } = useMatches(tournament?.id, {
   });
 
 
@@ -72,7 +71,7 @@ const Scheduler = () => {
     <Stack direction="column" spacing={3}>
       <Typography variant="h2">Scheduler</Typography>
       <MatchesTimeline></MatchesTimeline>
-      <MatchesTable matches={unscheduledMatches}></MatchesTable>
+      <MatchesTable matches={matches}></MatchesTable>
     </Stack>
   </Container>
 }

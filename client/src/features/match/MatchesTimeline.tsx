@@ -47,13 +47,19 @@ function MatchesTimeline() {
 
     const handleItemDrag = ({ eventType, itemId, time }: OnItemDragObjectBase) => {
         console.log(eventType, itemId, time)
+
         const datetime = new Date(time);
-        console.log(datetime);
+        const match = scheduledMatches?.find(m => m.id === itemId);
+        if (!match) throw new Error("Match not found")
 
         if (eventType === "move") {
+            const duration = dayjs(match.end).diff(match.start, "seconds");
+            console.log(duration)
+
             updateMatch.mutate({
                 id: itemId,
-                start: datetime
+                start: datetime,
+                end: dayjs(datetime).add(duration, "seconds").toDate()
             })
         } else if (eventType === "resize") {
             updateMatch.mutate({
