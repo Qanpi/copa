@@ -108,7 +108,7 @@ function Header() {
     <Box sx={{ width: "100vw", position: "sticky", zIndex: 12 }}>
       <Box sx={{
         background: theme.palette.secondary.main,
-        height: "50px",
+        height: "70px",
         paddingLeft: "270px",
         paddingRight: 3
       }} display="flex" alignItems={"center"}>
@@ -171,8 +171,8 @@ function Header() {
       <Box sx={{
         background: "none",
         width: "200px",
-        borderTop: `50px solid ${theme.palette.secondary.main}`,
-        borderRight: "40px solid transparent",
+        borderTop: `40px solid ${theme.palette.secondary.main}`,
+        borderRight: "20px solid transparent",
       }}></Box>
     </Box >
   )
