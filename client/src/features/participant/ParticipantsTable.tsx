@@ -51,7 +51,7 @@ function TeamsPage() {
     <BannerPage title="Teams">
       <Stack spacing={3}>
         <DivisionPanel>
-          <Box sx={{minHeight: "600px"}}>
+          <Box sx={{minHeight: "600px", width: "100%"}}>
             <Box sx={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, 250px)",
