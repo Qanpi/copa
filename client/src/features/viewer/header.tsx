@@ -4,6 +4,7 @@ import {
   BackdropProps,
   Box,
   CircularProgress,
+  ClickAwayListener,
   IconButton,
   MenuItem,
   MenuList,
@@ -24,21 +25,22 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  const handlePointerEnter = (e) => {
+  const handlerDropdownOpen = (e) => {
     setOpen(true);
   };
 
-  const handlePointerLeave = (e) => {
+  const handleDropdownClose = (e) => {
     setOpen(false);
   };
 
   const theme = useTheme();
 
   return (
-    <>
+    <ClickAwayListener onClickAway={handleDropdownClose}>
       <Box
-        onPointerLeave={handlePointerLeave}
-        onPointerEnter={handlePointerEnter}
+        onMouseLeave={handleDropdownClose}
+        onMouseEnter={handlerDropdownOpen}
+        onClick={handlerDropdownOpen}
         sx={{
           height: "100%"
         }}
@@ -94,7 +96,7 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
           </Stack>
         </Popper>
       </Box >
-    </>
+    </ClickAwayListener>
   );
 };
 
