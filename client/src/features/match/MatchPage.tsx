@@ -9,6 +9,8 @@ import ScoreCounter from "../inputs/ScoreCounter";
 import { useParticipant } from "../participant/hooks";
 import { useMatch, useUpdateMatch } from "./hooks";
 import { useUser } from "../user/hooks";
+import { Container, Box, Stack, Typography } from "@mui/material";
+import { Status } from "brackets-model"
 
 const MatchTimer = ({ duration }: { duration: number }) => {
   const getExpiryTimestamp = () => dayjs().add(duration, "seconds").toDate();
@@ -19,7 +21,7 @@ const MatchTimer = ({ duration }: { duration: number }) => {
     autoStart: false,
   });
 
-  const {setFieldValue, submitForm} = useFormikContext();
+  const { setFieldValue, submitForm } = useFormikContext();
 
   useEffect(() => {
     const updateFrequency = 5;
@@ -31,7 +33,7 @@ const MatchTimer = ({ duration }: { duration: number }) => {
 
   }, [seconds])
 
-  const {data: user} = useUser("me");
+  const { data: user } = useUser("me");
   const isAdmin = user?.role === "admin";
 
   const handleReset = () => {
@@ -67,52 +69,81 @@ function MatchPage() {
 
   const updateMatch = useUpdateMatch();
 
-  const {data: user} = useUser("me");
+  const { data: user } = useUser("me");
   const isAdmin = user?.role === "admin";
 
   if (status === "loading") return <div>Loading...</div>;
 
   const duration = match.duration * 60 - match.elapsed;
 
-  return (
-    <Formik
-      initialValues={{
-        ...match,
-        opponent1: {
-          ...match.opponent1,
-          score: match.opponent1.score || 0
-        },
-        opponent2: {
-          ...match.opponent2,
-          score: match.opponent2.score || 0
-        }
-      }}
-      onSubmit={(values) => updateMatch.mutate(values)}
-    >
-      {({ values, submitForm, setFieldValue }) => (
-        <Form>
-          <div>{participant1?.name}</div>
-          <ScoreCounter name="opponent1.score"></ScoreCounter>
-          <div>{participant2?.name}</div>
-          <ScoreCounter name="opponent2.score"></ScoreCounter>
-          {values.elapsed}
-          {isAdmin ? <Button onClick={
-            () => {
-              const s1 = values.opponent1.score;
-              const s2 = values.opponent2.score;
+  const getMatchLayout = () => {
+    if (!match?.status) return <>Loading</>
 
-              if (s1 > s2) setFieldValue("opponent1.result", "win");
-              else if (s1 === s2) setFieldValue("opponent1.result", "draw"); //FIXME: deal with this properly
-              else setFieldValue("opponent2.result", "win");
-
-              submitForm();
-            }
-          }>Submit</Button> : null}
-          <MatchTimer duration={duration}></MatchTimer>
-        </Form>
+    if (match.status <= Status.Ready) {
+      return (
+        <Stack direction={"row"} spacing={3} display="flex" justifyContent={"center"}>
+          <Box>
+            <Box>
+              img
+            </Box>
+            <Typography variant="h4">{participant1.name}</Typography>
+          </Box>
+          <Typography variant="h2">vs</Typography>
+          <Box>
+            <Box>
+              img
+            </Box>
+            <Typography variant="h4">{participant2.name}</Typography>
+          </Box>
+        </Stack>
       )
-      }
-    </Formik>
+    } else if (match.status === Status.Running) {
+      return <>Match running page</>
+    } else {
+      return <>Match completed page</>
+    }
+  }
+
+  return (
+    <Container sx={{ pt: 5 }}>
+      {getMatchLayout()}
+      <Formik
+        initialValues={{
+          ...match,
+          opponent1: {
+            ...match.opponent1,
+            score: match.opponent1.score || 0
+          },
+          opponent2: {
+            ...match.opponent2,
+            score: match.opponent2.score || 0
+          }
+        }}
+        onSubmit={(values) => updateMatch.mutate(values)}
+      >
+        {({ values, submitForm, setFieldValue }) => (
+          <Form>
+            <ScoreCounter name="opponent1.score"></ScoreCounter>
+            <ScoreCounter name="opponent2.score"></ScoreCounter>
+            {values.elapsed}
+            {isAdmin ? <Button onClick={
+              () => {
+                const s1 = values.opponent1.score;
+                const s2 = values.opponent2.score;
+
+                if (s1 > s2) setFieldValue("opponent1.result", "win");
+                else if (s1 === s2) setFieldValue("opponent1.result", "draw"); //FIXME: deal with this properly
+                else setFieldValue("opponent2.result", "win");
+
+                submitForm();
+              }
+            }>Submit</Button> : null}
+            <MatchTimer duration={duration}></MatchTimer>
+          </Form>
+        )
+        }
+      </Formik>
+    </Container>
   );
 }
 
