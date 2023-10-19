@@ -6,7 +6,7 @@ import * as matches from "../controllers/matchesController.js";
 import * as divisions from "../controllers/divisionsController.js";
 import * as participants from "../controllers/participationsController.js";
 import express from "express";
-import { isAuthenticated, isAuthorized } from "../middleware/auth.js";
+import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { validateObjectIdInBody, reportValidationErrors } from "../middleware/validation.js";
 
 const router = express.Router({ mergeParams: true });
@@ -15,9 +15,9 @@ const router = express.Router({ mergeParams: true });
 //FIXME: id overwrites touranment id
 router.get("/participants", participants.getMany);
 router.get("/participants/:id", participants.getOne)
-router.post("/participants", isAuthenticated, validateObjectIdInBody("team"), validateObjectIdInBody("division"), reportValidationErrors, participants.createOne);
-router.delete("/participants/:id", isAuthenticated, participants.deleteOne);
-router.patch("/participants/:id", isAuthenticated, participants.updateOne);
+router.post("/participants", isAuthMiddleware, validateObjectIdInBody("team"), validateObjectIdInBody("division"), reportValidationErrors, participants.createOne);
+router.delete("/participants/:id", isAuthMiddleware, participants.deleteOne);
+router.patch("/participants/:id", isAuthMiddleware, participants.updateOne);
 
 //DIVISIONS //TODO: legacy, deprecated, since subdocs (?)
 router.get("/divisions", divisions.readMany);
@@ -25,13 +25,13 @@ router.post("/divisions", divisions.createOne);
 router.put("/divisions/:divisionId", divisions.updateOne);
 
 //STAGES
-router.post("/stages/", isAuthorized, stages.createStage);
+router.post("/stages/", isAuthorizedMiddleware, stages.createStage);
 router.patch(
     "/stages/:stageId",
-    isAuthorized,
+    isAuthorizedMiddleware,
     stages.updateStage
 );
-router.delete("/stages/:stageId", isAuthorized, stages.deleteOne);
+router.delete("/stages/:stageId", isAuthorizedMiddleware, stages.deleteOne);
 router.get("/stages", stages.getMany);
 router.get("/stages/current", stages.getCurrentStage);
 router.get(
@@ -47,9 +47,9 @@ router.get(
     matches.getMany
 );
 router.get("/matches/:matchId", matches.getOne)
-router.patch("/matches/:matchId", isAuthorized, matches.updateOne);
-router.patch("/matches", isAuthorized, matches.resetDates)
-router.delete("/matches", isAuthorized, matches.deleteMany);
+router.patch("/matches/:matchId", isAuthorizedMiddleware, matches.updateOne);
+router.patch("/matches", isAuthorizedMiddleware, matches.resetDates)
+router.delete("/matches", isAuthorizedMiddleware, matches.deleteMany);
 
 //GROUPS
 router.get("/groups", groups.getMany);

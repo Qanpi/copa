@@ -6,7 +6,7 @@ import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
 import tournamentRouter from "./tournament.js";
-import { isAuthenticated, isAuthorized } from "../middleware/auth.js";
+import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { body, checkSchema } from "express-validator";
 import { reportValidationErrors, validateObjectIdInBody } from "../middleware/validation.js";
 
@@ -22,36 +22,36 @@ router.get(
 );
 router.post(
   "/tournaments",
-  isAuthorized,
+  isAuthorizedMiddleware,
   body("divisions").isArray({ min: 1, max: 10 }),
   reportValidationErrors,
   tournaments.createOne
 );
 router.patch("/tournaments/:id",
-  isAuthorized,
+  isAuthorizedMiddleware,
   tournaments.updateOne);
-router.delete("/tournaments/:id", isAuthorized,
+router.delete("/tournaments/:id", isAuthorizedMiddleware,
   tournaments.deleteOne);
 
 router.use("/tournaments/:id", tournamentRouter);
 
 //TEAMS
 router.get("/teams", teams.getMultiple);
-router.post("/teams", isAuthenticated, validateObjectIdInBody("manager"), reportValidationErrors, teams.createOne);
-router.patch("/teams/:id", isAuthenticated, teams.updateOne);
+router.post("/teams", isAuthMiddleware, validateObjectIdInBody("manager"), reportValidationErrors, teams.createOne);
+router.patch("/teams/:id", isAuthMiddleware, teams.updateOne);
 router.get("/teams/:id", teams.getById);
 router.get("/teams/:id/users", teams.getUsersInTeam);
-router.post("/teams/:teamId/users", isAuthorized, teams.addUserToTeam);
-router.delete("/teams/:teamId/users/:userId", isAuthenticated, validateObjectIdInBody("userId"), reportValidationErrors, teams.removeUserFromTeam);
-router.delete("/teams/:id", isAuthenticated, teams.removeById);
-router.get("/teams/:id/invite", isAuthenticated, teams.generateInviteToken);
-router.post("/teams/:id/join", isAuthenticated, body("token").isBase64({urlSafe: true}), reportValidationErrors, teams.joinViaInviteToken);
+router.post("/teams/:teamId/users", isAuthorizedMiddleware, teams.addUserToTeam);
+router.delete("/teams/:teamId/users/:userId", isAuthMiddleware, validateObjectIdInBody("userId"), reportValidationErrors, teams.removeUserFromTeam);
+router.delete("/teams/:id", isAuthMiddleware, teams.removeById);
+router.get("/teams/:id/invite", isAuthMiddleware, teams.generateInviteToken);
+router.post("/teams/:id/join", isAuthMiddleware, body("token").isBase64({urlSafe: true}), reportValidationErrors, teams.joinViaInviteToken);
 
 //USERS
-router.get("/users", isAuthorized, users.getMultiple);
-router.get("/users/:id", isAuthenticated, users.getOneById);
-router.patch("/users/:id", isAuthenticated, users.updateOne);
-router.post("/users", isAuthorized, users.createOne);
-router.delete("/users/:id", isAuthenticated, users.deleteOne);
+router.get("/users", isAuthorizedMiddleware, users.getMultiple);
+router.get("/users/:id", isAuthMiddleware, users.getOneById);
+router.patch("/users/:id", isAuthMiddleware, users.updateOne);
+router.post("/users", isAuthorizedMiddleware, users.createOne);
+router.delete("/users/:id", isAuthMiddleware, users.deleteOne);
 
 export default router;
