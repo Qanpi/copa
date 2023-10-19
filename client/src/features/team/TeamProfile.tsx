@@ -47,7 +47,7 @@ function TeamProfilePage() {
 
       const domain = window.location.host;
       return {
-        link: `${domain}/teams/join?id=${team.id}&token=${token}`,
+        link: `${domain}/team/join?id=${team.id}&token=${token}`,
         countdown: dayjs().to(expiresAt),
       };
     },

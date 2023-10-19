@@ -19,7 +19,7 @@ function NoTeamPage() {
         <Box>
             <Typography>You are not currently part of a team.</Typography>
             <Stack direction="row" spacing={1} display="flex" alignItems="center" justifyContent={"center"} sx={{ mt: 2 }}>
-                <Link to="/teams/create">
+                <Link to="/team/create">
                     <Button variant="contained" fullWidth>Create</Button>
                 </Link>
                 <Tooltip title="To join a team, ask the manager to send you an invite link.">

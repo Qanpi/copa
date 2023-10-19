@@ -51,7 +51,7 @@ function UserPanel() {
     //     {user.team ? (
     //       <Link to={`/teams/${user.team.name}`}>My team</Link>
     //     ) : (
-    //       <Link to={`/teams/none`}>My team</Link>
+    //       <Link to={`/team/none`}>My team</Link>
     //     )}
     //     <p>Settings</p>
     //     <p onClick={logout.mutate}>Log out</p>

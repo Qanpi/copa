@@ -48,7 +48,7 @@ function RegistrationPage() {
   //     return navigate(`/login`)
 
   //   if (userStatus === "success" && !user?.team) {
-  //     return navigate(`/teams/none`); //TODO: redirect back frm here to registration
+  //     return navigate(`/team/none`); //TODO: redirect back frm here to registration
   //   }
   // }, [user]);
   const getActivePrompt = () => {
