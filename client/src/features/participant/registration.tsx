@@ -25,7 +25,7 @@ import { TParticipant } from "@backend/models/participant.ts";
 export const PromptContainer = (props: ContainerProps) => {
   const { children, sx: propsSx, ...rest } = props;
 
-  return <Container sx={{ minHeight: "600px", justifyContent: "center", alignItems: "center", display: "flex", flexDirection: "column", ...propsSx }} maxWidth="md" {...rest}>
+  return <Container sx={{ minHeight: "600px", justifyContent: "center", alignItems: "center", display: "flex", flexDirection: "column", pt: 5, ...propsSx }} maxWidth="md" {...rest}>
     {children}
   </Container>
 }
