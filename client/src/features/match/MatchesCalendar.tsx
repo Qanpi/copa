@@ -44,7 +44,7 @@ function MatchesCalendar() {
         id: m.id,
         title: `Match ${i}`,
         start: dayjs(m.start).toDate(),
-        end: dayjs(m.start).add(m.duration, "minute").toDate(),
+        end: dayjs(m.end).toDate(),
         opponent1: m.opponent1?.id,
         opponent2: m.opponent2?.id,
         group: m.group_id,
