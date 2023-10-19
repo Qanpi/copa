@@ -3,14 +3,15 @@ import app from "../app.js";
 import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 import { disconnectMongoose } from "../services/mongo.js";
+import { TDivision } from "../models/division.js";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
 const viewer = request.agent(app);
 
-let teamId;
-let tournamentId;
-let divisionIds;
+let teamId: string;
+let tournamentId: string;
+let divisionIds: string[];
 
 describe("Registration stage", () => {
   beforeAll(async () => {
@@ -35,7 +36,7 @@ describe("Registration stage", () => {
     });
 
     tournamentId = tournament.id;
-    divisionIds = tournament.divisions.map((d) => d.id);
+    divisionIds = tournament.divisions.map((d: TDivision) => d.id);
 
     const { body: manager } = await auth.get("/me");
     const resTeam = await auth.post("/api/teams").send({
@@ -64,7 +65,7 @@ describe("Registration stage", () => {
     expect(res.body).toHaveProperty("id");
   });
 
-  it("should find participant based on team and tournament", async () => {
+  it("should find registered participant based on team and tournament", async () => {
     const { body: og } = await auth
       .post(`/api/tournaments/${tournamentId}/participants`)
       .send({
