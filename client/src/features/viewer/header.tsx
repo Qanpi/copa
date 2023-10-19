@@ -122,12 +122,10 @@ function Header() {
     </Link>
   ]
 
-  const tournamentLink = (
-    <Link to="/tournament">
+  const tournamentHeader = (
       <Typography>
         {tournament?.name || "Tournament"}
       </Typography>
-    </Link>
   );
 
   const tournamentSublinks = [
@@ -164,7 +162,7 @@ function Header() {
 
             {links[0]}
 
-            <DropdownMenu anchor={tournamentLink}>
+            <DropdownMenu anchor={tournamentHeader}>
               {tournamentSublinks}
             </DropdownMenu>
 
@@ -187,7 +185,10 @@ function Header() {
               </IconButton>
             }>
               <MenuItem>{links[0]}</MenuItem>
-              <MenuItem>{tournamentLink}</MenuItem>
+              <MenuItem>{tournamentHeader}</MenuItem>
+              {tournamentSublinks.map((l, i) => (
+                <Box sx={{pl: 2}}>{l}</Box>
+              ))}
               {links.slice(1).map((l, i) => (
                 <MenuItem key={i}>{l}</MenuItem>
               ))}
