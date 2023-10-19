@@ -106,6 +106,46 @@ function Header() {
 
   const { data: user } = useUser("me");
 
+  const links = [
+    <Link to="/" >Home</Link>,
+    <Link to="/all-time">
+      <Typography>
+        All-time
+      </Typography>
+    </Link>,
+    <Link to="/about">
+      <Typography>
+        About
+      </Typography>
+    </Link>
+  ]
+
+  const tournamentLink = (
+    <Link to="/tournament">
+      <Typography>
+        {tournament?.name || "Tournament"}
+      </Typography>
+    </Link>
+  );
+
+  const tournamentSublinks = [
+    <Link to="/tournament/teams" >
+      <MenuItem>Teams </MenuItem>
+    </Link>,
+    < Link to="/tournament/matches" >
+      <MenuItem>Matches </MenuItem>
+    </Link>,
+    < Link to="/tournament/groups" >
+      <MenuItem>Group stage </MenuItem>
+    </Link>,
+    < Link to="/tournament/bracket" >
+      <MenuItem>Bracket </MenuItem>
+    </Link>,
+    < Link to="/tournament/gamblers" >
+      <MenuItem>Gamblers </MenuItem>
+    </Link>
+  ]
+
   return (
     <Box sx={{ width: "100vw", position: "sticky", zIndex: 12 }}>
       <Box sx={{
@@ -119,28 +159,11 @@ function Header() {
           : <Stack direction="row" spacing={"7vw"} sx={{
             height: "100%"
           }} alignItems={"center"}>
-            <Link to="/" > Home </Link>
 
-            <DropdownMenu anchor={
-              <Typography>
-                {tournament?.name || "Tournament"}
-              </Typography>
-            }>
-              <Link to="/tournament/teams" >
-                <MenuItem>Teams </MenuItem>
-              </Link>
-              < Link to="/tournament/matches" >
-                <MenuItem>Matches </MenuItem>
-              </Link>
-              < Link to="/tournament/groups" >
-                <MenuItem>Group stage </MenuItem>
-              </Link>
-              < Link to="/tournament/bracket" >
-                <MenuItem>Bracket </MenuItem>
-              </Link>
-              < Link to="/tournament/gamblers" >
-                <MenuItem>Gamblers </MenuItem>
-              </Link>
+            {links[0]}
+
+            <DropdownMenu anchor={tournamentLink}>
+              {tournamentSublinks}
             </DropdownMenu>
 
             {user?.role === "admin" ?
@@ -151,22 +174,22 @@ function Header() {
               ) : null
             }
 
-            <Link to="/all-time">
-              <Typography>
-                All-time
-              </Typography>
-            </Link>
-            <Link to="/about">
-              <Typography>
-                About
-              </Typography>
-            </Link>
+            {links.slice(1)}
           </Stack>
         }
-        <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex" }}>
-          {isMobile ? <IconButton sx={{ mr: 1 }}>
-            <MenuIcon></MenuIcon>
-          </IconButton> : null}
+        <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "10px" }}>
+          {isMobile ?
+            <DropdownMenu anchor={
+              <IconButton size="medium">
+                <MenuIcon fontSize="large"></MenuIcon>
+              </IconButton>
+            }>
+              <MenuItem>{links[0]}</MenuItem>
+              <MenuItem>{tournamentLink}</MenuItem>
+              {links.slice(1).map((l, i) => (
+                <MenuItem key={i}>{l}</MenuItem>
+              ))}
+            </DropdownMenu> : null}
           <UserPanel></UserPanel>
         </Box>
       </Box>

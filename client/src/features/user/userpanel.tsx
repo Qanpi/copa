@@ -10,7 +10,6 @@ function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");
   const queryClient = useQueryClient();
 
-
   const logout = useMutation({
     mutationFn: async () => {
       return await axios.delete("/logout");
