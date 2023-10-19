@@ -63,10 +63,6 @@ function MatchPage() {
   const { id } = useParams();
   const { data: match, status } = useMatch(id);
 
-  //FIXME: auto-complete match if one of the articpns is BYE
-  const { data: participant1 } = useParticipant(match?.opponent1?.id);
-  const { data: participant2 } = useParticipant(match?.opponent2?.id);
-
   const updateMatch = useUpdateMatch();
 
   const { data: user } = useUser("me");
@@ -79,6 +75,9 @@ function MatchPage() {
   const getMatchLayout = () => {
     if (!match?.status) return <>Loading</>
 
+    const opp1 = match.opponent1;
+    const opp2 = match.opponent2;
+
     if (match.status <= Status.Ready) {
       return (
         <Stack direction={"row"} spacing={3} display="flex" justifyContent={"center"}>
@@ -86,14 +85,14 @@ function MatchPage() {
             <Box>
               img
             </Box>
-            <Typography variant="h4">{participant1.name}</Typography>
+            <Typography variant="h4">{opp1?.name || "BYE"}</Typography>
           </Box>
           <Typography variant="h2">vs</Typography>
           <Box>
             <Box>
               img
             </Box>
-            <Typography variant="h4">{participant2.name}</Typography>
+            <Typography variant="h4">{opp2?.name || "BYE"}</Typography>
           </Box>
         </Stack>
       )

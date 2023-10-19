@@ -34,7 +34,7 @@ export const useUpdateMatch = () => {
 
 
 
-export const useMatch = (id: string) => {
+export const useMatch = (id?: string) => {
   const { data: tournament } = useTournament("current");
 
   return useQuery({
@@ -44,6 +44,7 @@ export const useMatch = (id: string) => {
       const res = await axios.get(url);
       return res.data as TMatch;
     },
+    enabled: !!id
   });
 };
 

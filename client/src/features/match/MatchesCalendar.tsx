@@ -25,14 +25,14 @@ import { useMatches, useUpdateMatch } from "./hooks.ts";
 import "./MatchesCalendar.css";
 
 import { TMatch } from "@backend/models/match.ts";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTournament } from "../viewer/hooks.ts";
 
 function MatchesCalendar() {
   const { data: tournament } = useTournament("current");
   const { data: scheduledMatches } = useMatches(tournament?.id,
     {
-      scheduled: true,
+      scheduled: "true",
     });
 
   const updateMatch = useUpdateMatch();
@@ -42,14 +42,14 @@ function MatchesCalendar() {
       return {
         //FIXME: type
         id: m.id,
-        title: `${m.opponent1.name} vs ${m.opponent2.name}`,
+        title: `${m.opponent1?.name} vs ${m.opponent2?.name}`,
         start: dayjs(m.start).toDate(),
         end: dayjs(m.end).toDate(),
-        opponent1: m.opponent1?.id,
-        opponent2: m.opponent2?.id,
-        group: m.group_id,
-        stage: m.stage_id,
-        round: m.round_id,
+        // opponent1: m.opponent1?.id,
+        // opponent2: m.opponent2?.id,
+        // group: m.group_id,
+        // stage: m.stage_id,
+        // round: m.round_id,
       };
     }) || [],
     [scheduledMatches]
@@ -62,12 +62,14 @@ function MatchesCalendar() {
   });
   const [popperOpen, setPopperOpen] = useState(false);
 
+  const navigate = useNavigate();
   const handleEventClick = useCallback((info: EventClickArg) => {
     const { extendedProps, ...rest } = info.event.toPlainObject();
     const event = { ...extendedProps, ...rest };
 
-    setMatch({ event, anchorEl: info.el });
-    setPopperOpen(true);
+    return navigate(`/tournament/matches/${event.id}`);
+    // setMatch({ event, anchorEl: info.el });
+    // setPopperOpen(true);
   }, []);
 
   const handleEventResize = (info: EventResizeDoneArg) => {
