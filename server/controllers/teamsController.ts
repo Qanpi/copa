@@ -71,6 +71,28 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
   res.status(204).send({});
 });
 
+export const getTeamMembers = expressAsyncHandler(async (req, res) => {
+  const members = await User.find({
+    "team.id": req.params.teamId,
+  })
+
+  res.send(members);
+})
+
+export const addUserToTeam = expressAsyncHandler(async (req, res) => {
+  const userId: string = req.body.user;
+
+  const team = await Team.findById(req.params.teamId);
+  if (!team)
+    throw new Error("Invalid team.")
+
+  const updated = await User.findByIdAndUpdate(userId, {
+    team
+  }, {new: true});
+
+  res.status(201).send(updated);
+})
+
 export const joinViaInviteToken = expressAsyncHandler(async (req, res) => {
   const token = req.body.token as string;
 
