@@ -101,23 +101,6 @@ router.get("/oauth2/redirect/google", (req, res, next) => {
   })(req, res, next);
 });
 
-router.post(
-  "/oauth2/redirect/google",
-  (req, res, next) => {
-    req.url += "?code=" + req.body.code;
-    req.url +=
-      "&scope=profile https://www.googleapis.com/auth/userinfo.profile";
-    next();
-  },
-  (req, res, next) => {
-    return passport.authenticate("google", {
-      failureRedirect: "/login",
-      failureMessage: true,
-      successRedirect: "/",
-    })(req, res, next);
-  }
-);
-
 router.delete("/logout", (req, res, next) => {
   req.logOut((err) => {
     if (err) return next(err);
