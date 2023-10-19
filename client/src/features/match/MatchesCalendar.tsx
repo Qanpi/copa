@@ -42,7 +42,7 @@ function MatchesCalendar() {
       return {
         //FIXME: type
         id: m.id,
-        title: `Match ${i}`,
+        title: `${m.opponent1.name} vs ${m.opponent2.name}`,
         start: dayjs(m.start).toDate(),
         end: dayjs(m.end).toDate(),
         opponent1: m.opponent1?.id,
@@ -110,6 +110,7 @@ function MatchesCalendar() {
         events={events}
         eventClick={handleEventClick}
         // eventDrop={handleEventDrop}
+        // TODO: allow admin to modify these
         slotMinTime={"10:00:00"}
         slotMaxTime={"15:00:00"}
         scrollTime={"12:00:00"}

@@ -149,8 +149,8 @@ function HomePage() {
             <Box display="flex" justifyContent="center">
               <Box sx={{
                 background: "linear-gradient(150deg, var(--copa-aqua), 20%, var(--copa-purple) 55%, 80%, var(--copa-pink))",
-                height: { xs: "90vmin", md: "65vmin" },
-                width: { xs: "90vmin", md: "65vmin" },
+                height: { xs: "90vmin", md: "55vmin", lg: "70vmin" },
+                width: { xs: "90vmin", md: "55vmin", lg: "70vmin" },
               }}
 
                 display="flex" justifyContent="center" alignItems="center" minHeight="100%"
