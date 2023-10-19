@@ -77,7 +77,7 @@ describe("Registration stage", () => {
       .get(`/api/tournaments/${tournamentId}/participants`)
       .query({
         team: teamId,
-        division: divisionIds[0],
+        division: divisionIds[1],
       });
 
     expect(res.body[0].id).toEqual(og.id);
