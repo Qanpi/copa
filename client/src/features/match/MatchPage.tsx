@@ -9,8 +9,9 @@ import ScoreCounter from "../inputs/ScoreCounter";
 import { useParticipant } from "../participant/hooks";
 import { useMatch, useUpdateMatch } from "./hooks";
 import { useUser } from "../user/hooks";
-import { Container, Box, Stack, Typography } from "@mui/material";
+import { Container, Box, Stack, Typography, useTheme, LinearProgress } from "@mui/material";
 import { Status } from "brackets-model"
+import { TParticipant } from "brackets-mongo-db";
 
 const MatchTimer = ({ duration }: { duration: number }) => {
   const getExpiryTimestamp = () => dayjs().add(duration, "seconds").toDate();
@@ -62,11 +63,14 @@ const MatchTimer = ({ duration }: { duration: number }) => {
 function MatchPage() {
   const { id } = useParams();
   const { data: match, status } = useMatch(id);
+  console.log(match)
 
   const updateMatch = useUpdateMatch();
 
   const { data: user } = useUser("me");
   const isAdmin = user?.role === "admin";
+
+  const theme = useTheme();
 
   if (status === "loading") return <div>Loading...</div>;
 
@@ -77,10 +81,19 @@ function MatchPage() {
   const getMatchDisplay = (status: Status) => {
     if (status <= Status.Ready) {
       return (
-        <Box>
-          <Typography variant="h2">
-            {match.start ? dayjs(match.start).format("HH:mm") : "-:-"}
-          </Typography>
+        <Box sx={{ background: theme.palette.secondary.main, p: 1, pl: 5, pr: 5, borderRadius: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          {match.start ?
+            <>
+              <Typography variant="subtitle2">
+                {dayjs(match.start).format("DD.MM")}
+              </Typography>
+              <Typography variant="h1" sx={{ fontWeight: 800, m: -1 }}>
+                {dayjs(match.start).format("HH:mm")}
+              </Typography>
+              <Typography variant="subtitle2">
+                Indoor hall
+              </Typography>
+            </> : null}
         </Box>
       );
     } else if (match.status === Status.Running) {
@@ -94,23 +107,26 @@ function MatchPage() {
   const opp2 = match.opponent2;
 
   return (
-    <Container maxWidth="md" sx={{ pt: 5 }}>
-      <Stack sx={{ position: "relative", display: "flex", justifyContent: "center" }} direction="row" spacing={10}>
-        <Box>
-          <Box sx={{ height: 300, width: 300, background: "green" }}>
-            img
+    <Container maxWidth="md" sx={{ p: { xs: 5, md: 10 } }}>
+      <Stack direction="column" spacing={10}>
+        <Stack sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }} direction={{ xs: "column", md: "row" }} spacing={10}>
+          <Stack direction={{ xs: "column-reverse", md: "column", maxWidth: "45vmin" }}>
+            <Box sx={{ width: "45vmin", height: "45vmin", background: "lightblue" }}>
+              img
+            </Box>
+            <Typography variant="subtitle1">{opp1?.name || "BYE"}</Typography>
+          </Stack>
+          <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) ", m: "0 !important", maxWidth: "40vmin" }}>
+            {getMatchDisplay(match.status)}
           </Box>
-          <Typography variant="h4">{opp1?.name || "BYE"}</Typography>
-        </Box>
-        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", m: "0 !important" }}>
-          {getMatchDisplay(match.status)}
-        </Box>
-        <Box sx={{height: ""}}>
-          <Box sx={{ height: 300, width: 300, background: "green" }}>
-            img
+          <Box sx={{maxWidth: "45vmin"}}>
+            <Box sx={{ width: "45vmin" , height: "45vmin" , background: "lightblue"}}>
+              img
+            </Box>
+            <Typography variant="subtitle1">{opp2?.name || "BYE"}</Typography>
           </Box>
-          <Typography variant="h4">{opp2?.name || "BYE"}</Typography>
-        </Box>
+        </Stack>
+        <LinearProgress variant="determinate" value={100} sx={{ transform: "scaleX(-1)" }}></LinearProgress>
       </Stack>
     </Container >
   )

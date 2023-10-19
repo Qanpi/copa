@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { useMatches, useUpdateMatch } from "./hooks.ts";
-import { DataGrid, DataGridProps, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, DataGridProps, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { useDivisions, useTournament } from "../viewer/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
 import { notStrictEqual } from "assert";
@@ -9,6 +9,8 @@ import { useGroups } from "../group/hooks.ts";
 import { useStages } from "../stage/hooks.ts";
 import { useRounds } from "../round/hooks.ts";
 import dayjs from "dayjs";
+import { Launch } from "@mui/icons-material";
+import { useNavigate } from "react-router";
 
 export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { matches?: TMatch[] }) => {
   const { data: tournament } = useTournament("current");
@@ -22,7 +24,16 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
 
   const updateMatch = useUpdateMatch();
 
+  const navigate = useNavigate();
   const cols: GridColDef[] = [
+    {
+      field: "actions",
+      type: "actions",
+      getActions: (p) => [
+        <GridActionsCellItem icon={<Launch></Launch>} label={"Browse"} onClick={() => navigate(`/tournament/matches/${p.row.id}`)}></GridActionsCellItem>,
+        // <GridActionsCellItem></GridActionsCellItem>
+      ]
+    },
     {
       field: "start",
       headerName: "Date",
