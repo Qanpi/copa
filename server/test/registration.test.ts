@@ -181,6 +181,8 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(500);
   });
 
+  it.todo("should get all registered participants")
+
   afterEach(async () => {
     await admin.delete("/");
   });
