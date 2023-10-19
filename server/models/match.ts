@@ -72,59 +72,23 @@ MatchSchema.pre("save", async function () {
     });
     this.tournament = metadata?.latest;
 
-    //FIXME: atrocious code
-    // const stage = await Stage.findById(this.stage_id);
-
-    // const current = await Tournament.findById(this.tournament);
-    // const division = current?.divisions.find(d => d.id === stage?.division);
-
-    // const defaultDuration = division?.settings?.matchLength || 360;
-
-    // this.end = dayjs(this.start).add(defaultDuration, "seconds").toDate();
-  }
-})
-
-//hook into brackets-manager updating process
-//check if the update contains an id for opponent
-//if so, auto add the name to use on front-end
-MatchSchema.pre<Query<TMatch, TMatch>>("findOneAndUpdate", async function () {
-  let update = this.getUpdate();
-
-  if (update && "opponent1" in update) { //pleases typescript
-    const opp1 = update?.opponent1?.id;
-
+    //hook into brackets-manager creating stage process
+    //check if the participant slot contains an id for opponent
+    //if so, auto add the name to use on front-end
+    const opp1 = this.opponent1?.id;
     if (isValidObjectId(opp1)) {
       const p1 = await Participant.findById(opp1);
-
       if (!p1) throw new Error("Invalid participant.")
 
-      this.setUpdate({
-        ...update,
-        opponent1: {
-          ...update.opponent1,
-          name: p1.name
-        }
-      })
+      this.opponent1!.name = p1.name;
     }
-  }
 
-  update = this.getUpdate();
-
-  if (update && "opponent2" in update) { //pleases typescript
-    const opp2 = update?.opponent2?.id;
-
+    const opp2 = this.opponent2?.id;
     if (isValidObjectId(opp2)) {
       const p2 = await Participant.findById(opp2);
-
       if (!p2) throw new Error("Invalid participant.")
 
-      this.setUpdate({
-        ...update,
-        opponent2: {
-          ...update.opponent2,
-          name: p2.name
-        }
-      })
+      this.opponent2!.name = p2.name;
     }
   }
 })
