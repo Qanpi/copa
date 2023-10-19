@@ -4,7 +4,7 @@ import { useTeam } from "./hooks";
 import { Stack, Box, Button, Container, Typography, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { PromptContainer } from "../participant/registration";
+import { PromptContainer } from "../layout/PromptContainer";
 
 function NoTeamPage() {
     const { data: user } = useUser("me");

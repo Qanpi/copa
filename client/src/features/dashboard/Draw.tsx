@@ -12,7 +12,7 @@ import GroupStageStructure from "./GroupStage.js";
 import { useDeleteStage, useStageData } from "../stage/hooks.ts";
 import { divideGroups } from "./GroupStageStructure.tsx";
 import { useCreateStage } from "../stage/hooks.ts";
-import DivisionPanel from "./DivisionPanel.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
 import "./fortuneWheel.css"

@@ -4,12 +4,12 @@ import { useBracketsViewer } from "./hooks";
 import { useStageData } from "./hooks";
 import { useTournament } from "../viewer/hooks";
 import { useStages } from "./hooks";
-import DivisionPanel from "../dashboard/DivisionPanel";
+import DivisionPanel from "../layout/DivisionPanel";
 import { useContext } from "react";
 import { DivisionContext } from "../..";
 import BannerPage from "../viewer/BannerPage";
 import { Container, Typography } from "@mui/material";
-import { PromptContainer } from "../participant/registration";
+import { PromptContainer } from "../layout/PromptContainer";
 
 function BracketPage() {
     const { data: tournament } = useTournament("current");

@@ -31,7 +31,7 @@ import {
   useTournament,
   useUpdateTournament,
 } from "../viewer/hooks.ts";
-import DivisionPanel from "./DivisionPanel.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
 
 function RegistrationStage({ next, prev }) {

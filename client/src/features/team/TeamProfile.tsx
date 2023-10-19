@@ -21,7 +21,7 @@ import { useRemoveUserFromTeam, useTeam } from "./hooks.ts";
 import { useUpdateUser, useUser } from "../user/hooks.ts";
 import BannerPage from "../viewer/BannerPage.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
-import { PromptContainer } from "../participant/registration.tsx";
+import { PromptContainer } from "../layout/PromptContainer.tsx";
 import { useTournament } from "../viewer/hooks.ts";
 
 dayjs.extend(relativeTime);

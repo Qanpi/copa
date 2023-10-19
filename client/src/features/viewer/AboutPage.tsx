@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { PromptContainer } from "../participant/registration";
+import { PromptContainer } from "../layout/PromptContainer";
 
 function AboutPage() {
     return (

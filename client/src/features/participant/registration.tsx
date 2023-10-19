@@ -1,4 +1,4 @@
-import { Box, Stack, Button, Container, ContainerOwnProps, ContainerProps, MenuItem, Typography } from "@mui/material";
+import { Box, Stack, Button, ContainerOwnProps, MenuItem, Typography } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
@@ -17,18 +17,7 @@ import { GoogleSignInButton } from "../user/userpanel.tsx";
 import NoTeamPage from "../team/NoTeamPage.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
 import { TParticipant } from "@backend/models/participant.ts";
-
-//team member -> ask manager
-//team manager -> register
-//teamless -> join/create team
-//registered -> alr registered
-export const PromptContainer = (props: ContainerProps) => {
-  const { children, sx: propsSx, ...rest } = props;
-
-  return <Container sx={{ minHeight: "600px", alignItems: "center", display: "flex", flexDirection: "column", pt: 10, ...propsSx }} {...rest}>
-    {children}
-  </Container>
-}
+import { PromptContainer } from "../layout/PromptContainer.tsx";
 
 function RegistrationPage() {
   const { data: tournament } = useTournament("current");

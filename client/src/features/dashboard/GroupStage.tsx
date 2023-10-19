@@ -17,7 +17,7 @@ import { useMatches } from "../match/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
 import { useStages } from "../stage/hooks.ts";
 import { useDivisions, useTournament } from "../viewer/hooks.ts";
-import DivisionPanel from "./DivisionPanel.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
 
 function GroupStage({ next, prev }) {

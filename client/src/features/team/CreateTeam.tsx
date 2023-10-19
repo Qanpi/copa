@@ -26,7 +26,7 @@ import GradientTitle from "../viewer/gradientTitle.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Camera } from "@mui/icons-material";
-import { PromptContainer } from "../participant/registration.tsx";
+import { PromptContainer } from "../layout/PromptContainer.tsx";
 
 export const teamValidationSchema = {
   name: Yup.string().max(20).trim().required(),

@@ -5,13 +5,13 @@ import { useContext, useLayoutEffect } from "react";
 import DrawPage from "../dashboard/Draw";
 import { DivisionContext } from "../..";
 import { useGroupStageData, useStages } from "./hooks";
-import DivisionPanel from "../dashboard/DivisionPanel";
+import DivisionPanel from "../layout/DivisionPanel";
 import { useStageData } from "./hooks";
 import { useBracketsViewer } from "./hooks";
 import { Container, Typography } from "@mui/material";
 import BannerPage from "../viewer/BannerPage";
 import "ts-brackets-viewer/dist/style.css"
-import { PromptContainer } from "../participant/registration";
+import { PromptContainer } from "../layout/PromptContainer";
 
 function GroupStagePage() {
     const { data: tournament } = useTournament("current");

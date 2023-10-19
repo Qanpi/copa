@@ -5,7 +5,7 @@ import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { DivisionContext } from "../../index.tsx";
-import DivisionPanel from "../dashboard/DivisionPanel.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
 import {
   useTournament
