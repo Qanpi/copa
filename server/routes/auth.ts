@@ -111,14 +111,11 @@ router.delete("/logout", (req, res, next) => {
 
 router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
-    let user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id);
 
-    //create a user if the session is valid but one isn't in db
-    //this is useful for postman tests
-    if (!user) user = await User.create(req.user);
-
+    if (!user) throw new Error("User is authenticated but not in the database?")
     //pull out any sensitive fields
-    const {googleId, ...sanitized} = user.toObject();
+    const { googleId, ...sanitized } = user.toObject();
 
     //update user in case data changed
     req.login({ ...user.toObject() as TUser, team: user.team?.id }, function (err) {
