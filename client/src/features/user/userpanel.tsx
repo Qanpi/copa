@@ -28,7 +28,7 @@ function UserPanel() {
         <Box component="img" src={user.avatar} referrerPolicy="no-referrer" alt="user avatar" sx={{ width: "48px", height: "48px" }}></Box>
         {minified ? null : <Typography>{user.name}</Typography>}
       </Stack>
-    }>
+    } triangleRight="22%">
       <Link to={`/users/${user.id}`}>
         <MenuItem>Profile</MenuItem>
       </Link>

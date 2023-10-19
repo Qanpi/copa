@@ -20,7 +20,7 @@ import { useUser } from "../user/hooks.ts";
 import UserPanel from "../user/userpanel.tsx";
 import { useTournament } from "./hooks.ts";
 
-export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children: ReactNode }) => {
+export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -31,6 +31,8 @@ export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children
   const handlePointerLeave = (e) => {
     setOpen(false);
   };
+
+  const theme = useTheme();
 
   return (
     <>
@@ -67,11 +69,12 @@ export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children
                 {
                   position: "absolute",
                   top: -5,
+                  right: triangleRight,
                   width: 0,
                   height: 0,
-                  borderLeft: "5px solid transparent",
-                  borderRight: "5px solid transparent",
-                  borderBottom: "5px solid black",
+                  borderLeft: "15px solid transparent",
+                  borderRight: "15px solid transparent",
+                  borderBottom: `15px solid ${theme.palette.primary.main}`,
                 }
               }
             > </Box>
@@ -80,7 +83,7 @@ export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children
               elevation={0}
               square
               sx={{
-                bgcolor: "red",
+                background: theme.palette.primary.main,
                 minWidth: "150px",
               }}
             >
@@ -108,7 +111,7 @@ function Header() {
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "70px",
-        paddingLeft: "270px",
+        paddingLeft: "250px",
         paddingRight: 3
       }} display="flex" alignItems={"center"}>
         {isMobile ?
@@ -130,7 +133,7 @@ function Header() {
                 <MenuItem>Matches </MenuItem>
               </Link>
               < Link to="/tournament/groups" >
-                <MenuItem>Group Stage </MenuItem>
+                <MenuItem>Group stage </MenuItem>
               </Link>
               < Link to="/tournament/bracket" >
                 <MenuItem>Bracket </MenuItem>
