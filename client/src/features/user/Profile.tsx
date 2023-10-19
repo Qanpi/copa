@@ -9,10 +9,12 @@ import { useParams } from "react-router";
 import { useUser } from "./hooks.ts";
 import { LoadingBackdrop } from "../viewer/header.tsx";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
 
 function ProfilePage() {
   const { id } = useParams();
   const { status: userStatus, data: user } = useUser(id);
+  console.log(user)
 
   if (!user) return <LoadingBackdrop></LoadingBackdrop>
 
@@ -21,15 +23,15 @@ function ProfilePage() {
   return <Container maxWidth="lg" sx={{ display: "flex", justifyContent: "center", alignItems: "center", pt: 10 }}>
     <Stack direction="column" spacing={5}>
       <Stack direction="row" spacing={3} alignItems={"center"}>
-        <Avatar src={user.avatar} sx={{ width: 100, height: 100 }}></Avatar>
+        <Avatar src={user.avatar} sx={{ width: 150, height: 150 }}></Avatar>
         <Box>
-          <Typography variant="h2">{user.name}</Typography>
-          <Typography variant="h4">
+          <Typography variant="h2" sx={{mb: -1}}>{user.name}</Typography>
+          <Typography variant="h5" sx={{mb: 2}}>
             <Link to={`/teams/${user.team?.name}`}>
               {user.team?.name}
             </Link>
           </Typography>
-          <Typography>Joined x time ago.</Typography>
+          <Typography>Joined {dayjs().to(user.createdAt)}.</Typography>
         </Box>
       </Stack>
       <Box>
