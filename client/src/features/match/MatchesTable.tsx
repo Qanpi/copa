@@ -33,6 +33,13 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
       },
     },
     {
+      field: "time",
+      headerName: "Time",
+      valueGetter(p) {
+        return p.row.start ? dayjs(p.row.start).format('HH:mm') : undefined;
+      }
+    },
+    {
       field: "duration",
       headerName: "Duration (min)",
       type: "number",
