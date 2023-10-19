@@ -31,7 +31,7 @@ function DivisionPanel({ children }: { children?: ReactNode }) {
 
   const theme = useTheme();
 
-  if (status === "success" && !divisions) return <Container sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "10vh"}}>
+  if (status === "success" && !divisions) return <Container sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "10vh" }}>
     <Typography>Come back here when the tournament begins.</Typography>
   </Container>;
 
@@ -53,7 +53,9 @@ function DivisionPanel({ children }: { children?: ReactNode }) {
           ))}
         </ToggleButtonGroup>
 
-        {children}
+        <Box display="flex" justifyContent="center">
+          {children}
+        </Box>
       </Stack>
     </Box>
   );

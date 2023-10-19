@@ -9,6 +9,7 @@ import { useContext } from "react";
 import { DivisionContext } from "../..";
 import BannerPage from "../viewer/BannerPage";
 import { Container, Typography } from "@mui/material";
+import { PromptContainer } from "../participant/registration";
 
 function BracketPage() {
     const { data: tournament } = useTournament("current");
@@ -30,9 +31,9 @@ function BracketPage() {
                     ref={bracketsRef}
                     className="brackets-viewer"
                     id="bracket"
-                ></div> : <Container sx={{ minHeight: "60vw", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                ></div> : <PromptContainer>
                     <Typography>Hang on, we're not there yet.</Typography>
-                </Container>}
+                </PromptContainer>}
         </DivisionPanel>
     </BannerPage>
 }
