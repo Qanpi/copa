@@ -1,5 +1,5 @@
 import { Google } from "@mui/icons-material";
-import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, Breakpoint, ButtonProps } from "@mui/material";
+import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, Breakpoint, ButtonProps, useTheme } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -48,6 +48,7 @@ export const GoogleSignInButton = ({ breakpoint, ...props } : { breakpoint?: Bre
   };
 
   const minified = useMediaQuery((theme: Theme) => theme.breakpoints.down(breakpoint || 0));
+  const theme = useTheme();
 
   return <Button
     onClick={handleSignIn}
@@ -57,6 +58,8 @@ export const GoogleSignInButton = ({ breakpoint, ...props } : { breakpoint?: Bre
       minWidth: "30px",
       justifyContent: "center",
       alignItems: "center",
+      color: theme.palette.common.white,
+      border: `1px solid ${theme.palette.common.white}`
     }}
     {...props}
   >
