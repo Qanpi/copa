@@ -144,9 +144,10 @@ function GroupStage({ next, prev }) {
             </Stack>
           )}
         </Stack>
+        <Link to="/tournament/scheduler">
           <Button fullWidth variant="contained" color="secondary">
-            <Link to="/tournament/scheduler">Schedule matches</Link>
-          </Button>
+            Schedule matches
+          </Button></Link>
       </DivisionPanel>
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>

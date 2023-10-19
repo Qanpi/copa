@@ -11,6 +11,7 @@ import { useBracketsViewer } from "./hooks";
 import { Container, Typography } from "@mui/material";
 import BannerPage from "../viewer/BannerPage";
 import "ts-brackets-viewer/dist/style.css"
+import { PromptContainer } from "../participant/registration";
 
 function GroupStagePage() {
     const { data: tournament } = useTournament("current");
@@ -32,9 +33,9 @@ function GroupStagePage() {
                     className="brackets-viewer"
                     id="group-stage"
                 ></div>
-                : <Container sx={{ minHeight: "60vw", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                : <PromptContainer>
                     <Typography>Groups will appear here once we get there.</Typography>
-                </Container>}
+                </PromptContainer>}
         </DivisionPanel>
     </BannerPage>
 }
