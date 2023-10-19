@@ -53,11 +53,9 @@ function DivisionPanel({ children }: { children?: ReactNode }) {
           ))}
         </ToggleButtonGroup>
 
-        <Box display="flex" justifyContent="center">
-          {children}
-        </Box>
+        {children}
       </Stack>
-    </Box>
+    </Box >
   );
 }
 
