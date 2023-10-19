@@ -25,7 +25,7 @@ function UserPanel() {
   return user ? (
     <DropdownMenu anchor={
       <Stack direction="row" display={"flex"} alignItems="center" spacing={1}>
-        <Box component="img" src={user.avatar} referrerPolicy="no-referrer" alt="user avatar" sx={{ width: "32px", height: "32px" }}></Box>
+        <Box component="img" src={user.avatar} referrerPolicy="no-referrer" alt="user avatar" sx={{ width: "48px", height: "48px" }}></Box>
         {minified ? null : <Typography>{user.name}</Typography>}
       </Stack>
     }>
@@ -34,9 +34,6 @@ function UserPanel() {
       </Link>
       <Link to={`/team/${user.team ? user.team.name : "none"}`}>
         <MenuItem>My team</MenuItem>
-      </Link>
-      <Link to="/settings">
-        <MenuItem>Settings</MenuItem>
       </Link>
       <MenuItem onClick={_ => logout.mutate()}>Sign out</MenuItem>
     </DropdownMenu>
