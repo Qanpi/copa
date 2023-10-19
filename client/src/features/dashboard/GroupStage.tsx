@@ -75,15 +75,17 @@ function GroupStage({ next, prev }) {
   return (
     <Container maxWidth="md">
       {noGroupStageAlert ? (
-        <Alert severity="error">
-          <AlertTitle>
-            No group stage for the '{noGroupStageAlert.division}' name
-          </AlertTitle>
-          <Typography>
-            Please first draw teams using the wheel before proceeding to the
-            bracket.
-          </Typography>
-        </Alert>
+        <ThemeProvider theme={lightTheme}>
+          <Alert severity="error" sx={{mb: 5}}>
+            <AlertTitle>
+              No group stage for the '{noGroupStageAlert.division}' name
+            </AlertTitle>
+            <Typography>
+              Please first draw teams using the wheel before proceeding to the
+              bracket.
+            </Typography>
+          </Alert>
+        </ThemeProvider>
       ) : null}
       {incompleteMatchesAlert ? (
         <ThemeProvider theme={lightTheme}>
@@ -144,11 +146,11 @@ function GroupStage({ next, prev }) {
             </Stack>
           )}
         </Stack>
-        {groupStage? <Link to="/tournament/scheduler">
+        {groupStage ? <Link to="/tournament/scheduler">
           <Button fullWidth variant="contained" color="secondary">
             Schedule matches
           </Button>
-          </Link> : null}
+        </Link> : null}
       </DivisionPanel>
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>

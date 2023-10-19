@@ -17,6 +17,7 @@ import { DivisionContext } from "../../index.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
 import "./fortuneWheel.css"
 import { TParticipant } from "@backend/models/participant.ts";
+import { LoadingBackdrop } from "../viewer/header.tsx";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -85,7 +86,7 @@ function DrawPage() {
   const createGroupStage = useCreateStage();
   const resetDraw = useDeleteStage();
 
-  if (!stages) return <>Loading...</>
+  if (!stages || participantsStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
 
@@ -142,7 +143,7 @@ function DrawPage() {
     }
 
     return (
-      <GroupTable name={`${alphabet[i]}`} participants={placeholder}></GroupTable>
+      <GroupTable key={i} name={`${alphabet[i]}`} participants={placeholder}></GroupTable>
     )
   })
 
