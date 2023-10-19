@@ -22,7 +22,8 @@ import { Form, Formik } from "formik";
 import { groupBy } from "lodash-es";
 import { useContext, useState } from "react";
 import * as Yup from "yup";
-import { DivisionContext, lightTheme } from "../../index.tsx";
+import { DivisionContext } from "../../index.tsx";
+import { lightTheme } from "../../themes.ts";
 import MyDatePicker from "../inputs/MyDatePicker.js";
 import { useParticipants } from "../participant/hooks.ts";
 import {

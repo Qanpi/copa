@@ -33,7 +33,7 @@ function UserPanel() {
       <Link to={`/users/${user.id}`}>
         <MenuItem>Profile</MenuItem>
       </Link>
-      <Link to={`/teams/${user.team ? user.team.name : "none"}`}>
+      <Link to={`/team/${user.team ? user.team.name : "none"}`}>
         <MenuItem>My team</MenuItem>
       </Link>
       <Link to="/settings">

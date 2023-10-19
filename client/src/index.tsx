@@ -1,5 +1,5 @@
 import { TDivision } from "@backend/models/division.ts";
-import { CssBaseline, ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
@@ -32,53 +32,7 @@ import HomePage from "./features/viewer/Home.tsx";
 import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
-
-export const darkTheme = responsiveFontSizes(createTheme({
-  palette: {
-    mode: "dark",
-    background: {
-      default: "#242753"
-    },
-    primary: {
-      main: "#4398B8"
-    },
-    secondary: {
-      main: "#E12B69"
-    },
-  },
-  typography: {
-    h2: {
-      fontSize: "4rem",
-      fontWeight: 600
-    }
-  },
-  components: {
-    //TODO: custom styled component
-    // MuiCard: {
-    //   styleOverrides: {
-    //     root: {
-    //       background: "#FDFDFD",
-    //       color: "black"
-    //     },
-    //   },
-    // },
-    // MuiAlert: {
-    //   styleOverrides: {
-    //     root: {
-    //       background: "#FDFDFD"
-    //     }
-    //   }
-    // }
-  }
-}));
-
-export const lightTheme = responsiveFontSizes(createTheme({
-  typography: {
-    h2: {
-      fontWeight: 600
-    }
-  },
-}));
+import { darkTheme } from "./themes.ts";
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);

@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, CardProps, Container, ThemeProvider, Typography } from "@mui/material"
-import { lightTheme } from "../..";
+import { lightTheme } from "../../themes";
 
 const NumberCard = ({sx, number, children, ...rest }: { number: number } & CardProps) => {
   return (
