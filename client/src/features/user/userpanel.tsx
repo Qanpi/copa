@@ -3,9 +3,8 @@ import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, B
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useUser, userKeys } from "../hooks.ts";
-import "./userpanel.css";
-import { DropdownMenu } from "../../viewer/header.tsx";
+import { useUser, userKeys } from "./hooks.ts";
+import { DropdownMenu } from "../viewer/header.tsx";
 
 function UserPanel() {
   const { status: userStatus, data: user } = useUser("me");
@@ -41,22 +40,6 @@ function UserPanel() {
       </Link>
       <MenuItem onClick={_ => logout.mutate()}>Sign out</MenuItem>
     </DropdownMenu>
-    // <div className="user-panel">
-    //   <div className="profile">
-    //     <img src={user.avatar} referrerPolicy="no-referrer" alt="user avatar" />
-    //     <p>{user.name}</p>
-    //   </div>
-    //   <div className="dropdown">
-    //     <Link to={`/users/${user.id}`}>Profile</Link>
-    //     {user.team ? (
-    //       <Link to={`/teams/${user.team.name}`}>My team</Link>
-    //     ) : (
-    //       <Link to={`/team/none`}>My team</Link>
-    //     )}
-    //     <p>Settings</p>
-    //     <p onClick={logout.mutate}>Log out</p>
-    //   </div>
-    // </div>
   ) : (
     <GoogleSignInButton breakpoint={"md"}></GoogleSignInButton>
   );

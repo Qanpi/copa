@@ -17,7 +17,7 @@ import {
 import { ReactNode, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../user/hooks.ts";
-import UserPanel from "../user/userMenu/userpanel.tsx";
+import UserPanel from "../user/userpanel.tsx";
 import { useTournament } from "./hooks.ts";
 
 export const DropdownMenu = ({ anchor, children }: { anchor: ReactNode, children: ReactNode }) => {
