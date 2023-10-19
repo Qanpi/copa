@@ -19,17 +19,23 @@ export const useUpdateMatch = () => {
       const res = await axios.patch(`/api/${tournamentKeys.all[0]}/${tournament.id}/matches/${values.id}`, values);
       return res.data;
     },
-    onSuccess(data) {
-      queryClient.setQueriesData(matchKeys.id(data.id), data);
+    onSettled(data) {
       queryClient.invalidateQueries(matchKeys.lists)
     },
+    onError(err, values) {
+      queryClient.invalidateQueries(matchKeys.id(values.id));
+    },
+    async onMutate(data) {
+      await queryClient.cancelQueries(matchKeys.all); //to not overwrite optimistic update
+      queryClient.setQueriesData(matchKeys.id(data.id), data);
+    }
   });
 };
 
 
 
 export const useMatch = (id: string) => {
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
 
   return useQuery({
     queryKey: matchKeys.id(id),

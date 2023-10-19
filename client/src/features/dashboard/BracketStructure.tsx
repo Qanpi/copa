@@ -185,7 +185,7 @@ function BracketStructure() {
 
   const handleSaveBracket = () => {
     createBracket.mutate({
-      name: division.name,
+      name: division.name + " bracket",
       tournamentId: division.id,
       type: "single_elimination",
       seeding,

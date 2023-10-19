@@ -93,7 +93,7 @@ function DrawPage() {
 
   const handleConfirmSeeding = () => {
     createGroupStage.mutate({
-      name: division.name,
+      name: division.name + " group stage",
       type: "round_robin",
       tournamentId: division.id,
       settings: {

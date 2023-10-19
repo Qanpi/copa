@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import { Form, Formik } from 'formik';
 import { ReactNode, useState } from 'react';
@@ -9,6 +9,8 @@ import { useMatches, useUpdateMatch } from '../match/hooks';
 import { useTournament } from '../viewer/hooks';
 import { groupBy } from "lodash-es"
 import { useParticipants } from '../participant/hooks';
+import MatchesTimeline from '../match/MatchesTimeline';
+import { MatchesTable } from '../match/MatchesTable';
 
 const useMatchScheduler = () => {
   const { data: tournament } = useTournament("current");
@@ -60,6 +62,22 @@ const useMatchScheduler = () => {
 };
 
 const Scheduler = () => {
+  const { data: tournament } = useTournament("current");
+  const { data: unscheduledMatches } = useMatches(tournament?.id, {
+    scheduled: "false",
+  });
+
+
+  return <Container maxWidth="xl" sx={{ pt: 5 }}>
+    <Stack direction="column" spacing={3}>
+      <Typography variant="h2">Scheduler</Typography>
+      <MatchesTimeline></MatchesTimeline>
+      <MatchesTable matches={unscheduledMatches}></MatchesTable>
+    </Stack>
+  </Container>
+}
+
+const AutoScheduler = () => {
   const [ranges, setRanges] = useState({
     play: {
       startDate: new Date(),
@@ -68,16 +86,6 @@ const Scheduler = () => {
     } as Range
   });
 
-  const { data: tournament } = useTournament("current");
-
-  const { data: unscheduledMatches } = useMatches(tournament?.id, {
-    scheduled: "false",
-    state: "Groups"
-  });
-
-  const [blockedDates, setBlockedDates] = useState([])
-
-  const handleScheduleMatches = useMatchScheduler();
 
   const handleChangeRange = ({ play }: RangeKeyDict) => {
     const start = dayjs(play.startDate);
@@ -97,6 +105,7 @@ const Scheduler = () => {
     }
   }
 
+  const [blockedDates, setBlockedDates] = useState([])
   const blockedDayRenderer = (day) => {
     const date = dayjs(day);
 
@@ -111,6 +120,7 @@ const Scheduler = () => {
     </Box>
   }
 
+  const handleScheduleMatches = useMatchScheduler();
   return <Formik
     initialValues={{
       start: dayjs().day(8), //next Monday
@@ -142,7 +152,6 @@ const Scheduler = () => {
       </Button>
     </Form>
   </Formik>
-
 }
 
 export default Scheduler;

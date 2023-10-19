@@ -9,7 +9,8 @@ const DivisionSchema = new mongoose.Schema({
     settings: {
         matchLength: {
             type: Number,
-            default: 6,
+            default: 360, //in seconds
+            required: true,
         },
         playerCount: {
             type: Number,

@@ -1,41 +1,80 @@
-import Timeline, { TimelineItemBase } from "react-calendar-timeline"
+import Timeline, { OnItemDragObjectBase, TimelineItemBase } from "react-calendar-timeline"
 import 'react-calendar-timeline/lib/Timeline.css'
 
-import { useTournament } from "../viewer/hooks";
+import { useDivisions, useTournament } from "../viewer/hooks";
 import { useMatches, useUpdateMatch } from "./hooks";
 import dayjs from "dayjs";
+import { useGroups } from "../group/hooks";
+import { useStages } from "../stage/hooks";
+import { Select, Box } from "@mui/material";
 
 function MatchesTimeline() {
     const { data: tournament } = useTournament("current");
     const { data: scheduledMatches, status: scheduledStatus } = useMatches(tournament?.id,
         {
-            scheduled: true,
+            scheduled: "true",
         });
+
+    console.log(scheduledMatches)
+
+    //FIXME: trypes
+    const items: TimelineItemBase<Date>[] | undefined = scheduledMatches?.map(m => ({
+        id: m.id,
+        group: m.group_id,
+        start_time: new Date(m.start),
+        end_time: new Date(m.end),
+        // end_time: dayjs(m.start).add(m.duration, "minutes").toDate(),
+        canChangeGroup: false,
+    }))
 
     const updateMatch = useUpdateMatch();
 
-    const groups = [{
-        id: 1,
-        title: "group 1",
-    }]
+    const { data: divisions } = useDivisions(tournament?.id);
+    const { data: stages } = useStages(tournament?.id);
+    const { data: groupings } = useGroups(tournament?.id);
 
-    const items: TimelineItemBase<Date>[] = scheduledMatches?.map(m => ({
-        id: m.id,
-        group: 1,
-        title: `${m.opponent1.name || "name"}`,
-        start_time: new Date(m.start),
-        end_time: dayjs(m.start).add(m.duration, "minutes").toDate()
-    }))
+    const groups = groupings?.map(g => {
+        const stage = stages?.find(s => s.id === g.stage_id);
+        const division = divisions.find(d => d.id === stage?.division);
 
-    if (!items) return <>loading...</>;
+        return {
+            id: g.id,
+            title: `${division?.name} ${g.name}`
+        }
+    })
+
+    if (!items || !groups) return <>loading...</>;
+
+    const handleItemDrag = ({ eventType, itemId, time }: OnItemDragObjectBase) => {
+        console.log(eventType, itemId, time)
+        const datetime = new Date(time);
+        console.log(datetime);
+
+        if (eventType === "move") {
+            updateMatch.mutate({
+                id: itemId,
+                start: datetime
+            })
+        } else if (eventType === "resize") {
+            updateMatch.mutate({
+                id: itemId,
+                end: datetime,
+            })
+        }
+    }
 
     return (
-        <Timeline items={items}
-            groups={groups}
-            dragSnap={1 * 60 * 1000}
-            defaultTimeStart={dayjs().subtract(12, "hour").toDate()}
-            defaultTimeEnd={dayjs().add(12, "hour").toDate()}>
-        </Timeline>
+        <Box>
+            <Select label="Group by"></Select>
+            <Timeline items={items}
+                groups={groups}
+                dragSnap={1 * 60 * 1000}
+                defaultTimeStart={dayjs().subtract(12, "hour").toDate()}
+                defaultTimeEnd={dayjs().add(12, "hour").toDate()}
+                onItemDrag={handleItemDrag}
+            >
+            </Timeline>
+        </Box>
     )
 }
 

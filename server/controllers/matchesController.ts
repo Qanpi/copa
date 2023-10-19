@@ -25,6 +25,7 @@ export const getMany = async (req: Request, res: Response) => {
   }
 
   if (state) {
+    //FIXME: needs to be handled better
     const stages = await Stage.find({
       type: state === "Groups" ? "round_robin" : "single_elimination",
     });
