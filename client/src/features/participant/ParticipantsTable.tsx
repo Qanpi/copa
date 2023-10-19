@@ -57,7 +57,6 @@ function TeamsPage() {
               gap: 2,
               justifyContent: "center",
               pt: 2,
-              minHeight: "60vw"
             }}>
               {tournament?.state === "Registration" ? <Card sx={{
                 minHeight: 200, borderRadius: 3,
