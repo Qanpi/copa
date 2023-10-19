@@ -93,7 +93,7 @@ function HomePage() {
         alignItems: "center",
         height: "500px"
       }}>
-        <Typography>Hmm... I must've messed something up in code.</Typography>
+        <Typography>No tournament yet. Stay tuned.</Typography>
       </Container>
 
     case "Complete":
