@@ -33,6 +33,7 @@ import {
 } from "../viewer/hooks.ts";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
+import AdminAlert from "../layout/AdminAlert.tsx";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
@@ -123,16 +124,13 @@ function RegistrationStage({ next, prev }) {
 
       <Stack spacing={5}>
         {notEnoughParticipants ? (
-          <ThemeProvider theme={lightTheme}>
-            <Alert severity="error">
-              <AlertTitle>Error: Not enough participants</AlertTitle>
-              <Typography variant="body1">
-                There must be at least 2 registered participant(s) in the '
-                {notEnoughParticipants.division}' division before proceeding to
-                the next stage.
-              </Typography>
-            </Alert>
-          </ThemeProvider>
+          <AdminAlert title="Error: Not enough participants">
+            <Typography variant="body1">
+              There must be at least 2 registered participant(s) in the '
+              {notEnoughParticipants.division}' division before proceeding to
+              the next stage.
+            </Typography>
+          </AdminAlert>
         ) : null}
 
         <RegistrationPane></RegistrationPane>

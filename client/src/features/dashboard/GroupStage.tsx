@@ -19,6 +19,7 @@ import { useStages } from "../stage/hooks.ts";
 import { useDivisions, useTournament } from "../viewer/hooks.ts";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
+import AdminAlert from "../layout/AdminAlert.tsx";
 
 function GroupStage({ next, prev }) {
   const { data: tournament } = useTournament("current");
@@ -76,32 +77,24 @@ function GroupStage({ next, prev }) {
   return (
     <Container maxWidth="md">
       {noGroupStageAlert ? (
-        <ThemeProvider theme={lightTheme}>
-          <Alert severity="error" sx={{mb: 5}}>
-            <AlertTitle>
-              No group stage for the '{noGroupStageAlert.division}' name
-            </AlertTitle>
-            <Typography>
-              Please first draw teams using the wheel before proceeding to the
-              bracket.
-            </Typography>
-          </Alert>
-        </ThemeProvider>
-      ) : null}
-      {incompleteMatchesAlert ? (
-        <ThemeProvider theme={lightTheme}>
-          <Alert severity="error" sx={{ mb: 5 }}>
-            <AlertTitle>
-              Error: incomplete matches in the group stage of the '
-              {incompleteMatchesAlert.division}' division.
-            </AlertTitle>
-            <Typography>
-              Can't proceed before all the matches in the group stage are
-              complete. I you already know the results, enter them manually here.
-            </Typography>
-          </Alert>
-        </ThemeProvider>
-      ) : null}
+        <AdminAlert title={"No group stage for the '{noGroupStageAlert.division}' name"}>
+          <Typography>
+            Please first draw teams using the wheel before proceeding to the
+            bracket.
+          </Typography>
+        </AdminAlert>
+      ) : null
+      }
+      {
+        incompleteMatchesAlert ? (
+          <AdminAlert title="Error: incomplete matches in the group stage of the '{incompleteMatchesAlert.division}' division.">
+              <Typography>
+                Can't proceed before all the matches in the group stage are
+                complete. I you already know the results, enter them manually here.
+              </Typography>
+          </AdminAlert>
+        ) : null
+      }
 
       <DivisionPanel>
         <Stack direction={{ xs: "column", md: "row" }} spacing={2} display="flex" justifyContent="center">
@@ -155,7 +148,7 @@ function GroupStage({ next, prev }) {
       </DivisionPanel>
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
-    </Container>
+    </Container >
   );
 }
 

@@ -4,12 +4,13 @@ import TimelineContent from "@mui/lab/TimelineContent/TimelineContent.js";
 import TimelineDot from "@mui/lab/TimelineDot/TimelineDot.js";
 import TimelineItem from "@mui/lab/TimelineItem/TimelineItem.js";
 import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator.js";
-import {FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography } from "@mui/material";
+import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography } from "@mui/material";
 import { useParams } from "react-router";
 import { useUser } from "./hooks.ts";
 import { LoadingBackdrop } from "../viewer/header.tsx";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
+import OutlinedContainer from "../layout/OutlinedContainer.tsx";
 
 function ProfilePage() {
   const { id } = useParams();
@@ -25,8 +26,8 @@ function ProfilePage() {
       <Stack direction="row" spacing={3} alignItems={"center"}>
         <Avatar src={user.avatar} sx={{ width: 150, height: 150 }}></Avatar>
         <Box>
-          <Typography variant="h2" sx={{mb: -1}}>{user.name}</Typography>
-          <Typography variant="h5" sx={{mb: 2}}>
+          <Typography variant="h2" sx={{ mb: -1 }}>{user.name}</Typography>
+          <Typography variant="h5" sx={{ mb: 2 }}>
             <Link to={`/teams/${user.team?.name}`}>
               {user.team?.name}
             </Link>
@@ -34,10 +35,9 @@ function ProfilePage() {
           <Typography>Joined {dayjs().to(user.createdAt)}.</Typography>
         </Box>
       </Stack>
-      <Box>
-        <Typography>Settings</Typography>
+      <OutlinedContainer>
         <FormControlLabel control={<Switch></Switch>} label={"Publish profile"}></FormControlLabel>
-      </Box>
+      </OutlinedContainer>
     </Stack>
   </Container>
 
