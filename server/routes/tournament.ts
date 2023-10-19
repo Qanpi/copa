@@ -12,6 +12,7 @@ import { validateObjectIdInBody, reportValidationErrors } from "../middleware/va
 const router = express.Router({ mergeParams: true });
 
 //PARTICIPANTS
+//FIXME: id overwrites touranment id
 router.get("/participants", participants.getMany);
 router.get("/participants/:id", participants.getOne)
 router.post("/participants", isAuthenticated, validateObjectIdInBody("team"), validateObjectIdInBody("division"), reportValidationErrors, participants.createOne);
@@ -45,8 +46,8 @@ router.get(
     "/matches",
     matches.getMany
 );
-router.get("/matches/:id", matches.getOne)
-router.patch("/matches/:id", isAuthorized, matches.updateOne);
+router.get("/matches/:matchId", matches.getOne)
+router.patch("/matches/:matchId", isAuthorized, matches.updateOne);
 router.patch("/matches", isAuthorized, matches.resetDates)
 router.delete("/matches", isAuthorized, matches.deleteMany);
 
