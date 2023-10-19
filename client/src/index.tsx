@@ -31,6 +31,7 @@ import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import AboutPage from "./features/viewer/AboutPage.tsx";
+import AllTimePage from "./features/viewer/AllTimePage.tsx";
 
 export const darkTheme = responsiveFontSizes(createTheme({
   palette: {
@@ -108,6 +109,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage></HomePage>}></Route>
                   <Route path="/about" element={<AboutPage></AboutPage>}></Route>
+                  <Route path="/all-time" element={<AllTimePage></AllTimePage>}></Route>
 
                   <Route path="/tournament">
                     <Route
