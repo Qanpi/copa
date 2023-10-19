@@ -72,30 +72,17 @@ function MatchPage() {
 
   const duration = match.duration * 60 - match.elapsed;
 
-  const getMatchLayout = () => {
-    if (!match?.status) return <>Loading</>
+  if (!match?.status) return <>Loading</>
 
-    const opp1 = match.opponent1;
-    const opp2 = match.opponent2;
-
-    if (match.status <= Status.Ready) {
+  const getMatchDisplay = (status: Status) => {
+    if (status <= Status.Ready) {
       return (
-        <Stack direction={"row"} spacing={3} display="flex" justifyContent={"center"}>
-          <Box>
-            <Box>
-              img
-            </Box>
-            <Typography variant="h4">{opp1?.name || "BYE"}</Typography>
-          </Box>
-          <Typography variant="h2">vs</Typography>
-          <Box>
-            <Box>
-              img
-            </Box>
-            <Typography variant="h4">{opp2?.name || "BYE"}</Typography>
-          </Box>
-        </Stack>
-      )
+        <Box>
+          <Typography variant="h2">
+            {match.start ? dayjs(match.start).format("HH:mm") : "-:-"}
+          </Typography>
+        </Box>
+      );
     } else if (match.status === Status.Running) {
       return <>Match running page</>
     } else {
@@ -103,9 +90,34 @@ function MatchPage() {
     }
   }
 
+  const opp1 = match.opponent1;
+  const opp2 = match.opponent2;
+
+  return (
+    <Container maxWidth="md" sx={{ pt: 5 }}>
+      <Stack sx={{ position: "relative", display: "flex", justifyContent: "center" }} direction="row" spacing={10}>
+        <Box>
+          <Box sx={{ height: 300, width: 300, background: "green" }}>
+            img
+          </Box>
+          <Typography variant="h4">{opp1?.name || "BYE"}</Typography>
+        </Box>
+        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", m: "0 !important" }}>
+          {getMatchDisplay(match.status)}
+        </Box>
+        <Box sx={{height: ""}}>
+          <Box sx={{ height: 300, width: 300, background: "green" }}>
+            img
+          </Box>
+          <Typography variant="h4">{opp2?.name || "BYE"}</Typography>
+        </Box>
+      </Stack>
+    </Container >
+  )
+
   return (
     <Container sx={{ pt: 5 }}>
-      {getMatchLayout()}
+      {getMatchDisplay()}
       <Formik
         initialValues={{
           ...match,
