@@ -3,14 +3,15 @@ import {
   useQuery,
   useQueryClient
 } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Id, QueryKeyFactory, queryKeyFactory } from "../types";
 import { RoundNameInfo } from "ts-brackets-viewer";
 import { TTournament } from "@backend/models/tournament";
+import { TDivision } from "@backend/models/division";
 
-export const tournamentKeys = queryKeyFactory("tournaments");
+export const tournamentKeys = queryKeyFactory<TTournament>("tournaments");
 
-export const useTournament = (id: string) => {
+export const useTournament = (id?: string) => {
   return useQuery({
     queryKey: tournamentKeys.id(id),
     queryFn: async () => {
@@ -24,15 +25,27 @@ export const useTournament = (id: string) => {
 export const useCreateTournament = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<TTournament, AxiosError, Partial<TTournament>>({
     mutationFn: async (body: Partial<TTournament>) => {
       const res = await axios.post(`/api/tournaments/`, body);
       return res.data as TTournament;
     },
     onSuccess: (tournament) => {
       queryClient.setQueriesData(tournamentKeys.id("current"), tournament);
-      queryClient.setQueriesData(tournamentKeys.id(tournament.id), tournament);
+      queryClient.invalidateQueries(tournamentKeys.lists);
     },
+    // onMutate: async (tournament) => {
+    //   await queryClient.cancelQueries(tournamentKeys.id("current"))
+
+    //   //optimistic update
+    //   queryClient.setQueriesData(tournamentKeys.id("current"), tournament);
+    //   queryClient.invalidateQueries(tournamentKeys.lists);
+
+    //   return tournament;
+    // },
+    // onError: (err, variables, optimistic) => {
+    //   // queryClient.invalidateQueries(tournamentKeys.all);
+    // }
   });
 }
 
@@ -67,11 +80,11 @@ export const useDivision = (id: string) => {
   });
 }
 
-export const useDivisions = (tournamentId: string) => {
+export const useDivisions = (tournamentId?: string) => {
   const { data: tournament } = useTournament(tournamentId);
 
   return {
-    data: tournament?.divisions
+    data: tournament?.divisions as TDivision[]
   }
 }
 

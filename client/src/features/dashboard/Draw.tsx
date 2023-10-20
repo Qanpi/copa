@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Container, Slider, Typography } from "@mui/material";
+import { Backdrop, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -9,12 +9,15 @@ import { groupBy, shuffle } from "lodash-es";
 import Group from "../group/Group.js";
 import { DataGrid } from "@mui/x-data-grid";
 import GroupStageStructure from "./GroupStage.js";
-import { useStageData } from "../stage/hooks.ts";
+import { useDeleteStage, useStageData } from "../stage/hooks.ts";
 import { divideGroups } from "./GroupStageStructure.tsx";
 import { useCreateStage } from "../stage/hooks.ts";
-import DivisionPanel from "./DivisionPanel.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
+import "./fortuneWheel.css"
+import { TParticipant } from "@backend/models/participant.ts";
+import { LoadingBackdrop } from "../viewer/header.tsx";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -63,11 +66,16 @@ function DrawPage() {
 
   //TODO: better way to do this?
   useEffect(() => {
-    if (division) refetch();
+    if (division) {
+      setSeeding([]);
+      refetch();
+    }
   }, [division]);
 
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([]);
+
+  const [resetDialog, setResetDialog] = useState(false);
 
   const { data: stages } = useStages(tournament?.id, {
     division: division?.id,
@@ -76,8 +84,9 @@ function DrawPage() {
   const groupStage = stages?.[0];
 
   const createGroupStage = useCreateStage();
+  const resetDraw = useDeleteStage();
 
-  if (!participants) return <>Loading...</>
+  if (!stages || participantsStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
 
@@ -85,7 +94,7 @@ function DrawPage() {
 
   const handleConfirmSeeding = () => {
     createGroupStage.mutate({
-      name: division.name,
+      name: division.name + " group stage",
       type: "round_robin",
       tournamentId: division.id,
       settings: {
@@ -113,26 +122,65 @@ function DrawPage() {
     setSeeding([...seeding, option]);
   }
 
+  //TODO: maybe assign group id to participants or somewhow query participants by group
+  //in order to display the made groups in here rather than just placeholders
   const groupless = participants?.filter(p => !seeding.some(s => s.id === p.id));
   const groups = groupSizes.map((n, i) => {
+
+    //generate empty placeholder of size equals number of participants in group
+    const placeholder = new Array(n).fill({});
+
+    let k = 0; //participant number in the group
+
+    //go through all participants in the current seeding
+    //if their index (j) matches the index of the group, replace the placeholder with them
+    //increment k to the positoin of next participant
+    for (let j = 0; j < seeding.length; j++) {
+      if (j % groupCount === i) {
+        placeholder[k] = seeding[j];
+        k++;
+      }
+    }
+
     return (
-      <Group
-        name={`Group ${alphabet[i]}`}
-        participants={seeding.filter((v, j) => (j % groupCount === i))}
-        disableHead
-        key={i}
-      ></Group>
-    );
+      <GroupTable key={i} name={`${alphabet[i]}`} participants={placeholder}></GroupTable>
+    )
   })
 
+  const handlePotentialReset = () => {
+    setResetDialog(true);
+  }
+
+  const handleDialogResponse = async (choice: boolean) => {
+    if (!choice) return setResetDialog(false);
+
+    if (groupStage) await resetDraw.mutateAsync(groupStage.id);
+    setResetDialog(false);
+  }
+
   return (
-    <DivisionPanel>
-      {groupStage ?
-        <>Sorry can't reset an arleady made group stage yet. Contact support.</>
-        :
-        <>
+    <Stack sx={{ overflow: "hidden", pt: 5 }} direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
+      <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}>
+      </Backdrop>
+      <Dialog open={resetDialog}>
+        <DialogTitle>Would you like to reset the draw?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            The draw for the "{division.name}" division has already been made. Resetting it will delete all matches in the division up to this point.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleDialogResponse(true)} variant="outlined">Yes</Button>
+          <Button autoFocus onClick={() => handleDialogResponse(false)} variant="contained">No</Button>
+        </DialogActions>
+      </Dialog>
+
+      {!groupStage ? <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel> : null}
+
+      <Container maxWidth="md">
+        <DivisionPanel>
           <Container>
-            <Typography>Number of groups</Typography>
+            <InputLabel>Number of groups</InputLabel>
 
             <Slider
               value={groupCount}
@@ -147,25 +195,58 @@ function DrawPage() {
             ></Slider>
           </Container>
 
-          {groups}
+          <Box display="grid" gap="10px"
+            gridTemplateColumns={"repeat(auto-fill, 250px)"}
+            justifyContent={"center"}
+          >
+            {groups}
+          </Box>
 
-          <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
 
-          <Button onClick={handleSkipWheel}>
-            Skip
-          </Button>
-          <Button onClick={handleResetSeeding}>Reset</Button>
 
-          <Button onClick={handleConfirmSeeding}>
-            Confirm
-          </Button>
-        </>
-      }
-    </DivisionPanel>
+          <Box justifyContent={"center"} display="flex" gap={1}>
+
+
+            <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
+            <Button onClick={handleSkipWheel} variant="outlined" sx={{ mr: 3 }}>
+              Skip
+            </Button>
+
+            <Button onClick={handleConfirmSeeding} variant="contained">
+              Confirm
+            </Button>
+          </Box>
+        </DivisionPanel>
+      </Container>
+    </Stack >
   )
 }
 
-function FortuneWheel({ participants, onSelected }) {
+function GroupTable({ name, participants }: { name: string, participants: TParticipant[] }) {
+  return (
+    <TableContainer component={Paper}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell colSpan={5} align="center">
+              <Typography variant="h6">Group {name}</Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {participants.map((p, i) => (
+            <TableRow key={i}>
+              <TableCell>{i + 1}.</TableCell>
+              <TableCell>{p.name}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  )
+}
+
+function FortuneWheel({ participants, onSelected }: { participants: TParticipant[] }) {
   const [mustSpin, setMustSpin] = useState(false);
 
   const randomN = Math.floor(Math.random() * participants.length);
@@ -173,12 +254,11 @@ function FortuneWheel({ participants, onSelected }) {
   const wheelOptions = participants?.map((p) => {
     const l = 10;
     const trimmed =
-      p.name.length > l ? p.name.substring(0, l - 3) + "..." : p.name;
+      p.name?.length > l ? p.name?.substring(0, l - 3) + "..." : p.name;
     return { option: trimmed, ...p };
   });
 
-  const isWheelVisible =
-    !participants || participants.length === 0;
+  const isWheelVisible = participants?.length !== 0;
 
   const handleSpinOver = () => {
     setMustSpin(false);
@@ -188,29 +268,32 @@ function FortuneWheel({ participants, onSelected }) {
   };
 
   const handleSpin = () => {
-    if (isWheelVisible || mustSpin) return;
+    if (!isWheelVisible || mustSpin) return;
 
+    console.log(mustSpin)
     setMustSpin(true);
   };
 
-  return (
-    <>
-      {!isWheelVisible ? (
-        <Wheel
-          data={wheelOptions}
-          prizeNumber={randomN}
-          mustStartSpinning={mustSpin}
-          onStopSpinning={handleSpinOver}
-          spinDuration={0.00001} //TODO: fix later
-        ></Wheel>
-      ) : (
-        <div>No more temas left</div>
-      )}
+  const theme = useTheme();
 
-      <Button onClick={handleSpin} disabled={isWheelVisible}>
+  if (!isWheelVisible) return;
+
+  return (
+    <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
+      <Wheel
+        data={wheelOptions}
+        prizeNumber={randomN}
+        mustStartSpinning={mustSpin}
+        onStopSpinning={handleSpinOver}
+        spinDuration={0.00001} //TODO: fix later
+        // fontSize={theme.typography.body1.fontSize}
+      ></Wheel>
+
+      {/* position is calculated so that it's in the center and on top of the wheel */}
+      <Button onClick={handleSpin} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
         Spin
       </Button>
-    </>
+    </Box >
   );
 }
 

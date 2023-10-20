@@ -5,6 +5,42 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Jest",
+            "type": "node",
+            "request": "launch",
+            "env": {
+                "NODE_ENV": "test"
+            },
+            "args": [
+                "./server",
+                "--colors",
+                "--config=${workspaceFolder}\\server\\jest.config.cjs",
+            ],
+            "runtimeArgs": [
+                "--nolazy",
+                "--experimental-vm-modules"
+            ],
+            "windows": {
+                "program": "${workspaceFolder}/server/node_modules/jest/bin/jest",
+            },
+            "outputCapture": "std",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest current file",
+            "program": "${workspaceFolder}/server/node_modules/jest-cli/bin/jest",
+            "args": [
+                "${fileBasename}",
+                "--verbose",
+                "-i",
+                "--no-cache",
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
@@ -12,6 +48,10 @@
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}",
             "pathMappings": [
+                {
+                    "url": "file:///C:/Users/aleks/OneDrive%20-%20Suomalaisen%20Yhteiskoulun%20Osakeyhti%C3%B6/Tiedostot/Coding/IA/client/node_modules/@mui/base/unstable_useNumberInput/utils.js",
+                    "path": "${workspaceFolder}/server/node_modules/passport-oauth2/lib/utils.js"
+                },
                 {
                     "url": "file:///C:/Users/aleks/OneDrive%20-%20Suomalaisen%20Yhteiskoulun%20Osakeyhti%C3%B6/Tiedostot/Coding/IA/client/src/features/viewer/home",
                     "path": "${workspaceFolder}/client/src/features/viewer"
@@ -36,5 +76,4 @@
             "type": "node"
         }
     ],
-  
 }

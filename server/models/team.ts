@@ -1,6 +1,7 @@
-import mongoose, { InferSchemaType } from "mongoose";
+import mongoose, { InferSchemaType, ObtainSchemaGeneric, Types } from "mongoose";
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
+import mongooseUniqueValidator from "mongoose-unique-validator";
 
 const TeamSchema = new mongoose.Schema(
   {
@@ -18,7 +19,7 @@ const TeamSchema = new mongoose.Schema(
     instagramUrl: String,
     phoneNumber: String,
 
-    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id },
+    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v?: Types.ObjectId) => v?.toString(), unique: true },
 
     invite: {
       token: {
@@ -41,27 +42,39 @@ const TeamSchema = new mongoose.Schema(
     toObject: { virtuals: true, getters: true },
     methods: {
       async passManagement() {
-        //TODO: test this
         const newManager = await User.findOne({
-          team: this.id,
-          id: { $ne: this.manager },
+          "team.id": this.id,
+          _id: { $ne: this.manager },
         });
-        this.manager = newManager ? newManager.id : undefined;
+        this.manager = newManager ? newManager.id : null;
         //TODO: document the fact this doesn't delete the team
 
-        return this.save();
+        return await this.save();
       },
     },
+    id: true,
   }
 );
 
+TeamSchema.plugin(mongooseUniqueValidator);
+
 TeamSchema.pre("save", async function () {
   if (this.isNew) {
-    User.findByIdAndJoinTeam(this.manager, this);
+    await User.findByIdAndUpdate(this.manager, {
+      team: this
+    });
   }
 });
 
-type TTeamVirtuals = { id: string };
-export type TTeam = InferSchemaType<typeof TeamSchema> & TTeamVirtuals;
+TeamSchema.pre("deleteOne", async function () {
+  const members = await User.find({ team: this.getFilter()._id });
 
-export default mongoose.model(collections.teams.id, TeamSchema);
+  for (const m of members) {
+    m.team = undefined;
+    await m.save();
+  }
+})
+
+export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods"> & {manager?: string};
+
+export default mongoose.model<TTeam>(collections.teams.id, TeamSchema);

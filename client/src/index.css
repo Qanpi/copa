@@ -1,19 +1,17 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  color: var(--copa-white);
-  background: var(--copa-aqua);
+  /* background: var(--copa-purple); */
 }
 
-code {
+/* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
+} */
 
 /* temporary override */
 /* span, label, input, button {
@@ -27,22 +25,26 @@ code {
   --copa-white: #FDFDFD;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+/* 
 .primary {
+  background: var(--copa-aqua);
+  color: var(--copa-white);
   width: 100vw;
-  padding-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 100px;
-}
+} */
 
-* {
+/* * {
   scroll-margin-top: 100px;
-}
+} */
 
-
-
-button {
+/* button {
     font: inherit;
     height: 40px;
 }
@@ -55,4 +57,4 @@ button.light {
 
 .no-margin * {
   margin: 0;
-}
+} */

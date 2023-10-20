@@ -13,7 +13,7 @@ import { Status } from "brackets-model";
 import { groupBy } from "lodash";
 import { DivisionContext } from "../../index.tsx";
 import { useStages } from "../stage/hooks.ts";
-import DivisionPanel from "./DivisionPanel.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 
 function Bracket({ next, prev }) {
   const { data: tournament } = useTournament("current");

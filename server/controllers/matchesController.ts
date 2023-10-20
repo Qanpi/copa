@@ -25,6 +25,7 @@ export const getMany = async (req: Request, res: Response) => {
   }
 
   if (state) {
+    //FIXME: needs to be handled better
     const stages = await Stage.find({
       type: state === "Groups" ? "round_robin" : "single_elimination",
     });
@@ -38,7 +39,7 @@ export const getMany = async (req: Request, res: Response) => {
 };
 
 export const getOne = async (req: Request, res: Response) => {
-  const match = await Match.findById(req.params.id);
+  const match = await Match.findById(req.params.matchId);
   res.send(match);
 };
 
@@ -49,8 +50,8 @@ export const deleteMany = async (req: Request, res: Response) => {
 
 export const updateOne = async (req: Request, res: Response) => {
   //TODO: if statement
-  await bracketsManager.update.match({ ...req.body, id: req.params.id });
-  const updated = await Match.findById(req.params.id);
+  await bracketsManager.update.match({ ...req.body, id: req.params.matchId });
+  const updated = await Match.findById(req.params.matchId);
 
   res.send(updated);
 };

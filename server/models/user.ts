@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema(
       id: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: collections.teams.id,
+        get: (v?: Types.ObjectId) => v?.toString()
       },
       name: String,
     },
@@ -23,16 +24,7 @@ const UserSchema = new mongoose.Schema(
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
-    statics: {
-      async findByIdAndJoinTeam(id, team) {
-        await User.findByIdAndUpdate(id, {
-          team: {
-            id: team._id,
-            name: team.name,
-          },
-        });
-      },
-    },
+    timestamps: true,
   }
 );
 
@@ -47,21 +39,9 @@ const UserSchema = new mongoose.Schema(
 //member, manager
 //admin
 
-UserSchema.pre("findOneAndUpdate", async function () {
-  const update = this.getUpdate();
-  // const query = this.getQuery();
 
-  if (update && "team" in update && update.team === null) {
-    const user = await this.model.findOne(this.getQuery());
-    const team = await Team.findById(user.team.id);
-
-    if (team?.manager?.equals(user._id)) team?.passManagement();
-  }
-});
-
-const User = mongoose.model(collections.users.id, UserSchema);
-
-type TUserVirtuals = { id: string }
+type TUserVirtuals = { id: string, team?: {id?: string} }
 export type TUser = InferSchemaType<typeof UserSchema> & TUserVirtuals;
 
+const User = mongoose.model<TUser>(collections.users.id, UserSchema);
 export default User;

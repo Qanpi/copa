@@ -7,17 +7,13 @@ import { fileURLToPath } from "url";
 import path from "path";
 import "dotenv/config.js"
 
-connectMongoose(); //FIXME: await 
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const reactPath = path.resolve(__dirname, "build");
-
 import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
+import { debugHTTP } from "./services/debuggers.js";
 
+connectMongoose();
 const app = express();
 
 app.use(logger("dev"));
@@ -59,6 +55,8 @@ app.use(passport.session());
 
 //static react
 //TODO: move up to avoid user deserialization?
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const reactPath = path.resolve(__dirname, "build");
 app.use(express.static(reactPath));
 
 app.use("/api", apiRouter); // api request flow: route -> controller -> db service
@@ -68,7 +66,7 @@ app.use(authRouter);
 app.get("/", (req, res) => {
   //FIXME:!redirect to localhost if developing
   if (process.env.NODE_ENV === "development") {
-    return res.redirect(process.env.REACT_LOCALHOST_DOMAIN);
+    return res.redirect(process.env.REACT_LOCALHOST_DOMAIN!);
   }
   res.sendFile(reactPath + "/index.html");
 });
@@ -81,15 +79,15 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   // set locals, only providing error in development
+  debugHTTP(err.message, err.cause);
   res.locals.message = err.message;
-  console.error(err);
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
   res.status(err.status || 500);
   res.send({
     message: err.message,
-    error: err,
+    error: err.cause,
   });
 });
 

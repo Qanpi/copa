@@ -6,7 +6,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import MyAutocomplete from "../inputs/MyAutocomplete.tsx";
 import MyNumberSlider from "../inputs/myNumberSlider.js";
-import MyTextField from "../inputs/mytextfield.js";
+import MyTextField from "../inputs/myTextField.tsx";
 
 function NewTournamentPage() {
   return (

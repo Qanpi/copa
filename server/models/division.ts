@@ -1,4 +1,4 @@
-import mongoose, { SchemaTypes } from "mongoose";
+import mongoose, { InferSchemaType, SchemaTypes } from "mongoose";
 
 const DivisionSchema = new mongoose.Schema({
     name: String,
@@ -9,7 +9,8 @@ const DivisionSchema = new mongoose.Schema({
     settings: {
         matchLength: {
             type: Number,
-            default: 6,
+            default: 360, //in seconds
+            required: true,
         },
         playerCount: {
             type: Number,
@@ -24,5 +25,7 @@ const DivisionSchema = new mongoose.Schema({
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
 });
+
+export type TDivision = InferSchemaType<typeof DivisionSchema> & {id: string};
 
 export default DivisionSchema;

@@ -1,4 +1,7 @@
 import {
+  Box,
+  Container,
+  Stack,
   Step,
   StepButton,
   StepLabel,
@@ -6,12 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 import NewTournamentPage from "./NewTournament.js";
-import RegistrationStage from "./Registration.js";
+import RegistrationStage from "./Registration.tsx";
 import { useTournament, useUpdateTournament } from "../viewer/hooks.ts";
-import GroupStage from "./GroupStage.js";
+import GroupStage from "./GroupStage.tsx";
 import BracketStructure from "./BracketStructure.tsx";
 import Bracket from "./Bracket.tsx";
 import CreateTournamentPage from "./CreateTournament.tsx";
+import GradientTitle from "../viewer/gradientTitle.tsx";
 
 function DashboardPage() {
   const { data: tournament } = useTournament("current");
@@ -52,19 +56,26 @@ function DashboardPage() {
   };
 
   return (
-    <>
-      <Stepper activeStep={stateId} orientation="vertical" >
-        {
-          tournament.states.map((s, i) => (
-            <Step key={i} >
-              <StepLabel>{s} </StepLabel>
-            </Step>
-          ))
-        }
-      </Stepper>
+    <Box sx={{ pt: 7 }}>
 
-      {currentSection()}
-    </>
+      <GradientTitle>
+        <Stack direction="row" sx={{ height: "100%" }} justifyContent={"center"} alignItems={"center"}>
+          <Typography variant="h2" fontWeight={800} minWidth={"4em"}>{tournament.name}</Typography>
+          <Stepper activeStep={stateId} orientation="horizontal">
+            {
+              tournament.states.map((s, i) => (
+                <Step key={i} >
+                  <StepLabel>{s} </StepLabel>
+                </Step>
+              ))
+            }
+          </Stepper>
+        </Stack>
+      </GradientTitle>
+      <Container>
+        {currentSection()}
+      </Container>
+    </Box>
   );
 }
 

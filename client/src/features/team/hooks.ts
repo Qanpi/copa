@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeyFactory } from "../types";
 import { TTeam } from "@backend/models/team";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ export const useUpdateTeam = () => {
   });
 };
 
-export const useTeam = (name: string) => {
+export const useTeam = (name?: string) => {
   return useQuery({
     queryKey: teamKeys.id(name),
     queryFn: async () => {
@@ -42,17 +42,37 @@ export const useCreateTeam = () => {
     mutationFn: async (values: Partial<TTeam>) => {
       const res = await axios.post("/api/teams", {
         ...values,
-        name: values.name.trim(), //FIXME: encode uri?
+        name: values?.name?.trim(), //FIXME: encode uri?
       });
       return res.data as TTeam;
     },
     onSuccess: (newTeam) => {
       queryClient.setQueriesData(teamKeys.id(newTeam.id), newTeam);
-      queryClient.setQueriesData(teamKeys.lists, (previous: TTeam[]) => {
+      queryClient.setQueriesData(teamKeys.lists, (previous?: TTeam[]) => {
         return previous?.map(p => p.id === newTeam.id ? newTeam : p);
       })
+
       queryClient.invalidateQueries(userKeys.id("me"));
     },
   });
+}
+
+export const useRemoveUserFromTeam = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, userId }: { teamId: string, userId: string }) => {
+      const res = await axios.delete(`/api/teams/${teamId}/users/${userId}`);
+      return res.data;
+    },
+
+    onSuccess: (data, {teamId, userId}) => {
+      queryClient.invalidateQueries(userKeys.id("me"));
+      queryClient.invalidateQueries(userKeys.id(userId));
+
+      queryClient.invalidateQueries(teamKeys.id(teamId));
+    }
+
+  })
 }
 

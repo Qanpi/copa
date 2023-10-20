@@ -12,9 +12,9 @@ export function queryKeyFactory<T>(key: string) {
         key,
         all: [key],
         lists: [key, "list"],
-        list: (query) => [key, "list", query],
+        list: (query?: Partial<T>) => [key, "list", query],
         ids: [key, "id"],
-        id: (id) => [key, "id", id]
+        id: (id?: string) => [key, "id", id]
     } as QueryKeyObject<T>
 }
 

@@ -1,7 +1,8 @@
 import {
   EventApi,
   EventClickArg,
-  EventDropArg
+  EventDropArg,
+  EventInput
 } from "@fullcalendar/core";
 import interactionPlugin, {
   EventResizeDoneArg,
@@ -24,54 +25,33 @@ import { useMatches, useUpdateMatch } from "./hooks.ts";
 import "./MatchesCalendar.css";
 
 import { TMatch } from "@backend/models/match.ts";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTournament } from "../viewer/hooks.ts";
-
-// type MatchEvent = {
-//   matchId: ObjectId;
-//   title: string;
-//   start: Date;
-//   end: Date;
-//   opponent1: ObjectId;
-//   opponent2: ObjectId;
-//   group: ObjectId;
-//   stage: ObjectId;
-//   round: ObjectId;
-// };
-
-type MatchEvent = Omit<
-  Partial<TMatch>,
-  "opponent1" | "opponent2" | "duration"
-> & {
-  opponent1: ObjectId;
-  opponent2: ObjectId;
-} & Partial<EventApi>;
 
 function MatchesCalendar() {
   const { data: tournament } = useTournament("current");
-  const { data: scheduledMatches, status: scheduledStatus } = useMatches(tournament?.id,
+  const { data: scheduledMatches } = useMatches(tournament?.id,
     {
-      scheduled: true,
+      scheduled: "true",
     });
 
   const updateMatch = useUpdateMatch();
 
-  const events: MatchEvent[] = useMemo(
-    () =>
-      scheduledMatches?.map((m, i) => {
-        return {
-          //FIXME: type
-          id: m.id,
-          title: `Match ${i}`,
-          start: dayjs(m.start).toDate(),
-          end: dayjs(m.start).add(m.duration, "minute").toDate(),
-          opponent1: m.opponent1.id,
-          opponent2: m.opponent2.id,
-          group: m.group_id,
-          stage: m.stage_id,
-          round: m.round_id,
-        };
-      }),
+  const events: EventInput[] = useMemo(
+    () => scheduledMatches?.map((m, i) => {
+      return {
+        //FIXME: type
+        id: m.id,
+        title: `${m.opponent1?.name} vs ${m.opponent2?.name}`,
+        start: dayjs(m.start).toDate(),
+        end: dayjs(m.end).toDate(),
+        // opponent1: m.opponent1?.id,
+        // opponent2: m.opponent2?.id,
+        // group: m.group_id,
+        // stage: m.stage_id,
+        // round: m.round_id,
+      };
+    }) || [],
     [scheduledMatches]
   );
 
@@ -82,12 +62,14 @@ function MatchesCalendar() {
   });
   const [popperOpen, setPopperOpen] = useState(false);
 
+  const navigate = useNavigate();
   const handleEventClick = useCallback((info: EventClickArg) => {
     const { extendedProps, ...rest } = info.event.toPlainObject();
     const event = { ...extendedProps, ...rest };
 
-    setMatch({ event, anchorEl: info.el });
-    setPopperOpen(true);
+    return navigate(`/tournament/matches/${event.id}`);
+    // setMatch({ event, anchorEl: info.el });
+    // setPopperOpen(true);
   }, []);
 
   const handleEventResize = (info: EventResizeDoneArg) => {
@@ -102,8 +84,6 @@ function MatchesCalendar() {
 
     updateMatch.mutate({ id: event.id, start: event.start });
   };
-
-  if (scheduledStatus !== "success") return <div>Loading</div>;
 
   return (
     <>
@@ -131,13 +111,16 @@ function MatchesCalendar() {
         }}
         events={events}
         eventClick={handleEventClick}
-        eventDrop={handleEventDrop}
+        // eventDrop={handleEventDrop}
+        // TODO: allow admin to modify these
+        slotMinTime={"10:00:00"}
+        slotMaxTime={"15:00:00"}
         scrollTime={"12:00:00"}
         nowIndicator
-        snapDuration={1}
-        // expandRows
-        eventResize={handleEventResize}
-        editable
+        // snapDuration={1}
+        expandRows
+        // eventResize={handleEventResize}
+        // editable
         noEventsText="No matches scheduled for this week."
       ></FullCalendar>
     </>

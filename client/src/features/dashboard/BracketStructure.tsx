@@ -35,7 +35,7 @@ import { useGroupedParticipants } from "./Draw.tsx";
 import { useMatches } from "../match/hooks.ts";
 import { useCreateStage, useStages, useStandings } from "../stage/hooks.ts";
 import { DivisionContext } from "../../index.tsx";
-import DivisionPanel from "./DivisionPanel.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
@@ -185,7 +185,7 @@ function BracketStructure() {
 
   const handleSaveBracket = () => {
     createBracket.mutate({
-      name: division.name,
+      name: division.name + " bracket",
       tournamentId: division.id,
       type: "single_elimination",
       seeding,
