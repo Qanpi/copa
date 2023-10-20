@@ -18,6 +18,7 @@ import NoTeamPage from "../team/NoTeamPage.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
 import { TParticipant } from "@backend/models/participant.ts";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
+import OutlinedContainer from "../layout/OutlinedContainer.tsx";
 
 function RegistrationPage() {
   const { data: tournament } = useTournament("current");
@@ -79,16 +80,12 @@ function RegistrationPage() {
       return <RegistrationForm></RegistrationForm>;
     }
 
-    return <>
-      <div>
-        <p>You are currently a member of {user?.team?.name}</p>
-        <p>Please ask the leader of your team to register.</p>
-        <p>
-          If you wish to play in another team, please leave the current one and
-          join/create a new team.
-        </p>
-      </div>
-    </>
+    return <PromptContainer maxWidth="sm">
+      <OutlinedContainer>
+        <Typography>Please ask the manager of your team to submit the registration.</Typography>
+      </OutlinedContainer>
+    </PromptContainer>
+
   }
 
   if (userStatus !== "success" || !tournament) return <LoadingBackdrop open={true}></LoadingBackdrop>
@@ -176,10 +173,10 @@ function RegistrationForm() {
         }}
       >
         <Form>
-          <Typography variant="h6" sx={{ mb: 1 }}>Please verify the information below</Typography>
+          <Typography variant="h6" sx={{ mb: 2 }} color="primary">Please verify the information below</Typography>
           <Stack direction="column" spacing={1}>
-            <MyTextField name="name" label="team name"></MyTextField>
-            <MyTextField label="phone number" name="phoneNumber"></MyTextField>
+            <MyTextField name="name" label="Team name"></MyTextField>
+            <MyTextField label="Phone number" name="phoneNumber"></MyTextField>
           </Stack>
           <Stack direction="row" sx={{ width: "100%", mt: 5 }} display={"flex"} justifyContent={"space-between"} alignItems="center">
             <MySelect label="Division" name="division" sx={{ mr: 3, flexGrow: 1 }}>

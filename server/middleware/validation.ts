@@ -12,10 +12,10 @@ export const reportValidationErrors = expressAsyncHandler(async (req, res, next)
 })
 
 export const isLoggedInAsUser = (user: Express.User | undefined, userId: string) => {
-  return user && user.id === userId;
+  return !!user && user.id === userId;
 };
 export const isAdmin = (user: Express.User | undefined) => {
-  return user && user.role === "admin";
+  return !!user && user.role === "admin";
 };
 export const isManager = (user: Express.User | undefined, managerId?: string): boolean => {
   return !!user && managerId?.toString() === user.id;
@@ -25,5 +25,5 @@ export const isManagerOrAdmin = (user: Express.User | undefined, managerId?: str
 };
 
 export const isInTeam = (user: Express.User | undefined, teamId: string) => {
-  return user && user?.team === teamId;
+  return !!user && user?.team === teamId;
 }

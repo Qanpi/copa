@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { TUser } from "@backend/models/user.ts";
 import { useTeam, useUpdateTeam } from "../team/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
@@ -7,16 +7,16 @@ import { QueryKeyObject, queryKeyFactory } from "../types";
 export const userKeys = queryKeyFactory<TUser & {teamId?: string}>("users");
 
 export const useUser = (id?: string) => {
-  return useQuery({
+  return useQuery<TUser, AxiosError>({
     queryKey: userKeys.id(id),
     queryFn: async () => {
       const res =
         id === "me"
           ? await axios.get("/me")
           : await axios.get(`/api/${userKeys.all}/${id}`);
-      return res.data as TUser;
+      return res.data as TUser | "private";
     },
-    enabled: !!id
+    enabled: !!id,
   });
 };
 

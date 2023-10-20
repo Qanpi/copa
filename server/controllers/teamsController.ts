@@ -4,7 +4,7 @@ import expressAsyncHandler from "express-async-handler";
 import Team, { TTeam } from "../models/team.js";
 import User, { TUser } from "../models/user.js";
 import { Request } from "express";
-import { isManagerOrAdmin, isLoggedInAsUser, isAdmin } from "../middleware/validation.js";
+import { isManagerOrAdmin, isLoggedInAsUser, isAdmin, isInTeam } from "../middleware/validation.js";
 import { t } from "ts-brackets-viewer/dist/lang.js";
 import { StatusError } from "../middleware/auth.js";
 
@@ -54,11 +54,6 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
   res.send(updated);
 })
 
-export const getUsersInTeam = expressAsyncHandler(async (req, res) => {
-  const players = await User.find({ "team.id": req.params.id });
-  res.send(players);
-});
-
 export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
   const userId = req.params.userId;
 
@@ -77,9 +72,17 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
   res.status(204).send({});
 });
 
-export const getTeamMembers = expressAsyncHandler(async (req, res) => {
+export const getUsersInTeam = expressAsyncHandler(async (req, res) => {
+  const team = await Team.findById(req.params.teamId);
+
+  if (!team)
+    throw new Error("Invalid team.")
+
+  const privateAccess = isAdmin(req.user) || isInTeam(req.user, team.id)
+
   const members = await User.find({
-    "team.id": req.params.teamId,
+    "team.id": team.id,
+    "preferences.publicProfile": !privateAccess
   })
 
   res.send(members);

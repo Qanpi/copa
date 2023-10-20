@@ -38,7 +38,7 @@ router.get("/teams", teams.getMultiple);
 router.post("/teams", isAuthMiddleware, body("manager").isMongoId(), body("name").trim().isString().notEmpty(), reportValidationErrors, teams.createOne);
 router.patch("/teams/:id", isAuthMiddleware, teams.updateOne);
 router.get("/teams/:id", teams.getById);
-router.get("/teams/:id/users", teams.getUsersInTeam);
+router.get("/teams/:teamId/users", teams.getUsersInTeam);
 router.post("/teams/:teamId/users", isAuthorizedMiddleware, teams.addUserToTeam);
 router.delete("/teams/:teamId/users/:userId", isAuthMiddleware, param("userId").isMongoId(), reportValidationErrors, teams.removeUserFromTeam);
 router.delete("/teams/:id", isAuthMiddleware, teams.removeById);

@@ -18,8 +18,14 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["manager", "admin"],
+      enum: ["admin"],
     },
+    preferences: {
+      publicProfile: {
+        type: Boolean,
+        default: false,
+      },
+    }
   },
   {
     toObject: { virtuals: true },

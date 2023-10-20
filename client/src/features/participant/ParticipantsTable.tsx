@@ -48,7 +48,7 @@ function TeamsPage() {
   );
 
   return (
-    <BannerPage title="Teams">
+    <BannerPage title={`Participants`}>
       <Stack spacing={3}>
         <DivisionPanel>
           <Box sx={{minHeight: "600px", width: "100%"}}>

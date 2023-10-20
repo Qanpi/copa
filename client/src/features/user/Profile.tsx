@@ -6,33 +6,35 @@ import TimelineItem from "@mui/lab/TimelineItem/TimelineItem.js";
 import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator.js";
 import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography } from "@mui/material";
 import { useParams } from "react-router";
-import { useUser } from "./hooks.ts";
+import { useUser, userKeys } from "./hooks.ts";
 import { LoadingBackdrop } from "../viewer/header.tsx";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import OutlinedContainer from "../layout/OutlinedContainer.tsx";
+import { useQueryClient } from "@tanstack/react-query";
+import { PromptContainer } from "../layout/PromptContainer.tsx";
 
 function ProfilePage() {
   const { id } = useParams();
-  const { status: userStatus, data: user } = useUser(id);
-  console.log(user)
+  const { status: userStatus, data: user, error } = useUser(id);
 
-  if (!user) return <LoadingBackdrop></LoadingBackdrop>
+  if (!user) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
-  if (userStatus === "error") return <>not publicly available</>
+  if (user === "private") return <PromptContainer>
+    <Typography>This profile is private</Typography>
+  </PromptContainer>
 
   return <Container maxWidth="lg" sx={{ display: "flex", justifyContent: "center", alignItems: "center", pt: 10 }}>
     <Stack direction="column" spacing={5}>
       <Stack direction="row" spacing={3} alignItems={"center"}>
         <Avatar src={user.avatar} sx={{ width: 150, height: 150 }}></Avatar>
         <Box>
-          <Typography variant="h2" sx={{ mb: -1 }}>{user.name}</Typography>
-          <Typography variant="h5" sx={{ mb: 2 }}>
+          <Typography variant="h2" sx={{ mb: 0 }}>{user.name}</Typography>
+          <Typography variant="h5" >
             <Link to={`/teams/${user.team?.name}`}>
               {user.team?.name}
             </Link>
           </Typography>
-          <Typography>Joined {dayjs().to(user.createdAt)}.</Typography>
         </Box>
       </Stack>
       <OutlinedContainer>

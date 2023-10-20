@@ -91,7 +91,7 @@ function App() {
                   <Route path="/tournament/structure" element={<BracketStructure></BracketStructure>}></Route>
 
                   <Route
-                    path="/tournament/teams"
+                    path="/tournament/participants"
                     element={<TeamsPage></TeamsPage>}
                   ></Route>
 

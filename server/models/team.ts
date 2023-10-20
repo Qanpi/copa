@@ -16,7 +16,7 @@ const TeamSchema = new mongoose.Schema(
     about: {
       type: String,
     },
-    instagramUrl: String,
+    bannerUrl: String,
     phoneNumber: String,
 
     manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v?: Types.ObjectId) => v?.toString(), unique: true },
@@ -52,6 +52,7 @@ const TeamSchema = new mongoose.Schema(
         return await this.save();
       },
     },
+    timestamps: true,
     id: true,
   }
 );

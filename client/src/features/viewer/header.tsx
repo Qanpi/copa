@@ -129,8 +129,8 @@ function Header() {
   );
 
   const tournamentSublinks = [
-    <Link to="/tournament/teams" >
-      <MenuItem>Teams </MenuItem>
+    <Link to="/tournament/participants" >
+      <MenuItem>Participants</MenuItem>
     </Link>,
     < Link to="/tournament/matches" >
       <MenuItem>Matches </MenuItem>

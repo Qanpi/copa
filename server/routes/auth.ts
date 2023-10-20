@@ -113,7 +113,8 @@ router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
     let user = await User.findById(req.user.id);
 
-    if (!user) user = await User.create(req.user); // maybe make only possible for dev?
+    if (!user) throw new Error("No user found in db for the session.")
+    // if (!user) user = await User.create(req.user); // maybe make only possible for dev?
 
     //pull out any sensitive fields
     const { googleId, ...sanitized } = user.toObject();

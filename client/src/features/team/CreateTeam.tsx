@@ -108,7 +108,7 @@ function NewTeamPage() {
               <Stack direction={{xs: "column-reverse", md: "row"}} spacing={5} sx={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
                 <Box display="flex" flexDirection="column" gap={1} sx={{width: "45vmin", minWidth: "250px"}}>
                   <MyTextField label="Team name *" name="name"></MyTextField>
-                  <Tooltip title="Your phone number will only be visible to the organizer.">
+                  <Tooltip arrow title="Your phone number will only be visible to the organizer.">
                     <MyTextField label="Phone number *" name="phoneNumber"></MyTextField>
                   </Tooltip>
                   <MyTextField label="About" name="about" minRows={4} multiline maxRows={8} sx={{ mt: 3 }}></MyTextField>

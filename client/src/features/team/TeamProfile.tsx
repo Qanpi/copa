@@ -35,6 +35,8 @@ import { useState } from "react";
 import NotFoundPage from "../layout/NotFoundPage.tsx";
 import { TTeam } from "@backend/models/team.ts";
 import { AddLink, ContentCopy, DeleteForever, Edit, MeetingRoom, VisibilityOff } from "@mui/icons-material";
+import OutlinedContainer from "../layout/OutlinedContainer.tsx";
+import { useMatches } from "../match/hooks.ts";
 
 dayjs.extend(relativeTime);
 
@@ -49,8 +51,10 @@ function TeamProfilePage() {
     setSelectedTab(newTab);
   }
 
-  const { data: user } = useUser("me");
-  const { data: members } = useTeamMembers(team?.id);
+  const {data: tournament} = useTournament("current");
+  const upcomingMatches = useMatches(tournament?.id, {
+    team: team?.id,
+  });
 
   if (teamStatus !== "success") {
     return <div>loadgi team profiel</div>;
@@ -80,35 +84,56 @@ function TeamProfilePage() {
         </Tabs>
       </Box>
       <Container maxWidth="md" sx={{ p: 5, pt: 10 }}>
-        <Stack direction="column" spacing={4}>
-          {team.about ?
-            <>
-              <Typography variant="h6" color="primary">About</Typography>
-              <Typography>{team.about}</Typography></> : null}
-          {members && members.length > 0 ? <Box>
-            <Typography variant="h6" color="primary">Squad</Typography>
-            <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
-              {members?.map(m => {
-                return (
-                  <Box sx={{alignItems: "center", flexDirection: "column"}} display="flex">
-                    <Box key={m.id}  display="flex" alignItems="center" justifyContent={"center"}>
-                      <Avatar sx={{ width: "100px", height: "100px", opacity: 0.5 }} src={m.avatar} ></Avatar>
-                      <Tooltip title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
-                        <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
-                      </Tooltip>
-                    </Box>
-                    <Typography>{m.name}</Typography>
-                  </Box>
-                )
-              }
-              )}
-            </Box>
-          </Box> : null}
-        </Stack>
+        {selectedTab === 0 ? <ProfileTab team={team}></ProfileTab> : null}
+        {selectedTab === 1 ? <TimelineTab></TimelineTab> : null}
+        {selectedTab === 2 ? <TimelineTab></TimelineTab> : null}
       </Container>
       <TeamSpeedDial team={team}></TeamSpeedDial>
     </Box>
   );
+}
+
+const TimelineTab = () => {
+  return (
+    <Typography>This feature is still in development.</Typography>
+  )
+}
+
+const ProfileTab = ({team} : {team: TTeam}) => {
+  const { data: user } = useUser("me");
+  const { data: members } = useTeamMembers(team?.id);
+
+  return (
+    <Stack direction="column" spacing={4}>
+      {team.about ?
+        <OutlinedContainer>
+
+          <Typography variant="h6" color="primary">About</Typography>
+          <Typography>{team.about}</Typography>
+
+        </OutlinedContainer>
+        : null}
+      {members && members.length > 0 ? <OutlinedContainer>
+        <Typography variant="h6" color="primary">Squad</Typography>
+        <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
+          {members?.map(m => {
+            return (
+              <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
+                <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
+                  <Avatar sx={{ width: "100px", height: "100px", opacity: 0.5 }} src={m.avatar} ></Avatar>
+                  <Tooltip arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                    <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
+                  </Tooltip>
+                </Box>
+                <Typography>{m.name}</Typography>
+              </Box>
+            )
+          }
+          )}
+        </Box>
+      </OutlinedContainer> : null}
+    </Stack>
+  )
 }
 
 const TeamSpeedDial = ({ team }: { team: TTeam }) => {
