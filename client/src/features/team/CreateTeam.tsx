@@ -11,6 +11,7 @@ import {
   Box,
   Card,
   CardActionArea,
+  Tooltip,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -54,7 +55,7 @@ function NewTeamPage() {
 
   return (
     <BannerPage header={
-      <Typography variant="h2" sx={{fontWeight: 500}}>This is where it begins</Typography>
+      <Typography variant="h2" sx={{ fontWeight: 500 }}>This is where it begins</Typography>
     }>
       <LeaveTeamDialog
         onStay={(u) => navigate(`/teams/${u.team.name}`)}
@@ -66,8 +67,7 @@ function NewTeamPage() {
           manager: user.id,
           about: "",
           phoneNumber: "",
-          instagramUrl: "",
-          banner: "",
+          bannerUrl: "",
           picture: "",
         }}
         validationSchema={Yup.object(teamValidationSchema)}
@@ -80,27 +80,33 @@ function NewTeamPage() {
           });
         }}
       >
-        <Form>
-          <PromptContainer sx={{ gap: 7 }} maxWidth="sm">
-            <Stack direction="row" spacing={5} sx={{ width: "100%", justifyContent: "center" }}>
-              <Stack direction="column" spacing={2}>
-                <MyTextField label="Team name *" name="name"></MyTextField>
-                <MyTextField label="Slogan" name="about" variant="standard"></MyTextField>
+        {({ values }) =>
+          <Form>
+            <PromptContainer sx={{ gap: 7 }} maxWidth="md">
+              <Stack direction="row" spacing={5} sx={{ width: "100%", justifyContent: "center" }}>
+                <Stack direction="column" spacing={2}>
+                  <MyTextField label="Team name *" name="name"></MyTextField>
+                  <MyTextField label="Slogan" name="about" variant="standard"></MyTextField>
 
-                <MyTextField label="Phone number" name="phoneNumber" variant="standard"></MyTextField>
-                <MyTextField label="Instagram page" name="instagramUrl" variant="standard"></MyTextField>
+                  <MyTextField label="Phone number" name="phoneNumber" variant="standard"></MyTextField>
+
+                  <Tooltip title="Why link? As of now, it's too costly and time-consuming to setup a server dedicated to image uploads.">
+                    <MyTextField label="Link to banner (e.g. imgur)" name="bannerUrl" variant="standard"></MyTextField>
+                  </Tooltip>
+                </Stack>
+                <Card>
+                  <CardActionArea sx={{ height: "400px", width: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Box sx={{objectFit: "contain", width: "100%", height: "100%"}} component="img" src={values.bannerUrl}></Box>
+                    {/* <MyFileInput name="banner" sx={{ opacity: 1, position: "absolute" }}></MyFileInput> */}
+                    {/* <Camera></Camera> */}
+                  </CardActionArea>
+                </Card>
               </Stack>
-              <Card>
-                <CardActionArea sx={{ width: "200px", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <MyFileInput name="banner" sx={{ opacity: 1, position: "absolute" }}></MyFileInput>
-                  <Camera></Camera>
-                </CardActionArea>
-              </Card>
-            </Stack>
 
-            <Button type="submit" variant="contained" sx={{ width: "50%" }}>Submit</Button>
-          </PromptContainer>
-        </Form>
+              <Button type="submit" variant="contained" sx={{ width: "50%" }}>Submit</Button>
+            </PromptContainer>
+          </Form>
+        }
       </Formik>
     </BannerPage >
   );

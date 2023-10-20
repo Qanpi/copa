@@ -33,6 +33,7 @@ import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import { darkTheme } from "./themes.ts";
+import NotFoundPage from "./features/layout/NotFoundPage.tsx";
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
@@ -131,6 +132,8 @@ function App() {
                   path="/teams/:name"
                   element={<TeamProfilePage></TeamProfilePage>}
                 ></Route>
+
+                <Route path="*" element={<NotFoundPage></NotFoundPage>}></Route>
               </Routes>
             </LocalizationProvider>
           </DivisionDispatchContext.Provider>
