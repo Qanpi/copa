@@ -34,12 +34,12 @@ function JoinTeamPage() {
         token: values.token,
       });
 
-      return res.data;
+      return res.data as TUser;
     },
-    onSuccess: (team) => {
+    onSuccess: (user) => {
       //TODO: updated user's team via queryClient
       // queryClient.invalidateQueries(userKeys.details("me"));
-      navigate(`/teams/${team.name}`);
+      navigate(`/teams/${user.team.name}`);
     },
     onError: () => {
       setErrorAlert(true);
