@@ -1,14 +1,12 @@
-import express, { Request, Response } from "express";
+import express from "express";
 
-import mongoose from "mongoose";
-import * as divisions from "../controllers/divisionsController.js";
+import { body, param } from "express-validator";
 import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
-import tournamentRouter from "./tournament.js";
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
-import { body, checkSchema, param, query } from "express-validator";
-import { reportValidationErrors, validateObjectIdInBody } from "../middleware/validation.js";
+import { reportValidationErrors } from "../middleware/validation.js";
+import tournamentRouter from "./tournament.js";
 
 const router = express.Router();
 
@@ -37,7 +35,7 @@ router.use("/tournaments/:id", tournamentRouter);
 
 //TEAMS
 router.get("/teams", teams.getMultiple);
-router.post("/teams", isAuthMiddleware, validateObjectIdInBody("manager"), body("name").trim().isString().notEmpty(), reportValidationErrors, teams.createOne);
+router.post("/teams", isAuthMiddleware, body("manager").isMongoId(), body("name").trim().isString().notEmpty(), reportValidationErrors, teams.createOne);
 router.patch("/teams/:id", isAuthMiddleware, teams.updateOne);
 router.get("/teams/:id", teams.getById);
 router.get("/teams/:id/users", teams.getUsersInTeam);

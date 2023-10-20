@@ -27,9 +27,3 @@ export const isManagerOrAdmin = (user: Express.User | undefined, managerId?: str
 export const isInTeam = (user: Express.User | undefined, teamId: string) => {
   return user && user?.team === teamId;
 }
-
-export const validateObjectIdInBody = (fieldName: string) => {
-  return body(fieldName).custom(value => {
-    return isValidObjectId(value)
-  })
-}
