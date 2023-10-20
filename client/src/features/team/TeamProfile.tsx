@@ -2,62 +2,149 @@ import { Link } from "react-router-dom";
 import {
   Alert,
   AlertTitle,
+  Avatar,
   Box,
   Button,
+  ClickAwayListener,
   Container,
+  Dialog,
   IconButton,
   InputAdornment,
+  SpeedDial,
+  SpeedDialAction,
   SpeedDialIcon,
   Stack,
+  Tab,
+  Tabs,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRemoveUserFromTeam, useTeam } from "./hooks.ts";
-import { useUpdateUser, useUser } from "../user/hooks.ts";
+import { useTeamMembers, useUpdateUser, useUser } from "../user/hooks.ts";
 import BannerPage from "../viewer/BannerPage.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
 import { useTournament } from "../viewer/hooks.ts";
+import { useState } from "react";
+import NotFoundPage from "../layout/NotFoundPage.tsx";
+import { TTeam } from "@backend/models/team.ts";
+import { AddLink, ContentCopy, DeleteForever, Edit, MeetingRoom, VisibilityOff } from "@mui/icons-material";
 
 dayjs.extend(relativeTime);
 
 function TeamProfilePage() {
   //FIXME: think about encoding and decoding practices
   const { name } = useParams();
+  const encoded = name ? encodeURIComponent(name) : undefined;
+  const { data: team, status: teamStatus } = useTeam(encoded);
 
-  const { data: tournament } = useTournament("current");
+  const [selectedTab, setSelectedTab] = useState(0);
+  const handleChangeSelectedTab = (_, newTab: number) => {
+    setSelectedTab(newTab);
+  }
 
   const { data: user } = useUser("me");
-  const { data: team, status: teamStatus } = useTeam(name);
+  const { data: members } = useTeamMembers(team?.id);
 
-  const {
-    status: inviteStatus,
-    data: invite,
-    refetch: fetchInvite,
-  } = useQuery({
-    queryKey: ["invite"],
-    queryFn: async () => {
-      const invite = await axios.get(`/api/teams/${team.id}/invite`);
+  if (teamStatus !== "success") {
+    return <div>loadgi team profiel</div>;
+  }
+
+  if (!team) return <NotFoundPage></NotFoundPage>
+
+  //FIXME: refactor to model
+  // const isRegistration = tournament?.registration?.from && tournament?.registration?.from >= new Date() && (tournament?.registration?.to ? tournament?.registration?.to <= new Date() : true);
+
+  return (
+    <Box sx={{ pt: 15 }}>
+      <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
+        <Box component={"img"} sx={{ objectFit: "contain", maxHeight: "300px", maxWidth: "300px", width: "30vw", position: "absolute" }} src={team.bannerUrl}>
+        </Box>
+        <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "310px" } }}>
+          <Typography variant="h5">THIS IS</Typography>
+          <Typography variant="h1" fontWeight={800}>{team.name}</Typography>
+        </Stack>
+        <Typography variant="subtitle1" sx={{ ml: "auto", alignSelf: "end" }}>Est. {dayjs(team.createdAt).format("YYYY")}</Typography>
+      </GradientTitle>
+      <Box sx={{ ml: { xs: "38vw", md: "calc(300px + 5vw)" }, height: "50px" }}>
+        <Tabs value={selectedTab} onChange={handleChangeSelectedTab}>
+          <Tab label="Profile"></Tab>
+          <Tab label="Timeline"></Tab>
+          <Tab label="Settings"></Tab>
+        </Tabs>
+      </Box>
+      <Container maxWidth="md" sx={{ p: 5, pt: 10 }}>
+        <Stack direction="column" spacing={4}>
+          {team.about ?
+            <>
+              <Typography variant="h6" color="primary">About</Typography>
+              <Typography>{team.about}</Typography></> : null}
+          {members && members.length > 0 ? <Box>
+            <Typography variant="h6" color="primary">Squad</Typography>
+            <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
+              {members?.map(m => {
+                return (
+                  <Box sx={{alignItems: "center", flexDirection: "column"}} display="flex">
+                    <Box key={m.id}  display="flex" alignItems="center" justifyContent={"center"}>
+                      <Avatar sx={{ width: "100px", height: "100px", opacity: 0.5 }} src={m.avatar} ></Avatar>
+                      <Tooltip title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                        <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
+                      </Tooltip>
+                    </Box>
+                    <Typography>{m.name}</Typography>
+                  </Box>
+                )
+              }
+              )}
+            </Box>
+          </Box> : null}
+        </Stack>
+      </Container>
+      <TeamSpeedDial team={team}></TeamSpeedDial>
+    </Box>
+  );
+}
+
+const TeamSpeedDial = ({ team }: { team: TTeam }) => {
+  const { data: tournament } = useTournament("current");
+  const { data: user } = useUser("me");
+
+  const fetchInvite = useMutation({
+    mutationFn: async (values: Partial<TTeam>) => {
+      const invite = await axios.get(`/api/teams/${values.id}/invite`);
       const { token, expiresAt } = invite.data;
 
       const domain = window.location.host;
+
       return {
-        link: `${domain}/team/join?id=${team.id}&token=${token}`,
+        link: `${domain}/team/join?id=${values.id}&token=${token}`,
         countdown: dayjs().to(expiresAt),
       };
     },
 
-    enabled: false,
-    staleTime: Infinity,
   });
+  const [invite, setInvite] = useState({
+    link: undefined,
+    countdown: undefined
+  });
+
+  const handleFetchInvite = () => {
+    fetchInvite.mutate(team, {
+      onSuccess: (data) => {
+        setInvite(data);
+      }
+    })
+  }
 
   const handleCopyInviteLink = () => {
     navigator.clipboard.writeText(invite?.link);
+    setInvite({})
   };
 
   const removeUserFromTeam = useRemoveUserFromTeam();
@@ -65,41 +152,24 @@ function TeamProfilePage() {
     removeUserFromTeam.mutate({ userId: user.id, teamId: team.id });
   };
 
-  if (teamStatus !== "success") {
-    return <div>loadgi team profiel</div>;
-  }
-
-  if (!team) return <PromptContainer>
-    <Typography>404 not found. Sorry, we went looking for this page but we couldn't find who asked.</Typography>
-  </PromptContainer>
-
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
-  console.log(tournament)
-  //FIXME: refactor to model
-  // const isRegistration = tournament?.registration?.from && tournament?.registration?.from >= new Date() && (tournament?.registration?.to ? tournament?.registration?.to <= new Date() : true);
+
+  <Container maxWidth="md">
+    {isManager && tournament?.registration?.isOpen ? <Link to={`/tournament/register`}>
+      <Button>Register</Button></Link> : null}
+    {isMember ? <Button onClick={handleLeaveTeam}>Leave team</Button> : null}
+  </Container>
 
   return (
-    <Box sx={{ mt: -6 }}>
-      <GradientTitle justifyContent={"left"} paddingLeft={"20vw"}>
-        <Box component={"img"}>
-
-        </Box>
-        <Stack spacing={-1} direction="column">
-          <Typography variant="h5">THIS IS</Typography>
-          <Typography variant="h2">{team.name.toUpperCase()}</Typography>
-        </Stack>
-      </GradientTitle>
-      <Container maxWidth="md">
-        {isManager ? <Button onClick={() => fetchInvite()}>Invite</Button> : null}
-        {isManager && tournament?.registration?.isOpen ? <Link to={`/tournament/register`}>
-          <Button>Register</Button></Link> : null}
-        {inviteStatus === "success" ? (
+    <>
+      <Dialog open={invite?.link}>
+        <ClickAwayListener onClickAway={() => setInvite({})}>
           <Alert>
             <AlertTitle>Generated invite link!</AlertTitle>
             <Typography>
               Only share this link with players you trust. The invite will
-              automatically expire {invite.countdown}.
+              automatically expire {invite.countdown} or when you request a new link.
             </Typography>
             <TextField
               fullWidth
@@ -108,19 +178,26 @@ function TeamProfilePage() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={handleCopyInviteLink}>
-                      <SpeedDialIcon></SpeedDialIcon>
+                      <ContentCopy></ContentCopy>
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
               value={invite.link}
+              sx={{ mt: 1 }}
             ></TextField>
           </Alert>
-        ) : null}
-        {isMember ? <Button onClick={handleLeaveTeam}>Leave team</Button> : null}
-      </Container>
-    </Box>
-  );
+        </ClickAwayListener>
+      </Dialog>
+      <SpeedDial ariaLabel="Team Speed Dial" sx={{ position: "absolute", bottom: 30, right: 30 }}
+        icon={<SpeedDialIcon></SpeedDialIcon>}>
+        {isManager ? <SpeedDialAction icon={<Edit></Edit>} tooltipTitle="Edit profile"></SpeedDialAction> : null}
+        {isManager ? <SpeedDialAction icon={<AddLink></AddLink>} tooltipTitle="Invite member" onClick={handleFetchInvite}></SpeedDialAction> : null}
+        <SpeedDialAction icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team"></SpeedDialAction>
+        {isManager ? <SpeedDialAction icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete team"></SpeedDialAction> : null}
+      </SpeedDial>
+    </>
+  )
 }
 
 export default TeamProfilePage;

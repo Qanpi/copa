@@ -4,7 +4,7 @@ import { TUser } from "@backend/models/user.ts";
 import { useTeam, useUpdateTeam } from "../team/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
 
-export const userKeys = queryKeyFactory<TUser>("users");
+export const userKeys = queryKeyFactory<TUser & {teamId?: string}>("users");
 
 export const useUser = (id?: string) => {
   return useQuery({
@@ -39,3 +39,18 @@ export const useUpdateUser = () => {
     },
   });
 };
+
+export const useTeamMembers = (teamId: string) => {
+  const queryClient = useQueryClient();
+
+  return useQuery({
+    queryKey: userKeys.list({teamId}),
+
+    queryFn: async () => {
+      const res = await axios.get(`/api/teams/${teamId}/users`);
+      return res.data as TUser[];
+    },
+
+    enabled: !!teamId
+  })
+}

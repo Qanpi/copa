@@ -21,7 +21,7 @@ import RegistrationPage from "./features/participant/registration.tsx";
 import BracketPage from "./features/stage/Bracket.tsx";
 import GroupStagePage from "./features/stage/GroupStage.tsx";
 import NewTeamPage from "./features/team/CreateTeam.tsx";
-import JoinTeamPage from "./features/team/JoinTeam.js";
+import JoinTeamPage from "./features/team/JoinTeam.tsx";
 import NoTeamPage from "./features/team/NoTeamPage.tsx";
 import TeamProfilePage from "./features/team/TeamProfile.tsx";
 import ProfilePage from "./features/user/Profile.tsx";

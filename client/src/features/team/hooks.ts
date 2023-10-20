@@ -4,6 +4,7 @@ import { queryKeyFactory } from "../types";
 import { TTeam } from "@backend/models/team";
 import { useNavigate } from "react-router-dom";
 import { userKeys } from "../user/hooks";
+import { participantKeys } from "../participant/hooks";
 
 export const teamKeys = queryKeyFactory<TTeam>("team");
 
@@ -75,4 +76,5 @@ export const useRemoveUserFromTeam = () => {
 
   })
 }
+
 
