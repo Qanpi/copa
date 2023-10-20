@@ -225,6 +225,36 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(500);
   });
 
+  it("should reject registration if no deadline", async () => {
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration": {}
+    });
+
+    const res = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[0],
+      });
+
+    expect(res.status).toEqual(500);
+  })
+
+  it("should allow admin to bypass registration deadlines", async () => {
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration.to": dayjs().subtract(1, "minute").toDate(),
+    });
+
+    const res = await admin
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[0],
+      });
+
+    expect(res.status).toEqual(201);
+  })
+
   it.todo("should get all registered participants")
 
   afterEach(async () => {

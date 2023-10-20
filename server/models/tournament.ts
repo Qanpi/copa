@@ -95,7 +95,7 @@ TournamentSchema.virtual("registration.isOpen").get(function () {
 // })
 
 
-export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, name: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[] } & ObtainSchemaGeneric<typeof TournamentSchema, "TVirtuals">;
+export type TTournament = InferSchemaType<typeof TournamentSchema> & { id: string, name: string, state: keyof typeof TournamentStates, states: (keyof typeof TournamentStates)[], registration?: {isOpen: boolean} } & ObtainSchemaGeneric<typeof TournamentSchema, "TVirtuals">;
 
 const Tournament = mongoose.model<TTournament>("Tournament", TournamentSchema);
 export default Tournament as typeof Tournament & { getLatest: () => Promise<TTournament> };

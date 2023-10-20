@@ -44,14 +44,9 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   if (!tournament.divisions.some(d => d.id === req.body.division))
     throw new Error("The division does not exist in the latest tournament.")
 
-  const from = tournament.registration?.from;
-  const to = tournament.registration?.to;
-
-  if (!from || from >= new Date())
-    throw new Error("Registration isn't open yet.")
-
-  if (to && to <= new Date())
-    throw new Error("Registration is already over.")
+  if(!tournament.registration?.isOpen && !isAdmin(req.user)) {
+    throw new Error("Registration is not open.")
+  }
 
   const previous = await Participant.findOne({
     team: team.id,
