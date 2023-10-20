@@ -4,25 +4,36 @@ import TimelineContent from "@mui/lab/TimelineContent/TimelineContent.js";
 import TimelineDot from "@mui/lab/TimelineDot/TimelineDot.js";
 import TimelineItem from "@mui/lab/TimelineItem/TimelineItem.js";
 import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator.js";
-import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography } from "@mui/material";
+import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography, Tooltip, Tabs, Tab, Button } from "@mui/material";
 import { useParams } from "react-router";
-import { useUser, userKeys } from "./hooks.ts";
+import { useUpdateUser, useUser, userKeys } from "./hooks.ts";
 import { LoadingBackdrop } from "../viewer/header.tsx";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import OutlinedContainer from "../layout/OutlinedContainer.tsx";
 import { useQueryClient } from "@tanstack/react-query";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
+import { Form, Formik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup"
+import { TUser } from "@backend/models/user.ts";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 
 function ProfilePage() {
   const { id } = useParams();
   const { status: userStatus, data: user, error } = useUser(id);
+
+  const [selectedTab, setSelectedTab] = useState(0);
 
   if (!user) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (user === "private") return <PromptContainer>
     <Typography>This profile is private</Typography>
   </PromptContainer>
+
+  const handleChangeSelectedTab = (_, newTab: number) => {
+    setSelectedTab(newTab);
+  }
 
   return <Container maxWidth="lg" sx={{ display: "flex", justifyContent: "center", alignItems: "center", pt: 10 }}>
     <Stack direction="column" spacing={5}>
@@ -37,9 +48,17 @@ function ProfilePage() {
           </Typography>
         </Box>
       </Stack>
-      <OutlinedContainer>
-        <FormControlLabel control={<Switch></Switch>} label={"Publish profile"}></FormControlLabel>
-      </OutlinedContainer>
+      <Box>
+        <Tabs value={selectedTab} onChange={handleChangeSelectedTab} sx={{ mb: 5 }}>
+          <Tab label="Timeline"></Tab>
+          <Tab label="Preferences"></Tab>
+        </Tabs>
+
+        <OutlinedContainer>
+          {selectedTab === 0 ? <TimelineTab user={user}></TimelineTab> : null}
+          {selectedTab === 1 ? <PreferencesTab user={user}></PreferencesTab> : null}
+        </OutlinedContainer>
+      </Box>
     </Stack>
   </Container>
 
@@ -58,18 +77,67 @@ function ProfilePage() {
       </div>
       <div className="timeline">
         <h3>Timeline</h3>
-        <Timeline>
-          <TimelineItem>
-            <TimelineSeparator>
-              <TimelineDot />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>Eat</TimelineContent>
-          </TimelineItem>
-        </Timeline>
       </div>
     </>
   ) : <div>Loading..</div>;
+}
+
+const TimelineTab = ({ user }: { user: TUser }) => {
+  return (
+    <Box sx={{ minHeight: "50vh", display: "flex", alignItems: "end" }}>
+      <Timeline position="left">
+        <TimelineItem>
+          <TimelineSeparator>
+            <TimelineDot></TimelineDot>
+            <TimelineConnector></TimelineConnector>
+          </TimelineSeparator>
+          <TimelineContent>What's next?</TimelineContent>
+        </TimelineItem>
+        <TimelineItem>
+          <TimelineOppositeContent color="text.secondary">{dayjs(user.createdAt).format("DD.MM.YYYY")}</TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot />
+          </TimelineSeparator>
+          <TimelineContent>Joined</TimelineContent>
+        </TimelineItem>
+      </Timeline>
+    </Box>
+  );
+}
+
+type TUserAny = {
+  [key in keyof TUser]?: any
+}
+
+const userValidationSchema: TUserAny = {
+  name: Yup.string().trim().max(20).required(),
+  preferences: {
+    publicProfile: Yup.bool(),
+  }
+}
+
+const PreferencesTab = ({ user }: { user: TUser }) => {
+  const updateUser = useUpdateUser();
+
+  const handleUpdatePreferences = (values: TUser) => {
+    updateUser.mutate(values);
+  }
+
+  return (
+    <Formik initialValues={user} validationSchema={userValidationSchema}>
+      <Form>
+        {
+
+          <Stack direction="column" sx={{ minHeight: "400px" }}>
+            <Tooltip title="Make profile publicly accessible to anyone" arrow>
+              <FormControlLabel control={<Switch></Switch>} label={"Publish profile"}></FormControlLabel>
+            </Tooltip>
+            <Button type="submit" sx={{ mt: "auto", width: "30%" }}>Save</Button>
+          </Stack>
+        }
+      </Form>
+    </Formik>
+  )
 }
 
 export default ProfilePage;
