@@ -43,6 +43,7 @@ const MatchSchema = new mongoose.Schema(
     opponent1: ParticipantResultSchema,
     opponent2: ParticipantResultSchema,
 
+    location: String,
     start: { type: Date },
     end: { type: Date }, //TODO: validate end exists if start exists
     duration: { type: Number, default: 6 }, //in minutes  //FIXME: deprecated
