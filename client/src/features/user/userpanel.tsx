@@ -31,7 +31,7 @@ function UserPanel() {
       <Link to={`/users/${user.id}`}>
         <MenuItem>Profile</MenuItem>
       </Link>
-      <Link to={`/team/${user.team ? user.team.name : "none"}`}>
+      <Link to={user.team ? `/teams/${user.team.name}` : "/team/none"}>
         <MenuItem>My team</MenuItem>
       </Link>
       <MenuItem onClick={_ => logout.mutate()}>Sign out</MenuItem>
