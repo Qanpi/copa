@@ -4,6 +4,7 @@ import { isAdmin, isInTeam, isManagerOrAdmin } from "../middleware/validation.js
 import Team from "../models/team.js";
 import { Document, HydratedDocument, Types } from "mongoose";
 import Tournament from "../models/tournament.js";
+import { StatusError } from "../middleware/auth.js";
 
 export const getMany = expressAsyncHandler(async (req, res) => {
   //translateAliases because division = tournament_id;
@@ -33,8 +34,8 @@ export const createOne = expressAsyncHandler(async (req, res) => {
   if (!team)
     throw new Error("Provided team does not exist.")
 
-  if (!isInTeam(req.user, team.id) && !isAdmin(req.user))
-    throw new Error("User is not in team and is not admin.")
+  if (!isManagerOrAdmin(req.user, team.manager))
+    throw new StatusError("User is not manager and is not admin.", 403)
 
   const tournament = await Tournament.findById(req.params.id);
   if (!tournament)
