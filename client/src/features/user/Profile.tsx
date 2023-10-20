@@ -35,13 +35,13 @@ function ProfilePage() {
     setSelectedTab(newTab);
   }
 
-  return <Container maxWidth="lg" sx={{ display: "flex", justifyContent: "center", alignItems: "center", pt: 10 }}>
+  return <Container maxWidth="md" sx={{ display: "flex", justifyContent: "center", alignItems: "center", pt: 10 }}>
     <Stack direction="column" spacing={5}>
       <Stack direction="row" spacing={3} alignItems={"center"}>
         <Avatar src={user.avatar} sx={{ width: 150, height: 150 }}></Avatar>
         <Box>
-          <Typography variant="h2" sx={{ mb: 0 }}>{user.name}</Typography>
-          <Typography variant="h5" >
+          <Typography variant="h2" sx={{ mb: 1 }}>{user.name}</Typography>
+          <Typography variant="h5" sx={{ml: "3px"}}>
             <Link to={`/teams/${user.team?.name}`}>
               {user.team?.name}
             </Link>
@@ -111,9 +111,9 @@ type TUserAny = {
 
 const userValidationSchema: TUserAny = {
   name: Yup.string().trim().max(20).required(),
-  preferences: {
-    publicProfile: Yup.bool(),
-  }
+  preferences: Yup.object({
+    publicProfile: Yup.bool().required()
+  })
 }
 
 const PreferencesTab = ({ user }: { user: TUser }) => {
@@ -124,18 +124,19 @@ const PreferencesTab = ({ user }: { user: TUser }) => {
   }
 
   return (
-    <Formik initialValues={user} validationSchema={userValidationSchema}>
-      <Form>
-        {
-
+    <Formik initialValues={user} validationSchema={Yup.object(userValidationSchema)} onSubmit={handleUpdatePreferences}>
+      {({ setFieldValue, values }) => {
+        return (
+        <Form>
           <Stack direction="column" sx={{ minHeight: "400px" }}>
             <Tooltip title="Make profile publicly accessible to anyone" arrow>
-              <FormControlLabel control={<Switch></Switch>} label={"Publish profile"}></FormControlLabel>
+              <FormControlLabel value={"on"} onChange={(_, v) => setFieldValue("preferences.publicProfile", v)} control={<Switch checked={values.preferences?.publicProfile}></Switch>} label={"Publish profile"}></FormControlLabel>
             </Tooltip>
             <Button type="submit" sx={{ mt: "auto", width: "30%" }}>Save</Button>
           </Stack>
-        }
-      </Form>
+        </Form>
+      )}
+      }
     </Formik>
   )
 }

@@ -117,13 +117,15 @@ const ProfileTab = ({team} : {team: TTeam}) => {
         <Typography variant="h6" color="primary">Squad</Typography>
         <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
           {members?.map(m => {
+            const visible = m?.preferences?.publicProfile;
+
             return (
               <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
                 <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
-                  <Avatar sx={{ width: "100px", height: "100px", opacity: 0.5 }} src={m.avatar} ></Avatar>
-                  <Tooltip arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                  <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
+                  {visible ? null : <Tooltip arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
                     <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
-                  </Tooltip>
+                  </Tooltip>}
                 </Box>
                 <Typography>{m.name}</Typography>
               </Box>

@@ -82,7 +82,7 @@ export const getUsersInTeam = expressAsyncHandler(async (req, res) => {
 
   const members = await User.find({
     "team.id": team.id,
-    "preferences.publicProfile": !privateAccess
+    "preferences.publicProfile": (privateAccess ? undefined : true)
   })
 
   res.send(members);
