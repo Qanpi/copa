@@ -70,21 +70,7 @@ function RegistrationPage() {
 
     if (!user.team) return <NoTeamPage></NoTeamPage>;
 
-    if (participantStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
 
-    if (participant) {
-      const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]
-      const random = Math.floor(Math.random() * terms.length);
-
-      return (
-        <PromptContainer>
-          <Typography variant="h5">Congratulations! {team.name} is already registered.</Typography>
-          <Button sx={{ mt: 3 }} variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
-            {terms[random]}
-          </Button>
-        </PromptContainer>
-      );
-    }
 
     if (!team) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
@@ -107,8 +93,28 @@ function RegistrationPage() {
 
   if (userStatus !== "success" || !tournament) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
+  if (participantStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
+
+  if (participant) {
+    const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]
+    const random = Math.floor(Math.random() * terms.length);
+
+    return (
+      <BannerPage title="Congratulations!">
+        <PromptContainer>
+          <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
+            <Typography variant="h5">{team.name} is registered.</Typography>
+            <Button variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
+              {terms[random]}
+            </Button>
+          </Stack>
+        </PromptContainer>
+      </BannerPage>
+    );
+  }
+
   return (
-    <BannerPage title={"Register"}>
+    <BannerPage title={`Register for ${tournament.name}`}>
       {getActivePrompt()}
     </BannerPage>
   );
