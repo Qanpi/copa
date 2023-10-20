@@ -46,7 +46,7 @@ const TeamSchema = new mongoose.Schema(
           "team.id": this.id,
           _id: { $ne: this.manager },
         });
-        this.manager = newManager ? newManager.id : null;
+        this.manager = newManager ? newManager.id : undefined;
         //TODO: document the fact this doesn't delete the team
 
         return await this.save();
