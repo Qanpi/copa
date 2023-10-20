@@ -6,10 +6,16 @@ import User, { TUser } from "../models/user.js";
 import { Request } from "express";
 import { isManagerOrAdmin, isLoggedInAsUser, isAdmin } from "../middleware/validation.js";
 import { t } from "ts-brackets-viewer/dist/lang.js";
+import { StatusError } from "../middleware/auth.js";
 
 export const createOne = expressAsyncHandler(async (req, res, next) => {
-  const team = await Team.create(req.body);
+  if (req.user?.team)
+    throw new StatusError("Already in a team.", 403)
 
+  if (!isManagerOrAdmin(req.user, req.body.manager))
+    throw new StatusError("Neither manager nor admin.", 403)
+
+  const team = await Team.create(req.body);
   res.status(201).send(team);
 });
 
@@ -49,7 +55,7 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
 })
 
 export const getUsersInTeam = expressAsyncHandler(async (req, res) => {
-  const players = await User.find({ team: req.params.id });
+  const players = await User.find({ "team.id": req.params.id });
   res.send(players);
 });
 
@@ -57,7 +63,7 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
   const userId = req.params.userId;
 
   if (!isLoggedInAsUser(req.user, userId) && !isAdmin(req.user))
-    throw new Error("Unauthorized request.");
+    throw new StatusError("Unauthorized request.", 403);
 
   const team = await Team.findById(req.params.teamId);
   if (!team)
@@ -106,15 +112,15 @@ export const joinViaInviteToken = expressAsyncHandler(async (req, res) => {
     throw new Error("Strange... no auth.")
 
   if(req.user?.team) 
-    throw new Error("User is already in a team.")
+    throw new StatusError("User is already in a team.", 403)
 
   if (team.invite?.token === token && team.invite.expiresAt && team.invite.expiresAt >= new Date()) {
     const updated = await User.findByIdAndUpdate(req.user.id, {
       team
-    });
+    }, {new: true});
     res.status(201).send(updated);
   } else {
-    throw new Error("Invalid token.")
+    throw new StatusError("Invalid token.", 403)
   }
 })
 
@@ -125,7 +131,7 @@ export const generateInviteToken = expressAsyncHandler(async (req, res) => {
     throw new Error("Invalid team.")
 
   if (!isManagerOrAdmin(req.user, team.manager?.toString()))
-    throw new Error("Unauthorized request");
+    throw new StatusError("Neither manager nor in team.", 403);
 
   const random = crypto.randomBytes(16);
   const encoded = random.toString("base64url");

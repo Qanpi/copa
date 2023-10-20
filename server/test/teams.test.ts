@@ -6,12 +6,11 @@ import { ObjectId } from "mongodb";
 const admin = request.agent(app);
 const auth = request.agent(app);
 const auth2 = request.agent(app);
+const auth3 = request.agent(app);
 const viewer = request.agent(app);
 
 describe("Teams management logic", function () {
-  beforeAll(async function () {
-    await admin.delete("/");
-
+  beforeEach(async function () {
     await admin.post("/login/tests")
       .send({ username: "admin", password: "admin" });
 
@@ -20,6 +19,9 @@ describe("Teams management logic", function () {
 
     await auth2.post(`/login/tests`)
       .send({ username: "user2", password: "user2" })
+
+    const user3 = await auth3.post(`/login/tests`)
+      .send({ username: "user3", password: "user3" })
   })
 
   it("should reject team with no manager", async function () {
@@ -27,9 +29,17 @@ describe("Teams management logic", function () {
     expect(res.status).toEqual(500);
   })
 
+  it("should reject team with no name", async function () {
+    const { body: manager } = await auth.get("/me");
+
+    const res = await auth.post("/api/teams")
+      .send({ manager: manager.id });
+
+    expect(res.status).toEqual(500);
+  })
+
   it("should create team and assign manager", async function () {
     const user = await auth.get("/me");
-
     const team = await auth.post("/api/teams").send({ name: "Tinpot", manager: user.body.id });
 
     expect(team.body.name).toEqual("Tinpot");
@@ -52,7 +62,11 @@ describe("Teams management logic", function () {
     const name = "   T! * ' ( ) ; : @ & = + $ , / ? % # [ ]!@ $% #^ &@)~)}{ }~   ";
     const { body: team } = await auth.post("/api/teams").send({ name, manager: user.id });
 
-    expect(team.name).toStrictEqual(encodeURIComponent(name.trim()))
+    const { body: check1 } = await auth.get(`/api/teams?name=${name}`);
+    expect(check1).toHaveLength(0);
+
+    const { body: check2 } = await auth.get(`/api/teams?name=${encodeURIComponent(name.trim())}`);
+    expect(check2).toHaveLength(1);
   })
 
 
@@ -78,6 +92,7 @@ describe("Teams management logic", function () {
     let { body: user } = await auth.get("/me");
     const { body: team } = await auth.post("/api/teams").send({ name: "Tinpot", manager: user.id });
 
+    await auth.get("/me");
     const res = await auth.delete(`/api/teams/${team.id}/users/${user.id}`);
     expect(res.status).toEqual(204);
 
@@ -96,14 +111,12 @@ describe("Teams management logic", function () {
 
     await auth.get("/me");
     const res2 = await auth.post("/api/teams").send({ name: "Tinpot 2", manager: user.id });
-
-    expect(res.status).toEqual(500);
+    expect(res2.status).toEqual(403);
   })
 
   describe("Invite link", function () {
     let teamId: string;
     let invite: { token: string, expiresAt: Date };
-    const auth3 = request.agent(app);
 
     beforeEach(async () => {
       let { body: user } = await auth.get("/me");
@@ -112,10 +125,6 @@ describe("Teams management logic", function () {
 
       const res = await auth.get(`/api/teams/${teamId}/invite`);
       invite = res.body;
-
-
-      const user3 = await auth3.post(`/login/tests`)
-        .send({ username: "user3", password: "user3" })
     })
 
     it("should reject invite link request for non-member", async function () {
@@ -132,7 +141,6 @@ describe("Teams management logic", function () {
     it("should claim invite link and join team, but not disturb it", async function () {
       const res = await auth2.post(`/api/teams/${teamId}/join`)
         .send({ token: invite.token });
-
       expect(res.status).toEqual(201);
 
       const { body: updated } = await auth2.get(`/me`);
@@ -157,7 +165,7 @@ describe("Teams management logic", function () {
       const res = await auth2.post(`/api/teams/${fakeTeam.id}/join`)
         .send({ token: invite.token });
 
-      expect(res.status).toEqual(500);
+      expect(res.status).toEqual(403);
     })
 
     it("should reject invite link if user already in a team", async function () {
@@ -170,14 +178,14 @@ describe("Teams management logic", function () {
       const res = await auth2.post(`/api/teams/${teamId}/join`)
         .send({ token: invite.token });
 
-      expect(res.status).toEqual(500);
+      expect(res.status).toEqual(403);
     })
 
     it("should reject invite link with invalid token", async function () {
       const res = await auth2.post(`/api/teams/${teamId}/join`)
         .send({ token: invite.token + 'a' });
 
-      expect(res.status).toEqual(500);
+      expect(res.status).toEqual(403);
     })
 
     it("should invalidate token after refresh", async function () {
@@ -206,7 +214,7 @@ describe("Teams management logic", function () {
       const res2 = await auth3.post(`/api/teams/${teamId}/join`)
         .send({ token: invite.token });
 
-      expect(res2.status).toEqual(500);
+      expect(res2.status).toEqual(403);
     })
 
     it("should reject invite link for member", async function () {
@@ -222,7 +230,7 @@ describe("Teams management logic", function () {
 
     //TODO: manually add member to team
     const { body: member } = await auth2.get("/me");
-    await admin.post(`/api/teams/${team.id}/players`).send(
+    await admin.post(`/api/teams/${team.id}/users`).send(
       {
         user: member.id
       }
@@ -265,7 +273,7 @@ describe("Teams management logic", function () {
     expect(res.status).toEqual(403);
   })
 
-  it.todo("should reject removing a different member", async () => {
+  it("should reject removing a different member", async () => {
     const { body: manager } = await auth.get("/me");
     const { body: team } = await auth.post("/api/teams").send({ name: "Tinpot", manager: manager.id });
 
