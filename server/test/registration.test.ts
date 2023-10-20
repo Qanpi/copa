@@ -7,6 +7,7 @@ import { TDivision } from "../models/division.js";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
+const auth2= request.agent(app);
 const viewer = request.agent(app);
 
 let teamId: string;
@@ -22,6 +23,11 @@ describe("Registration stage", () => {
     await auth.post("/login/tests").send({
       username: "user",
       password: "user",
+    });
+
+    await auth2.post("/login/tests").send({
+      username: "user2",
+      password: "user2",
     });
   });
 
@@ -51,7 +57,20 @@ describe("Registration stage", () => {
     teamId = resTeam.body.id;
   });
 
-  it.todo("should reject registration if not manager");
+  it("should reject registration if not manager", async () => {
+    //manually insert member
+    const {body: member} = await auth2.get("/me");
+    await admin.post(`/api/teams${teamId}/users/${member.id}`);
+
+    const res = await auth2
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[1],
+      });
+
+    expect(res.status).toEqual(403);
+  });
 
   it("should register participant", async () => {
     const res = await auth
