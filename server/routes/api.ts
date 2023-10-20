@@ -47,7 +47,7 @@ router.post("/teams/:id/join", isAuthMiddleware, body("token").isBase64({urlSafe
 
 //USERS
 router.get("/users", isAuthorizedMiddleware, users.getMultiple);
-router.get("/users/:id", isAuthMiddleware, users.getOneById);
+router.get("/users/:id",users.getOneById);
 router.patch("/users/:id", isAuthMiddleware, users.updateOne);
 router.post("/users", isAuthorizedMiddleware, users.createOne);
 router.delete("/users/:id", isAuthMiddleware, users.deleteOne);
