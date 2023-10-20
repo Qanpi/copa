@@ -20,6 +20,7 @@ const ParticipantSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: collections.teams.id,
     },
+    bannerUrl: String,
     //TODO: make this more secure
     phoneNumber: {
       type: String,
@@ -33,7 +34,7 @@ const ParticipantSchema = new mongoose.Schema(
   }
 );
 
-ParticipantSchema.virtual("createdAd").get(function () {
+ParticipantSchema.virtual("createdAt").get(function () {
   return this._id.getTimestamp();
 })
 

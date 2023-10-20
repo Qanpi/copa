@@ -57,7 +57,7 @@ export const createOne = expressAsyncHandler(async (req, res) => {
     throw new Error("Registration for this team already exists in the latest tournament.")
 
   const participation = await new Participant(
-    Participant.translateAliases({ ...req.body, tournament: req.params.id, name: team.name })
+    Participant.translateAliases({ ...req.body, tournament: req.params.id, name: team.name, bannerUrl: team.bannerUrl })
   ).save();
 
   res.status(201).send(participation);
