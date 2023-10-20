@@ -21,7 +21,7 @@ export const isAuthorizedMiddleware = expressAsyncHandler(async (req, res, next)
     next();    
 })
 
-class StatusError extends Error {
+export class StatusError extends Error {
     status: number | undefined;
     
     constructor(message?: string, status?: number, options?: ErrorOptions) {
