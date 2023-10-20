@@ -111,9 +111,10 @@ router.delete("/logout", (req, res, next) => {
 
 router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
-    const user = await User.findById(req.user.id);
+    let user = await User.findById(req.user.id);
 
-    if (!user) throw new Error("User is authenticated but not in the database?")
+    if (!user) user = await User.create(req.user); // maybe make only possible for dev?
+
     //pull out any sensitive fields
     const { googleId, ...sanitized } = user.toObject();
 
