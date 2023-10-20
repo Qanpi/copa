@@ -72,17 +72,20 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
   //FIXME: type assertion
   const participant = await Participant.findById(req.params.id);
 
-  if (!participant?.team)
+  //TODO: unnecessary check, rather save manager to participant in the future
+  const team = await Team.findById(participant?.team);
+
+  if (!team || !participant)
     throw new Error("Invalid team or participant");
 
-  if (isAdmin(req.user) || isInTeam(req.user, participant.team.toString())) {
+  if (isManagerOrAdmin(req.user, team.manager)) {
     await participant.deleteOne();
     res.status(204).send({});
 
     return;
   }
 
-  throw new Error("User is neither in team nor admin.")
+  throw new StatusError("User is neither team manager nor admin.", 403);
 });
 
 export const updateOne = expressAsyncHandler(async (req, res) => {

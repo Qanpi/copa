@@ -7,7 +7,7 @@ import { TDivision } from "../models/division.js";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
-const auth2= request.agent(app);
+const auth2 = request.agent(app);
 const viewer = request.agent(app);
 
 let teamId: string;
@@ -59,8 +59,11 @@ describe("Registration stage", () => {
 
   it("should reject registration if not manager", async () => {
     //manually insert member
-    const {body: member} = await auth2.get("/me");
-    await admin.post(`/api/teams${teamId}/users/${member.id}`);
+    const { body: member } = await auth2.get("/me");
+    const { body: updated } = await admin.post(`/api/teams/${teamId}/users`)
+      .send({ user: member.id });
+
+    expect(updated.team.id).toEqual(teamId);
 
     const res = await auth2
       .post(`/api/tournaments/${tournamentId}/participants`)
@@ -124,6 +127,28 @@ describe("Registration stage", () => {
 
     expect(check.body).toHaveLength(0);
   });
+
+  it("should reject member's attempt to unregister", async () => {
+    const { body: member } = await auth2.get('/me');
+    await admin.post(`/api/teams/${teamId}/users`)
+      .send({
+        user: member.id
+      })
+
+    const { body: og } = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[0],
+      });
+
+    await auth2.get("/me");
+    const res = await auth2.delete(
+      `/api/tournaments/${tournamentId}/participants/${og.id}`
+    );
+
+    expect(res.status).toEqual(403);
+  })
 
   it("should reject duplicate registration by team", async () => {
     const res = await auth

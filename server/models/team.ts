@@ -75,6 +75,6 @@ TeamSchema.pre("deleteOne", async function () {
   }
 })
 
-export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods">;
+export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods"> & {manager?: string};
 
 export default mongoose.model<TTeam>(collections.teams.id, TeamSchema);
