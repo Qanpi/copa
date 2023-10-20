@@ -1,5 +1,6 @@
 import Timeline, { OnItemDragObjectBase, TimelineItemBase } from "react-calendar-timeline"
 import 'react-calendar-timeline/lib/Timeline.css'
+import './MatchesTimeline.css'
 
 import { useDivisions, useTournament } from "../viewer/hooks";
 import { useMatches, useUpdateMatch } from "./hooks";

@@ -1,7 +1,7 @@
 import { Box, Card, CardContent, CardProps, Container, ThemeProvider, Typography } from "@mui/material"
 import { lightTheme } from "../../themes";
 
-const NumberCard = ({sx, number, children, ...rest }: { number: number } & CardProps) => {
+const NumberCard = ({sx, number, children, ...rest }: { number?: number } & CardProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
       <Card sx={{
@@ -14,7 +14,7 @@ const NumberCard = ({sx, number, children, ...rest }: { number: number } & CardP
         ...sx
       }} {...rest}>
         <CardContent>
-          <Typography variant="h2">{number}</Typography>
+          <Typography variant="h2">{number || "..."}</Typography>
           {children}
         </CardContent>
       </Card>

@@ -93,16 +93,13 @@ function RegistrationPage() {
   if (participantStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (participant) {
-    const terms = ["Revoke registration", "Deregister", "Unregister", "Undo registration", "Delete registration", "Remove registration"]
-    const random = Math.floor(Math.random() * terms.length);
-
     return (
       <BannerPage title="Congratulations!">
         <PromptContainer>
           <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
             <Typography variant="h5">{team.name} is registered.</Typography>
             <Button variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
-              {terms[random]}
+              Deregister
             </Button>
           </Stack>
         </PromptContainer>

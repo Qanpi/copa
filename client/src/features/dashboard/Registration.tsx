@@ -1,7 +1,6 @@
 import { ArrowRight, ArrowLeft } from "@mui/icons-material";
 import {
   Box,
-  Alert,
   AlertTitle,
   Button,
   Container,
@@ -15,7 +14,6 @@ import {
   Stack,
   ThemeProvider,
   Typography,
-  Snackbar,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { Form, Formik } from "formik";
@@ -34,6 +32,7 @@ import {
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
 import AdminAlert from "../layout/AdminAlert.tsx";
+import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
 
 function RegistrationStage({ next, prev }) {
   const { status: tournamentStatus, data: tournament } =
@@ -203,11 +202,9 @@ function RegistrationPane() {
         touched,
       }) => (
         <Form>
-          <Snackbar open={updateSnackbar} anchorOrigin={{ horizontal: "right", vertical: "bottom" }} onClose={() => setUpdateSnackbar(false)} autoHideDuration={3000}>
-            <Alert severity="success">
-              Your changes have been saved.
-            </Alert>
-          </Snackbar>
+          <FeedbackSnackbar severity="success" open={updateSnackbar} onClose={() => setUpdateSnackbar(false)}>
+            Your changes have been saved.
+          </FeedbackSnackbar>
           <InputLabel sx={{ mb: 2 }}>Open registration</InputLabel>
           <Stack direction="row" spacing={2}>
             <MyDatePicker

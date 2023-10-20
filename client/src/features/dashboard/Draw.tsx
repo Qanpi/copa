@@ -1,4 +1,4 @@
-import { Backdrop, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
+import { AlertProps, Backdrop, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -18,6 +18,7 @@ import { useGroupStageData, useStages } from "../stage/hooks.ts";
 import "./fortuneWheel.css"
 import { TParticipant } from "@backend/models/participant.ts";
 import { LoadingBackdrop } from "../viewer/header.tsx";
+import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -76,6 +77,7 @@ function DrawPage() {
   const [seeding, setSeeding] = useState([]);
 
   const [resetDialog, setResetDialog] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertProps["severity"]>();
 
   const { data: stages } = useStages(tournament?.id, {
     division: division?.id,
@@ -104,6 +106,7 @@ function DrawPage() {
       seeding
     }, {
       onSuccess: () => {
+        setSnackbarSeverity("success");
         setSeeding([]);
       }
     });
@@ -158,10 +161,16 @@ function DrawPage() {
     setResetDialog(false);
   }
 
+
   return (
     <Stack sx={{ overflow: "hidden", pt: 5 }} direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
-      <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}>
-      </Backdrop>
+      <LoadingBackdrop open={createGroupStage.isLoading}></LoadingBackdrop>
+      <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}></Backdrop>
+
+      <FeedbackSnackbar severity={snackbarSeverity} onClose={() => setSnackbarSeverity(undefined)}
+        success="Group stage created successfully">
+      </FeedbackSnackbar>
+
       <Dialog open={resetDialog}>
         <DialogTitle>Would you like to reset the draw?</DialogTitle>
         <DialogContent>
@@ -285,8 +294,6 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
         prizeNumber={randomN}
         mustStartSpinning={mustSpin}
         onStopSpinning={handleSpinOver}
-        spinDuration={0.00001} //TODO: fix later
-        // fontSize={theme.typography.body1.fontSize}
       ></Wheel>
 
       {/* position is calculated so that it's in the center and on top of the wheel */}

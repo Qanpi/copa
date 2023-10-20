@@ -12,6 +12,7 @@ import { useUser } from "../user/hooks";
 import { Container, Box, Stack, Typography, useTheme, LinearProgress } from "@mui/material";
 import { Status } from "brackets-model"
 import { TParticipant } from "brackets-mongo-db";
+import { useTeam } from "../team/hooks";
 
 const MatchTimer = ({ duration }: { duration: number }) => {
   const getExpiryTimestamp = () => dayjs().add(duration, "seconds").toDate();
@@ -63,9 +64,11 @@ const MatchTimer = ({ duration }: { duration: number }) => {
 function MatchPage() {
   const { id } = useParams();
   const { data: match, status } = useMatch(id);
+  const updateMatch = useUpdateMatch();
   console.log(match)
 
-  const updateMatch = useUpdateMatch();
+  const {data: team1} = useParticipant(match?.opponent1?.id);
+  const {data: team2} = useParticipant(match?.opponent2?.id);
 
   const { data: user } = useUser("me");
   const isAdmin = user?.role === "admin";
@@ -82,18 +85,15 @@ function MatchPage() {
     if (status <= Status.Ready) {
       return (
         <Box sx={{ background: theme.palette.secondary.main, p: 1, pl: 5, pr: 5, borderRadius: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-          {match.start ?
-            <>
-              <Typography variant="subtitle2">
-                {dayjs(match.start).format("DD.MM")}
-              </Typography>
-              <Typography variant="h1" sx={{ fontWeight: 800, m: -1 }}>
-                {dayjs(match.start).format("HH:mm")}
-              </Typography>
-              <Typography variant="subtitle2">
-                Indoor hall
-              </Typography>
-            </> : null}
+          <Typography variant="subtitle2">
+            {match.start ? dayjs(match.start).format("DD.MM") : "Coming soon"}
+          </Typography>
+          <Typography variant="h1" sx={{ fontWeight: 800, m: -1 }}>
+            {match.start ? dayjs(match.start).format("HH:mm") : "-- : --"}
+          </Typography>
+          <Typography variant="subtitle2" sx={{mt: 1}}>
+            {match.location ? "Indoor hall" : "Stay tuned"}
+          </Typography>
         </Box>
       );
     } else if (match.status === Status.Running) {
@@ -103,31 +103,26 @@ function MatchPage() {
     }
   }
 
-  const opp1 = match.opponent1;
-  const opp2 = match.opponent2;
-
   return (
     <Container sx={{ p: { xs: 5, md: 10 } }}>
-      <Stack direction={{xs: "row", md: "column"}} sx={{ display: "flex",  alignItems: "center"}} spacing={5}>
+      <Stack direction={  "column" } sx={{ display: "flex", alignItems: "center" }} spacing={5}>
         <Stack sx={{ position: "relative" }} direction={{ xs: "column", md: "row" }} spacing={10}>
-          <Stack direction={{ xs: "column-reverse", md: "column"}} justifyContent={"center"}>
-            <Box sx={{ width: "45vmin", height: "45vmin", background: "lightblue" }}>
-              img
+          <Stack direction={{ xs: "column-reverse", md: "column" }} justifyContent={"center"}>
+            <Box sx={{ width: "45vmin", height: "45vmin", objectFit: "contain" }} component="img" src={team1?.bannerUrl}>
             </Box>
-            <Typography variant="subtitle1">{opp1?.name || "BYE"}</Typography>
+            <Typography variant="subtitle1">{team1?.name || "BYE"}</Typography>
           </Stack>
           <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) ", m: "0 !important", maxWidth: "40vmin" }}>
             {getMatchDisplay(match.status)}
           </Box>
-          <Box sx={{maxWidth: "45vmin"}}>
-            <Box sx={{ width: "45vmin" , height: "45vmin" , background: "lightblue"}}>
-              img
+          <Box sx={{ maxWidth: "45vmin" }}>
+            <Box sx={{ width: "45vmin", height: "45vmin", objectFit: "contain" }} component="img" src={team2?.bannerUrl}>
             </Box>
-            <Typography variant="subtitle1">{opp2?.name || "BYE"}</Typography>
+            <Typography variant="subtitle1">{team2?.name || "BYE"}</Typography>
           </Box>
         </Stack>
         {/* FIXME: make vertical on mobile */}
-        <LinearProgress variant="determinate" value={10} sx={{ transform: {xs: "rotate(90deg)", md: "scaleX(-1)"}, height: 5, width: "80vmin"}}></LinearProgress>
+        <LinearProgress variant="determinate" value={10} sx={{ transform: "scaleX(-1)", height: 5, width: "80vmin" }}></LinearProgress>
       </Stack>
     </Container >
   )
