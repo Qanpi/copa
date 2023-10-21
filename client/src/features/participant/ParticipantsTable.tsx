@@ -1,5 +1,5 @@
 import { TParticipant } from "@backend/models/participant.ts";
-import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
@@ -12,13 +12,16 @@ import {
 } from "../viewer/hooks.ts";
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.tsx";
+import { AddCircle } from "@mui/icons-material";
 
 const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string, banner?: string }) => {
-  console.log(banner)
+  const theme = useTheme();
+
   return (
     <Card key={name} sx={{
       minHeight: 200, borderRadius: 3,
-      maxHeight: "300px"
+      maxHeight: "300px",
+      background: theme.palette.primary.dark
     }} {...props}>
       <Link to={`/teams/${name}`}>
         <CardActionArea sx={{
@@ -50,6 +53,7 @@ function TeamsPage() {
   }
   );
 
+  const theme = useTheme();
   return (
     <BannerPage title={`Participants`}>
       <Stack spacing={3}>
@@ -64,12 +68,15 @@ function TeamsPage() {
             }}>
               {tournament?.registration?.isOpen ? <Card sx={{
                 minHeight: 200, borderRadius: 3,
-                maxHeight: "300px"
+                maxHeight: "300px",
+                background: theme.palette.secondary.dark
               }}>
                 <Link to="/tournament/register">
                   <CardActionArea sx={{height: "100%", display:"flex", justifyContent: "center", alignItems: "center"}}>
                     <CardContent>
-                      <Button size="large" color="primary">Register</Button>
+                      <IconButton>
+                        <AddCircle fontSize={"large"}></AddCircle>
+                      </IconButton>
                     </CardContent>
                   </CardActionArea>
                 </Link>
