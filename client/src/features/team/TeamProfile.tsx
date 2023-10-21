@@ -10,6 +10,7 @@ import {
   Dialog,
   IconButton,
   InputAdornment,
+  Skeleton,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
@@ -37,6 +38,7 @@ import { TTeam } from "@backend/models/team.ts";
 import { AddLink, ContentCopy, DeleteForever, Edit, MeetingRoom, VisibilityOff } from "@mui/icons-material";
 import OutlinedContainer from "../layout/OutlinedContainer.tsx";
 import { useMatches } from "../match/hooks.ts";
+import { useParticipants } from "../participant/hooks.ts";
 
 dayjs.extend(relativeTime);
 
@@ -44,8 +46,8 @@ function TeamProfilePage() {
   //FIXME: think about encoding and decoding practices
   const { name } = useParams();
   const encoded = name ? encodeURIComponent(name) : undefined;
-  const { data: team, status: teamStatus } = useTeam(encoded);
-  const { data: user } = useAuth("me");
+  const { data: team, status: teamStatus, isLoading } = useTeam(encoded);
+  const { data: user } = useAuth();
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = (_, newTab: number) => {
@@ -57,26 +59,21 @@ function TeamProfilePage() {
     team: team?.id,
   });
 
-  if (teamStatus !== "success") {
-    return <div>loadgi team profiel</div>;
-  }
-
-  if (!team) return <NotFoundPage></NotFoundPage>
+  if (!isLoading && !team) return <NotFoundPage></NotFoundPage>
 
   //FIXME: refactor to model
   // const isRegistration = tournament?.registration?.from && tournament?.registration?.from >= new Date() && (tournament?.registration?.to ? tournament?.registration?.to <= new Date() : true);
-  const isMember = user?.team?.id === team.id;
+  const isMember = user?.team?.id === team?.id;
 
   return (
     <Box sx={{ pt: 15 }} display="flex" flexDirection={"column"} height={"100%"}>
       <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
-        <Box component={"img"} sx={{ objectFit: "contain", maxHeight: "300px", maxWidth: "300px", width: "30vw", position: "absolute" }} src={team.bannerUrl}>
-        </Box>
+        { isLoading ? <Skeleton variant="rectangular" sx={{width: "30vw", height: "300px", maxWidth: "300px", maxHeight: "300px", position: "absolute"}}></Skeleton> : <Box component={"img"} sx={{ objectFit: "contain", maxHeight: "300px", maxWidth: "300px", width: "30vw", position: "absolute" }} src={team.bannerUrl}></Box>}
         <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "310px" } }}>
           <Typography variant="h5">THIS IS</Typography>
-          <Typography variant="h1" fontWeight={800}>{team.name}</Typography>
+          <Typography variant="h1" fontWeight={800}>{team?.name || <Skeleton sx={{width: "4em"}}></Skeleton>}</Typography> 
         </Stack>
-        <Typography variant="subtitle1" sx={{ ml: "auto", alignSelf: "end" }}>Est. {dayjs(team.createdAt).format("YYYY")}</Typography>
+        <Typography variant="subtitle1" sx={{ ml: "auto", alignSelf: "end" }}>Est. {team ? dayjs(team?.createdAt).format("YYYY") : ""}</Typography>
       </GradientTitle>
       <Box sx={{ ml: { xs: "38vw", md: "calc(300px + 5vw)" }, height: "50px" }}>
         <Tabs value={selectedTab} onChange={handleChangeSelectedTab}>
@@ -87,27 +84,31 @@ function TeamProfilePage() {
       </Box>
       <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
         {selectedTab === 0 ? <ProfileTab team={team}></ProfileTab> : null}
-        {selectedTab === 1 ? <TimelineTab></TimelineTab> : null}
-        {selectedTab === 2 ? <TimelineTab></TimelineTab> : null}
+        {selectedTab === 1 ? <TimelineTab team={team}></TimelineTab> : null}
+        {selectedTab === 2 ? <TimelineTab team={team}></TimelineTab> : null}
       </Container>
       <TeamSpeedDial team={team}></TeamSpeedDial>
     </Box>
   );
 }
 
-const TimelineTab = () => {
+const TimelineTab = ({team}: {team?: TTeam}) => {
+  // const {data: participantions} = useParticipants({
+  //   team: team.id,
+  // });
+
   return (
     <Typography>This feature is still in development.</Typography>
   )
 }
 
-const ProfileTab = ({ team }: { team: TTeam }) => {
-  const { data: user } = useAuth("me");
+const ProfileTab = ({ team }: { team?: TTeam }) => {
+  const { data: user } = useAuth();
   const { data: members } = useTeamMembers(team?.id);
 
   return (
     <Stack direction="column" spacing={4}>
-      {team.about ?
+      {team?.about ?
         <OutlinedContainer>
 
           <Typography variant="h6" color="primary">About</Typography>
@@ -140,9 +141,9 @@ const ProfileTab = ({ team }: { team: TTeam }) => {
   )
 }
 
-const TeamSpeedDial = ({ team }: { team: TTeam }) => {
+const TeamSpeedDial = ({ team }: { team?: TTeam }) => {
   const { data: tournament } = useTournament("current");
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
 
   const fetchInvite = useMutation({
     mutationFn: async (values: Partial<TTeam>) => {
@@ -163,6 +164,7 @@ const TeamSpeedDial = ({ team }: { team: TTeam }) => {
     countdown: undefined
   });
 
+
   const handleFetchInvite = () => {
     fetchInvite.mutate(team, {
       onSuccess: (data) => {
@@ -181,13 +183,10 @@ const TeamSpeedDial = ({ team }: { team: TTeam }) => {
     removeUserFromTeam.mutate({ userId: user.id, teamId: team.id });
   };
 
+  if (!team) return;
+
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
-
-  <Container maxWidth="md">
-    {isManager && tournament?.registration?.isOpen ? <Link to={`/tournament/register`}>
-      <Button>Register</Button></Link> : null}
-  </Container>
 
   return (
     <>
