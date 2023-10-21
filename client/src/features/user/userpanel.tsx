@@ -1,5 +1,5 @@
 import { Google } from "@mui/icons-material";
-import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, Breakpoint, ButtonProps, useTheme } from "@mui/material";
+import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, Breakpoint, ButtonProps, useTheme, Avatar } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -24,7 +24,7 @@ function UserPanel() {
   return user ? (
     <DropdownMenu anchor={
       <Stack direction="row" display={"flex"} alignItems="center" spacing={1}>
-        <Box component="img" src={user.avatar} referrerPolicy="no-referrer" alt="user avatar" sx={{ width: "48px", height: "48px" }}></Box>
+        <Avatar src={user.avatar} variant="rounded" sx={{width: "48px", height: "48px"}}></Avatar>
         {minified ? null : <Typography>{user.name}</Typography>}
       </Stack>
     } triangleRight="22%">

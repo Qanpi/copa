@@ -24,18 +24,18 @@ import { TFeedback } from "../types.ts";
 
 function RegistrationPage() {
   const { data: tournament } = useTournament("current");
-  const { data: user, status: userStatus } = useAuth("me");
-  const { data: team, status: teamStatus } = useTeam(user?.team?.name);
+  const { data: user, status: userStatus } = useAuth();
+  const { data: team, isInitialLoading } = useTeam(user?.team?.name);
 
   const unregisterTeam = useDeleteParticipant();
 
-  const { data: participants, status: participantStatus } = useParticipants(tournament?.id, {
+  const { data: participants } = useParticipants(tournament?.id, {
     team: user?.team?.id,
   });
   const participant = participants?.[0];
 
   const getActivePrompt = () => {
-    if (!tournament || teamStatus === "loading") return;
+    if (userStatus === "loading" || isInitialLoading) return;
 
     if (!tournament?.registration?.isOpen) {
       //FIXME: make sure the types checkout (Date and string)
