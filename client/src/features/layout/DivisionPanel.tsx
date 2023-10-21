@@ -31,9 +31,9 @@ function DivisionPanel({ children }: { children?: ReactNode }) {
 
   const theme = useTheme();
 
-  if (status === "success" && !divisions) return <Container sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "10vh" }}>
-    <Typography>Come back here when the tournament begins.</Typography>
-  </Container>;
+  // if (status === "success" && !divisions) return <Container sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "10vh" }}>
+  //   <Typography>Come back here when the tournament begins.</Typography>
+  // </Container>;
 
   return (
     <Box sx={{ padding: 2, border: `1px solid ${theme.palette.primary.main}`, borderRadius: 2 }}>

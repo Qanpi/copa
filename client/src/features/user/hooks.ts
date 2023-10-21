@@ -6,7 +6,7 @@ import { QueryKeyObject, queryKeyFactory } from "../types";
 
 export const userKeys = queryKeyFactory<TUser & { teamId?: string }>("users");
 
-export const useAuth = (id?: string) => {
+export const useAuth = () => {
   return useQuery({
     queryKey: userKeys.id("me"),
     queryFn: async () => {
