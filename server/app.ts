@@ -63,7 +63,7 @@ app.use("/api", apiRouter); // api request flow: route -> controller -> db servi
 app.use(authRouter);
 
 //home page
-app.get("/", (req, res) => {
+app.get("/*", (req, res) => {
   //FIXME:!redirect to localhost if developing
   if (process.env.NODE_ENV === "development") {
     return res.redirect(process.env.REACT_LOCALHOST_DOMAIN!);

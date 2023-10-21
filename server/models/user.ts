@@ -6,7 +6,10 @@ import Team from "./team.js";
 const UserSchema = new mongoose.Schema(
   {
     name: String,
-    googleId: String,
+    googleId: {
+      type: String,
+      select: false
+    },
     avatar: String,
     team: {
       id: {
