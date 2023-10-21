@@ -13,7 +13,7 @@ env:
   CI: ""
   AZURE_WEBAPP_NAME: copadekuutio 
   AZURE_WEBAPP_PACKAGE_PATH: server
-  AZURE_WEBAPP_SLOT_NAME: production
+  AZURE_WEBAPP_SLOT_NAME: development
 
 jobs:
   build-and-deploy:
@@ -27,19 +27,19 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build, and test client
+      - name: npm install and build client
         working-directory: client 
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
+          # npm run test --if-present
 
-      - name: npm install, build, and test server
+      - name: npm install and build server
         working-directory: server
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
+          # npm run test --if-present
 
       - name: move client build to server
         run: mv client/build server
