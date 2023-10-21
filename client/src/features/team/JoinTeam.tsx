@@ -17,6 +17,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useTeam, useTeamById } from "./hooks.ts";
 import { useUpdateUser, useAuth, userKeys } from "../user/hooks.ts";
 import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
+import { TUser } from "@backend/models/user.ts";
+import { TTeam } from "@backend/models/team.ts";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,8 +29,8 @@ function JoinTeamPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const joinTeam = useMutation({
-    mutationFn: async (values) => {
-      if (!id || !token) throw TypeError("Missing id or token.");
+    mutationFn: async (values: TTeam["invite"] & {id: string}) => {
+      if (!id || !values.token) throw TypeError("Missing id or token.");
 
       const res = await axios.post(`/api/teams/${values.id}/join`, {
         token: values.token,
@@ -50,7 +52,7 @@ function JoinTeamPage() {
   const token = searchParams.get("token");
 
   useEffect(() => {
-    if (!user.team) joinTeam.mutate({ id, token });
+    if (!user?.team) joinTeam.mutate({ id, token });
     else if (user.team.id === id) return navigate(`/teams/${user.team.name}`);
   }, [user]);
 
