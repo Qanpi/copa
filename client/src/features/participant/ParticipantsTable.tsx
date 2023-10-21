@@ -1,5 +1,5 @@
 import { TParticipant } from "@backend/models/participant.ts";
-import { Box, Card, CardActionArea, CardContent, CardProps, Container, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, Stack, Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
@@ -13,7 +13,8 @@ import {
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.tsx";
 
-const ParticipantCard = ({ name, ...props }: CardProps & { name?: string }) => {
+const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string, banner?: string }) => {
+  console.log(banner)
   return (
     <Card key={name} sx={{
       minHeight: 200, borderRadius: 3,
@@ -23,9 +24,11 @@ const ParticipantCard = ({ name, ...props }: CardProps & { name?: string }) => {
         <CardActionArea sx={{
           height: "100%",
           display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "left",
+          alignItems: "start",
+          flexDirection: "column"
         }}>
+          <CardMedia image={banner} sx={{height: "100%", width: "100%"}}>
+          </CardMedia>
           <CardContent>
             <Typography>{name}</Typography>
           </CardContent>
@@ -76,7 +79,7 @@ function TeamsPage() {
                   </CardActionArea>
                 </Link>
               </Card> : null}
-              {participants?.map(p => <ParticipantCard name={p?.name}></ParticipantCard>)}
+              {participants?.map(p => <ParticipantCard name={p?.name} banner={p?.bannerUrl}></ParticipantCard>)}
             </Box>
           </Box>
         </DivisionPanel>
