@@ -46,7 +46,6 @@ jobs:
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
-        if: ${{ !env.ACT }}
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}(${{env.AZURE_WEBAPP_SLOT_NAME}}) 
