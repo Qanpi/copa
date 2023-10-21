@@ -45,14 +45,14 @@ function TeamProfilePage() {
   const { name } = useParams();
   const encoded = name ? encodeURIComponent(name) : undefined;
   const { data: team, status: teamStatus } = useTeam(encoded);
-  const {data: user} = useUser("me");
+  const { data: user } = useUser("me");
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = (_, newTab: number) => {
     setSelectedTab(newTab);
   }
 
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
   const upcomingMatches = useMatches(tournament?.id, {
     team: team?.id,
   });
@@ -68,7 +68,7 @@ function TeamProfilePage() {
   const isMember = user?.team?.id === team.id;
 
   return (
-    <Box sx={{ pt: 15 }}>
+    <Box sx={{ pt: 15 }} display="flex" flexDirection={"column"} height={"100%"}>
       <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
         <Box component={"img"} sx={{ objectFit: "contain", maxHeight: "300px", maxWidth: "300px", width: "30vw", position: "absolute" }} src={team.bannerUrl}>
         </Box>
@@ -85,7 +85,7 @@ function TeamProfilePage() {
           {isMember ? <Tab label="Settings"></Tab> : null}
         </Tabs>
       </Box>
-      <Container maxWidth="md" sx={{ p: 5, pt: 10 }}>
+      <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
         {selectedTab === 0 ? <ProfileTab team={team}></ProfileTab> : null}
         {selectedTab === 1 ? <TimelineTab></TimelineTab> : null}
         {selectedTab === 2 ? <TimelineTab></TimelineTab> : null}
@@ -101,7 +101,7 @@ const TimelineTab = () => {
   )
 }
 
-const ProfileTab = ({team} : {team: TTeam}) => {
+const ProfileTab = ({ team }: { team: TTeam }) => {
   const { data: user } = useUser("me");
   const { data: members } = useTeamMembers(team?.id);
 

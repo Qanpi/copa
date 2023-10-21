@@ -163,7 +163,7 @@ function Header() {
       }} display="flex" alignItems={"center"}>
         {isMobile ?
           null
-          : <Stack direction="row" spacing={"7vw"} sx={{
+          : <Stack direction="row" spacing={"5vw"} sx={{
             height: "100%"
           }} alignItems={"center"}>
 
