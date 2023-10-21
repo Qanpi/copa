@@ -133,7 +133,6 @@ function HomePage() {
                 <Button variant="contained" sx={{ mt: 3, }} color="secondary">
                   Register
                 </Button>
-                <ArrowDropDown color="secondary"></ArrowDropDown>
               </Box>
             </Link>
           </CopaBanner >
