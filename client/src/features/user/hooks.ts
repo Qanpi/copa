@@ -4,17 +4,19 @@ import { TUser } from "@backend/models/user.ts";
 import { useTeam, useUpdateTeam } from "../team/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
 
-export const userKeys = queryKeyFactory<TUser & {teamId?: string}>("users");
+export const userKeys = queryKeyFactory<TUser & { teamId?: string }>("users");
 
 export const useUser = (id?: string) => {
-  return useQuery<TUser, AxiosError>({
+  return useQuery({
     queryKey: userKeys.id(id),
     queryFn: async () => {
-      const res =
-        id === "me"
-          ? await axios.get("/me")
-          : await axios.get(`/api/${userKeys.all}/${id}`);
-      return res.data as TUser | "private";
+      if (id === "me") {
+        const res = await axios.get("/me");
+        return res.data as TUser;
+      } else {
+        const res = await axios.get(`/api/${userKeys.all}/${id}`);
+        return res.data as TUser | "private";
+      }
     },
     enabled: !!id,
   });
@@ -44,7 +46,7 @@ export const useTeamMembers = (teamId: string) => {
   const queryClient = useQueryClient();
 
   return useQuery({
-    queryKey: userKeys.list({teamId}),
+    queryKey: userKeys.list({ teamId }),
 
     queryFn: async () => {
       const res = await axios.get(`/api/teams/${teamId}/users`);

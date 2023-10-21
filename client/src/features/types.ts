@@ -1,3 +1,6 @@
+import { SnackbarProps } from "@mui/base"
+import { AlertProps } from "@mui/material"
+
 export type QueryKeyObject<T> = {
     key: string
     all: [string],
@@ -17,6 +20,12 @@ export function queryKeyFactory<T>(key: string) {
         id: (id?: string) => [key, "id", id]
     } as QueryKeyObject<T>
 }
+
+export type TFeedback = {
+    severity?: AlertProps["severity"],
+    message?: AlertProps["children"] | string
+}
+
 declare module "*.png" {
   const value: string;
   export default value;

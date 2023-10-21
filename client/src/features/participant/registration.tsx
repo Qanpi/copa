@@ -2,7 +2,7 @@ import { Box, Stack, Button, ContainerOwnProps, MenuItem, Typography } from "@mu
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import MySelect from "../inputs/mySelect.tsx";
@@ -19,6 +19,8 @@ import BannerPage from "../viewer/BannerPage.tsx";
 import { TParticipant } from "@backend/models/participant.ts";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
 import OutlinedContainer from "../layout/OutlinedContainer.tsx";
+import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
+import { TFeedback } from "../types.ts";
 
 function RegistrationPage() {
   const { data: tournament } = useTournament("current");
@@ -42,7 +44,6 @@ function RegistrationPage() {
   //   }
   // }, [user]);
   const getActivePrompt = () => {
-    console.log(tournament)
     if (!tournament?.registration?.isOpen) {
       //FIXME: make sure the types checkout (Date and string)
       const from = tournament?.registration?.from;
@@ -65,19 +66,32 @@ function RegistrationPage() {
       }
     }
 
+    if (participant) {
+      return (
+        <BannerPage title="Congratulations!">
+          <PromptContainer>
+            <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
+              <Typography variant="h5">{team.name} is registered.</Typography>
+              <Button variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
+                Deregister
+              </Button>
+            </Stack>
+          </PromptContainer>
+        </BannerPage>
+      );
+    }
+
     if (!user) return <PromptContainer>
       <Typography>Please sign in to proceed.</Typography>
     </PromptContainer>
 
     if (!user.team) return <NoTeamPage></NoTeamPage>;
 
-
-
-    if (!team) return <LoadingBackdrop open={true}></LoadingBackdrop>
-
     //FIXME: manager context
     if (team.manager === user.id) {
-      return <RegistrationForm></RegistrationForm>;
+      return <BannerPage title={`Register for ${tournament.name}`}>
+        <RegistrationForm></RegistrationForm>;
+      </BannerPage>
     }
 
     return <PromptContainer maxWidth="sm">
@@ -88,29 +102,10 @@ function RegistrationPage() {
 
   }
 
-  if (userStatus !== "success" || !tournament) return <LoadingBackdrop open={true}></LoadingBackdrop>
-
-  if (participantStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
-
-  if (participant) {
-    return (
-      <BannerPage title="Congratulations!">
-        <PromptContainer>
-          <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
-            <Typography variant="h5">{team.name} is registered.</Typography>
-            <Button variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
-              Deregister
-            </Button>
-          </Stack>
-        </PromptContainer>
-      </BannerPage>
-    );
-  }
-
   return (
-    <BannerPage title={`Register for ${tournament.name}`}>
+    <>
       {getActivePrompt()}
-    </BannerPage>
+    </>
   );
 }
 
@@ -140,6 +135,8 @@ function RegistrationForm() {
     },
   });
 
+  const [feedback, setFeedback] = useState<TFeedback>({});
+
   return (
     <PromptContainer>
       <Formik
@@ -158,6 +155,9 @@ function RegistrationForm() {
                 (d) => d.name === values.division
               );
 
+              if (!selected)
+                return setFeedback({severity: "error", message: "Unrecognized division."})
+
               //TODO: error handling
               registerParticipant.mutate({
                 division: selected.id,
@@ -170,6 +170,7 @@ function RegistrationForm() {
         }}
       >
         <Form>
+          <FeedbackSnackbar severity={feedback.severity} message={feedback.message}></FeedbackSnackbar>
           <Typography variant="h6" sx={{ mb: 2 }} color="primary">Please verify the information below</Typography>
           <Stack direction="column" spacing={1}>
             <MyTextField name="name" label="Team name"></MyTextField>
