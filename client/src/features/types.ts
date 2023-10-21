@@ -17,4 +17,8 @@ export function queryKeyFactory<T>(key: string) {
         id: (id?: string) => [key, "id", id]
     } as QueryKeyObject<T>
 }
+declare module "*.png" {
+  const value: string;
+  export default value;
+}
 
