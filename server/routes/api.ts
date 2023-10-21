@@ -15,7 +15,7 @@ const router = express.Router();
 if (process.env.NODE_ENV !== "development") {
 
   const apiLimiter = rateLimit({
-    windowMs: 5 * 60 * 1000, //10min, taken from the npm page
+    windowMs: 1 * 60 * 1000, //10min, taken from the npm page
     limit: 100,
     standardHeaders: "draft-7",
     legacyHeaders: false,
