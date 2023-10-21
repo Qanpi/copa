@@ -14,7 +14,7 @@ const NumberCard = ({sx, number, children, ...rest }: { number?: number } & Card
         ...sx
       }} {...rest}>
         <CardContent>
-          <Typography variant="h2">{number || "..."}</Typography>
+          <Typography variant="h2">{number !== undefined ? number : "..."}</Typography>
           {children}
         </CardContent>
       </Card>
