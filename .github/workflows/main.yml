@@ -49,7 +49,7 @@ jobs:
         if: ${{ !env.ACT }}
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }} 
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}(${{env.AZURE_WEBAPP_SLOT_NAME}}) 
           slot-name: ${{ env.AZURE_WEBAPP_SLOT_NAME }}'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
