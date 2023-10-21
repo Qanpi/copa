@@ -77,7 +77,7 @@ function GroupStage({ next, prev }) {
   return (
     <Container maxWidth="md">
       {noGroupStageAlert ? (
-        <AdminAlert title={"No group stage for the '{noGroupStageAlert.division}' name"}>
+        <AdminAlert title={`No group stage for the '${noGroupStageAlert.division}' name`}>
           <Typography>
             Please first draw teams using the wheel before proceeding to the
             bracket.
@@ -87,7 +87,7 @@ function GroupStage({ next, prev }) {
       }
       {
         incompleteMatchesAlert ? (
-          <AdminAlert title="Error: incomplete matches in the group stage of the '{incompleteMatchesAlert.division}' division.">
+          <AdminAlert title={`Error: incomplete matches in the group stage of the '${incompleteMatchesAlert.division}' division.`}>
               <Typography>
                 Can't proceed before all the matches in the group stage are
                 complete. I you already know the results, enter them manually here.
