@@ -185,7 +185,6 @@ const TeamSpeedDial = ({ team }: { team: TTeam }) => {
   <Container maxWidth="md">
     {isManager && tournament?.registration?.isOpen ? <Link to={`/tournament/register`}>
       <Button>Register</Button></Link> : null}
-    {isMember ? <Button onClick={handleLeaveTeam}>Leave team</Button> : null}
   </Container>
 
   return (
@@ -216,13 +215,13 @@ const TeamSpeedDial = ({ team }: { team: TTeam }) => {
           </Alert>
         </ClickAwayListener>
       </Dialog>
-      <SpeedDial ariaLabel="Team Speed Dial" sx={{ position: "absolute", bottom: 30, right: 30 }}
+      {isMember ? <SpeedDial ariaLabel="Team Speed Dial" sx={{ position: "absolute", bottom: 30, right: 30 }}
         icon={<SpeedDialIcon></SpeedDialIcon>}>
         {isManager ? <SpeedDialAction icon={<Edit></Edit>} tooltipTitle="Edit profile"></SpeedDialAction> : null}
         {isManager ? <SpeedDialAction icon={<AddLink></AddLink>} tooltipTitle="Invite member" onClick={handleFetchInvite}></SpeedDialAction> : null}
-        <SpeedDialAction icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team"></SpeedDialAction>
+        <SpeedDialAction icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team" onClick={handleLeaveTeam}></SpeedDialAction>
         {isManager ? <SpeedDialAction icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete team"></SpeedDialAction> : null}
-      </SpeedDial>
+      </SpeedDial> : null}
     </>
   )
 }

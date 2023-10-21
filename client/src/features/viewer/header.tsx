@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { useUser } from "../user/hooks.ts";
 import UserPanel from "../user/userpanel.tsx";
 import { useTournament } from "./hooks.ts";
+import logo from "./copa.png";
 
 export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
@@ -123,9 +124,9 @@ function Header() {
   ]
 
   const tournamentHeader = (
-      <Typography>
-        {tournament?.name || "Tournament"}
-      </Typography>
+    <Typography>
+      {tournament?.name || "Tournament"}
+    </Typography>
   );
 
   const tournamentSublinks = [
@@ -187,7 +188,7 @@ function Header() {
               {links[0]}
               <MenuItem>{tournamentHeader}</MenuItem>
               {tournamentSublinks.map((l, i) => (
-                <Box sx={{pl: 2}}>{l}</Box>
+                <Box sx={{ pl: 2 }}>{l}</Box>
               ))}
               {links.slice(1)}
             </DropdownMenu> : null}
@@ -200,6 +201,10 @@ function Header() {
         borderTop: `40px solid ${theme.palette.secondary.main}`,
         borderRight: "20px solid transparent",
       }}></Box>
+      <Link to="/">
+      <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: "-2%", width: "220px", height: "222px" }}>
+      </Box>
+      </Link>
     </Box >
   )
 }
