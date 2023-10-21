@@ -1,4 +1,4 @@
-import { Box, Stack, Button, ContainerOwnProps, MenuItem, Typography } from "@mui/material";
+import { Box, Stack, Button, ContainerOwnProps, MenuItem, Typography, Skeleton } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
@@ -34,16 +34,9 @@ function RegistrationPage() {
   });
   const participant = participants?.[0];
 
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (userStatus === "success" && !user)
-  //     return navigate(`/login`)
-
-  //   if (userStatus === "success" && !user?.team) {
-  //     return navigate(`/team/none`); //TODO: redirect back frm here to registration
-  //   }
-  // }, [user]);
   const getActivePrompt = () => {
+    if (!tournament || teamStatus === "loading") return;
+
     if (!tournament?.registration?.isOpen) {
       //FIXME: make sure the types checkout (Date and string)
       const from = tournament?.registration?.from;
@@ -51,69 +44,62 @@ function RegistrationPage() {
 
       if (!from || new Date(from) > new Date()) {
         return (
-          <PromptContainer>
-            <Typography>Slow down. Registration hasn't begun yet.</Typography>
-          </PromptContainer>
+          <Typography>Slow down. Registration hasn't begun yet.</Typography>
         );
       }
 
       if (to && new Date(to) < new Date()) {
         return (
-          <PromptContainer>
-            <Typography>Dang, the registration has ended. You can try contacting the organizer.</Typography>
-          </PromptContainer>
+          <Typography>Dang, the registration has ended. You can try contacting the organizer.</Typography>
         );
       }
     }
 
-    if (participant) {
-      return (
-        <BannerPage title="Congratulations!">
-          <PromptContainer>
-            <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
-              <Typography variant="h5">{team.name} is registered.</Typography>
-              <Button variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
-                Deregister
-              </Button>
-            </Stack>
-          </PromptContainer>
-        </BannerPage>
-      );
-    }
-
-    if (!user) return <PromptContainer>
+    if (!user) return <Stack direction="column" spacing={2} alignItems="center">
       <Typography>Please sign in to proceed.</Typography>
-    </PromptContainer>
+      <GoogleSignInButton variant="contained" color="primary"></GoogleSignInButton>
+    </Stack>
+
 
     if (!user.team) return <NoTeamPage></NoTeamPage>;
 
-    //FIXME: manager context
-    if (team.manager === user.id) {
-      return <BannerPage title={`Register for ${tournament.name}`}>
-        <RegistrationForm></RegistrationForm>;
-      </BannerPage>
+    if (team?.manager === user.id) {
+      return <RegistrationForm></RegistrationForm>;
     }
 
-    return <PromptContainer maxWidth="sm">
-      <OutlinedContainer>
-        <Typography>Please ask the manager of your team to submit the registration.</Typography>
-      </OutlinedContainer>
-    </PromptContainer>
-
+    return <Typography>Please ask the manager of your team to submit the registration.</Typography>
   }
 
-  return (
-    <>
-      {getActivePrompt()}
-    </>
+  if (!participant) return (
+    <BannerPage title={`Register`}>
+      <OutlinedContainer maxWidth="sm">
+        <PromptContainer>
+          {getActivePrompt()}
+        </PromptContainer>
+      </OutlinedContainer>
+    </BannerPage>
   );
+
+  return (
+    <BannerPage title="Congratulations!">
+      <PromptContainer>
+        <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
+          <Typography variant="h5">{team.name} is registered.</Typography>
+          <Button variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
+            Deregister
+          </Button>
+        </Stack>
+      </PromptContainer>
+    </BannerPage>
+  );
+
 }
 
 function RegistrationForm() {
   const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
 
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
   const { data: team } = useTeam(user?.team?.name);
   const updateTeam = useUpdateTeam();
 
@@ -156,7 +142,7 @@ function RegistrationForm() {
               );
 
               if (!selected)
-                return setFeedback({severity: "error", message: "Unrecognized division."})
+                return setFeedback({ severity: "error", message: "Unrecognized division." })
 
               //TODO: error handling
               registerParticipant.mutate({

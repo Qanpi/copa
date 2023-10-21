@@ -30,7 +30,7 @@ export const useTeam = (name?: string) => {
     queryKey: teamKeys.id(name),
     queryFn: async () => {
       const response = await axios.get(`/api/teams/?name=${name}`);
-      return response.data[0] || null; //FIXME: assuming the response is array; maybe do this validation on server?
+      return response.data[0] as TTeam || null; //FIXME: assuming the response is array; maybe do this validation on server?
     },
     enabled: Boolean(name),
   });

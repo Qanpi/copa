@@ -41,7 +41,7 @@ function UserPanel() {
   );
 }
 
-export const GoogleSignInButton = ({ breakpoint, ...props } : { breakpoint?: Breakpoint | number } & ButtonProps) => {
+export const GoogleSignInButton = ({ breakpoint, sx, ...props } : { breakpoint?: Breakpoint | number } & ButtonProps) => {
   const handleSignIn = () => {
     window.open(`/login/federated/google`, "_self");
   };
@@ -58,7 +58,8 @@ export const GoogleSignInButton = ({ breakpoint, ...props } : { breakpoint?: Bre
       justifyContent: "center",
       alignItems: "center",
       color: theme.palette.common.white,
-      border: `1px solid ${theme.palette.common.white}`
+      border: `1px solid ${theme.palette.common.white}`,
+      ...sx
     }}
     {...props}
   >
