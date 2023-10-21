@@ -200,7 +200,7 @@ function Header() {
         borderRight: "20px solid transparent",
       }}></Box>
       <Link to="/">
-        <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: "-2%", width: "220px", height: "222px" }}>
+        <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: -10, width: "220px", height: "222px" }}>
         </Box>
       </Link>
     </Box >

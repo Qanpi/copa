@@ -19,7 +19,7 @@ const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string
 
   return (
     <Card key={name} sx={{
-      minHeight: 200, borderRadius: 3,
+      minHeight: 200, borderRadius: 1,
       maxHeight: "300px",
       background: theme.palette.primary.dark
     }} {...props}>

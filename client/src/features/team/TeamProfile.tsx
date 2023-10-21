@@ -45,6 +45,7 @@ function TeamProfilePage() {
   const { name } = useParams();
   const encoded = name ? encodeURIComponent(name) : undefined;
   const { data: team, status: teamStatus } = useTeam(encoded);
+  const {data: user} = useUser("me");
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = (_, newTab: number) => {
@@ -64,6 +65,7 @@ function TeamProfilePage() {
 
   //FIXME: refactor to model
   // const isRegistration = tournament?.registration?.from && tournament?.registration?.from >= new Date() && (tournament?.registration?.to ? tournament?.registration?.to <= new Date() : true);
+  const isMember = user?.team?.id === team.id;
 
   return (
     <Box sx={{ pt: 15 }}>
@@ -80,7 +82,7 @@ function TeamProfilePage() {
         <Tabs value={selectedTab} onChange={handleChangeSelectedTab}>
           <Tab label="Profile"></Tab>
           <Tab label="Timeline"></Tab>
-          <Tab label="Settings"></Tab>
+          {isMember ? <Tab label="Settings"></Tab> : null}
         </Tabs>
       </Box>
       <Container maxWidth="md" sx={{ p: 5, pt: 10 }}>
