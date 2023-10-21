@@ -9,13 +9,13 @@ import {
     DialogTitle,
     Typography,
 } from "@mui/material";
-import { useUpdateUser, useUser } from "../user/hooks";
+import { useUpdateUser, useAuth } from "../user/hooks";
 import { TUser } from "@backend/models/user";
 import { useRemoveUserFromTeam } from "./hooks";
 import { TTeam } from "@backend/models/team";
 
 function LeaveTeamDialog({ onLeave, onStay }: { onLeave?: (user: TUser) => void, onStay?: (user: TUser) => void }) {
-    const { data: user } = useUser("me");
+    const { data: user } = useAuth("me");
     const removeUserFromTeam = useRemoveUserFromTeam();
 
     const handleDialog = async (choice: boolean) => {

@@ -15,14 +15,14 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTeam, useTeamById } from "./hooks.ts";
-import { useUpdateUser, useUser, userKeys } from "../user/hooks.ts";
+import { useUpdateUser, useAuth, userKeys } from "../user/hooks.ts";
 import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [errorAlert, setErrorAlert] = useState(false);
 
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();

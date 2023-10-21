@@ -26,7 +26,7 @@ import JoinTeamPage from "./features/team/JoinTeam.tsx";
 import NoTeamPage from "./features/team/NoTeamPage.tsx";
 import TeamProfilePage from "./features/team/TeamProfile.tsx";
 import ProfilePage from "./features/user/Profile.tsx";
-import { useUser } from "./features/user/hooks.ts";
+import { useAuth } from "./features/user/hooks.ts";
 import AboutPage from "./features/viewer/AboutPage.tsx";
 import AllTimePage from "./features/viewer/AllTimePage.tsx";
 import HomePage from "./features/viewer/Home.tsx";
@@ -46,7 +46,7 @@ function divisionReducer(prevId: number, newId: number) {
 
 function App() {
   const { data: tournament, isLoading: isTournamentLoading } = useTournament("current");
-  const { data: user, isLoading: isUserLoading } = useUser("me");
+  const { data: user, isLoading: isUserLoading } = useAuth("me");
 
   const { data: divisions } = useDivisions(tournament?.id);
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);

@@ -3,11 +3,11 @@ import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, B
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useUser, userKeys } from "./hooks.ts";
+import { useAuth, userKeys } from "./hooks.ts";
 import { DropdownMenu } from "../viewer/header.tsx";
 
 function UserPanel() {
-  const { status: userStatus, data: user } = useUser("me");
+  const { status: userStatus, data: user } = useAuth("me");
   const queryClient = useQueryClient();
 
   const logout = useMutation({

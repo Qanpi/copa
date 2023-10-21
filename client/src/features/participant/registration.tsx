@@ -9,7 +9,7 @@ import MySelect from "../inputs/mySelect.tsx";
 import MyTextField from "../inputs/myTextField.tsx";
 import { teamValidationSchema } from "../team/CreateTeam.tsx";
 import { useTeam, useUpdateTeam } from "../team/hooks.ts";
-import { useUser } from "../user/hooks.ts";
+import { useAuth } from "../user/hooks.ts";
 import { divisionKeys, useDivisions, useTournament } from "../viewer/hooks.ts";
 import { participantKeys, useParticipants } from "./hooks.ts";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
@@ -24,7 +24,7 @@ import { TFeedback } from "../types.ts";
 
 function RegistrationPage() {
   const { data: tournament } = useTournament("current");
-  const { data: user, status: userStatus } = useUser("me");
+  const { data: user, status: userStatus } = useAuth("me");
   const { data: team, status: teamStatus } = useTeam(user?.team?.name);
 
   const unregisterTeam = useDeleteParticipant();
@@ -113,7 +113,7 @@ function RegistrationForm() {
   const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
 
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
   const { data: team } = useTeam(user?.team?.name);
   const updateTeam = useUpdateTeam();
 

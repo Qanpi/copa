@@ -10,7 +10,7 @@ import { useParams } from "react-router";
 import { useTimer } from "react-timer-hook";
 import ScoreCounter from "../inputs/ScoreCounter";
 import { useParticipant } from "../participant/hooks";
-import { useUser } from "../user/hooks";
+import { useAuth } from "../user/hooks";
 import { useMatch, useUpdateMatch } from "./hooks";
 import { useDivision, useTournament } from "../viewer/hooks";
 import OutlinedContainer from "../layout/OutlinedContainer";
@@ -40,7 +40,7 @@ const TeamBox = ({ match, opponent, sx, ...props }: { opponent: "opponent1" | "o
     })
   }
 
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
   const isAdmin = user?.role === "admin";
 
   return (
@@ -162,7 +162,7 @@ function MatchPage() {
   const { id } = useParams();
   const { data: match, status } = useMatch(id);
 
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
   const isAdmin = user?.role === "admin";
 
   // const [durationPrompt, setDurationPrompt] = useState(false);

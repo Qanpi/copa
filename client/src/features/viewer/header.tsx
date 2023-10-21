@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ReactNode, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../user/hooks.ts";
+import { useAuth } from "../user/hooks.ts";
 import UserPanel from "../user/userpanel.tsx";
 import { useTournament } from "./hooks.ts";
 import logo from "./copa.png";
@@ -104,7 +104,7 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
 
   const isAdmin = user?.role === "admin";
 

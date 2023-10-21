@@ -20,7 +20,7 @@ import axios from "axios";
 import { Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useUser } from "../user/hooks.ts";
+import { useAuth } from "../user/hooks.ts";
 import MyFileInput from "../inputs/MyFileInput.tsx";
 import MyTextField from "../inputs/myTextField.tsx";
 import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
@@ -50,7 +50,7 @@ export const teamValidationSchema = {
 };
 
 function NewTeamPage() {
-  const { status: userStatus, data: user } = useUser("me");
+  const { status: userStatus, data: user } = useAuth("me");
 
   const navigate = useNavigate();
   const createTeam = useCreateTeam();

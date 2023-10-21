@@ -6,24 +6,29 @@ import { QueryKeyObject, queryKeyFactory } from "../types";
 
 export const userKeys = queryKeyFactory<TUser & { teamId?: string }>("users");
 
+export const useAuth = (id?: string) => {
+  return useQuery({
+    queryKey: userKeys.id("me"),
+    queryFn: async () => {
+      const res = await axios.get("/me");
+      return res.data as TUser;
+    },
+  });
+};
+
 export const useUser = (id?: string) => {
   return useQuery({
     queryKey: userKeys.id(id),
     queryFn: async () => {
-      if (id === "me") {
-        const res = await axios.get("/me");
-        return res.data as TUser;
-      } else {
-        const res = await axios.get(`/api/${userKeys.all}/${id}`);
-        return res.data as TUser | "private";
-      }
+      const res = await axios.get(`/api/${userKeys.all}/${id}`);
+      return res.data as TUser | "private";
     },
     enabled: !!id,
   });
-};
+}
 
 export const useUpdateUser = () => {
-  const { data: me } = useUser("me");
+  const { data: me } = useAuth("me");
   const queryClient = useQueryClient();
 
   return useMutation({

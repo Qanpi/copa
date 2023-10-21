@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useUser } from "../user/hooks"
+import { useAuth } from "../user/hooks"
 import { useTeam } from "./hooks";
 import { Stack, Box, Button, Container, Typography, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { PromptContainer } from "../layout/PromptContainer";
 
 function NoTeamPage() {
-    const { data: user } = useUser("me");
+    const { data: user } = useAuth("me");
     const { data: team, status: teamStatus } = useTeam(user.team?.name);
 
     const navigate = useNavigate();

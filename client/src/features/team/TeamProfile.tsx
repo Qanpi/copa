@@ -26,7 +26,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRemoveUserFromTeam, useTeam } from "./hooks.ts";
-import { useTeamMembers, useUpdateUser, useUser } from "../user/hooks.ts";
+import { useTeamMembers, useUpdateUser, useAuth } from "../user/hooks.ts";
 import BannerPage from "../viewer/BannerPage.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
@@ -45,7 +45,7 @@ function TeamProfilePage() {
   const { name } = useParams();
   const encoded = name ? encodeURIComponent(name) : undefined;
   const { data: team, status: teamStatus } = useTeam(encoded);
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = (_, newTab: number) => {
@@ -102,7 +102,7 @@ const TimelineTab = () => {
 }
 
 const ProfileTab = ({ team }: { team: TTeam }) => {
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
   const { data: members } = useTeamMembers(team?.id);
 
   return (
@@ -142,7 +142,7 @@ const ProfileTab = ({ team }: { team: TTeam }) => {
 
 const TeamSpeedDial = ({ team }: { team: TTeam }) => {
   const { data: tournament } = useTournament("current");
-  const { data: user } = useUser("me");
+  const { data: user } = useAuth("me");
 
   const fetchInvite = useMutation({
     mutationFn: async (values: Partial<TTeam>) => {
