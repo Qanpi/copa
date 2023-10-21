@@ -1,5 +1,5 @@
 import { TParticipant } from "@backend/models/participant.ts";
-import { Box, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, Stack, Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
@@ -62,19 +62,14 @@ function TeamsPage() {
               justifyContent: "center",
               pt: 2,
             }}>
-              {tournament?.state === "Registration" ? <Card sx={{
+              {tournament?.registration?.isOpen ? <Card sx={{
                 minHeight: 200, borderRadius: 3,
                 maxHeight: "300px"
               }}>
                 <Link to="/tournament/register">
-                  <CardActionArea sx={{
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}>
+                  <CardActionArea sx={{height: "100%", display:"flex", justifyContent: "center", alignItems: "center"}}>
                     <CardContent>
-                      <Typography>Your team could be here</Typography>
+                      <Button size="large" color="primary">Register</Button>
                     </CardContent>
                   </CardActionArea>
                 </Link>
