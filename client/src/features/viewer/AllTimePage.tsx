@@ -14,7 +14,7 @@ function AllTimePage() {
                     <TimelineDot />
                     <TimelineConnector />
                 </TimelineSeparator>
-                <TimelineContent>Eat</TimelineContent>
+                <TimelineContent>dev</TimelineContent>
             </TimelineItem>
         </Timeline>
     </BannerPage>
