@@ -7,8 +7,22 @@ import * as users from "../controllers/usersController.js";
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { reportValidationErrors } from "../middleware/validation.js";
 import tournamentRouter from "./tournament.js";
+import { rateLimit } from "express-rate-limit"
 
 const router = express.Router();
+
+//RATE LIMITING
+if (process.env.NODE_ENV !== "development") {
+
+  const apiLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000, //10min, taken from the npm page
+    limit: 100,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+  })
+
+  router.use(apiLimiter);
+}
 
 //TOURNAMENT
 router.get("/tournaments", tournaments.getMultiple);
@@ -43,11 +57,11 @@ router.post("/teams/:teamId/users", isAuthorizedMiddleware, teams.addUserToTeam)
 router.delete("/teams/:teamId/users/:userId", isAuthMiddleware, param("userId").isMongoId(), reportValidationErrors, teams.removeUserFromTeam);
 router.delete("/teams/:id", isAuthMiddleware, teams.removeById);
 router.get("/teams/:id/invite", isAuthMiddleware, teams.generateInviteToken);
-router.post("/teams/:id/join", isAuthMiddleware, body("token").isBase64({urlSafe: true}), reportValidationErrors, teams.joinViaInviteToken);
+router.post("/teams/:id/join", isAuthMiddleware, body("token").isBase64({ urlSafe: true }), reportValidationErrors, teams.joinViaInviteToken);
 
 //USERS
 router.get("/users", isAuthorizedMiddleware, users.getMultiple);
-router.get("/users/:id",users.getOneById);
+router.get("/users/:id", users.getOneById);
 router.patch("/users/:id", isAuthMiddleware, users.updateOne);
 router.post("/users", isAuthorizedMiddleware, users.createOne);
 router.delete("/users/:id", isAuthMiddleware, users.deleteOne);

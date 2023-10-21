@@ -158,7 +158,9 @@ function RegistrationPane() {
     useTournament("current");
 
   const updateTournament = useUpdateTournament(tournament?.id);
-  const [updateSnackbar, setUpdateSnackbar] = useState(false);
+  const [updateSnackbar, setUpdateSnackbar] = useState({
+    severity: undefined
+  });
 
   if (tournamentStatus !== "success") return "bruh";
 
@@ -189,7 +191,9 @@ function RegistrationPane() {
             to: values.registration.to?.toDate()
           }
         }, {
-          onSuccess: () => setUpdateSnackbar(true)
+          onSuccess: () => setUpdateSnackbar({
+            severity: "success"
+          })
         });
       }}
     >
@@ -202,8 +206,7 @@ function RegistrationPane() {
         touched,
       }) => (
         <Form>
-          <FeedbackSnackbar severity="success" open={updateSnackbar} onClose={() => setUpdateSnackbar(false)}>
-            Your changes have been saved.
+          <FeedbackSnackbar severity={updateSnackbar?.severity} success="Your changes were saved succesfully" onClose={() => setUpdateSnackbar(false)}>
           </FeedbackSnackbar>
           <InputLabel sx={{ mb: 2 }}>Open registration</InputLabel>
           <Stack direction="row" spacing={2}>

@@ -45,13 +45,14 @@ function TeamProfilePage() {
   const { name } = useParams();
   const encoded = name ? encodeURIComponent(name) : undefined;
   const { data: team, status: teamStatus } = useTeam(encoded);
+  const { data: user } = useUser("me");
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = (_, newTab: number) => {
     setSelectedTab(newTab);
   }
 
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
   const upcomingMatches = useMatches(tournament?.id, {
     team: team?.id,
   });
@@ -64,9 +65,10 @@ function TeamProfilePage() {
 
   //FIXME: refactor to model
   // const isRegistration = tournament?.registration?.from && tournament?.registration?.from >= new Date() && (tournament?.registration?.to ? tournament?.registration?.to <= new Date() : true);
+  const isMember = user?.team?.id === team.id;
 
   return (
-    <Box sx={{ pt: 15 }}>
+    <Box sx={{ pt: 15 }} display="flex" flexDirection={"column"} height={"100%"}>
       <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
         <Box component={"img"} sx={{ objectFit: "contain", maxHeight: "300px", maxWidth: "300px", width: "30vw", position: "absolute" }} src={team.bannerUrl}>
         </Box>
@@ -80,10 +82,10 @@ function TeamProfilePage() {
         <Tabs value={selectedTab} onChange={handleChangeSelectedTab}>
           <Tab label="Profile"></Tab>
           <Tab label="Timeline"></Tab>
-          <Tab label="Settings"></Tab>
+          {isMember ? <Tab label="Settings"></Tab> : null}
         </Tabs>
       </Box>
-      <Container maxWidth="md" sx={{ p: 5, pt: 10 }}>
+      <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
         {selectedTab === 0 ? <ProfileTab team={team}></ProfileTab> : null}
         {selectedTab === 1 ? <TimelineTab></TimelineTab> : null}
         {selectedTab === 2 ? <TimelineTab></TimelineTab> : null}
@@ -99,7 +101,7 @@ const TimelineTab = () => {
   )
 }
 
-const ProfileTab = ({team} : {team: TTeam}) => {
+const ProfileTab = ({ team }: { team: TTeam }) => {
   const { data: user } = useUser("me");
   const { data: members } = useTeamMembers(team?.id);
 
@@ -185,7 +187,6 @@ const TeamSpeedDial = ({ team }: { team: TTeam }) => {
   <Container maxWidth="md">
     {isManager && tournament?.registration?.isOpen ? <Link to={`/tournament/register`}>
       <Button>Register</Button></Link> : null}
-    {isMember ? <Button onClick={handleLeaveTeam}>Leave team</Button> : null}
   </Container>
 
   return (
@@ -216,13 +217,13 @@ const TeamSpeedDial = ({ team }: { team: TTeam }) => {
           </Alert>
         </ClickAwayListener>
       </Dialog>
-      <SpeedDial ariaLabel="Team Speed Dial" sx={{ position: "absolute", bottom: 30, right: 30 }}
+      {isMember ? <SpeedDial ariaLabel="Team Speed Dial" sx={{ position: "absolute", bottom: 30, right: 30 }}
         icon={<SpeedDialIcon></SpeedDialIcon>}>
         {isManager ? <SpeedDialAction icon={<Edit></Edit>} tooltipTitle="Edit profile"></SpeedDialAction> : null}
         {isManager ? <SpeedDialAction icon={<AddLink></AddLink>} tooltipTitle="Invite member" onClick={handleFetchInvite}></SpeedDialAction> : null}
-        <SpeedDialAction icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team"></SpeedDialAction>
+        <SpeedDialAction icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team" onClick={handleLeaveTeam}></SpeedDialAction>
         {isManager ? <SpeedDialAction icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete team"></SpeedDialAction> : null}
-      </SpeedDial>
+      </SpeedDial> : null}
     </>
   )
 }

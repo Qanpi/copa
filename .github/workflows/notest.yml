@@ -1,0 +1,55 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js app to Azure Web App - copadekuutio
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env: 
+  CI: ""
+  AZURE_WEBAPP_NAME: copadekuutio 
+  AZURE_WEBAPP_PACKAGE_PATH: server
+  AZURE_WEBAPP_SLOT_NAME: development
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: npm install and build client
+        working-directory: client 
+        run: |
+          npm install
+          npm run build --if-present
+          # npm run test --if-present
+
+      - name: npm install and build server
+        working-directory: server
+        run: |
+          npm install
+          npm run build --if-present
+          # npm run test --if-present
+
+      - name: move client build to server
+        run: mv client/build server
+
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        if: ${{ !env.ACT }}
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }} 
+          slot-name: ${{ env.AZURE_WEBAPP_SLOT_NAME }}'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

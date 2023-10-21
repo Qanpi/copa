@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { useUser } from "../user/hooks.ts";
 import UserPanel from "../user/userpanel.tsx";
 import { useTournament } from "./hooks.ts";
+import logo from "./copa.png";
 
 export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
@@ -108,24 +109,30 @@ function Header() {
 
   const { data: user } = useUser("me");
 
+  const isAdmin = user?.role === "admin";
+
   const links = [
-    <Link to="/" >Home</Link>,
+    <Link to="/" >
+      <MenuItem>Home</MenuItem>
+    </Link>,
+    <Link to="/tournament/dashboard" >
+      {isAdmin ?
+        <MenuItem>Dashboard</MenuItem> : null}
+    </Link>,
     <Link to="/all-time">
-      <Typography>
+      <MenuItem>
         All-time
-      </Typography>
+      </MenuItem>
     </Link>,
     <Link to="/about">
-      <Typography>
-        About
-      </Typography>
+      <MenuItem>About</MenuItem>
     </Link>
   ]
 
   const tournamentHeader = (
-      <Typography>
-        {tournament?.name || "Tournament"}
-      </Typography>
+    <Typography noWrap>
+      {tournament?.name || "Tournament"}
+    </Typography>
   );
 
   const tournamentSublinks = [
@@ -156,7 +163,7 @@ function Header() {
       }} display="flex" alignItems={"center"}>
         {isMobile ?
           null
-          : <Stack direction="row" spacing={"7vw"} sx={{
+          : <Stack direction="row" spacing={"5vw"} sx={{
             height: "100%"
           }} alignItems={"center"}>
 
@@ -166,15 +173,7 @@ function Header() {
               {tournamentSublinks}
             </DropdownMenu>
 
-            {user?.role === "admin" ?
-              (
-                <Link to="/tournament/dashboard">
-                  <Typography>Dashboard</Typography>
-                </Link>
-              ) : null
-            }
-
-            {links.slice(1)}
+            {links.slice((isAdmin ? 1 : 2))}
           </Stack>
         }
         <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "10px" }}>
@@ -184,14 +183,12 @@ function Header() {
                 <MenuIcon fontSize="large"></MenuIcon>
               </IconButton>
             }>
-              <MenuItem>{links[0]}</MenuItem>
+              {links[0]}
               <MenuItem>{tournamentHeader}</MenuItem>
               {tournamentSublinks.map((l, i) => (
-                <Box sx={{pl: 2}}>{l}</Box>
+                <Box sx={{ pl: 2 }}>{l}</Box>
               ))}
-              {links.slice(1).map((l, i) => (
-                <MenuItem key={i}>{l}</MenuItem>
-              ))}
+              {links.slice(1)}
             </DropdownMenu> : null}
           <UserPanel></UserPanel>
         </Box>
@@ -202,6 +199,10 @@ function Header() {
         borderTop: `40px solid ${theme.palette.secondary.main}`,
         borderRight: "20px solid transparent",
       }}></Box>
+      <Link to="/">
+        <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: -10, width: "220px", height: "222px" }}>
+        </Box>
+      </Link>
     </Box >
   )
 }

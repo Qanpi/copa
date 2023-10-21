@@ -1,5 +1,5 @@
 import { TParticipant } from "@backend/models/participant.ts";
-import { Box, Card, CardActionArea, CardContent, CardProps, Container, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
@@ -12,20 +12,26 @@ import {
 } from "../viewer/hooks.ts";
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.tsx";
+import { AddCircle } from "@mui/icons-material";
 
-const ParticipantCard = ({ name, ...props }: CardProps & { name?: string }) => {
+const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string, banner?: string }) => {
+  const theme = useTheme();
+
   return (
     <Card key={name} sx={{
-      minHeight: 200, borderRadius: 3,
-      maxHeight: "300px"
+      minHeight: 200, borderRadius: 1,
+      maxHeight: "300px",
+      background: theme.palette.primary.dark
     }} {...props}>
       <Link to={`/teams/${name}`}>
         <CardActionArea sx={{
           height: "100%",
           display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "left",
+          alignItems: "start",
+          flexDirection: "column"
         }}>
+          <CardMedia image={banner} sx={{height: "100%", width: "100%"}}>
+          </CardMedia>
           <CardContent>
             <Typography>{name}</Typography>
           </CardContent>
@@ -47,6 +53,7 @@ function TeamsPage() {
   }
   );
 
+  const theme = useTheme();
   return (
     <BannerPage title={`Participants`}>
       <Stack spacing={3}>
@@ -59,24 +66,22 @@ function TeamsPage() {
               justifyContent: "center",
               pt: 2,
             }}>
-              {tournament?.state === "Registration" ? <Card sx={{
+              {tournament?.registration?.isOpen ? <Card sx={{
                 minHeight: 200, borderRadius: 3,
-                maxHeight: "300px"
+                maxHeight: "300px",
+                background: theme.palette.secondary.dark
               }}>
                 <Link to="/tournament/register">
-                  <CardActionArea sx={{
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}>
+                  <CardActionArea sx={{height: "100%", display:"flex", justifyContent: "center", alignItems: "center"}}>
                     <CardContent>
-                      <Typography>Your team could be here</Typography>
+                      <IconButton>
+                        <AddCircle fontSize={"large"}></AddCircle>
+                      </IconButton>
                     </CardContent>
                   </CardActionArea>
                 </Link>
               </Card> : null}
-              {participants?.map(p => <ParticipantCard name={p?.name}></ParticipantCard>)}
+              {participants?.map(p => <ParticipantCard name={p?.name} banner={p?.bannerUrl}></ParticipantCard>)}
             </Box>
           </Box>
         </DivisionPanel>
