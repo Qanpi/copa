@@ -60,12 +60,13 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
         padding: 2,
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
-          <Typography variant="h1" fontWeight={800} sx={{ fontSize: "10vw!important" }} noWrap>
+          <Typography variant="h1" fontWeight={800} sx={{ fontSize: "15vw!important" }} noWrap>
             {tournament?.name?.toUpperCase()}
           </Typography>
           <Typography sx={{
             textOrientation: "upright",
             writingMode: "vertical-rl",
+            fontSize: "2vw!important"
           }}>
             {dayjs().year()}
           </Typography>

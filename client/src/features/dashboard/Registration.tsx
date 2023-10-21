@@ -206,7 +206,7 @@ function RegistrationPane() {
         touched,
       }) => (
         <Form>
-          <FeedbackSnackbar severity={updateSnackbar?.severity} success="Your changes were saved succesfully" onClose={() => setUpdateSnackbar(false)}>
+          <FeedbackSnackbar severity={updateSnackbar?.severity} success="Your changes were saved succesfully" onClose={() => setUpdateSnackbar(null)}>
           </FeedbackSnackbar>
           <InputLabel sx={{ mb: 2 }}>Open registration</InputLabel>
           <Stack direction="row" spacing={2}>
