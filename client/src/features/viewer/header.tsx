@@ -1,9 +1,6 @@
 import { Menu as MenuIcon } from "@mui/icons-material";
 import {
-  Backdrop,
-  BackdropProps,
   Box,
-  CircularProgress,
   ClickAwayListener,
   IconButton,
   MenuItem,
@@ -205,12 +202,6 @@ function Header() {
       </Link>
     </Box >
   )
-}
-
-export const LoadingBackdrop = (props: BackdropProps) => {
-  return <Backdrop sx={{ zIndex: 11 }} {...props}>
-    <CircularProgress></CircularProgress>
-  </Backdrop>
 }
 
 export default Header;

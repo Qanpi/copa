@@ -8,7 +8,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { tournamentKeys, useCreateTournament, useTournament } from "../viewer/hooks";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { LoadingBackdrop } from "../viewer/header";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop";
 
 function CreateTournamentPage() {
     const tournament = useTournament("current");

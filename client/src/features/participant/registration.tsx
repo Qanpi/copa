@@ -12,7 +12,7 @@ import { useTeam, useUpdateTeam } from "../team/hooks.ts";
 import { useUser } from "../user/hooks.ts";
 import { divisionKeys, useDivisions, useTournament } from "../viewer/hooks.ts";
 import { participantKeys, useParticipants } from "./hooks.ts";
-import { LoadingBackdrop } from "../viewer/header.tsx";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { GoogleSignInButton } from "../user/userpanel.tsx";
 import NoTeamPage from "../team/NoTeamPage.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";

@@ -1,4 +1,5 @@
 import { TDivision } from "@backend/models/division.ts";
+import { LoadingBackdrop } from "./features/layout/LoadingBackdrop.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -44,13 +45,11 @@ function divisionReducer(prevId: number, newId: number) {
 }
 
 function App() {
-  const { data: tournament } = useTournament("current");
+  const { data: tournament, isLoading: isTournamentLoading } = useTournament("current");
+  const { data: user, isLoading: isUserLoading } = useUser("me");
+
   const { data: divisions } = useDivisions(tournament?.id);
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);
-
-  const { data: user, status: userStatus } = useUser("me");
-
-  if (userStatus !== "success") return;
 
   return (
     <Router>
@@ -60,6 +59,9 @@ function App() {
           <DivisionDispatchContext.Provider value={dispatch}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Header></Header>
+              <LoadingBackdrop open={
+                isUserLoading || isTournamentLoading
+              }></LoadingBackdrop>
               <Routes>
                 <Route path="/" element={<HomePage></HomePage>}></Route>
                 <Route path="/about" element={<AboutPage></AboutPage>}></Route>

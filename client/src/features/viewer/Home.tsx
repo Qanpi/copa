@@ -8,7 +8,7 @@ import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";
 import brush from "./brush.png";
-import { LoadingBackdrop } from "./header";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop";
 import { ArrowDropDown } from "@mui/icons-material";
 
 function WinnerPane({ stageId }: { stageId: string }) {

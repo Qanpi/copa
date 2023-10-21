@@ -7,7 +7,7 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator.js";
 import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography, Tooltip, Tabs, Tab, Button } from "@mui/material";
 import { useParams } from "react-router";
 import { useUpdateUser, useUser, userKeys } from "./hooks.ts";
-import { LoadingBackdrop } from "../viewer/header.tsx";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import OutlinedContainer from "../layout/OutlinedContainer.tsx";

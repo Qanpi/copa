@@ -17,7 +17,7 @@ import { DivisionContext } from "../../index.tsx";
 import { useGroupStageData, useStages } from "../stage/hooks.ts";
 import "./fortuneWheel.css"
 import { TParticipant } from "@backend/models/participant.ts";
-import { LoadingBackdrop } from "../viewer/header.tsx";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
 
 const useGroup = (id) => {
