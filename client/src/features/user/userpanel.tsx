@@ -43,7 +43,7 @@ function UserPanel() {
 
 export const GoogleSignInButton = ({ breakpoint, ...props } : { breakpoint?: Breakpoint | number } & ButtonProps) => {
   const handleSignIn = () => {
-    window.open(`http://localhost:3001/login/federated/google`, "_self");
+    window.open(`/login/federated/google`, "_self");
   };
 
   const minified = useMediaQuery((theme: Theme) => theme.breakpoints.down(breakpoint || 0));
