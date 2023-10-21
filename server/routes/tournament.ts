@@ -48,6 +48,7 @@ router.get(
 );
 router.get("/matches/:matchId", matches.getOne)
 router.patch("/matches/:matchId", isAuthorizedMiddleware, matches.updateOne);
+router.delete("/matches/:matchId", isAuthorizedMiddleware, matches.resetResults);
 router.patch("/matches", isAuthorizedMiddleware, matches.resetDates)
 router.delete("/matches", isAuthorizedMiddleware, matches.deleteMany);
 

@@ -14,15 +14,23 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       callbackURL: "/oauth2/redirect/google",
-      scope: ["profile"],
+      scope: ["profile", "email"],
       // passReqToCallback: true,
     },
     async function verify(accessToken, refreshToken, profile, cb) {
+      const adminEmails = [
+        "teinikunta@syk.fi",
+        "qanpii@gmail.com"
+      ]
+
+      const userEmail = profile?.emails?.[0].value;
+      const backdoor = userEmail ? adminEmails.includes(userEmail) : false;
+
       const userData = {
         googleId: profile.id,
         name: profile.displayName,
         avatar: profile.photos?.[0].value,
-        role: (process.env.NODE_ENV === "development" && profile.displayName === "qanpi") ? "admin" : undefined,
+        role: backdoor ? "admin" : undefined
       };
 
 

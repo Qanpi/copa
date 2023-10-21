@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 
 import { bracketsManager } from "../services/bracketsManager.js";
 import Stage from "../models/stage.js";
+import expressAsyncHandler from "express-async-handler";
 
 export const getMany = async (req: Request, res: Response) => {
   //FIXME: refactor this better
@@ -55,6 +56,12 @@ export const updateOne = async (req: Request, res: Response) => {
 
   res.send(updated);
 };
+
+export const resetResults = expressAsyncHandler(async (req, res) => {
+  await bracketsManager.reset.matchResults(req.params.matchId);
+
+  res.status(204).send({});
+})
 
 export const resetDates = async (req: Request, res: Response) => {
   const matches = await Match.updateMany({}, { $unset: { start: "" } });
