@@ -13,6 +13,7 @@ env:
   CI: ""
   AZURE_WEBAPP_NAME: copadekuutio 
   AZURE_WEBAPP_PACKAGE_PATH: server
+  AZURE_WEBAPP_SLOT_NAME: development
 
 jobs:
   build-and-deploy:
@@ -49,6 +50,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }} 
-          slot-name: 'Production'
+          slot-name: ${{ env.AZURE_WEBAPP_SLOT_NAME }}'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
