@@ -12,6 +12,7 @@ import authRouter from "./routes/auth.js";
 import cookieSession from "cookie-session";
 import passport from "passport";
 import { debugHTTP } from "./services/debuggers.js";
+import expressAsyncHandler from "express-async-handler";
 
 connectMongoose();
 const app = express();
@@ -63,18 +64,19 @@ app.use("/api", apiRouter); // api request flow: route -> controller -> db servi
 app.use(authRouter);
 
 //home page
-app.get("/*", (req, res) => {
+app.use(expressAsyncHandler(async (req, res) => {
   //FIXME:!redirect to localhost if developing
   if (process.env.NODE_ENV === "development") {
     return res.redirect(process.env.REACT_LOCALHOST_DOMAIN!);
   }
+
   res.sendFile(reactPath + "/index.html");
-});
+}));
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 
 // error handler
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
