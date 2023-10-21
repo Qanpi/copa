@@ -12,14 +12,17 @@ import { rateLimit } from "express-rate-limit"
 const router = express.Router();
 
 //RATE LIMITING
-const apiLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, //10min, taken from the npm page
-  limit: 100,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
-})
+if (process.env.NODE_ENV !== "development") {
 
-router.use(apiLimiter);
+  const apiLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000, //10min, taken from the npm page
+    limit: 100,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+  })
+
+  router.use(apiLimiter);
+}
 
 //TOURNAMENT
 router.get("/tournaments", tournaments.getMultiple);
