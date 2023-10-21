@@ -173,7 +173,7 @@ function Header() {
               {tournamentSublinks}
             </DropdownMenu>
 
-            {links.slice(1)}
+            {links.slice((isAdmin ? 1 : 2))}
           </Stack>
         }
         <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "10px" }}>
