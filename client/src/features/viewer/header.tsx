@@ -109,16 +109,16 @@ function Header() {
   const { data: user } = useUser("me");
 
   const links = [
-    <Link to="/" >Home</Link>,
+    <Link to="/" >
+      <MenuItem>Home</MenuItem>
+    </Link>,
     <Link to="/all-time">
-      <Typography>
+      <MenuItem>
         All-time
-      </Typography>
+      </MenuItem>
     </Link>,
     <Link to="/about">
-      <Typography>
-        About
-      </Typography>
+      <MenuItem>About</MenuItem>
     </Link>
   ]
 
@@ -184,14 +184,12 @@ function Header() {
                 <MenuIcon fontSize="large"></MenuIcon>
               </IconButton>
             }>
-              <MenuItem>{links[0]}</MenuItem>
+              {links[0]}
               <MenuItem>{tournamentHeader}</MenuItem>
               {tournamentSublinks.map((l, i) => (
                 <Box sx={{pl: 2}}>{l}</Box>
               ))}
-              {links.slice(1).map((l, i) => (
-                <MenuItem key={i}>{l}</MenuItem>
-              ))}
+              {links.slice(1)}
             </DropdownMenu> : null}
           <UserPanel></UserPanel>
         </Box>
