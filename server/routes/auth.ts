@@ -126,7 +126,6 @@ router.get("/me", async (req, res, next) => {
       req.session = null;
       res.clearCookie("session").status(204).send({});
     });
-    // if (!user) user = await User.create(req.user); // maybe make only possible for dev?
 
     //pull out any sensitive fields
     const { googleId, ...sanitized } = user.toObject();
