@@ -25,7 +25,8 @@
     },
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true, 
   },
+  "exclude": ["test/"]
 
 }
