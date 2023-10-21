@@ -60,19 +60,19 @@ const TeamBox = ({ match, opponent, sx, ...props }: { opponent: "opponent1" | "o
     <Stack direction="column" display="flex" alignItems="center"  {...props}>
       <Typography variant="subtitle1">{opp?.name || "BYE"}</Typography>
 
-      <OutlinedContainer sx={{p: 0, pt: 1, pb: 1}}>
-        <Stack direction="column" sx={{ pl: 10, pr: 10, alignItems: "center", display: "flex", justifyContent: "center" }}>
+      <OutlinedContainer sx={{p: 0, pt: 1, pb: 1, pl: 1, pr:1, background: theme.palette.primary.main}}>
+        <Stack direction="column" sx={{ alignItems: "center", display: "flex", justifyContent: "center" }}>
           <Button size="small" variant="contained" fullWidth color="primary" onClick={() => handleChangeScore(1)}>
             {/* <IconButton onClick={() => handleChangeScore(-1)}> */}
             <KeyboardArrowUp></KeyboardArrowUp>
             {/* </IconButton> */}
           </Button>
           {/* <Box sx={{ width: "100%", height: "100%", objectFit: "contain" }} component="img" src={participant?.bannerUrl}></Box> */}
-          <Typography fontSize={"30vmin"} fontWeight={800} sx={{mb: -5, mt: -5}}>
+          <Typography fontSize={"30vmin"} fontWeight={800} sx={{mb: -5, mt: -5, ml: 10, mr: 10}}>
             {opp?.score}
           </Typography>
 
-          <Button size="small" variant="contained" color="primary" sx={{ width: "100%", }} onClick={() => handleChangeScore(-1)}>
+          <Button size="small" disabled={opp.score <= 0} variant="contained" color="primary" sx={{ width: "100%", }} onClick={() => handleChangeScore(-1)}>
             {/* <IconButton onClick={() => handleChangeScore(-1)}> */}
             <KeyboardArrowDown></KeyboardArrowDown>
             {/* </IconButton> */}
