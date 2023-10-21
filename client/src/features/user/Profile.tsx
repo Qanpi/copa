@@ -36,7 +36,7 @@ function ProfilePage() {
   }
 
   return <Container maxWidth="md" sx={{ display: "flex", justifyContent: "center", alignItems: "center", pt: 10 }}>
-    <Stack direction="column" spacing={5}>
+    <Stack direction="column" minWidth={"400px"} spacing={5}>
       <Stack direction="row" spacing={3} alignItems={"center"}>
         <Avatar src={user.avatar} sx={{ width: 150, height: 150 }}></Avatar>
         <Box>
