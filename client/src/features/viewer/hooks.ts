@@ -71,13 +71,9 @@ export const divisionKeys = queryKeyFactory("divisions");
 export const useDivision = (id: string) => {
   const { data: tournament } = useTournament("current");
 
-  return useQuery({
-    queryKey: divisionKeys.id(id),
-    queryFn: async () => {
-      const response = await axios.get(`/api/${tournamentKeys.all}/${tournament.id}/${divisionKeys.all}/${id}`);
-      return response.data;
-    },
-  });
+  return {
+    data: tournament?.divisions.find(d => d.id === id)
+  }
 }
 
 export const useDivisions = (tournamentId?: string) => {
