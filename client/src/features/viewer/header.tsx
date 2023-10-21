@@ -109,9 +109,15 @@ function Header() {
 
   const { data: user } = useUser("me");
 
+  const isAdmin = user?.role === "admin";
+
   const links = [
     <Link to="/" >
       <MenuItem>Home</MenuItem>
+    </Link>,
+    <Link to="/tournament/dashboard" >
+      {isAdmin ?
+        <MenuItem>Dashboard</MenuItem> : null}
     </Link>,
     <Link to="/all-time">
       <MenuItem>
@@ -124,7 +130,7 @@ function Header() {
   ]
 
   const tournamentHeader = (
-    <Typography>
+    <Typography noWrap>
       {tournament?.name || "Tournament"}
     </Typography>
   );
@@ -167,14 +173,6 @@ function Header() {
               {tournamentSublinks}
             </DropdownMenu>
 
-            {user?.role === "admin" ?
-              (
-                <Link to="/tournament/dashboard">
-                  <Typography>Dashboard</Typography>
-                </Link>
-              ) : null
-            }
-
             {links.slice(1)}
           </Stack>
         }
@@ -202,8 +200,8 @@ function Header() {
         borderRight: "20px solid transparent",
       }}></Box>
       <Link to="/">
-      <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: "-2%", width: "220px", height: "222px" }}>
-      </Box>
+        <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: "-2%", width: "220px", height: "222px" }}>
+        </Box>
       </Link>
     </Box >
   )
