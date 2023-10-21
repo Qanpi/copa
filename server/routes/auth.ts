@@ -121,7 +121,11 @@ router.get("/me", async (req, res, next) => {
   if (req.isAuthenticated()) {
     let user = await User.findById(req.user.id);
 
-    if (!user) throw new Error("No user found in db for the session.")
+    if (!user) return req.logout((err) => {
+      if (err) return next(err);
+      req.session = null;
+      res.clearCookie("session").status(204).send({});
+    });
     // if (!user) user = await User.create(req.user); // maybe make only possible for dev?
 
     //pull out any sensitive fields
