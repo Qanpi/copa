@@ -101,6 +101,8 @@ function TeamsPage() {
 //               }) 
 
 function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
+  const {data: tournament} = useTournament("current");
+
   const unregisterTeam = useDeleteParticipant();
   const updateParticipant = useUpdateParticipant();
 

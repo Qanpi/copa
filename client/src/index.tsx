@@ -156,9 +156,9 @@ function App() {
                 <Route path="/team">
                   <Route path="/team/none" element={<NoTeamPage></NoTeamPage>}></Route>
                   <Route
-                    path="/team/join"
+                    path="/team/error-joining"
                     element={<JoinTeamPage></JoinTeamPage>}
-                  >R</Route>
+                  ></Route>
 
                   <Route
                     path="/team/create"
