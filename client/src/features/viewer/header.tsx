@@ -146,9 +146,6 @@ function Header() {
     < Link to="/tournament/bracket" >
       <MenuItem>Bracket </MenuItem>
     </Link>,
-    < Link to="/tournament/gamblers" >
-      <MenuItem>Gamblers </MenuItem>
-    </Link>
   ]
 
   return (
