@@ -18,6 +18,7 @@ enum TournamentStates {
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
   {
+    name: String,
     idx: Number,
     organizer: {
       name: String,
@@ -44,11 +45,7 @@ const TournamentSchema = new mongoose.Schema(
           return statePath.enumValues;
         },
       },
-      name: {
-        get() {
-          return `Copa ${romanize(this.idx || 0)}`;
-        },
-      },
+
     },
     statics: {
       async getLatest() {
@@ -74,6 +71,7 @@ TournamentSchema.pre("save", async function () {
       });
 
     this.idx = metadata.idx;
+    this.name = `Copa ${romanize(this.idx || 0)}`;
 
     metadata.idx += 1;
     metadata.latest = this._id;
