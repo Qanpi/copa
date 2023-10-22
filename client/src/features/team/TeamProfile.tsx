@@ -48,6 +48,7 @@ import GradientTitle from "../viewer/gradientTitle.tsx";
 import { useTournament } from "../viewer/hooks.ts";
 import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
 import { useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
+import { useParticipants } from "../participant/hooks.ts";
 
 dayjs.extend(relativeTime);
 
@@ -73,7 +74,7 @@ function TeamProfilePage() {
     }
     , [])
 
-  const handleSubmit = (values: TTeam ) => {
+  const handleSubmit = (values: TTeam) => {
     updateTeam.mutate(values, {
       onSuccess: () => {
         setEditMode(false);
@@ -220,39 +221,50 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
   const { data: user } = useAuth();
   const { data: tournament } = useTournament("current");
   const { data: members } = useTeamMembers(team?.id);
+  const { data: participants } = useParticipants(tournament?.id, {
+    team: team?.id,
+  })
+  const isParticipant = !!participants?.[0];
 
   const isManager = user?.id === team?.manager;
 
   return (
     <Stack direction="column" spacing={4}>
-      {isManager && tournament?.registration?.isOpen ? <Alert severity="info">
+      {!isParticipant ? (isManager && tournament?.registration?.isOpen ? <Alert severity={"info"}>
         <AlertTitle>Register!</AlertTitle>
-        Don't miss your chance to <Link style={{textDecoration: "underline"}} to="/tournament/register">register</Link> for {tournament.name}!
-      </Alert> : null}
+        Don't miss your chance to <Link style={{ textDecoration: "underline" }} to="/tournament/register">register</Link> for {tournament.name}!
+      </Alert> : null) :
+        <Alert>
+          <AlertTitle>Congratulations!</AlertTitle>
+          Your team is registered for {tournament?.name || ""}!
+        </Alert>
+      }
       <AboutSection open={team?.about !== "" || editMode} name="about" edit={editMode}></AboutSection>
 
-      {members && members.length > 0 ? <OutlinedContainer>
-        <Typography variant="h6" color="primary">Squad</Typography>
-        <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
-          {members?.map(m => {
-            const visible = m?.preferences?.publicProfile;
+      {
+        members && members.length > 0 ? <OutlinedContainer>
+          <Typography variant="h6" color="primary">Squad</Typography>
+          <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
+            {members?.map(m => {
+              const visible = m?.preferences?.publicProfile;
 
-            return (
-              <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
-                <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
-                  <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
-                  {visible ? null : <Tooltip arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
-                    <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
-                  </Tooltip>}
+              return (
+                <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
+                  <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
+                    <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
+                    {visible ? null : <Tooltip arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                      <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
+                    </Tooltip>}
+                  </Box>
+                  <Typography>{m.name}</Typography>
                 </Box>
-                <Typography>{m.name}</Typography>
-              </Box>
-            )
-          }
-          )}
-        </Box>
-      </OutlinedContainer> : null}
-    </Stack>
+              )
+            }
+            )}
+          </Box>
+        </OutlinedContainer> : null
+      }
+    </Stack >
   )
 }
 
