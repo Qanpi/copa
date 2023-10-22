@@ -176,7 +176,6 @@ const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: 
 const TimelineTab = ({ teamName }: { teamName?: string }) => {
   const { data: team, isLoading } = useTeam(teamName);
   const { data: participations } = useParticipations(team?.id);
-  console.log(participations);
 
   return (
     <Box sx={{ display: "flex", alignItems: "end" }}>
@@ -230,10 +229,17 @@ const AboutSection = ({ name, open, edit }: { name: string, open: boolean, edit:
 
 const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => {
   const { data: user } = useAuth();
+  const { data: tournament } = useTournament("current");
   const { data: members } = useTeamMembers(team?.id);
+
+  const isManager = user?.id === team?.manager;
 
   return (
     <Stack direction="column" spacing={4}>
+      {isManager && tournament?.registration?.isOpen ? <Alert severity="info">
+        <AlertTitle>Register!</AlertTitle>
+        Don't miss your chance to <Link style={{textDecoration: "underline"}} to="/tournament/register">register</Link> for {tournament.name}!
+      </Alert> : null}
       <AboutSection open={team?.about !== "" || editMode} name="about" edit={editMode}></AboutSection>
 
       {members && members.length > 0 ? <OutlinedContainer>
