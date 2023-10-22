@@ -7,6 +7,7 @@ import { Request } from "express";
 import { isManagerOrAdmin, isLoggedInAsUser, isAdmin, isInTeam } from "../middleware/validation.js";
 import { t } from "ts-brackets-viewer/dist/lang.js";
 import { StatusError } from "../middleware/auth.js";
+import Participant from "../models/participant.js";
 
 export const createOne = expressAsyncHandler(async (req, res, next) => {
   if (req.user?.team)
@@ -47,10 +48,10 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
   if (!team)
     throw new Error("Team not found.")
 
-  if (!isManagerOrAdmin(req.user, team.manager?.toString()))
+  if (!isManagerOrAdmin(req.user, team.manager))
     throw new Error("Unauthorized request.");
 
-  const updated = await Team.findByIdAndUpdate(req.params.id, req.body, {new: true}).exec();
+  const updated = await Team.findByIdAndUpdate(req.params.id, req.body, { new: true }).exec();
   res.send(updated);
 })
 
@@ -64,7 +65,7 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
   if (!team)
     throw new Error("Invalid team.")
 
-  if (userId === team.manager?.toString()) {
+  if (userId === team.manager) {
     await team.passManagement();
   }
 
@@ -88,6 +89,14 @@ export const getUsersInTeam = expressAsyncHandler(async (req, res) => {
   res.send(members);
 })
 
+export const getParticipations = expressAsyncHandler(async (req, res) => {
+  const participations = await Participant.find({
+    team: req.params.id
+  }).populate("tournament");
+
+  res.send(participations);
+})
+
 export const addUserToTeam = expressAsyncHandler(async (req, res) => {
   const userId: string = req.body.user;
 
@@ -97,7 +106,7 @@ export const addUserToTeam = expressAsyncHandler(async (req, res) => {
 
   const updated = await User.findByIdAndUpdate(userId, {
     team
-  }, {new: true});
+  }, { new: true });
 
   res.status(201).send(updated);
 })
@@ -114,13 +123,13 @@ export const joinViaInviteToken = expressAsyncHandler(async (req, res) => {
   if (!req.user)
     throw new Error("Strange... no auth.")
 
-  if(req.user?.team) 
+  if (req.user?.team)
     throw new StatusError("User is already in a team.", 403)
 
   if (team.invite?.token === token && team.invite.expiresAt && team.invite.expiresAt >= new Date()) {
     const updated = await User.findByIdAndUpdate(req.user.id, {
       team
-    }, {new: true});
+    }, { new: true });
     res.status(201).send(updated);
   } else {
     throw new StatusError("Invalid token.", 403)
@@ -133,7 +142,7 @@ export const generateInviteToken = expressAsyncHandler(async (req, res) => {
   if (!team)
     throw new Error("Invalid team.")
 
-  if (!isManagerOrAdmin(req.user, team.manager?.toString()))
+  if (!isManagerOrAdmin(req.user, team.manager))
     throw new StatusError("Neither manager nor in team.", 403);
 
   const random = crypto.randomBytes(16);
@@ -151,7 +160,12 @@ export const generateInviteToken = expressAsyncHandler(async (req, res) => {
 export const removeById = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.params.id);
 
-  if (!isManagerOrAdmin(req.user, team?.manager?.toString()))
+  if (!team) {
+    res.status(204).send();
+    return;
+  }
+
+  if (!isManagerOrAdmin(req.user, team.manager))
     throw new Error("Neither manager nor admin of team.");
 
   await team?.deleteOne();

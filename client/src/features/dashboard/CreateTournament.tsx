@@ -9,10 +9,15 @@ import axios from "axios";
 import { tournamentKeys, useCreateTournament, useTournament } from "../viewer/hooks";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop";
+import { FeedbackSnackbar } from "../layout/FeedbackSnackbar";
+import { useState } from "react";
+import { TFeedback } from "../types";
 
 function CreateTournamentPage() {
     const tournament = useTournament("current");
     const createTournament = useCreateTournament();
+
+    const [feedback, setFeedback] = useState<TFeedback>();
 
     return (
         <Formik
@@ -31,15 +36,25 @@ function CreateTournamentPage() {
                 divisions: Yup.array().min(1, "You must create at least one division.").required().of(Yup.string()),
             })}
             onSubmit={(values) => {
-                createTournament.mutate(values);
+                createTournament.mutate(values, {
+                    onSuccess: () => {
+                        setFeedback({
+                            severity: "success",
+                            message: "Succesfully created tournamet"
+                        })
+                    },
+                    onError: (err) => {
+                        setFeedback({
+                            severity: "error",
+                            message: err.message
+                        })
+                    }
+                });
             }}
         >
             <Form>
-                <Snackbar open={createTournament.isError} anchorOrigin={{vertical: "top", horizontal: "center"}}>
-                    <Alert severity="error" sx={{width: "100%"}}>
-                        {createTournament.error?.message}
-                    </Alert>
-                </Snackbar>
+                <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}>
+                </FeedbackSnackbar>
                 <LoadingBackdrop open={createTournament.isLoading}></LoadingBackdrop>
                 <Container sx={{ pt: 15 }} maxWidth="xs">
                     <Grid2 container spacing={2} alignItems={"center"} justifyContent="center">

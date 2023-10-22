@@ -19,7 +19,7 @@ const TeamSchema = new mongoose.Schema(
     bannerUrl: String,
     phoneNumber: String,
 
-    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v?: Types.ObjectId) => v?.toString(), unique: true },
+    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v: Types.ObjectId) => v.toString(), unique: true },
 
     invite: {
       token: {
@@ -46,14 +46,26 @@ const TeamSchema = new mongoose.Schema(
           "team.id": this.id,
           _id: { $ne: this.manager },
         });
-        this.manager = newManager ? newManager.id : undefined;
-        //TODO: document the fact this doesn't delete the team
 
-        return await this.save();
+        if (newManager) {
+          this.manager = newManager.id;
+          return await this.save();
+        } else {
+          await this.deleteOne();
+          return;
+        }
       },
+    },
+    virtuals: {
+      createdAt: {
+        get() {
+          return this._id.getTimestamp() as Date;
+        }
+      }
     },
     timestamps: true,
     id: true,
+    _id: true,
   }
 );
 
@@ -76,6 +88,6 @@ TeamSchema.pre("deleteOne", async function () {
   }
 })
 
-export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods"> & {manager?: string};
+export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods"> & { manager: string, id: string };
 
 export default mongoose.model<TTeam>(collections.teams.id, TeamSchema);

@@ -1,8 +1,8 @@
 import { useField, useFormikContext } from "formik";
 import { TextField, TextFieldProps } from "@mui/material";
 
-const MyTextField = ({...props } : TextFieldProps) => {
-  const [field, meta] = useField(props);
+const MyTextField = ({...props } : TextFieldProps & {name: string}) => {
+  const [field, meta] = useField(props.name);
   const {setFieldTouched} = useFormikContext();
 
   const handleInput = () => {

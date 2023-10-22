@@ -13,6 +13,7 @@ import {
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.tsx";
 import { AddCircle } from "@mui/icons-material";
+import { PromptContainer } from "../layout/PromptContainer.tsx";
 
 const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string, banner?: string }) => {
   const theme = useTheme();
@@ -30,7 +31,7 @@ const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string
           alignItems: "start",
           flexDirection: "column"
         }}>
-          <CardMedia image={banner} sx={{height: "100%", width: "100%"}}>
+          <CardMedia image={banner} sx={{ height: "100%", width: "100%" }}>
           </CardMedia>
           <CardContent>
             <Typography>{name}</Typography>
@@ -54,11 +55,13 @@ function TeamsPage() {
   );
 
   const theme = useTheme();
+  const to = tournament?.registration?.to;
+
   return (
     <BannerPage title={`Participants`}>
       <Stack spacing={3}>
         <DivisionPanel>
-          <Box sx={{minHeight: "600px", width: "100%"}}>
+          {to && new Date(to) >= new Date() ? <Box sx={{ minHeight: "600px", width: "100%" }}>
             <Box sx={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, 250px)",
@@ -66,13 +69,13 @@ function TeamsPage() {
               justifyContent: "center",
               pt: 2,
             }}>
-              {tournament?.registration?.isOpen ? <Card sx={{
+              <Card sx={{
                 minHeight: 200, borderRadius: 3,
                 maxHeight: "300px",
-                background: theme.palette.secondary.dark
+                background: theme.palette.secondary.main
               }}>
                 <Link to="/tournament/register">
-                  <CardActionArea sx={{height: "100%", display:"flex", justifyContent: "center", alignItems: "center"}}>
+                  <CardActionArea sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <CardContent>
                       <IconButton>
                         <AddCircle fontSize={"large"}></AddCircle>
@@ -80,10 +83,14 @@ function TeamsPage() {
                     </CardContent>
                   </CardActionArea>
                 </Link>
-              </Card> : null}
+              </Card>
               {participants?.map(p => <ParticipantCard name={p?.name} banner={p?.bannerUrl}></ParticipantCard>)}
             </Box>
-          </Box>
+          </Box> :
+            <PromptContainer>
+              <Typography>Registration hasn't begun yet.</Typography>
+            </PromptContainer>
+          }
         </DivisionPanel>
       </Stack>
     </BannerPage>
