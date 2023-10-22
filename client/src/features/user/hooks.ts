@@ -47,7 +47,7 @@ export const useUpdateUser = () => {
   });
 };
 
-export const useTeamMembers = (teamId: string) => {
+export const useTeamMembers = (teamId?: string) => {
   const queryClient = useQueryClient();
 
   return useQuery({

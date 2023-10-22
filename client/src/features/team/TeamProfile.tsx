@@ -1,12 +1,17 @@
-import { Link } from "react-router-dom";
-import * as Yup from "yup"
+import { TTeam } from "@backend/models/team.ts";
+import { AddLink, Clear, ContentCopy, DeleteForever, Edit, MeetingRoom, Save, VisibilityOff } from "@mui/icons-material";
+import Timeline from "@mui/lab/Timeline";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import {
   Alert,
   AlertTitle,
   Avatar,
   Box,
-  Button,
-  Card,
   ClickAwayListener,
   Container,
   Dialog,
@@ -22,41 +27,27 @@ import {
   TabsProps,
   TextField,
   Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import { useNavigate, useParams } from "react-router-dom";
-import { useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
-import { useTeamMembers, useUpdateUser, useAuth } from "../user/hooks.ts";
-import BannerPage from "../viewer/BannerPage.tsx";
-import GradientTitle from "../viewer/gradientTitle.tsx";
-import { PromptContainer } from "../layout/PromptContainer.tsx";
-import { useTournament } from "../viewer/hooks.ts";
-import { memo, useCallback, useMemo, useState } from "react";
-import NotFoundPage from "../layout/NotFoundPage.tsx";
-import { TTeam } from "@backend/models/team.ts";
-import { AddLink, Clear, ContentCopy, DeleteForever, Edit, MeetingRoom, Save, VisibilityOff } from "@mui/icons-material";
-import OutlinedContainer from "../layout/OutlinedContainer.tsx";
-import { useMatches } from "../match/hooks.ts";
-import { useParticipants } from "../participant/hooks.ts";
-import { Form, Formik, useField, useFormikContext } from "formik";
-import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
+import { Form, Formik, useField } from "formik";
+import { memo, useCallback, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import * as Yup from "yup";
 import MyTextField from "../inputs/myTextField.tsx";
-import { TFeedback } from "../types.ts";
-import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
-import user from "@backend/models/user.ts";
-import Timeline from "@mui/lab/Timeline";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import { ParticipantResultSchema } from "brackets-mongo-db";
 import DevFeature from "../layout/DevelopmentFeature.tsx";
+import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
+import NotFoundPage from "../layout/NotFoundPage.tsx";
+import OutlinedContainer from "../layout/OutlinedContainer.tsx";
+import { TFeedback } from "../types.ts";
+import { useAuth, useTeamMembers } from "../user/hooks.ts";
+import GradientTitle from "../viewer/gradientTitle.tsx";
+import { useTournament } from "../viewer/hooks.ts";
+import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
+import { useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
 
 dayjs.extend(relativeTime);
 
@@ -67,7 +58,7 @@ function TeamProfilePage() {
   const { data: team, status: teamStatus, isLoading } = useTeam(encoded);
 
   const [selectedTab, setSelectedTab] = useState(0);
-  const handleChangeSelectedTab = useCallback((_, newTab: number) => {
+  const handleChangeSelectedTab = useCallback((_: any, newTab: number) => {
     setSelectedTab(newTab);
   }, [])
 
@@ -82,7 +73,7 @@ function TeamProfilePage() {
     }
     , [])
 
-  const handleSubmit = (values: Partial<TTeam>) => {
+  const handleSubmit = (values: TTeam ) => {
     updateTeam.mutate(values, {
       onSuccess: () => {
         setEditMode(false);
@@ -103,7 +94,7 @@ function TeamProfilePage() {
   if (!isLoading && !team) return <NotFoundPage></NotFoundPage>
 
   return (
-    <Formik enableReinitialize validationSchema={Yup.object(teamValidationSchema)} initialValues={team || {}} onSubmit={handleSubmit}>
+    <Formik enableReinitialize validationSchema={Yup.object(teamValidationSchema)} initialValues={team || {} as TTeam} onSubmit={handleSubmit}>
       {
         ({ values: team, dirty, submitForm, resetForm }) => {
           return (
@@ -184,6 +175,7 @@ const TimelineTab = ({ teamName }: { teamName?: string }) => {
           </TimelineSeparator>
           <TimelineContent>What's next?</TimelineContent>
         </TimelineItem>
+        <DevFeature></DevFeature>
         {participations?.map(p => {
           return (
             <TimelineItem>
@@ -282,13 +274,18 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
     },
 
   });
-  const [invite, setInvite] = useState({
-    link: undefined,
-    countdown: undefined
-  });
+
+  type TInvite = {
+    link?: string,
+    countdown?: string
+  }
+
+  const [invite, setInvite] = useState<TInvite>({} as TInvite);
 
 
   const handleFetchInvite = () => {
+    if (!team) return;
+
     fetchInvite.mutate(team, {
       onSuccess: (data) => {
         setInvite(data);
@@ -297,12 +294,13 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
   }
 
   const handleCopyInviteLink = () => {
-    navigator.clipboard.writeText(invite?.link);
+    navigator.clipboard.writeText(invite.link || "");
     setInvite({})
   };
 
   const removeUserFromTeam = useRemoveUserFromTeam();
   const handleLeaveTeam = () => {
+    if (!user || !team) return;
     removeUserFromTeam.mutate({ userId: user.id, teamId: team.id });
   };
 
@@ -313,7 +311,7 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
 
   return (
     <>
-      <Dialog open={invite?.link}>
+      <Dialog open={!!invite?.link}>
         <ClickAwayListener onClickAway={() => setInvite({})}>
           <Alert>
             <AlertTitle>Generated invite link!</AlertTitle>
