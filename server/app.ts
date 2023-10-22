@@ -17,7 +17,11 @@ import expressAsyncHandler from "express-async-handler";
 connectMongoose();
 const app = express();
 
-app.use(logger("dev"));
+//only log in dev because azure provides transaction logs by default
+if (app.get("env") === "development") {
+  app.use(logger("dev"));
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env["GOOGLE_CLIENT_SECRET"]));
