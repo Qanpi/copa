@@ -29,7 +29,7 @@ import TeamProfilePage from "./features/team/TeamProfile.tsx";
 import ProfilePage from "./features/user/Profile.tsx";
 import { useAuth } from "./features/user/hooks.ts";
 import AboutPage from "./features/viewer/AboutPage.tsx";
-import AllTimePage from "./features/viewer/AllTimePage.tsx";
+import HallOfFame from "./features/viewer/AllTimePage.tsx";
 import HomePage from "./features/viewer/Home.tsx";
 import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
@@ -39,6 +39,7 @@ import NotFoundPage from "./features/layout/NotFoundPage.tsx";
 import axios from "axios";
 import { FeedbackSnackbar } from "./features/layout/FeedbackSnackbar.tsx";
 import { TFeedback } from "./features/types.ts";
+import AllTeams from "./features/team/AllTeams.tsx";
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
@@ -55,16 +56,16 @@ function QueryProvider() {
     mutationCache: new MutationCache({
       onError: (error) => {
         if (axios.isAxiosError(error)) {
-          switch(error.status) {
+          switch (error.status) {
             case 429: setFeedback({
               severity: "error",
               message: "Hold up. You are sending to many requests."
             }); break;
-            default: 
-          setFeedback({
-            severity: "error",
-            message: error.message
-          })
+            default:
+              setFeedback({
+                severity: "error",
+                message: error.message
+              })
           }
         } else {
           setFeedback({
@@ -101,7 +102,11 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage></HomePage>}></Route>
                 <Route path="/about" element={<AboutPage></AboutPage>}></Route>
-                <Route path="/all-time" element={<AllTimePage></AllTimePage>}></Route>
+                <Route path="/hall-of-fame"
+                  element={<HallOfFame></HallOfFame>}>
+                </Route>
+                <Route path="/teams" element={<AllTeams></AllTeams>}>
+                </Route>
 
                 <Route path="/tournament">
                   <Route

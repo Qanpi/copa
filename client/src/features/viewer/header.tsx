@@ -19,6 +19,8 @@ import { useAuth } from "../user/hooks.ts";
 import UserPanel from "../user/userpanel.tsx";
 import { useTournament } from "./hooks.ts";
 import logo from "./copa.png";
+import AllTeams from "../team/AllTeams.tsx";
+import HallOfFame from "./AllTimePage.tsx";
 
 export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
@@ -117,11 +119,6 @@ function Header() {
       {isAdmin ?
         <MenuItem>Dashboard</MenuItem> : null}
     </Link>,
-    <Link to="/all-time">
-      <MenuItem>
-        All-time
-      </MenuItem>
-    </Link>,
     <Link to="/about">
       <MenuItem>About</MenuItem>
     </Link>
@@ -167,6 +164,14 @@ function Header() {
 
             <DropdownMenu anchor={tournamentHeader}>
               {tournamentSublinks}
+            </DropdownMenu>
+            <DropdownMenu anchor={<Typography noWrap>All-time</Typography>}>
+              {/* <Link to="/teams">
+                <AllTeams></AllTeams>
+              </Link> */}
+              <Link to="/hall-of-fame">
+                <MenuItem>Hall of Fame</MenuItem>
+              </Link>
             </DropdownMenu>
 
             {links.slice((isAdmin ? 1 : 2))}

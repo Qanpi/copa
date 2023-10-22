@@ -5,19 +5,21 @@ import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import DevFeature from "../layout/DevelopmentFeature";
 
-function AllTimePage() {
+function HallOfFame() {
     return <BannerPage title="Hall Of Fame">
+        <DevFeature></DevFeature>
         <Timeline>
             <TimelineItem>
                 <TimelineSeparator>
                     <TimelineDot />
                     <TimelineConnector />
                 </TimelineSeparator>
-                <TimelineContent>dev</TimelineContent>
+                <TimelineContent></TimelineContent>
             </TimelineItem>
         </Timeline>
     </BannerPage>
 }
 
-export default AllTimePage;
+export default HallOfFame;
