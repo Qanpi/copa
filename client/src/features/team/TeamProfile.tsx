@@ -43,7 +43,7 @@ import OutlinedContainer from "../layout/OutlinedContainer.tsx";
 import { useMatches } from "../match/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
 import { Form, Formik, useField, useFormikContext } from "formik";
-import { teamValidationSchema } from "./CreateTeam.tsx";
+import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
 import MyTextField from "../inputs/myTextField.tsx";
 import { TFeedback } from "../types.ts";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
@@ -105,9 +105,11 @@ function TeamProfilePage() {
               <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>
               <Box sx={{ pt: 15 }} display="flex" flexDirection={"column"} height={"100%"}>
                 <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
-                  {isLoading ? <Skeleton variant="circular" sx={{ width: "30vw", height: "300px", maxWidth: "300px", maxHeight: "300px", position: "absolute" }}></Skeleton> :
-                    <Box component={"img"} sx={{ objectFit: "contain", maxHeight: "300px", maxWidth: "300px", width: "30vw", position: "absolute" }} src={team?.bannerUrl}></Box>}
-                  <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "310px" } }}>
+                  <Box sx={{ width: "30vw", height: "300px", maxWidth: "300px", maxHeight: "300px", position: "absolute" }}>
+                    {isLoading ? <Skeleton variant="circular" sx={{height: "100%"}}></Skeleton> :
+                      <TeamBannerInput name={"bannerUrl"} edit={editMode} sx={{width: "100%", height: "100%" }}></TeamBannerInput>}
+                  </Box>
+                  <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "320px" } }}>
                     <Typography variant="h5">THIS IS</Typography>
                     <Typography variant="h1" fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
                   </Stack>
@@ -138,6 +140,12 @@ function TeamProfilePage() {
   );
 }
 
+// const TeamBanner = ({ src }: { src: string }) => {
+//   return (
+//     <Box component={"img"} sx={{ objectFit: "contain", maxHeight: "300px", maxWidth: "300px", width: "30vw", position: "absolute" }} src={src}></Box>
+//   )
+// }
+
 const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: number, onChange: TabsProps["onChange"], teamId: string }) {
   const { data: user } = useAuth();
   const isMember = user?.team?.id === teamId;
@@ -146,7 +154,7 @@ const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: 
     <Tabs></Tabs>
   </Skeleton>
 
-  return <Box sx={{ ml: { xs: "38vw", md: "calc(300px + 5vw)" }, height: "50px" }}>
+  return <Box sx={{ ml: { xs: "38vw", md: "calc(310px + 5vw)" }, height: "50px" }}>
     <Tabs value={selected} onChange={onChange}>
       <Tab label="Profile"></Tab>
       <Tab label="Timeline"></Tab>
