@@ -47,7 +47,7 @@ import { useAuth, useTeamMembers } from "../user/hooks.ts";
 import GradientTitle from "../viewer/gradientTitle.tsx";
 import { useTournament } from "../viewer/hooks.ts";
 import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
-import { useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
+import { useDeleteTeam, useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
 
 dayjs.extend(relativeTime);
@@ -312,12 +312,20 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
   };
 
   const removeUserFromTeam = useRemoveUserFromTeam();
+  const deleteTeam = useDeleteTeam();
+
+
+
+  if (!team) return;
+
   const handleLeaveTeam = () => {
-    if (!user || !team) return;
+    if (!user) return;
     removeUserFromTeam.mutate({ userId: user.id, teamId: team.id });
   };
 
-  if (!team) return;
+  const handleDeleteTeam = () => {
+    deleteTeam.mutate(team);
+  }
 
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
@@ -355,7 +363,7 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
         {isManager ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit"></SpeedDialAction> : null}
         {isManager ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite" onClick={handleFetchInvite}></SpeedDialAction> : null}
         <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave" onClick={handleLeaveTeam}></SpeedDialAction>
-        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete"></SpeedDialAction> : null}
+        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} onClick={handleDeleteTeam} tooltipTitle="Delete"></SpeedDialAction> : null}
       </SpeedDial> : null}
     </>
   )

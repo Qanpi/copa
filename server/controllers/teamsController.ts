@@ -62,10 +62,8 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
     throw new StatusError("Unauthorized request.", 403);
 
   const team = await Team.findById(req.params.teamId);
-  if (!team)
-    throw new Error("Invalid team.")
 
-  if (userId === team.manager) {
+  if (userId === team?.manager) {
     await team.passManagement();
   }
 
@@ -168,7 +166,7 @@ export const removeById = expressAsyncHandler(async (req, res) => {
   if (!isManagerOrAdmin(req.user, team.manager))
     throw new Error("Neither manager nor admin of team.");
 
-  await team?.deleteOne();
+  await Team.findByIdAndDelete(team.id);
   res.status(204).send();
 });
 

@@ -9,6 +9,7 @@ const TeamSchema = new mongoose.Schema(
       type: String,
       unique: true,
       index: true,
+      required: true,
       //TODO: do i even need the below? how would an attack vector look?
       set: encodeURIComponent,
       get: decodeURIComponent,
@@ -79,8 +80,8 @@ TeamSchema.pre("save", async function () {
   }
 });
 
-TeamSchema.pre("deleteOne", async function () {
-  const members = await User.find({ team: this.getFilter()._id });
+TeamSchema.pre("findOneAndDelete", async function () {
+  const members = await User.find({ "team.id": this.getFilter()._id });
 
   for (const m of members) {
     m.team = undefined;
