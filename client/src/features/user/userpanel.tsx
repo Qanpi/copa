@@ -1,5 +1,5 @@
 import { Google } from "@mui/icons-material";
-import { Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, Breakpoint, ButtonProps, useTheme, Avatar } from "@mui/material";
+import {Skeleton, Stack, Box, Button, Theme, Typography, useMediaQuery, MenuItem, Menu, Breakpoint, ButtonProps, useTheme, Avatar } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { useAuth, userKeys } from "./hooks.ts";
 import { DropdownMenu } from "../viewer/header.tsx";
 
 function UserPanel() {
-  const { status: userStatus, data: user } = useAuth("me");
+  const { isLoading, data: user } = useAuth();
   const queryClient = useQueryClient();
 
   const logout = useMutation({
@@ -20,6 +20,8 @@ function UserPanel() {
   });
 
   const minified = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
+
+  if(isLoading) return <Skeleton variant="rounded" sx={{width: "8vw", height: "48px"}}></Skeleton>
 
   return user ? (
     <DropdownMenu anchor={

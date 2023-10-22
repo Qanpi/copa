@@ -23,7 +23,7 @@ import { TTeam } from "@backend/models/team.ts";
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();

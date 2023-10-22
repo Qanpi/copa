@@ -7,8 +7,8 @@ import { useEffect } from "react";
 import { PromptContainer } from "../layout/PromptContainer";
 
 function NoTeamPage() {
-    const { data: user } = useAuth("me");
-    const { data: team, status: teamStatus } = useTeam(user.team?.name);
+    const { data: user } = useAuth();
+    const { data: team, status: teamStatus } = useTeam(user?.team?.name);
 
     const navigate = useNavigate();
     useEffect(() => {

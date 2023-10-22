@@ -105,7 +105,7 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
 
   const isAdmin = user?.role === "admin";
 

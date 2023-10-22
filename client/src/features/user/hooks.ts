@@ -28,7 +28,7 @@ export const useUser = (id?: string) => {
 }
 
 export const useUpdateUser = () => {
-  const { data: me } = useAuth("me");
+  const { data: me } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
