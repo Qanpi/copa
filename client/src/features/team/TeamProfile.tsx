@@ -123,7 +123,7 @@ function TeamProfilePage() {
                 </Container>
               </Box>
               <Box sx={{ position: "fixed", bottom: 30, right: 30 }}>
-                {dirty ? <SpeedDial ariaLabel="Save updates" icon={<IconButton onClick={submitForm} size="large"><Save ></Save></IconButton>}>
+                {editMode ? <SpeedDial ariaLabel="Save updates" icon={<IconButton onClick={submitForm} size="large"><Save ></Save></IconButton>}>
                   <SpeedDialAction icon={<Clear></Clear>} tooltipTitle={"Cancel"} onClick={() => {
                     handleCancelEdit();
                     resetForm();
