@@ -112,33 +112,27 @@ export const addUserToTeam = expressAsyncHandler(async (req, res) => {
 })
 
 export const joinViaInviteToken = expressAsyncHandler(async (req, res) => {
-  const token = req.query.token as string;
+  const token = req.body.token as string;
 
   const team = await Team.findById(req.params.id).select(["+invite.token", "+invite.expiresAt"]);
 
-  if (!team) {
-    res.redirect(`/team/error-joining`);
-    return;
-  }
+  if (!team)
+    throw new Error("Invalid team.")
 
-  if (!req.user) {
-    res.redirect("/team/error-joining");
-    return;
-  }
+  //this is to please typescript, there isAuth middleware checking the session
+  if (!req.user)
+    throw new Error("Strange... no auth.")
 
-  if (req.user?.team) {
-    res.redirect("/team/error-joining");
-    return;
-  }
+  if (req.user?.team)
+    throw new StatusError("User is already in a team.", 403)
 
   if (team.invite?.token === token && team.invite.expiresAt && team.invite.expiresAt >= new Date()) {
-    await User.findByIdAndUpdate(req.user.id, {
+    const updated = await User.findByIdAndUpdate(req.user.id, {
       team
-    });
-    //TODO: test this out in prod
-    res.redirect(`/teams/${team.name}`);
+    }, { new: true });
+    res.status(201).send(updated);
   } else {
-    res.redirect(`/team/error-joining`);
+    throw new StatusError("Invalid token.", 403)
   }
 })
 

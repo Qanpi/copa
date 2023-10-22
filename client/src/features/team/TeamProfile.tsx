@@ -279,7 +279,7 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
       const domain = window.location.host;
 
       return {
-        link: `${domain}/api/teams/${values.id}/join?token=${token}`,
+        link: `${domain}/team/join?id=${values.id}&token=${token}`,
         countdown: dayjs().to(expiresAt),
       };
     },

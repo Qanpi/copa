@@ -23,16 +23,59 @@ import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
 
 function JoinTeamPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const { data: user } = useAuth();
 
-  if (!user) return <LoadingBackdrop open={true}></LoadingBackdrop>
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const joinTeam = useMutation({
+    mutationFn: async (values: TTeam["invite"] & {id: string}) => {
+      const res = await axios.post(`/api/teams/${values.id}/join`, {
+        token: values.token
+      });
 
-  if (user.team) return (
-    <PromptContainer>You are already in a team.</PromptContainer>
-  )
+      return res.data as TUser;
+    },
+    onSuccess: (user) => {
+      queryClient.invalidateQueries(userKeys.id("me"));
+      navigate(`/teams/${user.team!.name}`);
+    },
+  });
+
+  const id = searchParams.get("id");
+  const token = searchParams.get("token");
+
+  const handleJoinTeam = () => {
+    if (!id || !token || !user) return;
+
+    if (!user?.team) joinTeam.mutate({ id, token });
+    else if (user.team.id === id) return navigate(`/teams/${user.team.name}`);
+  }
+
+  useEffect(() => {
+    handleJoinTeam();
+  }, [id, token, user]);
+
+  if (!user) return <>Loadng...</>;
+
+  //TODO: trigger rerender using react-query on user team leave
   return (
-    <PromptContainer>Something went wrong </PromptContainer>
-  )
+    <>
+      {user.team && user.team.id !== id ? (
+        <LeaveTeamDialog
+          onLeave={handleJoinTeam}
+          onStay={() => navigate(`/teams/${user.team!.name}`)}
+        ></LeaveTeamDialog>
+      ) : null}
+      {/* {errorAlert ? (
+        <Alert severity="error">
+          <AlertTitle>Invalid or expired token.</AlertTitle>
+          Please ask the team manager to resend invite link or contact support.
+        </Alert>
+      ) : null} */}
+    </>
+  );
 }
 
 export default JoinTeamPage;

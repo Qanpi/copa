@@ -59,7 +59,7 @@ router.post("/teams/:teamId/users", isAuthorizedMiddleware, teams.addUserToTeam)
 router.delete("/teams/:teamId/users/:userId", isAuthMiddleware, param("userId").isMongoId(), reportValidationErrors, teams.removeUserFromTeam);
 router.delete("/teams/:id", isAuthMiddleware, teams.removeById);
 router.get("/teams/:id/invite", isAuthMiddleware, teams.generateInviteToken);
-router.get("/teams/:id/join", isAuthMiddleware, query("token").isBase64({ urlSafe: true }).notEmpty(), param("id").isMongoId(), reportValidationErrors, teams.joinViaInviteToken);
+router.post("/teams/:id/join", isAuthMiddleware, body("token").isBase64({ urlSafe: true }).notEmpty(), param("id").isMongoId(), reportValidationErrors, teams.joinViaInviteToken);
 
 //USERS
 router.get("/users", isAuthorizedMiddleware, users.getMultiple);
