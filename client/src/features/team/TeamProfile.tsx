@@ -76,7 +76,8 @@ function TeamProfilePage() {
   const [editMode, setEditMode] = useState(false);
   const handleEditClick = useCallback(
     () => {
-      setEditMode(m => !m)
+      setSelectedTab(0);
+      setEditMode(m => !m);
     }
     , [])
 
@@ -132,6 +133,7 @@ function TeamProfilePage() {
               </Box>
               <Box sx={{ position: "fixed", bottom: 30, right: 30 }}>
                 {editMode ? <SpeedDial ariaLabel="Save updates" icon={<IconButton onClick={submitForm} size="large"><Save ></Save></IconButton>}>
+                  {/* fixme: cancel functionality for mobile */}
                   <SpeedDialAction icon={<Clear></Clear>} tooltipTitle={"Cancel"} onClick={() => {
                     handleCancelEdit();
                     resetForm();
@@ -336,10 +338,10 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
       </Dialog>
       {isMember ? <SpeedDial ariaLabel="Team Speed Dial" icon={<SpeedDialIcon></SpeedDialIcon>}>
 
-        {isManager ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit profile"></SpeedDialAction> : null}
-        {isManager ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite member" onClick={handleFetchInvite}></SpeedDialAction> : null}
-        <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team" onClick={handleLeaveTeam}></SpeedDialAction>
-        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete team"></SpeedDialAction> : null}
+        {isManager ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit"></SpeedDialAction> : null}
+        {isManager ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite" onClick={handleFetchInvite}></SpeedDialAction> : null}
+        <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave" onClick={handleLeaveTeam}></SpeedDialAction>
+        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete"></SpeedDialAction> : null}
       </SpeedDial> : null}
     </>
   )
