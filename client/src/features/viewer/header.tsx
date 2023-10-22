@@ -9,6 +9,7 @@ import {
   Popper,
   Stack,
   Typography,
+  alpha,
   useMediaQuery,
   useTheme
 } from "@mui/material";
@@ -156,7 +157,8 @@ function Header() {
         background: theme.palette.secondary.main,
         height: "70px",
         paddingLeft: "250px",
-        paddingRight: 3
+        paddingRight: 3,
+        boxShadow: `${alpha(theme.palette.common.black, 0.7)} 0px 0px 10px;`
       }} display="flex" alignItems={"center"}>
         {isMobile ?
           null
@@ -195,6 +197,7 @@ function Header() {
         width: "200px",
         borderTop: `40px solid ${theme.palette.secondary.main}`,
         borderRight: "20px solid transparent",
+        boxShadow: `${alpha(theme.palette.common.black, 0.7)} 0px 10px 10px -10px;`
       }}></Box>
       <Link to="/">
         <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: -10, width: "220px", height: "222px" }}>
