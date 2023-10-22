@@ -55,10 +55,17 @@ function QueryProvider() {
     mutationCache: new MutationCache({
       onError: (error) => {
         if (axios.isAxiosError(error)) {
+          switch(error.status) {
+            case 429: setFeedback({
+              severity: "error",
+              message: "Hold up. You are sending to many requests."
+            }); break;
+            default: 
           setFeedback({
             severity: "error",
             message: error.message
           })
+          }
         } else {
           setFeedback({
             severity: "error",
@@ -79,9 +86,7 @@ function QueryProvider() {
 }
 
 function App() {
-  const { data: tournament, isLoading: isTournamentLoading } = useTournament("current");
-  const { data: user, isLoading: isUserLoading } = useAuth();
-
+  const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);
 
@@ -93,9 +98,6 @@ function App() {
           <DivisionDispatchContext.Provider value={dispatch}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Header></Header>
-              {/* <LoadingBackdrop open={
-                isUserLoading || isTournamentLoading
-              }></LoadingBackdrop> */}
               <Routes>
                 <Route path="/" element={<HomePage></HomePage>}></Route>
                 <Route path="/about" element={<AboutPage></AboutPage>}></Route>
