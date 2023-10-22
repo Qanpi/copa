@@ -147,7 +147,7 @@ function NewTeamPage() {
                   </Tooltip>
                   <MyTextField label="About" name="about" minRows={4} multiline maxRows={8} sx={{ mt: 3 }}></MyTextField>
                 </Box>
-                <TeamBannerInput name={"bannerUrl"} sx={{ width: "50vmin", height: "50vmin", minWidth: "250px", minHeight: "250px" }}></TeamBannerInput>
+                <TeamBannerInput edit name={"bannerUrl"} sx={{ width: "50vmin", height: "50vmin", minWidth: "250px", minHeight: "250px" }}></TeamBannerInput>
               </Stack>
 
               <Stack direction="row" spacing={2} minWidth="45vmin">

@@ -336,10 +336,10 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
       </Dialog>
       {isMember ? <SpeedDial ariaLabel="Team Speed Dial" icon={<SpeedDialIcon></SpeedDialIcon>}>
 
-        {isManager ? <SpeedDialAction icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit profile"></SpeedDialAction> : null}
-        {isManager ? <SpeedDialAction icon={<AddLink></AddLink>} tooltipTitle="Invite member" onClick={handleFetchInvite}></SpeedDialAction> : null}
-        <SpeedDialAction icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team" onClick={handleLeaveTeam}></SpeedDialAction>
-        {isManager ? <SpeedDialAction icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete team"></SpeedDialAction> : null}
+        {isManager ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit profile"></SpeedDialAction> : null}
+        {isManager ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite member" onClick={handleFetchInvite}></SpeedDialAction> : null}
+        <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave team" onClick={handleLeaveTeam}></SpeedDialAction>
+        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete team"></SpeedDialAction> : null}
       </SpeedDial> : null}
     </>
   )
