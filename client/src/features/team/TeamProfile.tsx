@@ -29,7 +29,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import { useNavigate, useParams } from "react-router-dom";
-import { useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
+import { useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
 import { useTeamMembers, useUpdateUser, useAuth } from "../user/hooks.ts";
 import BannerPage from "../viewer/BannerPage.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
@@ -47,6 +47,15 @@ import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
 import MyTextField from "../inputs/myTextField.tsx";
 import { TFeedback } from "../types.ts";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
+import user from "@backend/models/user.ts";
+import Timeline from "@mui/lab/Timeline";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import { ParticipantResultSchema } from "brackets-mongo-db";
 
 dayjs.extend(relativeTime);
 
@@ -55,7 +64,6 @@ function TeamProfilePage() {
   const { name } = useParams();
   const encoded = name ? encodeURIComponent(name) : undefined;
   const { data: team, status: teamStatus, isLoading } = useTeam(encoded);
-  const { data: user } = useAuth();
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = useCallback((_, newTab: number) => {
@@ -106,8 +114,8 @@ function TeamProfilePage() {
               <Box sx={{ pt: 15 }} display="flex" flexDirection={"column"} height={"100%"}>
                 <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
                   <Box sx={{ width: "30vw", height: "300px", maxWidth: "300px", maxHeight: "300px", position: "absolute" }}>
-                    {isLoading ? <Skeleton variant="circular" sx={{height: "100%"}}></Skeleton> :
-                      <TeamBannerInput name={"bannerUrl"} edit={editMode} sx={{width: "100%", height: "100%" }}></TeamBannerInput>}
+                    {isLoading ? <Skeleton variant="circular" sx={{ height: "100%" }}></Skeleton> :
+                      <TeamBannerInput name={"bannerUrl"} edit={editMode} sx={{ width: "100%", height: "100%" }}></TeamBannerInput>}
                   </Box>
                   <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "320px" } }}>
                     <Typography variant="h5">THIS IS</Typography>
@@ -118,7 +126,7 @@ function TeamProfilePage() {
                 <TabBar teamId={team.id} selected={selectedTab} onChange={handleChangeSelectedTab}></TabBar>
                 <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
                   {selectedTab === 0 ? <ProfileTab team={team} editMode={editMode}></ProfileTab> : null}
-                  {selectedTab === 1 ? <TimelineTab team={team}></TimelineTab> : null}
+                  {selectedTab === 1 ? <TimelineTab teamName={team?.name}></TimelineTab> : null}
                   {selectedTab === 2 ? <TimelineTab team={team}></TimelineTab> : null}
                 </Container>
               </Box>
@@ -163,14 +171,42 @@ const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: 
   </Box>
 })
 
-const TimelineTab = ({ team }: { team?: TTeam }) => {
-  // const {data: participantions} = useParticipants({
-  //   team: team.id,
-  // });
+const TimelineTab = ({ teamName }: { teamName?: string }) => {
+  const { data: team, isLoading } = useTeam(teamName);
+  const { data: participations } = useParticipations(team?.id);
+  console.log(participations);
 
   return (
-    <Typography>This feature is still in development.</Typography>
-  )
+    <Box sx={{ display: "flex", alignItems: "end" }}>
+      <Timeline position="left">
+        <TimelineItem>
+          <TimelineSeparator>
+            <TimelineDot></TimelineDot>
+            <TimelineConnector></TimelineConnector>
+          </TimelineSeparator>
+          <TimelineContent>What's next?</TimelineContent>
+        </TimelineItem>
+        {participations?.map(p => {
+          return (
+            <TimelineItem>
+              <TimelineOppositeContent color="text.secondary">{!team?.createdAt ? "" : dayjs(team.createdAt).format("DD.MM.YYYY")}</TimelineOppositeContent>
+              <TimelineSeparator>
+                <TimelineDot />
+              </TimelineSeparator>
+              <TimelineContent>{ }</TimelineContent>
+            </TimelineItem>
+          )
+        })}
+        <TimelineItem>
+          <TimelineOppositeContent color="text.secondary">{!team?.createdAt ? "" : dayjs(team.createdAt).format("DD.MM.YYYY")}</TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot />
+          </TimelineSeparator>
+          <TimelineContent>Established</TimelineContent>
+        </TimelineItem>
+      </Timeline>
+    </Box >
+  );
 }
 
 const AboutSection = ({ name, open, edit }: { name: string, open: boolean, edit: boolean }) => {
@@ -193,8 +229,6 @@ const AboutSection = ({ name, open, edit }: { name: string, open: boolean, edit:
 const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => {
   const { data: user } = useAuth();
   const { data: members } = useTeamMembers(team?.id);
-
-  const { values, initialValues } = useFormikContext<TTeam>();
 
   return (
     <Stack direction="column" spacing={4}>

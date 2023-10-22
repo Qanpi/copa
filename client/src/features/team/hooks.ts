@@ -5,6 +5,7 @@ import { TTeam } from "@backend/models/team";
 import { useNavigate } from "react-router-dom";
 import { userKeys } from "../user/hooks";
 import { participantKeys } from "../participant/hooks";
+import { TParticipant } from "@backend/models/participant";
 
 export const teamKeys = queryKeyFactory<TTeam>("team");
 
@@ -74,6 +75,16 @@ export const useRemoveUserFromTeam = () => {
       queryClient.invalidateQueries(teamKeys.id(teamId));
     }
 
+  })
+}
+
+export const useParticipations = (teamId?: string) => {
+  return useQuery({
+    queryFn: async () => {
+      const res = await axios.get(`/api/teams/${teamId}/participations`);
+      return res.data as TParticipant[];
+    },
+    enabled: !!teamId
   })
 }
 

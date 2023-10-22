@@ -19,4 +19,4 @@ const MetadataSchema = new mongoose.Schema(
 
 export type TMetadata = InferSchemaType<typeof MetadataSchema>;
 
-export default mongoose.model<TMetadata>("Metadata", MetadataSchema);
+export default mongoose.model<TMetadata>("CopaMetadata", MetadataSchema);

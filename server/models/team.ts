@@ -52,8 +52,16 @@ const TeamSchema = new mongoose.Schema(
         return await this.save();
       },
     },
+    virtuals: {
+      createdAt: {
+        get() {
+          return this._id.getTimestamp() as Date;
+        }
+      } 
+    },
     timestamps: true,
     id: true,
+    _id: true,
   }
 );
 
@@ -76,6 +84,6 @@ TeamSchema.pre("deleteOne", async function () {
   }
 })
 
-export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods"> & {manager?: string};
+export type TTeam = InferSchemaType<typeof TeamSchema> & ObtainSchemaGeneric<typeof TeamSchema, "TVirtuals"> & ObtainSchemaGeneric<typeof TeamSchema, "TInstanceMethods"> & {manager?: string, id: string};
 
 export default mongoose.model<TTeam>(collections.teams.id, TeamSchema);

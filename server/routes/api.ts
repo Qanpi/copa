@@ -1,9 +1,10 @@
 import express from "express";
 
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
+import * as participants from "../controllers/participationsController.js";
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { reportValidationErrors } from "../middleware/validation.js";
 import tournamentRouter from "./tournament.js";
@@ -49,6 +50,7 @@ router.use("/tournaments/:id", tournamentRouter);
 
 //TEAMS
 router.get("/teams", teams.getMultiple);
+router.get("/teams/:id/participations", param("id").isMongoId(), reportValidationErrors, teams.getParticipations);
 router.post("/teams", isAuthMiddleware, body("manager").isMongoId(), body("name").trim().isString().notEmpty(), reportValidationErrors, teams.createOne);
 router.patch("/teams/:id", isAuthMiddleware, teams.updateOne);
 router.get("/teams/:id", teams.getById);

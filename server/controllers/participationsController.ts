@@ -9,13 +9,13 @@ import { StatusError } from "../middleware/auth.js";
 export const getMany = expressAsyncHandler(async (req, res) => {
   //translateAliases because division = tournament_id;
   const filter = Participant.translateAliases({
-    ...req.query,
     tournament: req.params.id,
+    ...req.query,
   });
 
   let participants;
   if (isAdmin(req.user)) {
-    participants = await Participant.find(filter).select(["+team.phoneNumber"]);
+    participants = await Participant.find(filter).select("+phoneNumber");
   } else {
     participants = await Participant.find(filter);
   }

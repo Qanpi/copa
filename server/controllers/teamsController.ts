@@ -7,6 +7,7 @@ import { Request } from "express";
 import { isManagerOrAdmin, isLoggedInAsUser, isAdmin, isInTeam } from "../middleware/validation.js";
 import { t } from "ts-brackets-viewer/dist/lang.js";
 import { StatusError } from "../middleware/auth.js";
+import Participant from "../models/participant.js";
 
 export const createOne = expressAsyncHandler(async (req, res, next) => {
   if (req.user?.team)
@@ -86,6 +87,14 @@ export const getUsersInTeam = expressAsyncHandler(async (req, res) => {
   })
 
   res.send(members);
+})
+
+export const getParticipations = expressAsyncHandler(async (req, res) => {
+  const participations = await Participant.find({
+    team: req.params.id
+  }).populate("tournament");
+
+  res.send(participations);
 })
 
 export const addUserToTeam = expressAsyncHandler(async (req, res) => {
