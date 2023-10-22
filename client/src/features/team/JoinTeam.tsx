@@ -1,26 +1,13 @@
-import {
-  Alert,
-  AlertTitle,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Typography,
-} from "@mui/material";
+import { TTeam } from "@backend/models/team.ts";
+import { TUser } from "@backend/models/user.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { Link, useSearchParams } from "react-router-dom";
-import { useTeam, useTeamById } from "./hooks.ts";
-import { useUpdateUser, useAuth, userKeys } from "../user/hooks.ts";
-import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
-import { TUser } from "@backend/models/user.ts";
-import { TTeam } from "@backend/models/team.ts";
+import { useSearchParams } from "react-router-dom";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
-import { PromptContainer } from "../layout/PromptContainer.tsx";
+import { useAuth, userKeys } from "../user/hooks.ts";
+import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -57,9 +44,8 @@ function JoinTeamPage() {
     handleJoinTeam();
   }, [id, token, user]);
 
-  if (!user) return <>Loadng...</>;
+  if (!user) return <LoadingBackdrop open={true}></LoadingBackdrop>;
 
-  //TODO: trigger rerender using react-query on user team leave
   return (
     <>
       {user.team && user.team.id !== id ? (
@@ -68,12 +54,6 @@ function JoinTeamPage() {
           onStay={() => navigate(`/teams/${user.team!.name}`)}
         ></LeaveTeamDialog>
       ) : null}
-      {/* {errorAlert ? (
-        <Alert severity="error">
-          <AlertTitle>Invalid or expired token.</AlertTitle>
-          Please ask the team manager to resend invite link or contact support.
-        </Alert>
-      ) : null} */}
     </>
   );
 }

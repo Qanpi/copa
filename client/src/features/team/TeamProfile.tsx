@@ -56,6 +56,7 @@ import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import { ParticipantResultSchema } from "brackets-mongo-db";
+import DevFeature from "../layout/DevelopmentFeature.tsx";
 
 dayjs.extend(relativeTime);
 
@@ -81,7 +82,7 @@ function TeamProfilePage() {
     }
     , [])
 
-  const handleSubmit = (values) => {
+  const handleSubmit = (values: Partial<TTeam>) => {
     updateTeam.mutate(values, {
       onSuccess: () => {
         setEditMode(false);
@@ -98,10 +99,6 @@ function TeamProfilePage() {
   }
 
   const { data: tournament } = useTournament("current");
-  const upcomingMatches = useMatches(tournament?.id, {
-    team: team?.id,
-  });
-
 
   if (!isLoading && !team) return <NotFoundPage></NotFoundPage>
 
@@ -128,7 +125,7 @@ function TeamProfilePage() {
                 <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
                   {selectedTab === 0 ? <ProfileTab team={team} editMode={editMode}></ProfileTab> : null}
                   {selectedTab === 1 ? <TimelineTab teamName={team?.name}></TimelineTab> : null}
-                  {selectedTab === 2 ? <TimelineTab team={team}></TimelineTab> : null}
+                  {selectedTab === 2 ? <DevFeature></DevFeature> : null}
                 </Container>
               </Box>
               <Box sx={{ position: "fixed", bottom: 30, right: 30 }}>
@@ -156,7 +153,7 @@ function TeamProfilePage() {
 //   )
 // }
 
-const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: number, onChange: TabsProps["onChange"], teamId: string }) {
+const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: number, onChange: TabsProps["onChange"], teamId?: string }) {
   const { data: user } = useAuth();
   const isMember = user?.team?.id === teamId;
 
