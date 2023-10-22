@@ -117,17 +117,17 @@ export const joinViaInviteToken = expressAsyncHandler(async (req, res) => {
   const team = await Team.findById(req.params.id).select(["+invite.token", "+invite.expiresAt"]);
 
   if (!team) {
-    res.redirect(404, `/team/error-joining`);
+    res.redirect(`/team/error-joining`);
     return;
   }
 
   if (!req.user) {
-    res.redirect(401, "/team/error-joining");
+    res.redirect("/team/error-joining");
     return;
   }
 
   if (req.user?.team) {
-    res.redirect(403, "/team/error-joining");
+    res.redirect("/team/error-joining");
     return;
   }
 
@@ -138,7 +138,7 @@ export const joinViaInviteToken = expressAsyncHandler(async (req, res) => {
     //TODO: test this out in prod
     res.redirect(`/teams/${team.name}`);
   } else {
-    res.redirect(403, `/team/error-joining`);
+    res.redirect(`/team/error-joining`);
   }
 })
 
