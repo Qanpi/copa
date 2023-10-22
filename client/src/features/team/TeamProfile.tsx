@@ -221,7 +221,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
   const { data: user } = useAuth();
   const { data: tournament } = useTournament("current");
   const { data: members } = useTeamMembers(team?.id);
-  const { data: participants } = useParticipants(tournament?.id, {
+  const { data: participants, isInitialLoading } = useParticipants(tournament?.id, {
     team: team?.id,
   })
   const isParticipant = !!participants?.[0];
@@ -238,7 +238,8 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
           <AlertTitle>Congratulations!</AlertTitle>
           Your team is registered for {tournament?.name || ""}!
         </Alert>
-      }
+      } 
+      {/* <Skeleton variant="rectangular" sx={{ width: "100%", height: "20px" }}></Skeleton>} */}
       <AboutSection open={team?.about !== "" || editMode} name="about" edit={editMode}></AboutSection>
 
       {

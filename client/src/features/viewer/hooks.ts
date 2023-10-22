@@ -26,7 +26,7 @@ export const useCreateTournament = () => {
   const queryClient = useQueryClient();
 
   return useMutation<TTournament, AxiosError, Partial<TTournament>>({
-    mutationFn: async (body: Partial<TTournament>) => {
+    mutationFn: async (body: Partial<TTournament> & {divisions: string[]}) => {
       const res = await axios.post(`/api/tournaments/`, body);
       return res.data as TTournament;
     },
