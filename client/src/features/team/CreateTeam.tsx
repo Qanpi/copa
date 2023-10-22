@@ -70,7 +70,7 @@ export const TeamBannerInput = ({ name, edit, sx, ...props }: { name: string, ed
           <Typography variant="body2" color="lightgray">Recommended dimensions are 400x400 pixels.</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setFieldValue(field.name, ""); showBannerDialog(false) }}>Cancel</Button>
+          <Button onClick={() => { setFieldValue(field.name, field.value); showBannerDialog(false) }}>Cancel</Button>
           <Button onClick={() => showBannerDialog(false)}>Ok</Button>
         </DialogActions>
       </Dialog>
