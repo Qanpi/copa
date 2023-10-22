@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
+  MutationCache,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
@@ -35,6 +36,9 @@ import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import { darkTheme } from "./themes.ts";
 import NotFoundPage from "./features/layout/NotFoundPage.tsx";
+import axios from "axios";
+import { FeedbackSnackbar } from "./features/layout/FeedbackSnackbar.tsx";
+import { TFeedback } from "./features/types.ts";
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
@@ -44,9 +48,39 @@ function divisionReducer(prevId: number, newId: number) {
   return newId;
 }
 
+function QueryProvider() {
+  const [feedback, setFeedback] = React.useState<TFeedback>({});
+
+  const queryClient = new QueryClient({
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        if (axios.isAxiosError(error)) {
+          setFeedback({
+            severity: "error",
+            message: error.message
+          })
+        } else {
+          setFeedback({
+            severity: "error",
+            message: "Something went wrong..."
+          })
+        }
+      }
+    })
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>
+      <App></App>
+      <ReactQueryDevtools></ReactQueryDevtools>
+    </QueryClientProvider>
+  )
+}
+
 function App() {
   const { data: tournament, isLoading: isTournamentLoading } = useTournament("current");
-  const { data: user, isLoading: isUserLoading } = useAuth("me");
+  const { data: user, isLoading: isUserLoading } = useAuth();
 
   const { data: divisions } = useDivisions(tournament?.id);
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);
@@ -59,9 +93,9 @@ function App() {
           <DivisionDispatchContext.Provider value={dispatch}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Header></Header>
-              <LoadingBackdrop open={
+              {/* <LoadingBackdrop open={
                 isUserLoading || isTournamentLoading
-              }></LoadingBackdrop>
+              }></LoadingBackdrop> */}
               <Routes>
                 <Route path="/" element={<HomePage></HomePage>}></Route>
                 <Route path="/about" element={<AboutPage></AboutPage>}></Route>
@@ -145,16 +179,12 @@ function App() {
   );
 }
 
-const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
-  <QueryClientProvider client={queryClient}>
-    <React.StrictMode>
-      <App></App>
-    </React.StrictMode>
-    <ReactQueryDevtools></ReactQueryDevtools>
-  </QueryClientProvider>
+  <React.StrictMode>
+    <QueryProvider></QueryProvider>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

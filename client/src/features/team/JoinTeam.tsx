@@ -22,7 +22,6 @@ import { TTeam } from "@backend/models/team.ts";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [errorAlert, setErrorAlert] = useState(false);
 
   const { data: user } = useAuth("me");
 
@@ -43,9 +42,6 @@ function JoinTeamPage() {
       // queryClient.invalidateQueries(userKeys.details("me"));
       navigate(`/teams/${user.team.name}`);
     },
-    onError: () => {
-      setErrorAlert(true);
-    }
   });
 
   const id = searchParams.get("id");
@@ -67,12 +63,12 @@ function JoinTeamPage() {
           onStay={() => navigate(`/teams/${user.team.name || "none"}`)}
         ></LeaveTeamDialog>
       ) : null}
-      {errorAlert ? (
+      {/* {errorAlert ? (
         <Alert severity="error">
           <AlertTitle>Invalid or expired token.</AlertTitle>
           Please ask the team manager to resend invite link or contact support.
         </Alert>
-      ) : null}
+      ) : null} */}
     </>
   );
 }
