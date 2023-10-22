@@ -48,6 +48,7 @@ const TeamSchema = new mongoose.Schema(
         });
 
         if (newManager) {
+          this.manager = newManager.id;
           return await this.save();
         } else {
           await this.deleteOne();
