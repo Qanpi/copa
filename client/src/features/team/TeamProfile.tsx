@@ -1,5 +1,5 @@
 import { TTeam } from "@backend/models/team.ts";
-import { AddLink, Clear, ContentCopy, DeleteForever, Edit, MeetingRoom, Save, VisibilityOff } from "@mui/icons-material";
+import { AddAPhoto, AddLink, Clear, ContentCopy, DeleteForever, Edit, MeetingRoom, Save, VisibilityOff } from "@mui/icons-material";
 import Timeline from "@mui/lab/Timeline";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
@@ -121,17 +121,18 @@ function TeamProfilePage() {
                 </Container>
               </Box>
               <Box sx={{ position: "fixed", bottom: 30, right: 30 }}>
-                {editMode ? <SpeedDial ariaLabel="Save updates" icon={<IconButton onClick={submitForm} size="large"><Save ></Save></IconButton>}>
-                  {/* fixme: cancel functionality for mobile */}
-                  <SpeedDialAction icon={<Clear></Clear>} tooltipTitle={"Cancel"} onClick={() => {
-                    handleCancelEdit();
-                    resetForm();
-                  }}></SpeedDialAction>
-                </SpeedDial>
+                {editMode ?
+                  <SpeedDial ariaLabel="Save updates" icon={<Edit></Edit>} >
+                    <SpeedDialAction icon={<Save></Save>} tooltipTitle="Save" onClick={submitForm}></SpeedDialAction>
+                    <SpeedDialAction icon={<Clear></Clear>} tooltipTitle={"Cancel"} onClick={() => {
+                      handleCancelEdit();
+                      resetForm();
+                    }}></SpeedDialAction>
+                  </SpeedDial>
                   : <TeamSpeedDial teamName={team?.name} onEditClick={handleEditClick}>
                   </TeamSpeedDial>}
               </Box>
-            </Form>
+            </Form >
           )
         }
       }
@@ -224,21 +225,28 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
   const { data: participants, isInitialLoading } = useParticipants(tournament?.id, {
     team: team?.id,
   })
-  const isParticipant = !!participants?.[0];
+  const isParticipating = !!participants?.[0];
 
   const isManager = user?.id === team?.manager;
+  const isMember = user?.team?.id === team?.id;
+
+  const getRegistrationPrompt = () => {
+    if (!isMember) return;
+
+    if (isParticipating) return <Alert>
+      <AlertTitle>Congratulations!</AlertTitle>
+      Your team is registered for {tournament?.name || ""}!
+    </Alert>
+    else if (isManager && tournament?.registration?.isOpen) return <Alert severity={"info"}>
+      <AlertTitle>Register!</AlertTitle>
+      Don't miss your chance to <Link style={{ textDecoration: "underline" }} to="/tournament/register">register</Link> for {tournament.name}!
+    </Alert>
+
+  }
 
   return (
     <Stack direction="column" spacing={4}>
-      {!isParticipant ? (isManager && tournament?.registration?.isOpen ? <Alert severity={"info"}>
-        <AlertTitle>Register!</AlertTitle>
-        Don't miss your chance to <Link style={{ textDecoration: "underline" }} to="/tournament/register">register</Link> for {tournament.name}!
-      </Alert> : null) :
-        <Alert>
-          <AlertTitle>Congratulations!</AlertTitle>
-          Your team is registered for {tournament?.name || ""}!
-        </Alert>
-      } 
+      {isInitialLoading ? null : getRegistrationPrompt()}
       {/* <Skeleton variant="rectangular" sx={{ width: "100%", height: "20px" }}></Skeleton>} */}
       <AboutSection open={team?.about !== "" || editMode} name="about" edit={editMode}></AboutSection>
 
