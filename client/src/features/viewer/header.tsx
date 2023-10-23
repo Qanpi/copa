@@ -26,8 +26,10 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  const handlerDropdownOpen = (e) => {
-    setOpen(true);
+  const handleDropdownToggle = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen(o => !o);
   };
 
   const handleDropdownClose = (e) => {
@@ -37,27 +39,26 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
   const theme = useTheme();
 
   return (
-    <ClickAwayListener onClickAway={handleDropdownClose}>
+    <Box
+      onMouseLeave={handleDropdownClose}
+      onMouseEnter={handleDropdownToggle}
+      onClick={handleDropdownToggle}
+      sx={{
+        height: "100%"
+      }}
+    >
       <Box
-        onMouseLeave={handleDropdownClose}
-        onMouseEnter={handlerDropdownOpen}
-        onClick={handlerDropdownOpen}
         sx={{
+          display: "flex",
+          alignItems: "center",
           height: "100%"
         }}
+        ref={ref}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            height: "100%"
-          }}
-          ref={ref}
-        >
-          {anchor}
-        </Box>
+        {anchor}
+      </Box>
 
-
+      <ClickAwayListener onClickAway={handleDropdownToggle}>
         <Popper
           open={open}
           anchorEl={ref.current}
@@ -96,8 +97,8 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
             </Paper>
           </Stack>
         </Popper>
-      </Box >
-    </ClickAwayListener>
+      </ClickAwayListener>
+    </Box >
   );
 };
 
