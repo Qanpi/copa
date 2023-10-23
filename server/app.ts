@@ -17,6 +17,12 @@ import expressAsyncHandler from "express-async-handler";
 connectMongoose();
 const app = express();
 
+//configure rate limiter with azure load balance
+app.set('trust proxy', 1);
+app.get("/ip", (req, res) => res.send(req.ip));
+app.get('/x-forwarded-for', (request, response) => response.send(request.headers['x-forwarded-for']))
+
+
 //only log in dev because azure provides transaction logs by default
 if (app.get("env") === "development") {
   app.use(logger("dev"));
