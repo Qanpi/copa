@@ -55,13 +55,13 @@ function TeamsPage() {
   );
 
   const theme = useTheme();
-  const to = tournament?.registration?.to;
+  const from = tournament?.registration?.from;
 
   return (
     <BannerPage title={`Participants`}>
       <Stack spacing={3}>
         <DivisionPanel>
-          {to && new Date(to) >= new Date() ? <Box sx={{ minHeight: "600px", width: "100%" }}>
+          {from && new Date(from) <= new Date() ? <Box sx={{ minHeight: "600px", width: "100%" }}>
             <Box sx={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, 250px)",
