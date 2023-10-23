@@ -14,7 +14,7 @@ function GradientTitle({ children, sx, ...props }: { children?: ReactNode } & Bo
         }} padding={4}
             alignItems={"center"}
             display={"flex"}
-            justifyContent={"center"}
+            paddingLeft={"15vw"}
             {...props}>
             {children}
         </Box>
