@@ -152,7 +152,7 @@ function Header() {
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "70px",
-        paddingLeft: "230px",
+        paddingLeft: "200px",
         paddingRight: 3,
         boxShadow: `${alpha(theme.palette.common.black, 0.7)} 0px 0px 10px;`
       }} display="flex" alignItems={"center"}>
