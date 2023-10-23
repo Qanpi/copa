@@ -188,7 +188,7 @@ function Header() {
               {links[0]}
               <MenuItem>{tournamentHeader}</MenuItem>
               {tournamentSublinks.map((l, i) => (
-                <Box sx={{ pl: 2 }}>{l}</Box>
+                <Box sx={{ pl: 2 }} key={i}>{l}</Box>
               ))}
               {links.slice(1)}
             </DropdownMenu> : null}
