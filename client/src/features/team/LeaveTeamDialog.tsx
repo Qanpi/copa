@@ -15,7 +15,7 @@ import { useRemoveUserFromTeam } from "./hooks";
 import { TTeam } from "@backend/models/team";
 
 function LeaveTeamDialog({ onLeave, onStay }: { onLeave?: (user: TUser) => void, onStay?: (user: TUser) => void }) {
-    const { data: user } = useAuth("me");
+    const { data: user } = useAuth();
     const removeUserFromTeam = useRemoveUserFromTeam();
 
     const handleDialog = async (choice: boolean) => {

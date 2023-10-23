@@ -1,77 +1,58 @@
-import {
-  Alert,
-  AlertTitle,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Typography,
-} from "@mui/material";
+import { TTeam } from "@backend/models/team.ts";
+import { TUser } from "@backend/models/user.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { Link, useSearchParams } from "react-router-dom";
-import { useTeam, useTeamById } from "./hooks.ts";
-import { useUpdateUser, useAuth, userKeys } from "../user/hooks.ts";
+import { useSearchParams } from "react-router-dom";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
+import { useAuth, userKeys } from "../user/hooks.ts";
 import LeaveTeamDialog from "./LeaveTeamDialog.tsx";
-import { TUser } from "@backend/models/user.ts";
-import { TTeam } from "@backend/models/team.ts";
 
 function JoinTeamPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [errorAlert, setErrorAlert] = useState(false);
 
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const joinTeam = useMutation({
     mutationFn: async (values: TTeam["invite"] & {id: string}) => {
-      if (!id || !values.token) throw TypeError("Missing id or token.");
-
       const res = await axios.post(`/api/teams/${values.id}/join`, {
-        token: values.token,
+        token: values.token
       });
 
       return res.data as TUser;
     },
     onSuccess: (user) => {
-      //TODO: updated user's team via queryClient
-      // queryClient.invalidateQueries(userKeys.details("me"));
-      navigate(`/teams/${user.team.name}`);
+      queryClient.invalidateQueries(userKeys.id("me"));
+      navigate(`/teams/${user.team!.name}`);
     },
-    onError: () => {
-      setErrorAlert(true);
-    }
   });
 
   const id = searchParams.get("id");
   const token = searchParams.get("token");
 
-  useEffect(() => {
+  const handleJoinTeam = () => {
+    if (!id || !token || !user) return;
+
     if (!user?.team) joinTeam.mutate({ id, token });
     else if (user.team.id === id) return navigate(`/teams/${user.team.name}`);
-  }, [user]);
+  }
 
-  if (!user) return <>Loadng...</>;
+  useEffect(() => {
+    handleJoinTeam();
+  }, [id, token, user]);
 
-  //TODO: trigger rerender using react-query on user team leave
+  if (!user) return <LoadingBackdrop open={true}></LoadingBackdrop>;
+
   return (
     <>
       {user.team && user.team.id !== id ? (
         <LeaveTeamDialog
-          onLeave={() => joinTeam.mutate({ id, token })}
-          onStay={() => navigate(`/teams/${user.team.name || "none"}`)}
+          onLeave={handleJoinTeam}
+          onStay={() => navigate(`/teams/${user.team!.name}`)}
         ></LeaveTeamDialog>
-      ) : null}
-      {errorAlert ? (
-        <Alert severity="error">
-          <AlertTitle>Invalid or expired token.</AlertTitle>
-          Please ask the team manager to resend invite link or contact support.
-        </Alert>
       ) : null}
     </>
   );

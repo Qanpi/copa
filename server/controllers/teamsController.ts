@@ -8,6 +8,16 @@ import { isManagerOrAdmin, isLoggedInAsUser, isAdmin, isInTeam } from "../middle
 import { t } from "ts-brackets-viewer/dist/lang.js";
 import { StatusError } from "../middleware/auth.js";
 import Participant from "../models/participant.js";
+import mongoose from "mongoose";
+
+export type NotUniqueError = {
+  type: "mongoose-unique-validator",
+  message: string,
+}
+
+function isNotUniqueError(err: any): err is NotUniqueError {
+  return !!err && err.kind === "mongoose-unique-validator" && typeof err.message === "string";
+}
 
 export const createOne = expressAsyncHandler(async (req, res, next) => {
   if (req.user?.team)
@@ -16,8 +26,20 @@ export const createOne = expressAsyncHandler(async (req, res, next) => {
   if (!isManagerOrAdmin(req.user, req.body.manager))
     throw new StatusError("Neither manager nor admin.", 403)
 
-  const team = await Team.create(req.body);
-  res.status(201).send(team);
+  try {
+    const team = await Team.create(req.body);
+    res.status(201).send(team);
+  } catch (err) {
+    if (err instanceof mongoose.Error.ValidationError) {
+
+    const first = Object.values(err.errors)[0];
+    if (isNotUniqueError(first)) {
+      const message = first.path === "name" ? `A team by the name '${first.value}' already exists.` : first.message;
+      throw new StatusError(message, 409);
+    }
+    }
+    throw err;
+  }
 });
 
 export const getMultiple = expressAsyncHandler(async (req, res) => {
@@ -62,10 +84,8 @@ export const removeUserFromTeam = expressAsyncHandler(async (req, res) => {
     throw new StatusError("Unauthorized request.", 403);
 
   const team = await Team.findById(req.params.teamId);
-  if (!team)
-    throw new Error("Invalid team.")
 
-  if (userId === team.manager) {
+  if (userId === team?.manager) {
     await team.passManagement();
   }
 
@@ -168,7 +188,7 @@ export const removeById = expressAsyncHandler(async (req, res) => {
   if (!isManagerOrAdmin(req.user, team.manager))
     throw new Error("Neither manager nor admin of team.");
 
-  await team?.deleteOne();
+  await Team.findByIdAndDelete(team.id);
   res.status(204).send();
 });
 

@@ -17,7 +17,11 @@ import expressAsyncHandler from "express-async-handler";
 connectMongoose();
 const app = express();
 
-app.use(logger("dev"));
+//only log in dev because azure provides transaction logs by default
+if (app.get("env") === "development") {
+  app.use(logger("dev"));
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env["GOOGLE_CLIENT_SECRET"]));
@@ -67,7 +71,7 @@ app.use(authRouter);
 app.use(expressAsyncHandler(async (req, res) => {
   //FIXME:!redirect to localhost if developing
   if (process.env.NODE_ENV === "development") {
-    return res.redirect(process.env.REACT_LOCALHOST_DOMAIN!);
+    return res.redirect(process.env.REACT_LOCALHOST_DOMAIN! + req.url);
   }
 
   res.sendFile(reactPath + "/index.html");

@@ -1,12 +1,17 @@
-import { Link } from "react-router-dom";
-import * as Yup from "yup"
+import { TTeam } from "@backend/models/team.ts";
+import { AddLink, Clear, ContentCopy, DeleteForever, Edit, MeetingRoom, Save, VisibilityOff } from "@mui/icons-material";
+import Timeline from "@mui/lab/Timeline";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import {
   Alert,
   AlertTitle,
   Avatar,
   Box,
-  Button,
-  Card,
   ClickAwayListener,
   Container,
   Dialog,
@@ -22,40 +27,28 @@ import {
   TabsProps,
   TextField,
   Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
-import { useNavigate, useParams } from "react-router-dom";
-import { useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
-import { useTeamMembers, useUpdateUser, useAuth } from "../user/hooks.ts";
-import BannerPage from "../viewer/BannerPage.tsx";
-import GradientTitle from "../viewer/gradientTitle.tsx";
-import { PromptContainer } from "../layout/PromptContainer.tsx";
-import { useTournament } from "../viewer/hooks.ts";
-import { memo, useCallback, useMemo, useState } from "react";
-import NotFoundPage from "../layout/NotFoundPage.tsx";
-import { TTeam } from "@backend/models/team.ts";
-import { AddLink, Clear, ContentCopy, DeleteForever, Edit, MeetingRoom, Save, VisibilityOff } from "@mui/icons-material";
-import OutlinedContainer from "../layout/OutlinedContainer.tsx";
-import { useMatches } from "../match/hooks.ts";
-import { useParticipants } from "../participant/hooks.ts";
-import { Form, Formik, useField, useFormikContext } from "formik";
-import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
+import { Form, Formik, useField } from "formik";
+import { memo, useCallback, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import * as Yup from "yup";
 import MyTextField from "../inputs/myTextField.tsx";
-import { TFeedback } from "../types.ts";
+import DevFeature from "../layout/DevelopmentFeature.tsx";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
-import user from "@backend/models/user.ts";
-import Timeline from "@mui/lab/Timeline";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import { ParticipantResultSchema } from "brackets-mongo-db";
+import NotFoundPage from "../layout/NotFoundPage.tsx";
+import OutlinedContainer from "../layout/OutlinedContainer.tsx";
+import { TFeedback } from "../types.ts";
+import { useAuth, useTeamMembers } from "../user/hooks.ts";
+import GradientTitle from "../viewer/gradientTitle.tsx";
+import { useTournament } from "../viewer/hooks.ts";
+import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
+import { useDeleteTeam, useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
+import { useParticipants } from "../participant/hooks.ts";
 
 dayjs.extend(relativeTime);
 
@@ -66,7 +59,7 @@ function TeamProfilePage() {
   const { data: team, status: teamStatus, isLoading } = useTeam(encoded);
 
   const [selectedTab, setSelectedTab] = useState(0);
-  const handleChangeSelectedTab = useCallback((_, newTab: number) => {
+  const handleChangeSelectedTab = useCallback((_: any, newTab: number) => {
     setSelectedTab(newTab);
   }, [])
 
@@ -81,7 +74,7 @@ function TeamProfilePage() {
     }
     , [])
 
-  const handleSubmit = (values) => {
+  const handleSubmit = (values: TTeam) => {
     updateTeam.mutate(values, {
       onSuccess: () => {
         setEditMode(false);
@@ -98,15 +91,11 @@ function TeamProfilePage() {
   }
 
   const { data: tournament } = useTournament("current");
-  const upcomingMatches = useMatches(tournament?.id, {
-    team: team?.id,
-  });
-
 
   if (!isLoading && !team) return <NotFoundPage></NotFoundPage>
 
   return (
-    <Formik enableReinitialize validationSchema={Yup.object(teamValidationSchema)} initialValues={team || {}} onSubmit={handleSubmit}>
+    <Formik enableReinitialize validationSchema={Yup.object(teamValidationSchema)} initialValues={team || {} as TTeam} onSubmit={handleSubmit}>
       {
         ({ values: team, dirty, submitForm, resetForm }) => {
           return (
@@ -128,7 +117,7 @@ function TeamProfilePage() {
                 <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
                   {selectedTab === 0 ? <ProfileTab team={team} editMode={editMode}></ProfileTab> : null}
                   {selectedTab === 1 ? <TimelineTab teamName={team?.name}></TimelineTab> : null}
-                  {selectedTab === 2 ? <TimelineTab team={team}></TimelineTab> : null}
+                  {selectedTab === 2 ? <DevFeature></DevFeature> : null}
                 </Container>
               </Box>
               <Box sx={{ position: "fixed", bottom: 30, right: 30 }}>
@@ -156,7 +145,7 @@ function TeamProfilePage() {
 //   )
 // }
 
-const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: number, onChange: TabsProps["onChange"], teamId: string }) {
+const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: number, onChange: TabsProps["onChange"], teamId?: string }) {
   const { data: user } = useAuth();
   const isMember = user?.team?.id === teamId;
 
@@ -187,6 +176,7 @@ const TimelineTab = ({ teamName }: { teamName?: string }) => {
           </TimelineSeparator>
           <TimelineContent>What's next?</TimelineContent>
         </TimelineItem>
+        <DevFeature></DevFeature>
         {participations?.map(p => {
           return (
             <TimelineItem>
@@ -231,39 +221,51 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
   const { data: user } = useAuth();
   const { data: tournament } = useTournament("current");
   const { data: members } = useTeamMembers(team?.id);
+  const { data: participants, isInitialLoading } = useParticipants(tournament?.id, {
+    team: team?.id,
+  })
+  const isParticipant = !!participants?.[0];
 
   const isManager = user?.id === team?.manager;
 
   return (
     <Stack direction="column" spacing={4}>
-      {isManager && tournament?.registration?.isOpen ? <Alert severity="info">
+      {!isParticipant ? (isManager && tournament?.registration?.isOpen ? <Alert severity={"info"}>
         <AlertTitle>Register!</AlertTitle>
-        Don't miss your chance to <Link style={{textDecoration: "underline"}} to="/tournament/register">register</Link> for {tournament.name}!
-      </Alert> : null}
+        Don't miss your chance to <Link style={{ textDecoration: "underline" }} to="/tournament/register">register</Link> for {tournament.name}!
+      </Alert> : null) :
+        <Alert>
+          <AlertTitle>Congratulations!</AlertTitle>
+          Your team is registered for {tournament?.name || ""}!
+        </Alert>
+      } 
+      {/* <Skeleton variant="rectangular" sx={{ width: "100%", height: "20px" }}></Skeleton>} */}
       <AboutSection open={team?.about !== "" || editMode} name="about" edit={editMode}></AboutSection>
 
-      {members && members.length > 0 ? <OutlinedContainer>
-        <Typography variant="h6" color="primary">Squad</Typography>
-        <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
-          {members?.map(m => {
-            const visible = m?.preferences?.publicProfile;
+      {
+        members && members.length > 0 ? <OutlinedContainer>
+          <Typography variant="h6" color="primary">Squad</Typography>
+          <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
+            {members?.map(m => {
+              const visible = m?.preferences?.publicProfile;
 
-            return (
-              <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
-                <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
-                  <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
-                  {visible ? null : <Tooltip arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
-                    <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
-                  </Tooltip>}
+              return (
+                <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
+                  <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
+                    <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
+                    {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                      <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
+                    </Tooltip>}
+                  </Box>
+                  <Typography>{m.name}</Typography>
                 </Box>
-                <Typography>{m.name}</Typography>
-              </Box>
-            )
-          }
-          )}
-        </Box>
-      </OutlinedContainer> : null}
-    </Stack>
+              )
+            }
+            )}
+          </Box>
+        </OutlinedContainer> : null
+      }
+    </Stack >
   )
 }
 
@@ -285,13 +287,18 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
     },
 
   });
-  const [invite, setInvite] = useState({
-    link: undefined,
-    countdown: undefined
-  });
+
+  type TInvite = {
+    link?: string,
+    countdown?: string
+  }
+
+  const [invite, setInvite] = useState<TInvite>({} as TInvite);
 
 
   const handleFetchInvite = () => {
+    if (!team) return;
+
     fetchInvite.mutate(team, {
       onSuccess: (data) => {
         setInvite(data);
@@ -300,23 +307,32 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
   }
 
   const handleCopyInviteLink = () => {
-    navigator.clipboard.writeText(invite?.link);
+    navigator.clipboard.writeText(invite.link || "");
     setInvite({})
   };
 
   const removeUserFromTeam = useRemoveUserFromTeam();
+  const deleteTeam = useDeleteTeam();
+
+
+
+  if (!team) return;
+
   const handleLeaveTeam = () => {
+    if (!user) return;
     removeUserFromTeam.mutate({ userId: user.id, teamId: team.id });
   };
 
-  if (!team) return;
+  const handleDeleteTeam = () => {
+    deleteTeam.mutate(team);
+  }
 
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
 
   return (
     <>
-      <Dialog open={invite?.link}>
+      <Dialog open={!!invite?.link}>
         <ClickAwayListener onClickAway={() => setInvite({})}>
           <Alert>
             <AlertTitle>Generated invite link!</AlertTitle>
@@ -347,7 +363,7 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
         {isManager ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit"></SpeedDialAction> : null}
         {isManager ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite" onClick={handleFetchInvite}></SpeedDialAction> : null}
         <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave" onClick={handleLeaveTeam}></SpeedDialAction>
-        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} tooltipTitle="Delete"></SpeedDialAction> : null}
+        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} onClick={handleDeleteTeam} tooltipTitle="Delete"></SpeedDialAction> : null}
       </SpeedDial> : null}
     </>
   )

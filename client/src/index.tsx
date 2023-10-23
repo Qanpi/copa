@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
+  MutationCache,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
@@ -28,13 +29,17 @@ import TeamProfilePage from "./features/team/TeamProfile.tsx";
 import ProfilePage from "./features/user/Profile.tsx";
 import { useAuth } from "./features/user/hooks.ts";
 import AboutPage from "./features/viewer/AboutPage.tsx";
-import AllTimePage from "./features/viewer/AllTimePage.tsx";
+import HallOfFame from "./features/viewer/AllTimePage.tsx";
 import HomePage from "./features/viewer/Home.tsx";
 import Header from "./features/viewer/header.tsx";
 import { useDivisions, useTournament } from "./features/viewer/hooks.ts";
 import "./index.css";
 import { darkTheme } from "./themes.ts";
 import NotFoundPage from "./features/layout/NotFoundPage.tsx";
+import axios from "axios";
+import { FeedbackSnackbar } from "./features/layout/FeedbackSnackbar.tsx";
+import { TFeedback } from "./features/types.ts";
+import AllTeams from "./features/team/AllTeams.tsx";
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
@@ -44,10 +49,49 @@ function divisionReducer(prevId: number, newId: number) {
   return newId;
 }
 
-function App() {
-  const { data: tournament, isLoading: isTournamentLoading } = useTournament("current");
-  const { data: user, isLoading: isUserLoading } = useAuth("me");
+function QueryProvider() {
+  const [feedback, setFeedback] = React.useState<TFeedback>({});
 
+  const queryClient = new QueryClient({
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        if (axios.isAxiosError(error)) {
+          switch (error.response?.status) {
+            case 429: setFeedback({
+              severity: "error",
+              message: "Hold up. You are sending to many requests."
+            }); break;
+            case 409: setFeedback({
+              severity: "error",
+              message: error.response?.data.message || "Something went wrong..."
+            }); break;
+            default:
+              setFeedback({
+                severity: "error",
+                message: error.message
+              })
+          }
+        } else {
+          setFeedback({
+            severity: "error",
+            message: "Something went wrong..."
+          })
+        }
+      }
+    })
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>
+      <App></App>
+      <ReactQueryDevtools></ReactQueryDevtools>
+    </QueryClientProvider>
+  )
+}
+
+function App() {
+  const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
   const [selected, dispatch] = React.useReducer(divisionReducer, 0);
 
@@ -59,13 +103,14 @@ function App() {
           <DivisionDispatchContext.Provider value={dispatch}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Header></Header>
-              <LoadingBackdrop open={
-                isUserLoading || isTournamentLoading
-              }></LoadingBackdrop>
               <Routes>
                 <Route path="/" element={<HomePage></HomePage>}></Route>
                 <Route path="/about" element={<AboutPage></AboutPage>}></Route>
-                <Route path="/all-time" element={<AllTimePage></AllTimePage>}></Route>
+                <Route path="/hall-of-fame"
+                  element={<HallOfFame></HallOfFame>}>
+                </Route>
+                <Route path="/teams" element={<AllTeams></AllTeams>}>
+                </Route>
 
                 <Route path="/tournament">
                   <Route
@@ -122,7 +167,7 @@ function App() {
                   <Route
                     path="/team/join"
                     element={<JoinTeamPage></JoinTeamPage>}
-                  >R</Route>
+                  ></Route>
 
                   <Route
                     path="/team/create"
@@ -145,16 +190,12 @@ function App() {
   );
 }
 
-const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
-  <QueryClientProvider client={queryClient}>
-    <React.StrictMode>
-      <App></App>
-    </React.StrictMode>
-    <ReactQueryDevtools></ReactQueryDevtools>
-  </QueryClientProvider>
+  <React.StrictMode>
+    <QueryProvider></QueryProvider>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

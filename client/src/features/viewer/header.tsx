@@ -19,6 +19,8 @@ import { useAuth } from "../user/hooks.ts";
 import UserPanel from "../user/userpanel.tsx";
 import { useTournament } from "./hooks.ts";
 import logo from "./copa.png";
+import AllTeams from "../team/AllTeams.tsx";
+import HallOfFame from "./AllTimePage.tsx";
 
 export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
@@ -105,7 +107,7 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
 
   const isAdmin = user?.role === "admin";
 
@@ -116,11 +118,6 @@ function Header() {
     <Link to="/tournament/dashboard" >
       {isAdmin ?
         <MenuItem>Dashboard</MenuItem> : null}
-    </Link>,
-    <Link to="/all-time">
-      <MenuItem>
-        All-time
-      </MenuItem>
     </Link>,
     <Link to="/about">
       <MenuItem>About</MenuItem>
@@ -146,9 +143,6 @@ function Header() {
     < Link to="/tournament/bracket" >
       <MenuItem>Bracket </MenuItem>
     </Link>,
-    < Link to="/tournament/gamblers" >
-      <MenuItem>Gamblers </MenuItem>
-    </Link>
   ]
 
   return (
@@ -170,6 +164,14 @@ function Header() {
 
             <DropdownMenu anchor={tournamentHeader}>
               {tournamentSublinks}
+            </DropdownMenu>
+            <DropdownMenu anchor={<Typography noWrap>All-time</Typography>}>
+              {/* <Link to="/teams">
+                <AllTeams></AllTeams>
+              </Link> */}
+              <Link to="/hall-of-fame">
+                <MenuItem>Hall of Fame</MenuItem>
+              </Link>
             </DropdownMenu>
 
             {links.slice((isAdmin ? 1 : 2))}

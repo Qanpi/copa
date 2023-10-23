@@ -7,8 +7,8 @@ import { useEffect } from "react";
 import { PromptContainer } from "../layout/PromptContainer";
 
 function NoTeamPage() {
-    const { data: user } = useAuth("me");
-    const { data: team, status: teamStatus } = useTeam(user.team?.name);
+    const { data: user } = useAuth();
+    const { data: team, status: teamStatus } = useTeam(user?.team?.name);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -22,7 +22,7 @@ function NoTeamPage() {
                 <Link to="/team/create">
                     <Button variant="contained" fullWidth>Create</Button>
                 </Link>
-                <Tooltip title="To join a team, ask the manager to send you an invite link.">
+                <Tooltip title="To join a team, ask the manager to send you an invite link." enterTouchDelay={0}>
                     <Button variant="contained" color="secondary" fullWidth>Join</Button>
                 </Tooltip>
             </Stack>

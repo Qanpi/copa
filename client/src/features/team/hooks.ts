@@ -18,9 +18,9 @@ export const useUpdateTeam = () => {
       return res.data as TTeam;
     },
     onSuccess: (team) => {
-      queryClient.setQueryData(teamKeys.id(team.name), team);
-      queryClient.setQueryData(teamKeys.lists, (previous: TTeam[]) => {
-        return previous?.map(t => t.name === team.name ? team : t);
+      queryClient.setQueryData(teamKeys.id(team.id), team);
+      queryClient.setQueryData(teamKeys.lists, (previous: TTeam[] | undefined) => {
+        return previous?.map(t => t.id === team.id ? team : t);
       })
     },
   });
@@ -85,6 +85,22 @@ export const useParticipations = (teamId?: string) => {
       return res.data as TParticipant[];
     },
     enabled: !!teamId
+  })
+}
+
+export const useDeleteTeam = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (team: TTeam) => {
+      const res = await axios.delete(`/api/teams/${team.id}`);
+      return res.data; 
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries(teamKeys.lists);
+      queryClient.invalidateQueries(teamKeys.id(variables.id));
+      queryClient.invalidateQueries(userKeys.id("me"));
+    }
   })
 }
 

@@ -40,7 +40,7 @@ const TeamBox = ({ match, opponent, sx, ...props }: { opponent: "opponent1" | "o
     })
   }
 
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
   const isAdmin = user?.role === "admin";
 
   return (
@@ -162,7 +162,7 @@ function MatchPage() {
   const { id } = useParams();
   const { data: match, status } = useMatch(id);
 
-  const { data: user } = useAuth("me");
+  const { data: user } = useAuth();
   const isAdmin = user?.role === "admin";
 
   // const [durationPrompt, setDurationPrompt] = useState(false);

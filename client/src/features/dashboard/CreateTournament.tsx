@@ -17,8 +17,6 @@ function CreateTournamentPage() {
     const tournament = useTournament("current");
     const createTournament = useCreateTournament();
 
-    const [feedback, setFeedback] = useState<TFeedback>();
-
     return (
         <Formik
             initialValues={{
@@ -36,25 +34,10 @@ function CreateTournamentPage() {
                 divisions: Yup.array().min(1, "You must create at least one division.").required().of(Yup.string()),
             })}
             onSubmit={(values) => {
-                createTournament.mutate(values, {
-                    onSuccess: () => {
-                        setFeedback({
-                            severity: "success",
-                            message: "Succesfully created tournamet"
-                        })
-                    },
-                    onError: (err) => {
-                        setFeedback({
-                            severity: "error",
-                            message: err.message
-                        })
-                    }
-                });
+                createTournament.mutate(values);
             }}
         >
             <Form>
-                <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}>
-                </FeedbackSnackbar>
                 <LoadingBackdrop open={createTournament.isLoading}></LoadingBackdrop>
                 <Container sx={{ pt: 15 }} maxWidth="xs">
                     <Grid2 container spacing={2} alignItems={"center"} justifyContent="center">
