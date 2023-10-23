@@ -146,6 +146,7 @@ function NewTeamPage() {
                     <MyTextField label="Phone number *" name="phoneNumber"></MyTextField>
                   </Tooltip>
                   <MyTextField label="About" name="about" minRows={4} multiline maxRows={8} sx={{ mt: 3 }}></MyTextField>
+                  <Typography sx={{ mt: 1 }}>You will be able to modify these values later on too.</Typography>
                 </Box>
                 <TeamBannerInput edit name={"bannerUrl"} sx={{ width: "50vmin", height: "50vmin", minWidth: "250px", minHeight: "250px" }}></TeamBannerInput>
               </Stack>

@@ -22,7 +22,7 @@ function NoTeamPage() {
                 <Link to="/team/create">
                     <Button variant="contained" fullWidth>Create</Button>
                 </Link>
-                <Tooltip title="To join a team, ask the manager to send you an invite link.">
+                <Tooltip title="To join a team, ask the manager to send you an invite link." enterTouchDelay={0}>
                     <Button variant="contained" color="secondary" fullWidth>Join</Button>
                 </Tooltip>
             </Stack>
