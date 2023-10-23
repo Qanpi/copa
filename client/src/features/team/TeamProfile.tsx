@@ -114,7 +114,7 @@ function TeamProfilePage() {
                   </Stack>
                 </GradientTitle>
                 <TabBar teamId={team.id} selected={selectedTab} onChange={handleChangeSelectedTab}></TabBar>
-                <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
+                <Container maxWidth="md" sx={{ p: 5, position: "relative", height: "100%" }}>
                   {selectedTab === 0 ? <ProfileTab team={team} editMode={editMode}></ProfileTab> : null}
                   {selectedTab === 1 ? <TimelineTab teamName={team?.name}></TimelineTab> : null}
                   {selectedTab === 2 ? <DevFeature></DevFeature> : null}
@@ -154,7 +154,7 @@ const TabBar = memo(function TabBar({ selected, onChange, teamId }: { selected: 
     <Tabs></Tabs>
   </Skeleton>
 
-  return <Box sx={{ ml: { xs: "38vw", md: "calc(310px + 5vw)" }, height: "50px" }}>
+  return <Box sx={{ ml: { xs: 5, sm: "38vw", md: "calc(310px + 5vw)" }, height: "50px" }}>
     <Tabs value={selected} onChange={onChange}>
       <Tab label="Profile"></Tab>
       <Tab label="Timeline"></Tab>
