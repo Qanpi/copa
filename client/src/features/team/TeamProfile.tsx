@@ -110,8 +110,8 @@ function TeamProfilePage() {
                   <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "320px" } }}>
                     <Typography variant="h5">THIS IS</Typography>
                     <Typography variant="h1" fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
+                    <Typography variant="subtitle2" sx={{ ml: "auto", alignSelf: "end" }}>Est. {team ? dayjs(team?.createdAt).format("YYYY") : ""}</Typography>
                   </Stack>
-                  <Typography variant="subtitle1" sx={{ ml: "auto", alignSelf: "end" }}>Est. {team ? dayjs(team?.createdAt).format("YYYY") : ""}</Typography>
                 </GradientTitle>
                 <TabBar teamId={team.id} selected={selectedTab} onChange={handleChangeSelectedTab}></TabBar>
                 <Container maxWidth="md" sx={{ p: 5, pt: 10, position: "relative", height: "100%" }}>
@@ -235,7 +235,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
 
     if (isParticipating) return <Alert>
       <AlertTitle>Congratulations!</AlertTitle>
-      Your team is registered for {tournament?.name || ""}!
+      Your team is registered for <Link to="/" style={{textDecoration: "underline"}}>{tournament?.name || ""}</Link>!
     </Alert>
     else if (isManager && tournament?.registration?.isOpen) return <Alert severity={"info"}>
       <AlertTitle>Register!</AlertTitle>
