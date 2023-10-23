@@ -104,7 +104,7 @@ function TeamProfilePage() {
               <Box sx={{ pt: 15 }} display="flex" flexDirection={"column"} height={"100%"}>
                 <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
                   <Box sx={{ width: "30vw", height: "300px", maxWidth: "300px", maxHeight: "300px", position: "absolute", display: "flex", alignItems: "center" }}>
-                    {isLoading ? <Skeleton variant="circular" sx={{ height: "30vw", width: "100%" }}></Skeleton> :
+                    {isLoading ? <Skeleton variant="circular" sx={{ height: "30vw", maxHeight: "300px", maxWidth: "300px", width: "100%" }}></Skeleton> :
                       <TeamBannerInput name={"bannerUrl"} edit={editMode} sx={{ width: "100%", height: "100%" }}></TeamBannerInput>}
                   </Box>
                   <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "320px" } }}>
@@ -184,8 +184,9 @@ const TimelineTab = ({ teamName }: { teamName?: string }) => {
               <TimelineOppositeContent color="text.secondary">{!team?.createdAt ? "" : dayjs(team.createdAt).format("DD.MM.YYYY")}</TimelineOppositeContent>
               <TimelineSeparator>
                 <TimelineDot />
+                <TimelineConnector></TimelineConnector>
               </TimelineSeparator>
-              <TimelineContent>{ }</TimelineContent>
+              <TimelineContent>Registered</TimelineContent>
             </TimelineItem>
           )
         })}
@@ -235,7 +236,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
 
     if (isParticipating) return <Alert>
       <AlertTitle>Congratulations!</AlertTitle>
-      Your team is registered for <Link to="/" style={{textDecoration: "underline"}}>{tournament?.name || ""}</Link>!
+      Your team is registered for <Link to="/" style={{ textDecoration: "underline" }}>{tournament?.name || ""}</Link>!
     </Alert>
     else if (isManager && tournament?.registration?.isOpen) return <Alert severity={"info"}>
       <AlertTitle>Register!</AlertTitle>

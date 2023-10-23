@@ -80,6 +80,7 @@ export const useRemoveUserFromTeam = () => {
 
 export const useParticipations = (teamId?: string) => {
   return useQuery({
+    queryKey: participantKeys.list({team: teamId}),
     queryFn: async () => {
       const res = await axios.get(`/api/teams/${teamId}/participations`);
       return res.data as TParticipant[];
