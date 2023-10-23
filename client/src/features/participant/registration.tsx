@@ -1,4 +1,4 @@
-import { Box, Stack, Button, ContainerOwnProps, MenuItem, Typography, Skeleton } from "@mui/material";
+import { Box, Stack, Button, ContainerOwnProps, MenuItem, Typography, Skeleton, Tooltip } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Form, Formik } from "formik";
@@ -84,7 +84,7 @@ function RegistrationPage() {
     <BannerPage title="Congratulations!">
       <PromptContainer>
         <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
-          <Typography variant="h5">{team.name} is registered.</Typography>
+          <Typography variant="h5">{team?.name} is registered.</Typography>
           <Button variant="outlined" onClick={() => unregisterTeam.mutate({ id: participant.id })}>
             Deregister
           </Button>
@@ -159,7 +159,9 @@ function RegistrationForm() {
           <FeedbackSnackbar severity={feedback.severity} message={feedback.message}></FeedbackSnackbar>
           <Typography variant="h6" sx={{ mb: 2 }} color="primary">Please verify the information below</Typography>
           <Stack direction="column" spacing={1}>
-            <MyTextField name="name" label="Team name"></MyTextField>
+            <Tooltip enterTouchDelay={0} title="Changing the name is not supported as of now." arrow>
+              <MyTextField name="name" label="Team name" disabled></MyTextField>
+            </Tooltip>
             <MyTextField label="Phone number" name="phoneNumber"></MyTextField>
           </Stack>
           <Stack direction="row" sx={{ width: "100%", mt: 5 }} display={"flex"} justifyContent={"space-between"} alignItems="center">

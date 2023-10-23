@@ -129,7 +129,7 @@ const PreferencesTab = ({ user }: { user: TUser }) => {
         return (
         <Form>
           <Stack direction="column" sx={{ minHeight: "400px" }}>
-            <Tooltip title="Make profile publicly accessible to anyone" arrow>
+            <Tooltip enterTouchDelay={0} title="Make profile publicly accessible to anyone" arrow>
               <FormControlLabel value={"on"} onChange={(_, v) => setFieldValue("preferences.publicProfile", v)} control={<Switch checked={values.preferences?.publicProfile}></Switch>} label={"Publish profile"}></FormControlLabel>
             </Tooltip>
             <Button type="submit" sx={{ mt: "auto", width: "30%" }}>Save</Button>

@@ -253,7 +253,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
                 <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
                   <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
                     <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
-                    {visible ? null : <Tooltip arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                    {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
                       <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
                     </Tooltip>}
                   </Box>
