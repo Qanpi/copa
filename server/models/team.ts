@@ -2,6 +2,7 @@ import mongoose, { InferSchemaType, ObtainSchemaGeneric, Types } from "mongoose"
 import { collections } from "../configs/db.config.js";
 import User from "./user.js";
 import mongooseUniqueValidator from "mongoose-unique-validator";
+import { NotUniqueError } from "../controllers/teamsController.js";
 
 const TeamSchema = new mongoose.Schema(
   {
@@ -20,7 +21,7 @@ const TeamSchema = new mongoose.Schema(
     bannerUrl: String,
     phoneNumber: String,
 
-    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v: Types.ObjectId) => v.toString(), unique: true },
+    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v: Types.ObjectId) => v.toString() },
 
     invite: {
       token: {
@@ -70,7 +71,7 @@ const TeamSchema = new mongoose.Schema(
   }
 );
 
-TeamSchema.plugin(mongooseUniqueValidator);
+TeamSchema.plugin(mongooseUniqueValidator, {type: "mongoose-unique-validator"});
 
 TeamSchema.pre("save", async function () {
   if (this.isNew) {

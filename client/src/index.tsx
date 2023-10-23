@@ -56,10 +56,14 @@ function QueryProvider() {
     mutationCache: new MutationCache({
       onError: (error) => {
         if (axios.isAxiosError(error)) {
-          switch (error.status) {
+          switch (error.response?.status) {
             case 429: setFeedback({
               severity: "error",
               message: "Hold up. You are sending to many requests."
+            }); break;
+            case 409: setFeedback({
+              severity: "error",
+              message: error.response?.data.message || "Something went wrong..."
             }); break;
             default:
               setFeedback({
