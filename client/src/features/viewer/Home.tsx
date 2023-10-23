@@ -10,6 +10,7 @@ import { FinalStandingsItem } from "brackets-manager";
 import brush from "./brush.png";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop";
 import { ArrowDropDown } from "@mui/icons-material";
+import { PromptContainer } from "../layout/PromptContainer";
 
 function WinnerPane({ stageId }: { stageId: string }) {
   //FIXME: needs to show all winners across divisions
@@ -39,25 +40,21 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
   const { data: tournament } = useTournament("current");
 
   return (
-    <Container sx={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      mt: 5
-    }}>
+    <PromptContainer sx={{justifyContent: "center"}}>
       <Box component="img" src={brush} sx={{
         position: "absolute",
         width: "95vw",
         zIndex: -1,
         rotate: "-2deg",
       }}></Box>
-      <Stack sx={{
-        width: "80vw",
-        height: "700px",
+      <Box sx={{
         backdropFilter: "blur(30px)",
+        display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: 2,
+        width: "80vw",
+        height: "80vw",
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "15vw!important" }} noWrap>
@@ -74,8 +71,8 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
         {/* <Typography variant="subtitle1" sx={{mt: -2, mb: 5}}>is here!</Typography> */}
 
         {children}
-      </Stack>
-    </Container>
+      </Box>
+    </PromptContainer>
   )
 }
 
@@ -125,8 +122,8 @@ function HomePage() {
       if (!to || now <= to) return (
         <>
           <CopaBanner>
-            <Typography variant="subtitle1" >
-              {to ? `Registration closes ${dayjs().to(tournament.registration.to)}!` : "Hurry up! There is still time to register"}
+            <Typography variant="body1" noWrap>
+              {to ? `Registration closes ${dayjs().to(tournament.registration.to)}!` : "Hurry up! There is still time to register."}
             </Typography>
             <Link to="/tournament/register">
               <Box sx={{ display: "flex", position: "relative", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
