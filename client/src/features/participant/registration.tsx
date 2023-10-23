@@ -124,7 +124,6 @@ function RegistrationForm() {
   const [feedback, setFeedback] = useState<TFeedback>({});
 
   return (
-    <PromptContainer>
       <Formik
         initialValues={{
           ...team,
@@ -141,9 +140,6 @@ function RegistrationForm() {
                 (d) => d.name === values.division
               );
 
-              if (!selected)
-                return setFeedback({ severity: "error", message: "Unrecognized division." })
-
               //TODO: error handling
               registerParticipant.mutate({
                 division: selected.id,
@@ -156,7 +152,6 @@ function RegistrationForm() {
         }}
       >
         <Form>
-          <FeedbackSnackbar severity={feedback.severity} message={feedback.message}></FeedbackSnackbar>
           <Typography variant="h6" sx={{ mb: 2 }} color="primary">Please verify the information below</Typography>
           <Stack direction="column" spacing={1}>
             <Tooltip enterTouchDelay={0} title="Changing the name is not supported as of now." arrow>
@@ -176,7 +171,6 @@ function RegistrationForm() {
           </Stack>
         </Form>
       </Formik>
-    </PromptContainer >
   );
 }
 
