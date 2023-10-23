@@ -86,7 +86,6 @@ const MatchDisplay = ({ match }: { match: TMatch }) => {
     const updateFrequency = 5;
 
     if (isRunning && seconds % updateFrequency === 0) {
-      console.log("tick")
     }
 
   }, [seconds])
@@ -96,7 +95,6 @@ const MatchDisplay = ({ match }: { match: TMatch }) => {
     else resume();
   }
 
-  console.log(match)
 
   if (!match.status) return <Typography>Couldn't determine the status of the match.</Typography>
 
@@ -164,10 +162,6 @@ function MatchPage() {
 
   const { data: user } = useAuth();
   const isAdmin = user?.role === "admin";
-
-  // const [durationPrompt, setDurationPrompt] = useState(false);
-
-  console.log(match)
 
   const updateMatch = useUpdateMatch();
   const handleBeginMatch = () => {

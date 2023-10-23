@@ -158,7 +158,7 @@ function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
         const res = await updateParticipant.mutateAsync(newRow);
         return res;
       }}
-      onProcessRowUpdateError={(err) => console.log(err)}
+      onProcessRowUpdateError={(err) => console.error(err)}
     ></DataGrid>
   )
 }

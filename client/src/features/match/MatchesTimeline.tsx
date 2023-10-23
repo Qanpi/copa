@@ -16,8 +16,6 @@ function MatchesTimeline() {
             scheduled: "true",
         });
 
-    console.log(scheduledMatches)
-
     //FIXME: trypes
     const items: TimelineItemBase<Date>[] | undefined = scheduledMatches?.map(m => ({
         id: m.id,
@@ -47,15 +45,12 @@ function MatchesTimeline() {
     if (!items || !groups) return <>loading...</>;
 
     const handleItemDrag = ({ eventType, itemId, time }: OnItemDragObjectBase) => {
-        console.log(eventType, itemId, time)
-
         const datetime = new Date(time);
         const match = scheduledMatches?.find(m => m.id === itemId);
         if (!match) throw new Error("Match not found")
 
         if (eventType === "move") {
             const duration = dayjs(match.end).diff(match.start, "seconds");
-            console.log(duration)
 
             updateMatch.mutate({
                 id: itemId,

@@ -279,7 +279,6 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
   const handleSpin = () => {
     if (!isWheelVisible || mustSpin) return;
 
-    console.log(mustSpin)
     setMustSpin(true);
   };
 
