@@ -103,8 +103,8 @@ function TeamProfilePage() {
               <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>
               <Box sx={{ pt: 15 }} display="flex" flexDirection={"column"} height={"100%"}>
                 <GradientTitle justifyContent={"left"} paddingLeft={"5vw"} sx={{ mb: 0 }}>
-                  <Box sx={{ width: "30vw", height: "300px", maxWidth: "300px", maxHeight: "300px", position: "absolute" }}>
-                    {isLoading ? <Skeleton variant="circular" sx={{ height: "100%" }}></Skeleton> :
+                  <Box sx={{ width: "30vw", height: "300px", maxWidth: "300px", maxHeight: "300px", position: "absolute", display: "flex", alignItems: "center" }}>
+                    {isLoading ? <Skeleton variant="circular" sx={{ height: "30vw", width: "100%" }}></Skeleton> :
                       <TeamBannerInput name={"bannerUrl"} edit={editMode} sx={{ width: "100%", height: "100%" }}></TeamBannerInput>}
                   </Box>
                   <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "320px" } }}>
@@ -258,7 +258,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
               const visible = m?.preferences?.publicProfile;
 
               return (
-                <Box sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
+                <Box key={m.id} sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
                   <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
                     <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
                     {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>

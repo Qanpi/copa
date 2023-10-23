@@ -75,9 +75,9 @@ export const TeamBannerInput = ({ name, edit, sx, ...props }: { name: string, ed
         </DialogActions>
       </Dialog>
 
-      <Box sx={{ maxWidth: "400px", maxHeight: "400px", ...sx }} {...props}>
+      <Box sx={{ maxWidth: "400px", maxHeight: "400px", display: "flex", alignItems: "center", ...sx }} {...props}>
         {field.value ?
-          <Box sx={{ position: "relative" }}>
+          <Box sx={{ position: "relative"}}>
             <Box sx={{ objectFit: "contain", width: "100%", height: "100%" }} component="img" src={field.value}></Box>
             <Backdrop open={edit} sx={{ position: "absolute" }} onClick={() => showBannerDialog(true)}>
               <CardActionArea sx={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
