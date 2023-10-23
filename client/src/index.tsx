@@ -77,6 +77,14 @@ function QueryProvider() {
             message: "Something went wrong..."
           })
         }
+      },
+      onSuccess: (data, variables, context, mutation) => {
+        if (mutation.meta?.successMessage) {
+          setFeedback({
+            severity: "success",
+            message: mutation.meta?.successMessage as string
+          })
+        }
       }
     })
   });
@@ -110,6 +118,8 @@ function App() {
                   element={<HallOfFame></HallOfFame>}>
                 </Route>
                 <Route path="/teams" element={<AllTeams></AllTeams>}>
+                </Route>
+                <Route path="/bug-report" element={<AllTeams></AllTeams>}>
                 </Route>
 
                 <Route path="/tournament">

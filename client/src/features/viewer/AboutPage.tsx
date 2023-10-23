@@ -1,19 +1,20 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { PromptContainer } from "../layout/PromptContainer";
 
+const QAndA = ({ q, a }: { q: string, a: string }) => {
+    return <Box>
+        <Typography variant="h5" color="primary" sx={{mb: 1}}>{q}</Typography>
+        <Typography>{a}</Typography>
+    </Box>
+}
 function AboutPage() {
     return (
         <PromptContainer sx={{ alignItems: "center", justifyContent: "left" }}>
-            <Typography variant="h4" sx={{mb: 3}}>ABOUT</Typography>
             <Stack direction="column" spacing={4}>
-                <Box>
-                    <Typography variant="h5">What is copa?</Typography>
-                    <Typography>Copa is Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad sit saepe numquam enim nostrum dolor reprehenderit dignissimos quos ab nulla unde, eum et excepturi aut culpa quisquam itaque consectetur odit.</Typography>
-                </Box>
-                <Box>
-                    <Typography variant="h5">What is the purpose of this website?</Typography>
-                    <Typography>Copa is Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad sit saepe numquam enim nostrum dolor reprehenderit dignissimos quos ab nulla unde, eum et excepturi aut culpa quisquam itaque consectetur odit.</Typography>
-                </Box>
+                <Typography variant="h4">ABOUT</Typography>
+                <QAndA q={"What is copa?"} a="Copa is Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad sit saepe numquam enim nostrum dolor reprehenderit dignissimos quos ab nulla unde, eum et excepturi aut culpa quisquam itaque consectetur odit."></QAndA>
+                <QAndA q={"What is the purpose of this website?"} a="Not to encroach upon what copa is, but rather to augment it by adding various cool functionality."></QAndA>
+                <QAndA q={"What is the purpose of this website?"} a="Not to encroach upon what copa is, but rather to augment it by adding various cool functionality."></QAndA>
                 <Box>
                     <Typography variant="h5">How was this webapp made?</Typography>
                     <Typography>Copa is Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad sit saepe numquam enim nostrum dolor reprehenderit dignissimos quos ab nulla unde, eum et excepturi aut culpa quisquam itaque consectetur odit.</Typography>

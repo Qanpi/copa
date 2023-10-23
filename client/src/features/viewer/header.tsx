@@ -1,4 +1,4 @@
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { BugReport, Menu as MenuIcon } from "@mui/icons-material";
 import {
   Box,
   ClickAwayListener,
@@ -122,13 +122,14 @@ function Header() {
     </Link>,
     <Link to="/about">
       <MenuItem>About</MenuItem>
-    </Link>
+    </Link>,
+
   ]
 
   const tournamentHeader = (
-    <Typography noWrap>
+    <MenuItem>
       {tournament?.name || "Tournament"}
-    </Typography>
+    </MenuItem>
   );
 
   const tournamentSublinks = [
@@ -151,13 +152,13 @@ function Header() {
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "70px",
-        paddingLeft: "250px",
+        paddingLeft: "230px",
         paddingRight: 3,
         boxShadow: `${alpha(theme.palette.common.black, 0.7)} 0px 0px 10px;`
       }} display="flex" alignItems={"center"}>
         {isMobile ?
           null
-          : <Stack direction="row" spacing={"5vw"} sx={{
+          : <Stack direction="row" spacing={"3vw"} sx={{
             height: "100%"
           }} alignItems={"center"}>
 
@@ -179,9 +180,14 @@ function Header() {
           </Stack>
         }
         <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "10px" }}>
+          <Link to="/bug-report">
+            <IconButton size="medium">
+              <BugReport></BugReport>
+            </IconButton>
+          </Link>
           {isMobile ?
             <DropdownMenu anchor={
-              <IconButton size="medium">
+              <IconButton size="medium" sx={{mr: 1}}>
                 <MenuIcon fontSize="large"></MenuIcon>
               </IconButton>
             }>
