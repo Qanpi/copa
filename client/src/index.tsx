@@ -40,6 +40,7 @@ import axios from "axios";
 import { FeedbackSnackbar } from "./features/layout/FeedbackSnackbar.tsx";
 import { TFeedback } from "./features/types.ts";
 import AllTeams from "./features/team/AllTeams.tsx";
+import BugReportPage from "./features/viewer/BugReport.tsx";
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
@@ -119,7 +120,7 @@ function App() {
                 </Route>
                 <Route path="/teams" element={<AllTeams></AllTeams>}>
                 </Route>
-                <Route path="/bug-report" element={<AllTeams></AllTeams>}>
+                <Route path="/bug-report" element={<BugReportPage></BugReportPage>}>
                 </Route>
 
                 <Route path="/tournament">

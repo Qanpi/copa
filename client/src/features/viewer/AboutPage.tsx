@@ -1,12 +1,14 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { PromptContainer } from "../layout/PromptContainer";
+import { ReactNode } from "react";
 
-const QAndA = ({ q, a }: { q: string, a: string }) => {
+export const QAndA = ({ q, a, children }: { q: string, a?: string, children?: ReactNode }) => {
     return <Box>
         <Typography variant="h5" color="primary" sx={{mb: 1}}>{q}</Typography>
-        <Typography>{a}</Typography>
+        {children ? children : <Typography>{a}</Typography>}
     </Box>
 }
+
 function AboutPage() {
     return (
         <PromptContainer sx={{ alignItems: "center", justifyContent: "left" }}>
