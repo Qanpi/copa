@@ -2,7 +2,7 @@ import { Form, Formik, useField, useFormik, useFormikContext } from "formik";
 import DivisionPanel from "../layout/DivisionPanel";
 import { PromptContainer } from "../layout/PromptContainer";
 import BannerPage from "./BannerPage";
-import { Button, Stack, FormControlLabel, FormLabel, Input, InputAdornment, InputBaseProps, InputLabel, TextField, Typography, Box } from "@mui/material";
+import { Button, Stack, FormControlLabel, FormLabel, Input, InputAdornment, InputBaseProps, InputLabel, TextField, Typography, Box, styled } from "@mui/material";
 import { useContext } from "react";
 import { DivisionContext } from "../..";
 import { InputProps } from "@mui/base";
@@ -21,6 +21,18 @@ const MyNumberInput = ({ name, label, ...props }: InputProps & { name: string, l
         </Box>
     )
 }
+
+const RulesTextField = styled(MyTextField)({
+    "& .MuiOutlinedInput-root": {
+        "& fieldset": { border: 0 },
+        color: "white !important",
+    },
+    "& .MuiInputBase-input": { "&.Mui-disabled": {
+            color: "white !important",
+            "-webkit-text-fill-color": "white"
+        }
+    }
+})
 
 function RulesPage() {
     const { data: user } = useAuth();
@@ -41,10 +53,10 @@ function RulesPage() {
 
                 <Formik enableReinitialize initialValues={division} onSubmit={handleSubmit}>
                     {({ values }) => <Form>
-                        <PromptContainer sx={{p: 2, pt: 2 }}>
+                        <PromptContainer sx={{ p: 2, pt: 2 }}>
                             <Stack direction={{ xs: "column-reverse", md: "row" }} spacing={5} sx={{ width: "100%", justifyContent: "center" }}>
-                                <MyTextField disabled={!isAdmin} multiline minRows={5} name="rules"  placeholder="Eh... rules are meant to be broken anyways i guess." sx={{width: "100%"}}>
-                                </MyTextField>
+                                <RulesTextField disabled={!isAdmin} multiline minRows={5} name="rules" placeholder="Eh... rules are meant to be broken anyways i guess." sx={{ width: "100%" }}>
+                                </RulesTextField>
 
                                 <Stack spacing={2} sx={{ width: "150px" }}>
                                     <MyNumberInput disabled={!isAdmin} name="settings.playerCount" label="Players on field"></MyNumberInput>
