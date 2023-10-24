@@ -14,6 +14,7 @@ import { groupBy } from "lodash";
 import { DivisionContext } from "../../index.tsx";
 import { useStages } from "../stage/hooks.ts";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
+import AdminOnlyPage from "./AdminOnlyBanner.tsx";
 
 function Bracket({ next, prev }) {
   const { data: tournament } = useTournament("current");

@@ -1,20 +1,19 @@
-import { Typography } from "@mui/material";
+import { Backdrop, Typography } from "@mui/material";
 import { PromptContainer } from "../layout/PromptContainer";
 import { useAuth } from "../user/hooks";
 import { ReactNode } from "react";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop";
+import NotFoundPage from "../layout/NotFoundPage";
 
-function AdminOnlyPage({children}: {children: ReactNode}) {
-    const { data: user } = useAuth();
+function AdminOnlyPage({ children }: { children: ReactNode }) {
+    const { data: user, status, isFetching } = useAuth();
 
     const isAdmin = user?.role === "admin";
 
-    if (!user || !isAdmin) {
-        return (
-            <PromptContainer>
-                <Typography>Stop right there!</Typography>
-                <Typography>This page is only available to admins.</Typography>
-            </PromptContainer>
-        )
+    if (status !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
+
+    if (!isAdmin) {
+        return <NotFoundPage></NotFoundPage>
     }
 
     return children;
