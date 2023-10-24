@@ -20,9 +20,9 @@ router.delete("/participants/:id", isAuthMiddleware, participants.deleteOne);
 router.patch("/participants/:id", isAuthMiddleware, participants.updateOne);
 
 //DIVISIONS //TODO: legacy, deprecated, since subdocs (?)
-router.get("/divisions", divisions.readMany);
-router.post("/divisions", divisions.createOne);
-router.put("/divisions/:divisionId", divisions.updateOne);
+// router.get("/divisions", divisions.readMany);
+// router.post("/divisions", divisions.createOne);
+router.put("/divisions/:divisionId", isAuthorizedMiddleware, divisions.updateOne);
 
 //STAGES
 router.post("/stages/", isAuthorizedMiddleware, stages.createStage);
