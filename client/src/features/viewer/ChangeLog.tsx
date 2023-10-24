@@ -16,7 +16,10 @@ export const ChangeLogContext = createContext<((b: boolean) => void)>(null);
 
 function ChangeLog({ children }: { children: ReactNode }) {
     const v = localStorage.getItem("version");
-    const [open, setOpen] = useState(v !== latest);
+
+        //check only for minor and major release updates, not patches
+    const update = latest.charAt(2) !== v?.charAt(2)
+    const [open, setOpen] = useState(update);
 
     const handleClose = () => {
         localStorage.setItem("version", latest);
@@ -27,7 +30,7 @@ function ChangeLog({ children }: { children: ReactNode }) {
         <ChangeLogContext.Provider value={(b: boolean) => setOpen(b)}>
             <Dialog open={open} onClose={handleClose}> 
                 <DialogTitle sx={{mr: 5}}>
-                    {v === latest ? `This is Copa v${latest}!` : `A new version of Copa just dropped!   `}
+                    {!update ? `This is Copa v${latest}!` : `A new version of Copa just dropped!   `}
                 </DialogTitle>
                 <IconButton onClick={handleClose} sx={{ position: "absolute", top: 12, right: 10 }}>
                     <Close></Close>
