@@ -11,7 +11,7 @@ import {
 import {
   useDivisions,
   useTournament
-} from "../viewer/hooks.ts";
+} from "../tournament/hooks.ts";
 import { ReactNode, useContext } from "react";
 import { DivisionContext, DivisionDispatchContext } from "../../index.tsx";
 

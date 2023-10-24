@@ -12,7 +12,7 @@ import ScoreCounter from "../inputs/ScoreCounter";
 import { useParticipant } from "../participant/hooks";
 import { useAuth } from "../user/hooks";
 import { useMatch, useUpdateMatch } from "./hooks";
-import { useDivision, useTournament } from "../viewer/hooks";
+import { useDivision, useTournament } from "../tournament/hooks";
 import OutlinedContainer from "../layout/OutlinedContainer";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";

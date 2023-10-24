@@ -13,14 +13,16 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../user/hooks.ts";
 import UserPanel from "../user/userpanel.tsx";
-import { useTournament } from "./hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 import logo from "./copa.png";
 import AllTeams from "../team/AllTeams.tsx";
 import HallOfFame from "./AllTimePage.tsx";
+import packageJson from "../../../package.json"
+import { ChangeLogContext } from "./ChangeLog.tsx";
 
 export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
@@ -105,11 +107,11 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
 function Header() {
   const { data: tournament } = useTournament("current");
 
+  const toggleChangelog = useContext(ChangeLogContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
   const { data: user } = useAuth();
-
   const isAdmin = user?.role === "admin";
 
   const links = [
@@ -137,13 +139,16 @@ function Header() {
       <MenuItem>Participants</MenuItem>
     </Link>,
     < Link to="/tournament/matches" >
-      <MenuItem>Matches </MenuItem>
+      <MenuItem>Matches</MenuItem>
     </Link>,
     < Link to="/tournament/groups" >
-      <MenuItem>Group stage </MenuItem>
+      <MenuItem>Group stage</MenuItem>
     </Link>,
     < Link to="/tournament/bracket" >
-      <MenuItem>Bracket </MenuItem>
+      <MenuItem>Bracket</MenuItem>
+    </Link>,
+    < Link to="/tournament/rules" >
+      <MenuItem>Rules</MenuItem>
     </Link>,
   ]
 
@@ -187,7 +192,7 @@ function Header() {
           </Link>
           {isMobile ?
             <DropdownMenu anchor={
-              <IconButton size="medium" sx={{mr: 1}}>
+              <IconButton size="medium" sx={{ mr: 1 }}>
                 <MenuIcon fontSize="large"></MenuIcon>
               </IconButton>
             }>
@@ -208,10 +213,13 @@ function Header() {
         borderRight: "20px solid transparent",
         boxShadow: `${alpha(theme.palette.common.black, 0.7)} 0px 10px 10px -10px;`
       }}></Box>
-      <Link to="/">
-        <Box component="img" src={logo} sx={{ position: "absolute", top: "-50%", left: -10, width: "220px", height: "222px" }}>
-        </Box>
-      </Link>
+      <Box sx={{ position: "absolute", height: "110px", width: "220px", top: 0 }}>
+        <Link to="/">
+          <Box component="img" src={logo} sx={{position: "absolute", top: "-54%", left: -20, height: "220px", width: "220px" }}>
+          </Box>
+        </Link>
+        <Typography onClick={() => toggleChangelog(true)} sx={{position: "absolute", bottom: "10px", right: "45px", textAlign: "right"}} color={theme.palette.warning.main}>v{packageJson.version}</Typography>
+      </Box>
     </Box >
   )
 }

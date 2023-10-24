@@ -7,7 +7,7 @@ import {
 import axios from "axios";
 import { ObjectId } from "mongodb";
 import { TParticipant } from "@backend/models/participant";
-import { divisionKeys, tournamentKeys, useTournament } from "../viewer/hooks";
+import { divisionKeys, tournamentKeys, useTournament } from "../tournament/hooks";
 import { queryKeyFactory } from "../types";
 
 export const participantKeys = queryKeyFactory<TParticipant>("participants");

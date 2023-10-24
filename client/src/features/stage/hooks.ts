@@ -5,7 +5,7 @@ import { Id, InputStage } from "brackets-model";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { BracketsViewer } from "ts-brackets-viewer";
-import { finalRoundNames, tournamentKeys, useTournament } from "../viewer/hooks";
+import { finalRoundNames, tournamentKeys, useTournament } from "../tournament/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
 import { TStage } from "@backend/models/stage.ts"
 

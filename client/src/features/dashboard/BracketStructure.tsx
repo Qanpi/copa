@@ -20,7 +20,7 @@ import {
   useState
 } from "react";
 import { useParticipants } from "../participant/hooks.ts";
-import { useTournament } from "../viewer/hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 
 import { BracketsViewer } from "ts-brackets-viewer";
 // import "ts-brackets-viewer/dist/style.css";

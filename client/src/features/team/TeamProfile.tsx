@@ -45,7 +45,7 @@ import OutlinedContainer from "../layout/OutlinedContainer.tsx";
 import { TFeedback } from "../types.ts";
 import { useAuth, useTeamMembers } from "../user/hooks.ts";
 import GradientTitle from "../viewer/gradientTitle.tsx";
-import { useTournament } from "../viewer/hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
 import { useDeleteTeam, useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";

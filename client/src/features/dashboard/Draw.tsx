@@ -3,7 +3,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/re
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
-import { useTournament } from "../viewer/hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 import { participantKeys, useParticipants } from "../participant/hooks.ts";
 import { groupBy, shuffle } from "lodash-es";
 import Group from "../group/Group.js";

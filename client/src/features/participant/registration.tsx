@@ -10,7 +10,7 @@ import MyTextField from "../inputs/myTextField.tsx";
 import { teamValidationSchema } from "../team/CreateTeam.tsx";
 import { useTeam, useUpdateTeam } from "../team/hooks.ts";
 import { useAuth } from "../user/hooks.ts";
-import { divisionKeys, useDivisions, useTournament } from "../viewer/hooks.ts";
+import { divisionKeys, useDivisions, useTournament } from "../tournament/hooks.ts";
 import { participantKeys, useParticipants } from "./hooks.ts";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { GoogleSignInButton } from "../user/userpanel.tsx";

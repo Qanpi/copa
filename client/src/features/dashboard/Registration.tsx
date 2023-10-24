@@ -28,7 +28,7 @@ import {
   useDivisions,
   useTournament,
   useUpdateTournament,
-} from "../viewer/hooks.ts";
+} from "../tournament/hooks.ts";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
 import AdminAlert from "../layout/AdminAlert.tsx";

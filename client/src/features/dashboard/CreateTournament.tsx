@@ -6,7 +6,7 @@ import MyTextField from "../inputs/myTextField";
 import * as Yup from "yup"
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { tournamentKeys, useCreateTournament, useTournament } from "../viewer/hooks";
+import { tournamentKeys, useCreateTournament, useTournament } from "../tournament/hooks";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar";

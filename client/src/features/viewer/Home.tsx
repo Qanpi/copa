@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
 import { useStages } from "../stage/hooks";
-import { useTournament } from "./hooks";
+import { useTournament } from "../tournament/hooks";
 import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";

@@ -26,7 +26,7 @@ import "./MatchesCalendar.css";
 
 import { TMatch } from "@backend/models/match.ts";
 import { Link, useNavigate } from "react-router-dom";
-import { useTournament } from "../viewer/hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 
 function MatchesCalendar() {
   const { data: tournament } = useTournament("current");

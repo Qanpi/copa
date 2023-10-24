@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import NewTournamentPage from "./NewTournament.js";
 import RegistrationStage from "./Registration.tsx";
-import { useTournament, useUpdateTournament } from "../viewer/hooks.ts";
+import { useTournament, useUpdateTournament } from "../tournament/hooks.ts";
 import GroupStage from "./GroupStage.tsx";
 import BracketStructure from "./BracketStructure.tsx";
 import Bracket from "./Bracket.tsx";

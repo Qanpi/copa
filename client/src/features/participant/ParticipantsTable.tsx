@@ -9,7 +9,7 @@ import DivisionPanel from "../layout/DivisionPanel.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
 import {
   useTournament
-} from "../viewer/hooks.ts";
+} from "../tournament/hooks.ts";
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.tsx";
 import { AddCircle } from "@mui/icons-material";

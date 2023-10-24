@@ -2,7 +2,7 @@ import { C } from "@fullcalendar/core/internal-common";
 import BracketStructure from "../dashboard/BracketStructure";
 import { useBracketsViewer } from "./hooks";
 import { useStageData } from "./hooks";
-import { useTournament } from "../viewer/hooks";
+import { useTournament } from "../tournament/hooks";
 import { useStages } from "./hooks";
 import DivisionPanel from "../layout/DivisionPanel";
 import { useContext } from "react";
