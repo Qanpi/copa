@@ -20,7 +20,8 @@ passport.use(
     async function verify(accessToken, refreshToken, profile, cb) {
       const adminEmails = [
         "teinikunta@syk.fi",
-        "qanpii@gmail.com"
+        "qanpii@gmail.com",
+        "urhoheinonen05@gmail.com"
       ]
 
       const userEmail = profile?.emails?.[0].value;
