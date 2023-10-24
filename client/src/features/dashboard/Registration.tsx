@@ -213,7 +213,7 @@ function RegistrationPane() {
             <MyDatePicker
               label="from 00:00 on"
               name="registration.from"
-              minDate={from ? dayjs(from) : dayjs()}
+              minDate={dayjs()}
               onChange={async (value) => {
                 await setFieldValue("registration.from", dayjs(value).startOf("day"));
                 submitForm();
