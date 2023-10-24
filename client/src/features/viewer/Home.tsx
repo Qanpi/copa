@@ -55,6 +55,7 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
         justifyContent: "center",
         width: "80vw",
         height: "80vw",
+        minHeight: "400px"
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "15vw!important" }} noWrap>
