@@ -63,6 +63,9 @@ export const useUpdateTournament = (id: Id) => {
       queryClient.setQueriesData(tournamentKeys.id(id), tournament);
       //TODO: lists update
     },
+    meta: {
+      successMessage: "Updated tournament."
+    }
   });
 };
 
