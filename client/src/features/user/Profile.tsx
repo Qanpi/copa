@@ -137,7 +137,7 @@ const PreferencesTab = ({ user }: { user: TUser }) => {
             <Stack direction="column" spacing={2}>
               <Box>
                 <InputLabel>Real name
-                  <Tooltip arrow enterTouchDelay={0} title="This name will be visible only to the admin. Please set it to your real name.">
+                  <Tooltip arrow enterTouchDelay={0} title="This name will be visible only to the organizer. Please set it to your real name.">
                     <Help sx={{ml: 1}} fontSize="10px"></Help>
                   </Tooltip>
                 </InputLabel>
@@ -145,7 +145,7 @@ const PreferencesTab = ({ user }: { user: TUser }) => {
               </Box>
               <Box>
                 <InputLabel>Display name
-                  <Tooltip arrow enterTouchDelay={0} title="This name will be visible to everyone else. You can keep it blank to use your real name.">
+                  <Tooltip arrow enterTouchDelay={0} title="This name will be visible to everyone else (if your profile is public). Keep it blank to use your real name.">
                     <Help sx={{ml: 1}} fontSize="10px"></Help>
                   </Tooltip>
                 </InputLabel>
