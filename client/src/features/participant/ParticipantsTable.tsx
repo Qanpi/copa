@@ -1,5 +1,5 @@
 import { TParticipant } from "@backend/models/participant.ts";
-import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, IconButton, Skeleton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
@@ -48,7 +48,7 @@ function TeamsPage() {
 
   const division = useContext(DivisionContext);
 
-  const { data: participants, status } = useParticipants(
+  const { data: participants, status, isLoading } = useParticipants(
     tournament?.id, {
     division: division?.id
   }
@@ -84,6 +84,9 @@ function TeamsPage() {
                   </CardActionArea>
                 </Link>
               </Card>
+              {isLoading ? <>
+                {Array.from({ length: 10 }, (_, i) => <Skeleton variant="rounded" key={i} sx={{ width: "250px", height: "200px" }}></Skeleton>)}
+              </> : null}
               {participants?.map(p => <ParticipantCard name={p.name} banner={p?.bannerUrl}></ParticipantCard>)}
             </Box>
           </Box> :
@@ -101,7 +104,7 @@ function TeamsPage() {
 //               }) 
 
 function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
 
   const unregisterTeam = useDeleteParticipant();
   const updateParticipant = useUpdateParticipant();
