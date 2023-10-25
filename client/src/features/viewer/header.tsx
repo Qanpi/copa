@@ -70,7 +70,7 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
           }}
         >
           <Stack alignItems="center" >
-            {/* <Box
+            <Box
               sx={
                 {
                   position: "absolute",
@@ -84,7 +84,7 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
                   borderBottom: `15px solid ${theme.palette.primary.main}`,
                 }
               }
-            > </Box> */}
+            > </Box>
 
             < Paper
               onClick={handleDropdownClose}
@@ -159,7 +159,7 @@ function Header() {
       <Box sx={{
         background: theme.palette.secondary.main,
         height: "70px",
-        paddingLeft: "200px",
+        paddingLeft: "190px",
         paddingRight: 3,
         boxShadow: `${alpha(theme.palette.common.black, 0.7)} 0px 0px 10px;`
       }} display="flex" alignItems={"center"}>
@@ -186,20 +186,20 @@ function Header() {
             {links.slice((isAdmin ? 1 : 2))}
           </Stack>
         }
-        <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "10px" }}>
+        <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "7px" }}>
           <Link to="/bug-report">
-            <IconButton size="medium">
-              <BugReport></BugReport>
+            <IconButton size="medium" >
+              <BugReport sx={{mr: {xs: -1, md: 1}}}></BugReport>
             </IconButton>
           </Link>
           {isMobile ?
             <DropdownMenu anchor={
-              <IconButton size="medium" sx={{ mr: 1 }}>
+              <IconButton size="medium">
                 <MenuIcon fontSize="large"></MenuIcon>
               </IconButton>
             }>
               {links[0]}
-              <MenuItem>{tournamentHeader}</MenuItem>
+              {tournamentHeader}
               {tournamentSublinks.map((l, i) => (
                 <Box sx={{ pl: 2 }} key={i}>{l}</Box>
               ))}
@@ -210,17 +210,17 @@ function Header() {
       </Box>
       <Box sx={{
         background: "none",
-        width: "200px",
+        width: "170px",
         borderTop: `40px solid ${theme.palette.secondary.main}`,
         borderRight: "20px solid transparent",
         boxShadow: `${alpha(theme.palette.common.black, 0.7)} 0px 10px 10px -10px;`
       }}></Box>
-      <Box sx={{ position: "absolute", height: "110px", width: "220px", top: 0 }}>
+      <Box sx={{ position: "absolute", height: "110px", width: "170px", top: 0 }}>
         <Link to="/">
-          <Box component="img" src={logo} sx={{ position: "absolute", top: "-54%", left: -20, height: "220px", width: "220px" }}>
+          <Box component="img" src={logo} sx={{ position: "absolute", top: "-54%", left: -30, height: "220px", width: "220px" }}>
           </Box>
         </Link>
-        <Typography onClick={() => toggleChangelog(true)} sx={{ position: "absolute", bottom: "10px", right: "45px", textAlign: "right" }} color={theme.palette.warning.main}>v{packageJson.version}</Typography>
+        <Typography onClick={() => toggleChangelog(true)} sx={{ position: "absolute", bottom: "10px", right: "25px", textAlign: "right" }} color={theme.palette.warning.main}>v{packageJson.version}</Typography>
       </Box>
     </Box >
   )
