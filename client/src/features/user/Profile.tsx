@@ -6,7 +6,7 @@ import TimelineItem from "@mui/lab/TimelineItem/TimelineItem.js";
 import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator.js";
 import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography, Tooltip, Tabs, Tab, Button, IconButton, InputLabel } from "@mui/material";
 import { useParams } from "react-router";
-import { useUpdateUser, useUser, userKeys } from "./hooks.ts";
+import { useAuth, useUpdateUser, useUser, userKeys } from "./hooks.ts";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
@@ -25,6 +25,7 @@ import MyTextField from "../inputs/myTextField.tsx";
 function ProfilePage() {
   const { id } = useParams();
   const { status: userStatus, data: user, error } = useUser(id);
+  const {data: auth} = useAuth();
 
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -36,12 +37,15 @@ function ProfilePage() {
     setSelectedTab(newTab);
   }
 
+  const isAdmin = auth?.role === "admin";
+  const isUser = auth?.id === user?.id;
+
   return <Container maxWidth="md" sx={{ display: "flex", justifyContent: "center", alignItems: "center", pt: 10 }}>
     <Stack direction="column" spacing={5}>
       <Stack direction="row" spacing={3} alignItems={"center"}>
         <Avatar src={user.avatar} sx={{ width: 150, height: 150 }}></Avatar>
         <Box>
-          <Typography variant="h2" sx={{ mb: 1 }}>{user.name}</Typography>
+          <Typography variant="h2" sx={{ mb: 1 }}>{isAdmin || !user.nickname ? user.name : user.nickname}</Typography>
           <Typography variant="h5" sx={{ ml: "3px" }}>
             {user.team ? <Link to={`/teams/${encodeURIComponent(user.team.name)}`}>
               {user.team.name}
@@ -52,7 +56,7 @@ function ProfilePage() {
       <Box>
         <Tabs value={selectedTab} onChange={handleChangeSelectedTab} sx={{ mb: 5 }}>
           <Tab label="Timeline"></Tab>
-          <Tab label="Preferences"></Tab>
+          {isUser ? <Tab label="Preferences"></Tab> : null}
         </Tabs>
 
         <OutlinedContainer>

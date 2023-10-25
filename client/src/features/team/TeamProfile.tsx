@@ -263,15 +263,17 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
               const visible = m?.preferences?.publicProfile;
 
               return (
-                <Box key={m.id} sx={{ alignItems: "center", flexDirection: "column", gap: 1 }} display="flex">
-                  <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
-                    <Avatar sx={{ width: "90px", height: "90px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
-                    {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
-                      <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
-                    </Tooltip>}
+                <Link to={`/users/${m.id}`}>
+                  <Box key={m.id} sx={{ alignItems: "center", flexDirection: "column", gap: 1 }} display="flex">
+                    <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
+                      <Avatar sx={{ width: "90px", height: "90px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
+                      {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                        <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
+                      </Tooltip>}
+                    </Box>
+                    <Typography>{isAdmin || !m.nickname ? m.name : m.nickname}</Typography>
                   </Box>
-                  <Typography>{isAdmin || !m.nickname ? m.name : m.nickname}</Typography>
-                </Box>
+                </Link>
               )
             }
             )}
