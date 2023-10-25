@@ -64,7 +64,7 @@ function TeamsPage() {
           {from && new Date(from) <= new Date() ? <Box sx={{ minHeight: "600px", width: "100%" }}>
             <Box sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
               gap: 2,
               justifyContent: "center",
               p:2 
