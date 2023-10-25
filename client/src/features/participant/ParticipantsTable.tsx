@@ -21,8 +21,8 @@ const ParticipantCard = ({ name, banner, ...props }: CardProps & { name: string,
   return (
     <Card key={name} sx={{
       minHeight: 200, borderRadius: 1,
-      maxHeight: "300px",
-      background: theme.palette.primary.dark
+      background: theme.palette.primary.dark,
+      maxWidth: 400
     }} {...props}>
       <Link to={`/teams/${encodeURIComponent(name)}`}>
         <CardActionArea sx={{
@@ -64,28 +64,14 @@ function TeamsPage() {
           {from && new Date(from) <= new Date() ? <Box sx={{ minHeight: "600px", width: "100%" }}>
             <Box sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, 250px)",
+              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
               gap: 2,
               justifyContent: "center",
-              pt: 2,
+              p:2 
             }}>
-              <Card sx={{
-                minHeight: 200, borderRadius: 3,
-                maxHeight: "300px",
-                background: theme.palette.secondary.main
-              }}>
-                <Link to="/tournament/register">
-                  <CardActionArea sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <CardContent>
-                      <IconButton>
-                        <AddCircle fontSize={"large"}></AddCircle>
-                      </IconButton>
-                    </CardContent>
-                  </CardActionArea>
-                </Link>
-              </Card>
+
               {isLoading ? <>
-                {Array.from({ length: 10 }, (_, i) => <Skeleton variant="rounded" key={i} sx={{ width: "250px", height: "200px" }}></Skeleton>)}
+                {Array.from({ length: 10 }, (_, i) => <Skeleton variant="rounded" key={i} sx={{ width: "100%", height: "200px" }}></Skeleton>)}
               </> : null}
               {participants?.map(p => <ParticipantCard name={p.name} banner={p?.bannerUrl}></ParticipantCard>)}
             </Box>
