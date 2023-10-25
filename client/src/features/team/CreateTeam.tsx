@@ -113,7 +113,7 @@ function NewTeamPage() {
       <Typography variant="h2" sx={{ fontWeight: 500 }}>It begins here</Typography>
     }>
       <LeaveTeamDialog
-        onStay={(u) => navigate(`/teams/${u.team.name}`)}
+        onStay={(u) => navigate(`/teams/${u.team!.name}`)}
       ></LeaveTeamDialog>
 
       <Formik

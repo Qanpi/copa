@@ -329,8 +329,6 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
   const removeUserFromTeam = useRemoveUserFromTeam();
   const deleteTeam = useDeleteTeam();
 
-
-
   if (!team) return;
 
   const handleLeaveTeam = () => {
@@ -344,6 +342,7 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
 
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
+  const isAdmin = user?.role === "admin";
 
   return (
     <>
@@ -373,12 +372,12 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
           </Alert>
         </ClickAwayListener>
       </Dialog>
-      {isMember ? <SpeedDial ariaLabel="Team Speed Dial" icon={<SpeedDialIcon></SpeedDialIcon>}>
+      {isMember || isAdmin ? <SpeedDial ariaLabel="Team Speed Dial" icon={<SpeedDialIcon></SpeedDialIcon>}>
 
-        {isManager ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit"></SpeedDialAction> : null}
-        {isManager ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite" onClick={handleFetchInvite}></SpeedDialAction> : null}
-        <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave" onClick={handleLeaveTeam}></SpeedDialAction>
-        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} onClick={handleDeleteTeam} tooltipTitle="Delete"></SpeedDialAction> : null}
+        {isManager || isAdmin ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit"></SpeedDialAction> : null}
+        {isManager || isAdmin ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite" onClick={handleFetchInvite}></SpeedDialAction> : null}
+        {isMember ? <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave" onClick={handleLeaveTeam}></SpeedDialAction> : null}
+        {isManager || isAdmin ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} onClick={handleDeleteTeam} tooltipTitle="Delete"></SpeedDialAction> : null}
       </SpeedDial> : null}
     </>
   )
