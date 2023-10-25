@@ -4,7 +4,7 @@ import TimelineContent from "@mui/lab/TimelineContent/TimelineContent.js";
 import TimelineDot from "@mui/lab/TimelineDot/TimelineDot.js";
 import TimelineItem from "@mui/lab/TimelineItem/TimelineItem.js";
 import TimelineSeparator from "@mui/lab/TimelineSeparator/TimelineSeparator.js";
-import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography, Tooltip, Tabs, Tab, Button } from "@mui/material";
+import { FormControlLabel, Avatar, Box, Container, Stack, Switch, Typography, Tooltip, Tabs, Tab, Button, IconButton, InputLabel } from "@mui/material";
 import { useParams } from "react-router";
 import { useUpdateUser, useUser, userKeys } from "./hooks.ts";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
@@ -18,6 +18,9 @@ import { useState } from "react";
 import * as Yup from "yup"
 import { TUser } from "@backend/models/user.ts";
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import NotFoundPage from "../layout/NotFoundPage.tsx";
+import { Edit, Help, QuestionMark, QuestionMarkRounded } from "@mui/icons-material";
+import MyTextField from "../inputs/myTextField.tsx";
 
 function ProfilePage() {
   const { id } = useParams();
@@ -27,9 +30,7 @@ function ProfilePage() {
 
   if (!user) return <LoadingBackdrop open={true}></LoadingBackdrop>
 
-  if (user === "private") return <PromptContainer>
-    <Typography>This profile is private</Typography>
-  </PromptContainer>
+  if (user === "private") return <NotFoundPage></NotFoundPage>;
 
   const handleChangeSelectedTab = (_, newTab: number) => {
     setSelectedTab(newTab);
@@ -41,7 +42,7 @@ function ProfilePage() {
         <Avatar src={user.avatar} sx={{ width: 150, height: 150 }}></Avatar>
         <Box>
           <Typography variant="h2" sx={{ mb: 1 }}>{user.name}</Typography>
-          <Typography variant="h5" sx={{ml: "3px"}}>
+          <Typography variant="h5" sx={{ ml: "3px" }}>
             {user.team ? <Link to={`/teams/${encodeURIComponent(user.team.name)}`}>
               {user.team.name}
             </Link> : null}
@@ -111,6 +112,7 @@ type TUserAny = {
 
 const userValidationSchema: TUserAny = {
   name: Yup.string().trim().max(20).required(),
+  nickname: Yup.string().trim().max(20).optional(),
   preferences: Yup.object({
     publicProfile: Yup.bool().required()
   })
@@ -127,15 +129,32 @@ const PreferencesTab = ({ user }: { user: TUser }) => {
     <Formik initialValues={user} validationSchema={Yup.object(userValidationSchema)} onSubmit={handleUpdatePreferences}>
       {({ setFieldValue, values }) => {
         return (
-        <Form>
-          <Stack direction="column" sx={{ minHeight: "400px" }}>
-            <Tooltip enterTouchDelay={0} title="Make profile publicly accessible to anyone" arrow>
-              <FormControlLabel value={"on"} onChange={(_, v) => setFieldValue("preferences.publicProfile", v)} control={<Switch checked={values.preferences?.publicProfile}></Switch>} label={"Publish profile"}></FormControlLabel>
-            </Tooltip>
-            <Button type="submit" sx={{ mt: "auto", width: "30%" }}>Save</Button>
-          </Stack>
-        </Form>
-      )}
+          <Form>
+            <Stack direction="column" spacing={2}>
+              <Box>
+                <InputLabel>Real name
+                  <Tooltip arrow enterTouchDelay={0} title="This name will be visible only to the admin. Please set it to your real name.">
+                    <Help sx={{ml: 1}} fontSize="10px"></Help>
+                  </Tooltip>
+                </InputLabel>
+                <MyTextField name="name"></MyTextField>
+              </Box>
+              <Box>
+                <InputLabel>Display name
+                  <Tooltip arrow enterTouchDelay={0} title="This name will be visible to everyone else. You can keep it blank to use your real name.">
+                    <Help sx={{ml: 1}} fontSize="10px"></Help>
+                  </Tooltip>
+                </InputLabel>
+                <MyTextField name="nickname"></MyTextField>
+              </Box>
+              <Tooltip enterTouchDelay={0} title="Make profile publicly accessible to anyone" arrow>
+                <FormControlLabel value={"on"} onChange={(_, v) => setFieldValue("preferences.publicProfile", v)} control={<Switch checked={values.preferences?.publicProfile}></Switch>} label={"Publish profile"}></FormControlLabel>
+              </Tooltip>
+              <Button type="submit" sx={{ mt: "auto", width: "30%" }}>Save</Button>
+            </Stack>
+          </Form>
+        )
+      }
       }
     </Formik>
   )

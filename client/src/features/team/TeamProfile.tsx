@@ -27,7 +27,8 @@ import {
   TabsProps,
   TextField,
   Tooltip,
-  Typography
+  Typography,
+  useTheme
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -228,6 +229,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
   })
   const isParticipating = !!participants?.[0];
 
+  const isAdmin = user?.role === "admin";
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team?.id;
 
@@ -245,6 +247,8 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
 
   }
 
+  // const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
+
   return (
     <Stack direction="column" spacing={4}>
       {isInitialLoading ? null : getRegistrationPrompt()}
@@ -254,19 +258,19 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
       {
         members && members.length > 0 ? <OutlinedContainer>
           <Typography variant="h6" color="primary">Squad</Typography>
-          <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
+          <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: `repeat(auto-fill, 90px)`, gridTemplateRows: `repeat(auto-fill, 120px)` }}>
             {members?.map(m => {
               const visible = m?.preferences?.publicProfile;
 
               return (
-                <Box key={m.id} sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
+                <Box key={m.id} sx={{ alignItems: "center", flexDirection: "column", gap: 1 }} display="flex">
                   <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
-                    <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
+                    <Avatar sx={{ width: "90px", height: "90px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
                     {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
                       <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
                     </Tooltip>}
                   </Box>
-                  <Typography>{m.name}</Typography>
+                  <Typography>{isAdmin || !m.nickname ? m.name : m.nickname}</Typography>
                 </Box>
               )
             }

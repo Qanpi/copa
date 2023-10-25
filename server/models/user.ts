@@ -5,7 +5,11 @@ import Team from "./team.js";
 
 const UserSchema = new mongoose.Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: true,
+    },
+    nickname: String,
     googleId: {
       type: String,
       select: false
