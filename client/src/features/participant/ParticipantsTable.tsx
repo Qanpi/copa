@@ -15,7 +15,7 @@ import { useDeleteParticipant } from "./registration.tsx";
 import { AddCircle } from "@mui/icons-material";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
 
-const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string, banner?: string }) => {
+const ParticipantCard = ({ name, banner, ...props }: CardProps & { name: string, banner?: string }) => {
   const theme = useTheme();
 
   return (
@@ -24,7 +24,7 @@ const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string
       maxHeight: "300px",
       background: theme.palette.primary.dark
     }} {...props}>
-      <Link to={`/teams/${name}`}>
+      <Link to={`/teams/${encodeURIComponent(name)}`}>
         <CardActionArea sx={{
           height: "100%",
           display: "flex",
@@ -84,7 +84,7 @@ function TeamsPage() {
                   </CardActionArea>
                 </Link>
               </Card>
-              {participants?.map(p => <ParticipantCard name={p?.name} banner={p?.bannerUrl}></ParticipantCard>)}
+              {participants?.map(p => <ParticipantCard name={p.name} banner={p?.bannerUrl}></ParticipantCard>)}
             </Box>
           </Box> :
             <PromptContainer>
@@ -113,7 +113,7 @@ function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
       width: 200,
       renderCell: (params) => {
         return (
-          <Link to={`/teams/${params.row.name}`}>{params.row.name}</Link>
+          <Link to={`/teams/${encodeURIComponent(params.row.name)}`}>{params.row.name}</Link>
         )
       },
     },
