@@ -39,7 +39,7 @@ function CreateTournamentPage() {
         >
             <Form>
                 <LoadingBackdrop open={createTournament.isLoading}></LoadingBackdrop>
-                <Container sx={{ pt: 15 }} maxWidth="xs">
+                <Container maxWidth="xs">
                     <Grid2 container spacing={2} alignItems={"center"} justifyContent="center">
                         <Grid2 xs={12} justifyContent="center" alignItems="center" display="flex">
                             {/* <Typography variant="h3" fontWeight={600}>KICKSTART COPA{tournament.idx ? tournament.idx + 1 : ""} </Typography> */}
