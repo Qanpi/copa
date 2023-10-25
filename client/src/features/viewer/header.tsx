@@ -23,16 +23,16 @@ import AllTeams from "../team/AllTeams.tsx";
 import HallOfFame from "./AllTimePage.tsx";
 import packageJson from "../../../package.json"
 import { ChangeLogContext } from "./ChangeLog.tsx";
+import { setNextOpponent } from "brackets-manager/dist/helpers";
 
 export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  const handleDropdownToggle = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setOpen(o => !o);
-  };
+  const handleDropdownOpen = (e) => {
+    setOpen(true);
+  }
+
 
   const handleDropdownClose = (e) => {
     setOpen(false);
@@ -41,26 +41,26 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
   const theme = useTheme();
 
   return (
-    <Box
-      onMouseLeave={handleDropdownClose}
-      onMouseEnter={handleDropdownToggle}
-      onClick={handleDropdownToggle}
-      sx={{
-        height: "100%"
-      }}
-    >
+    <ClickAwayListener onClickAway={handleDropdownClose}>
       <Box
+        onMouseLeave={handleDropdownClose}
+        onMouseEnter={handleDropdownOpen}
         sx={{
-          display: "flex",
-          alignItems: "center",
           height: "100%"
         }}
-        ref={ref}
       >
-        {anchor}
-      </Box>
+        <Box
+          onClick={handleDropdownOpen}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            height: "100%"
+          }}
+          ref={ref}
+        >
+          {anchor}
+        </Box>
 
-      <ClickAwayListener onClickAway={handleDropdownToggle}>
         <Popper
           open={open}
           anchorEl={ref.current}
@@ -70,7 +70,7 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
           }}
         >
           <Stack alignItems="center" >
-            <Box
+            {/* <Box
               sx={
                 {
                   position: "absolute",
@@ -78,14 +78,16 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
                   right: triangleRight,
                   width: 0,
                   height: 0,
+                  zIndex: 50,
                   borderLeft: "15px solid transparent",
                   borderRight: "15px solid transparent",
                   borderBottom: `15px solid ${theme.palette.primary.main}`,
                 }
               }
-            > </Box>
+            > </Box> */}
 
             < Paper
+              onClick={handleDropdownClose}
               elevation={0}
               square
               sx={{
@@ -99,8 +101,8 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
             </Paper>
           </Stack>
         </Popper>
-      </ClickAwayListener>
-    </Box >
+      </Box >
+    </ClickAwayListener>
   );
 };
 
@@ -215,10 +217,10 @@ function Header() {
       }}></Box>
       <Box sx={{ position: "absolute", height: "110px", width: "220px", top: 0 }}>
         <Link to="/">
-          <Box component="img" src={logo} sx={{position: "absolute", top: "-54%", left: -20, height: "220px", width: "220px" }}>
+          <Box component="img" src={logo} sx={{ position: "absolute", top: "-54%", left: -20, height: "220px", width: "220px" }}>
           </Box>
         </Link>
-        <Typography onClick={() => toggleChangelog(true)} sx={{position: "absolute", bottom: "10px", right: "45px", textAlign: "right"}} color={theme.palette.warning.main}>v{packageJson.version}</Typography>
+        <Typography onClick={() => toggleChangelog(true)} sx={{ position: "absolute", bottom: "10px", right: "45px", textAlign: "right" }} color={theme.palette.warning.main}>v{packageJson.version}</Typography>
       </Box>
     </Box >
   )
