@@ -42,9 +42,9 @@ function ProfilePage() {
         <Box>
           <Typography variant="h2" sx={{ mb: 1 }}>{user.name}</Typography>
           <Typography variant="h5" sx={{ml: "3px"}}>
-            <Link to={`/teams/${user.team?.name}`}>
-              {user.team?.name}
-            </Link>
+            {user.team ? <Link to={`/teams/${encodeURIComponent(user.team.name)}`}>
+              {user.team.name}
+            </Link> : null}
           </Typography>
         </Box>
       </Stack>

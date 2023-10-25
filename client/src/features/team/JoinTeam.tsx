@@ -37,7 +37,7 @@ function JoinTeamPage() {
     if (!id || !token || !user) return;
 
     if (!user?.team) joinTeam.mutate({ id, token });
-    else if (user.team.id === id) return navigate(`/teams/${user.team.name}`);
+    else if (user.team.id === id) return navigate(`/teams/${encodeURIComponent(user.team.name)}`);
   }
 
   useEffect(() => {

@@ -34,8 +34,8 @@ import { PromptContainer } from "../layout/PromptContainer.tsx";
 import { useState } from "react";
 
 export const teamValidationSchema = {
-  name: Yup.string().max(20).trim().required(""),
-  about: Yup.string().max(100).optional(),
+  name: Yup.string().max(20).trim().matches(/^[^.]*$/, "Dot ('.') is reserved, sorry.").required(""),
+  about: Yup.string().max(200).optional(),
   phoneNumber: Yup.string()
     .matches(
       /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/,
