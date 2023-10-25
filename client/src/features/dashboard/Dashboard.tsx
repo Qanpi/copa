@@ -46,15 +46,15 @@ function DashboardPage() {
     }
   };
 
-  const stateId = tournament.states.indexOf(tournament.state);
+  const stateId = tournament?.states?.indexOf(tournament.state);
 
   const nextSection = () => {
-    const next = tournament.states[stateId + 1];
+    const next = tournament?.states[stateId + 1];
     updateTournament.mutate({ state: next });
   };
 
   const prevSection = () => {
-    const prev = tournament.states[stateId - 1];
+    const prev = tournament?.states[stateId - 1];
     updateTournament.mutate({ state: prev });
   };
 
@@ -63,10 +63,10 @@ function DashboardPage() {
       <Box sx={{ pt: 7 }}>
         <GradientTitle>
           <Stack direction="row" sx={{ height: "100%" }} justifyContent={"center"} alignItems={"center"}>
-            <Typography variant="h2" fontWeight={800} minWidth={"4em"}>{tournament.name}</Typography>
+            <Typography variant="h2" fontWeight={800} minWidth={"4em"}>{tournament?.name || "Kickstart Copa"}</Typography>
             <Stepper activeStep={stateId} orientation="horizontal">
               {
-                tournament.states.map((s, i) => (
+                tournament?.states?.map((s, i) => (
                   <Step key={i} >
                     <StepLabel>{s} </StepLabel>
                   </Step>
