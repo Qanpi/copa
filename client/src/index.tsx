@@ -49,7 +49,7 @@ export const DivisionContext = React.createContext<TDivision | null>(null);
 export const DivisionDispatchContext = React.createContext<React.Dispatch<number> | null>(null);
 
 function divisionReducer(prevId: number, newId: number) {
-  localStorage.setItem("division", newId);
+  localStorage.setItem("division", newId.toString());
   return newId;
 }
 
@@ -63,7 +63,7 @@ function QueryProvider() {
           switch (error.response?.status) {
             case 429: setFeedback({
               severity: "error",
-              message: "Hold up. You are sending to many requests."
+              message: "Hold up. You are sending too many requests."
             }); break;
             case 409: setFeedback({
               severity: "error",
@@ -105,7 +105,9 @@ function QueryProvider() {
 function App() {
   const { data: tournament } = useTournament("current");
   const { data: divisions } = useDivisions(tournament?.id);
-  const [selected, dispatch] = React.useReducer(divisionReducer, 0);
+
+  const initialDivision = parseInt(localStorage.getItem("division") || "0");
+  const [selected, dispatch] = React.useReducer(divisionReducer, initialDivision);
 
   return (
     <Router>
