@@ -293,10 +293,11 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
       const invite = await axios.get(`/api/teams/${values.id}/invite`);
       const { token, expiresAt } = invite.data;
 
-      const domain = window.location.host;
+      if (!values.name) throw new Error("Invalid team name.");
 
+      const domain = window.location.host;
       return {
-        link: `${domain}/team/join?id=${values.id}&token=${token}`,
+        link: `${domain}/team/join?name=${encodeURIComponent(values.name)}&token=${token}`,
         countdown: dayjs().to(expiresAt),
       };
     },

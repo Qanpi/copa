@@ -58,7 +58,7 @@ function QueryProvider() {
 
   const queryClient = new QueryClient({
     mutationCache: new MutationCache({
-      onError: (error) => {
+      onError: (error, variables, context, mutation) => {
         if (axios.isAxiosError(error)) {
           switch (error.response?.status) {
             case 429: setFeedback({
@@ -72,7 +72,7 @@ function QueryProvider() {
             default:
               setFeedback({
                 severity: "error",
-                message: error.message
+                message: mutation.meta.errorMessage || error.message
               })
           }
         } else {
