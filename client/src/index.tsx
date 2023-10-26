@@ -43,6 +43,8 @@ import AllTeams from "./features/team/AllTeams.tsx";
 import BugReportPage from "./features/viewer/BugReport.tsx";
 import ChangeLog from "./features/viewer/ChangeLog.tsx";
 import RulesPage from "./features/viewer/RulesPage.tsx";
+import { YbugProvider, useYbugApi } from "ybug-react";
+import { useEffect } from "react";
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
@@ -95,8 +97,10 @@ function QueryProvider() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>
-      <App></App>
+      <YbugProvider ybugId="xbnv19zwap2z990ntxhx">
+        <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>
+        <App></App>
+      </YbugProvider>
       <ReactQueryDevtools></ReactQueryDevtools>
     </QueryClientProvider>
   )
@@ -108,6 +112,19 @@ function App() {
 
   const initialDivision = parseInt(localStorage.getItem("division") || "0");
   const [selected, dispatch] = React.useReducer(divisionReducer, initialDivision);
+
+  const {data: auth} = useAuth();
+  const YbugContext = useYbugApi();
+
+  useEffect(() => {
+    if (auth?.name && YbugContext?.Ybug) {
+      YbugContext.init({
+        feedback: {
+          name: auth.name
+        }
+      })
+    }
+  }, [auth, YbugContext])
 
   return (
     <Router>
