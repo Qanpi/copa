@@ -24,6 +24,7 @@ import HallOfFame from "./AllTimePage.tsx";
 import packageJson from "../../../package.json"
 import { ChangeLogContext } from "./ChangeLog.tsx";
 import { setNextOpponent } from "brackets-manager/dist/helpers";
+import NotificationDrawer from "./NotificationDrawer.tsx";
 
 export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: ReactNode, children: ReactNode, triangleRight?: string | number }) => {
   const [open, setOpen] = useState(false);
@@ -187,6 +188,7 @@ function Header() {
           </Stack>
         }
         <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "7px" }}>
+          <NotificationDrawer></NotificationDrawer>
           <Link to="/bug-report">
             <IconButton size="medium" >
               <BugReport sx={{mr: {xs: -1, md: 1}}}></BugReport>
