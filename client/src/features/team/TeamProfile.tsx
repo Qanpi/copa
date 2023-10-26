@@ -107,9 +107,9 @@ function TeamProfilePage() {
                     {isLoading ? <Skeleton variant="circular" sx={{ height: "30vw", maxHeight: "300px", maxWidth: "300px", width: "100%" }}></Skeleton> :
                       <TeamBannerInput name={"bannerUrl"} edit={editMode} sx={{ width: "100%", height: "100%" }}></TeamBannerInput>}
                   </Box>
-                  <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "320px" } }}>
+                  <Stack spacing={-1} direction="column" sx={{ ml: (isLoading || team.bannerUrl || editMode ? { xs: "35vw", md: "320px" } : "5vw") }}>
                     <Typography variant="h5">THIS IS</Typography>
-                    <Typography variant="h1" fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
+                    <Typography variant="h1" sx={{wordWrap: "anywhere"}} fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
                     <Typography variant="subtitle2" sx={{ ml: "auto", alignSelf: "end" }}>Est. {team ? dayjs(team?.createdAt).format("YYYY") : ""}</Typography>
                   </Stack>
                 </GradientTitle>
