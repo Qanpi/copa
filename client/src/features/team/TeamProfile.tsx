@@ -56,8 +56,7 @@ dayjs.extend(relativeTime);
 function TeamProfilePage() {
   //FIXME: think about encoding and decoding practices
   const { name } = useParams();
-  const encoded = name ? encodeURIComponent(name) : undefined;
-  const { data: team, status: teamStatus, isLoading } = useTeam(encoded);
+  const { data: team, status: teamStatus, isLoading } = useTeam(name);
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = useCallback((_: any, newTab: number) => {

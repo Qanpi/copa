@@ -37,7 +37,7 @@ function JoinTeamPage() {
     },
     onSuccess: (user) => {
       queryClient.invalidateQueries(userKeys.id("me"));
-      navigate(`/teams/${user.team!.name}`);
+      navigate(`/teams/${encodeURIComponent(user.team!.name)}`);
     },
     meta: {
       errorMessage: "This link is invalid/expired."
@@ -69,7 +69,7 @@ function JoinTeamPage() {
     {user.team && user.team.name === name ? (
       <LeaveTeamDialog
         onLeave={handleJoinTeam}
-        onStay={() => navigate(`/teams/${user.team!.name}`)}
+        onStay={() => navigate(`/teams/${encodeURIComponent(user.team!.name)}`)}
       ></LeaveTeamDialog>) : null}
     <Stack direction="column" alignItems="center" spacing={5}>
       <Box sx={{ width: "50vw", aspectRatio: 1, position: "relative" }}>

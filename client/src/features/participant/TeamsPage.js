@@ -22,7 +22,7 @@ export function TeamsPage() {
       width: 200,
       //is encoding fine?
       renderCell: (params) => (
-        <Link to={`/teams/${params.row.name}`}>{params.value}</Link>
+        <Link to={`/teams/${encodeURIComponent(params.row.name)}`}>{params.value}</Link>
       ),
     },
     {

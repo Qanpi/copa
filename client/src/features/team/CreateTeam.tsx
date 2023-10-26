@@ -113,7 +113,7 @@ function NewTeamPage() {
       <Typography variant="h2" sx={{ fontWeight: 500 }}>It begins here</Typography>
     }>
       <LeaveTeamDialog
-        onStay={(u) => navigate(`/teams/${u.team!.name}`)}
+        onStay={(u) => navigate(`/teams/${encodeURIComponent(u.team!.name!)}`)}
       ></LeaveTeamDialog>
 
       <Formik
@@ -129,7 +129,7 @@ function NewTeamPage() {
         onSubmit={(values) => {
           createTeam.mutate(values, {
             onSuccess: (newTeam) => {
-              navigate(`/teams/${newTeam.name}`);
+              navigate(`/teams/${encodeURIComponent(newTeam.name)}`);
             },
           });
         }}
