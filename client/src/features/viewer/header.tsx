@@ -189,11 +189,11 @@ function Header() {
         }
         <Box sx={{ ml: "auto", height: "100%", alignItems: "center", display: "flex", gap: "7px" }}>
           <NotificationDrawer></NotificationDrawer>
-          <Link to="/bug-report">
+          {/* <Link to="/bug-report">
             <IconButton size="medium" >
               <BugReport sx={{mr: {xs: -1, md: 1}}}></BugReport>
             </IconButton>
-          </Link>
+          </Link> */}
           {isMobile ?
             <DropdownMenu anchor={
               <IconButton size="medium">

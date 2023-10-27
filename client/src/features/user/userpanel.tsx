@@ -29,7 +29,7 @@ function UserPanel() {
         <Avatar src={user.avatar} variant="rounded" sx={{width: "48px", height: "48px"}}></Avatar>
         {minified ? null : <Typography>{user.name}</Typography>}
       </Stack>
-    } triangleRight="28%">
+    } triangleRight="40px">
       <Link to={`/users/${user.id}`}>
         <MenuItem>Profile</MenuItem>
       </Link>
