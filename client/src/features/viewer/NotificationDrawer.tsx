@@ -18,7 +18,6 @@ function NotificationDrawer() {
 
     const [openNewPreview, setOpenNewPreview] = useState(false);
 
-
     const { data: tournament } = useTournament("current");
 
     const queryClient = useQueryClient();
@@ -30,6 +29,18 @@ function NotificationDrawer() {
         },
         enabled: Boolean(tournament?.id)
     })
+
+    const lastSeen = dayjs(localStorage.getItem("lastOpenedNotifications"));
+
+    let unseenCount = 0;
+    const classifiedNotifications = notifications?.map(n => {
+        if (dayjs(n.createdAt) > lastSeen) {
+            unseenCount++;
+            return { ...n, seen: false };
+        }
+        return {...n, seen: true};
+    }
+    );
 
     const createNotification = useMutation({
         mutationFn: async (values: TNotification) => {
@@ -84,10 +95,15 @@ function NotificationDrawer() {
         deleteNotification.mutate(id);
     }
 
+    const handleToggleNotifications = (b: boolean) => {
+        setOpen(b);
+        if (!b) localStorage.setItem("lastOpenedNotifications", dayjs().toISOString());
+    }
+
     return (
         <>
-            <IconButton onClick={() => setOpen(!open)}>
-                <Badge color="primary" badgeContent={notifications?.length || 0}>
+            <IconButton onClick={() => handleToggleNotifications(!open)}>
+                <Badge color="primary" badgeContent={unseenCount || 0}>
                     <Notifications></Notifications>
                 </Badge>
             </IconButton>
@@ -95,8 +111,8 @@ function NotificationDrawer() {
             <SwipeableDrawer
                 open={open}
                 anchor="left"
-                onOpen={() => setOpen(true)}
-                onClose={() => setOpen(false)}
+                onOpen={() => handleToggleNotifications(true)}
+                onClose={() => handleToggleNotifications(false)}
                 PaperProps={{
                     sx: {
                         background: theme.palette.primary.dark,
@@ -153,14 +169,13 @@ function NotificationDrawer() {
                             </Paper>
                         </ListItem>
                     }
-                    {notifications?.map((n, i) => {
-                        console.log(n)
+                    {classifiedNotifications?.map((n, i) => {
                         return (
-                            <ListItem>
-                                <Alert severity={n.severity} sx={{ width: "100%" }}>
+                            <ListItem sx={{opacity: (n.seen ? 0.85 : 1) }}>
+                                <Alert severity={n.severity} sx={{ width: "100%",  }}>
                                     <AlertTitle>{n.title}</AlertTitle>
                                     {n.body}
-                                    <Typography sx={{position: "absolute", bottom: 15, right: 25}} textAlign="right" variant="body2" color="GrayText">{dayjs(n.createdAt).format("DD.MM")}</Typography>
+                                    <Typography sx={{ position: "absolute", bottom: 15, right: 25 }} textAlign="right" variant="body2" color="GrayText">{dayjs(n.createdAt).format("DD.MM")}</Typography>
                                 </Alert>
                                 <IconButton sx={{ position: "absolute", top: 5, right: 15 }} onClick={() => handleDeleteNotification(n._id)}>
                                     <CloseOutlined></CloseOutlined>
