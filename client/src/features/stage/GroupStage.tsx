@@ -1,4 +1,4 @@
-import { useTournament } from "../viewer/hooks";
+import { useTournament } from "../tournament/hooks";
 import GroupStageStructure from "../dashboard/GroupStage";
 import { ViewerData } from "ts-brackets-viewer";
 import { useContext, useLayoutEffect } from "react";

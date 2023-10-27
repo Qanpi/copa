@@ -12,7 +12,7 @@ function NoTeamPage() {
 
     const navigate = useNavigate();
     useEffect(() => {
-        if (team) navigate(`/teams/${team.name}`);
+        if (team) navigate(`/teams/${encodeURIComponent(team.name)}`);
     }, [team])
 
     return <PromptContainer>

@@ -26,7 +26,7 @@ export const useCreateTournament = () => {
   const queryClient = useQueryClient();
 
   return useMutation<TTournament, AxiosError, Partial<TTournament>>({
-    mutationFn: async (body: Partial<TTournament> & {divisions: string[]}) => {
+    mutationFn: async (body: Partial<TTournament> & { divisions: string[] }) => {
       const res = await axios.post(`/api/tournaments/`, body);
       return res.data as TTournament;
     },
@@ -63,6 +63,9 @@ export const useUpdateTournament = (id: Id) => {
       queryClient.setQueriesData(tournamentKeys.id(id), tournament);
       //TODO: lists update
     },
+    meta: {
+      successMessage: "Updated tournament."
+    }
   });
 };
 
@@ -83,6 +86,22 @@ export const useDivisions = (tournamentId?: string) => {
     data: tournament?.divisions as TDivision[]
   }
 }
+
+export const useUpdateDivision = () => {
+  const queryClient = useQueryClient();
+  const { data: tournament } = useTournament("current");
+
+  return useMutation({
+    mutationFn: async (values: Partial<TDivision>) => {
+      const res = await axios.put(`/api/tournaments/${tournament.id}/divisions/${values.id}`, values);
+      return res.data as TDivision;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(tournamentKeys.id("current"));
+      queryClient.invalidateQueries(tournamentKeys.id(tournament.id));
+    },
+  });
+};
 
 export const finalRoundNames = (roundInfo: RoundNameInfo) => {
   if ("fractionOfFinal" in roundInfo) {

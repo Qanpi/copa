@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import { useMatches, useUpdateMatch } from "./hooks.ts";
 import { DataGrid, DataGridProps, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { useDivisions, useTournament } from "../viewer/hooks.ts";
+import { useDivisions, useTournament } from "../tournament/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
 import { notStrictEqual } from "assert";
 import { TMatch } from "@backend/models/match.ts";

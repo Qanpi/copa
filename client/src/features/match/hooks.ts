@@ -4,7 +4,7 @@ import axios from "axios";
 import { Dayjs } from "dayjs";
 import _ from "lodash";
 import { useParticipants } from "../participant/hooks";
-import { tournamentKeys, useTournament } from "../viewer/hooks";
+import { tournamentKeys, useTournament } from "../tournament/hooks";
 import { QueryKeyFactory, queryKeyFactory } from "../types";
 
 const matchKeys = queryKeyFactory("matches");

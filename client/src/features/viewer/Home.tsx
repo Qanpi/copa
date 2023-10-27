@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
 import { useStages } from "../stage/hooks";
-import { useTournament } from "./hooks";
+import { useTournament } from "../tournament/hooks";
 import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";
@@ -55,6 +55,7 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
         justifyContent: "center",
         width: "80vw",
         height: "80vw",
+        minHeight: "400px"
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "15vw!important" }} noWrap>

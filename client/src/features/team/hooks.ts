@@ -30,7 +30,7 @@ export const useTeam = (name?: string) => {
   return useQuery({
     queryKey: teamKeys.id(name),
     queryFn: async () => {
-      const response = await axios.get(`/api/teams/?name=${name}`);
+      const response = await axios.get(`/api/teams/?name=${encodeURIComponent(name)}`);
       return response.data[0] as TTeam || null; //FIXME: assuming the response is array; maybe do this validation on server?
     },
     enabled: Boolean(name),
@@ -44,7 +44,7 @@ export const useCreateTeam = () => {
     mutationFn: async (values: Partial<TTeam>) => {
       const res = await axios.post("/api/teams", {
         ...values,
-        name: values?.name?.trim(), //FIXME: encode uri?
+        name: values?.name?.trim(),
       });
       return res.data as TTeam;
     },

@@ -15,6 +15,20 @@ enum TournamentStates {
   Complete
 }
 
+const NotificationSchema = new mongoose.Schema({
+  title: String,
+  body: String,
+  severity: {
+    type: String,
+    enum: ["success", "error", "warning", "info"]
+  }
+}, {
+  timestamps: true,
+  id: true
+})
+
+export type TNotification = InferSchemaType<typeof NotificationSchema>;
+
 //TODO: split into user and admin models
 const TournamentSchema = new mongoose.Schema(
   {
@@ -33,6 +47,7 @@ const TournamentSchema = new mongoose.Schema(
       enum: Object.values(TournamentStates).filter(v => (typeof v === "string")),
       default: "Registration",
     },
+    notifications: [NotificationSchema],
     divisions: [DivisionSchema],
   },
   {

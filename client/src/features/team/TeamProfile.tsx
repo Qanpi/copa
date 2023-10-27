@@ -27,7 +27,8 @@ import {
   TabsProps,
   TextField,
   Tooltip,
-  Typography
+  Typography,
+  useTheme
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -45,7 +46,7 @@ import OutlinedContainer from "../layout/OutlinedContainer.tsx";
 import { TFeedback } from "../types.ts";
 import { useAuth, useTeamMembers } from "../user/hooks.ts";
 import GradientTitle from "../viewer/gradientTitle.tsx";
-import { useTournament } from "../viewer/hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 import { TeamBannerInput, teamValidationSchema } from "./CreateTeam.tsx";
 import { useDeleteTeam, useParticipations, useRemoveUserFromTeam, useTeam, useUpdateTeam } from "./hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
@@ -55,8 +56,7 @@ dayjs.extend(relativeTime);
 function TeamProfilePage() {
   //FIXME: think about encoding and decoding practices
   const { name } = useParams();
-  const encoded = name ? encodeURIComponent(name) : undefined;
-  const { data: team, status: teamStatus, isLoading } = useTeam(encoded);
+  const { data: team, status: teamStatus, isLoading } = useTeam(name);
 
   const [selectedTab, setSelectedTab] = useState(0);
   const handleChangeSelectedTab = useCallback((_: any, newTab: number) => {
@@ -107,9 +107,9 @@ function TeamProfilePage() {
                     {isLoading ? <Skeleton variant="circular" sx={{ height: "30vw", maxHeight: "300px", maxWidth: "300px", width: "100%" }}></Skeleton> :
                       <TeamBannerInput name={"bannerUrl"} edit={editMode} sx={{ width: "100%", height: "100%" }}></TeamBannerInput>}
                   </Box>
-                  <Stack spacing={-1} direction="column" sx={{ ml: { xs: "35vw", md: "320px" } }}>
+                  <Stack spacing={-1} direction="column" sx={{ ml: (isLoading || team.bannerUrl || editMode ? { xs: "35vw", md: "320px" } : "5vw") }}>
                     <Typography variant="h5">THIS IS</Typography>
-                    <Typography variant="h1" fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
+                    <Typography variant="h1" sx={{wordWrap: "anywhere"}} fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
                     <Typography variant="subtitle2" sx={{ ml: "auto", alignSelf: "end" }}>Est. {team ? dayjs(team?.createdAt).format("YYYY") : ""}</Typography>
                   </Stack>
                 </GradientTitle>
@@ -228,6 +228,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
   })
   const isParticipating = !!participants?.[0];
 
+  const isAdmin = user?.role === "admin";
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team?.id;
 
@@ -236,7 +237,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
 
     if (isParticipating) return <Alert>
       <AlertTitle>Congratulations!</AlertTitle>
-      Your team is registered for <Link to="/" style={{ textDecoration: "underline" }}>{tournament?.name || ""}</Link>!
+      {team?.name || ""} is registered for <Link to="/" style={{ textDecoration: "underline" }}>{tournament?.name || ""}</Link>!
     </Alert>
     else if (isManager && tournament?.registration?.isOpen) return <Alert severity={"info"}>
       <AlertTitle>Register!</AlertTitle>
@@ -244,6 +245,8 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
     </Alert>
 
   }
+
+  // const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
 
   return (
     <Stack direction="column" spacing={4}>
@@ -254,20 +257,22 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
       {
         members && members.length > 0 ? <OutlinedContainer>
           <Typography variant="h6" color="primary">Squad</Typography>
-          <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: "repeat(auto-fill, 100px)", gridTemplateRows: "repeat(auto-fill, 120px)" }}>
+          <Box sx={{ display: "grid", gap: 3, p: 3, gridTemplateColumns: `repeat(auto-fill, 90px)`, gridTemplateRows: `repeat(auto-fill, 120px)` }}>
             {members?.map(m => {
               const visible = m?.preferences?.publicProfile;
 
               return (
-                <Box key={m.id} sx={{ alignItems: "center", flexDirection: "column" }} display="flex">
-                  <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
-                    <Avatar sx={{ width: "100px", height: "100px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
-                    {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
-                      <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
-                    </Tooltip>}
+                <Link to={`/users/${m.id}`}>
+                  <Box key={m.id} sx={{ alignItems: "center", flexDirection: "column", gap: 1 }} display="flex">
+                    <Box key={m.id} display="flex" alignItems="center" justifyContent={"center"}>
+                      <Avatar sx={{ width: "90px", height: "90px", opacity: visible ? 1 : 0.5 }} src={m.avatar} ></Avatar>
+                      {visible ? null : <Tooltip enterTouchDelay={0} arrow title={m.id === user?.id ? "Your profile is only visible to your team members by default. You can change this option on your profile page." : ""}>
+                        <VisibilityOff sx={{ position: "absolute" }}></VisibilityOff>
+                      </Tooltip>}
+                    </Box>
+                    <Typography>{isAdmin || !m.nickname ? m.name : m.nickname}</Typography>
                   </Box>
-                  <Typography>{m.name}</Typography>
-                </Box>
+                </Link>
               )
             }
             )}
@@ -287,10 +292,11 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
       const invite = await axios.get(`/api/teams/${values.id}/invite`);
       const { token, expiresAt } = invite.data;
 
-      const domain = window.location.host;
+      if (!values.name) throw new Error("Invalid team name.");
 
+      const domain = window.location.host;
       return {
-        link: `${domain}/team/join?id=${values.id}&token=${token}`,
+        link: `${domain}/team/join?name=${encodeURIComponent(values.name)}&token=${token}`,
         countdown: dayjs().to(expiresAt),
       };
     },
@@ -323,8 +329,6 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
   const removeUserFromTeam = useRemoveUserFromTeam();
   const deleteTeam = useDeleteTeam();
 
-
-
   if (!team) return;
 
   const handleLeaveTeam = () => {
@@ -338,6 +342,7 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
 
   const isManager = user?.id === team?.manager;
   const isMember = user?.team?.id === team.id;
+  const isAdmin = user?.role === "admin";
 
   return (
     <>
@@ -367,12 +372,12 @@ const TeamSpeedDial = memo(function TeamSpeedDial({ teamName, onEditClick }: { t
           </Alert>
         </ClickAwayListener>
       </Dialog>
-      {isMember ? <SpeedDial ariaLabel="Team Speed Dial" icon={<SpeedDialIcon></SpeedDialIcon>}>
+      {isMember || isAdmin ? <SpeedDial ariaLabel="Team Speed Dial" icon={<SpeedDialIcon></SpeedDialIcon>}>
 
-        {isManager ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit"></SpeedDialAction> : null}
-        {isManager ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite" onClick={handleFetchInvite}></SpeedDialAction> : null}
-        <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave" onClick={handleLeaveTeam}></SpeedDialAction>
-        {isManager ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} onClick={handleDeleteTeam} tooltipTitle="Delete"></SpeedDialAction> : null}
+        {isManager || isAdmin ? <SpeedDialAction tooltipOpen icon={<Edit></Edit>} onClick={onEditClick} tooltipTitle="Edit"></SpeedDialAction> : null}
+        {isManager || isAdmin ? <SpeedDialAction tooltipOpen icon={<AddLink></AddLink>} tooltipTitle="Invite" onClick={handleFetchInvite}></SpeedDialAction> : null}
+        {isMember ? <SpeedDialAction tooltipOpen icon={<MeetingRoom></MeetingRoom>} tooltipTitle="Leave" onClick={handleLeaveTeam}></SpeedDialAction> : null}
+        {isManager || isAdmin ? <SpeedDialAction tooltipOpen icon={<DeleteForever></DeleteForever>} onClick={handleDeleteTeam} tooltipTitle="Delete"></SpeedDialAction> : null}
       </SpeedDial> : null}
     </>
   )

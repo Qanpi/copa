@@ -3,7 +3,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/re
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
-import { useTournament } from "../viewer/hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 import { participantKeys, useParticipants } from "../participant/hooks.ts";
 import { groupBy, shuffle } from "lodash-es";
 import Group from "../group/Group.js";
@@ -19,6 +19,7 @@ import "./fortuneWheel.css"
 import { TParticipant } from "@backend/models/participant.ts";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
+import AdminOnlyPage from "./AdminOnlyBanner.tsx";
 
 const useGroup = (id) => {
   const { data: tournament } = useTournament("current");
@@ -287,19 +288,21 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
   if (!isWheelVisible) return;
 
   return (
-    <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
-      <Wheel
-        data={wheelOptions}
-        prizeNumber={randomN}
-        mustStartSpinning={mustSpin}
-        onStopSpinning={handleSpinOver}
-      ></Wheel>
+    <AdminOnlyPage>
+      <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
+        <Wheel
+          data={wheelOptions}
+          prizeNumber={randomN}
+          mustStartSpinning={mustSpin}
+          onStopSpinning={handleSpinOver}
+        ></Wheel>
 
-      {/* position is calculated so that it's in the center and on top of the wheel */}
-      <Button onClick={handleSpin} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
-        Spin
-      </Button>
-    </Box >
+        {/* position is calculated so that it's in the center and on top of the wheel */}
+        <Button onClick={handleSpin} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
+          Spin
+        </Button>
+      </Box >
+    </AdminOnlyPage>
   );
 }
 

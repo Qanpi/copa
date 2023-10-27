@@ -1,5 +1,5 @@
 import { TParticipant } from "@backend/models/participant.ts";
-import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, CardMedia, CardProps, Container, IconButton, Skeleton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { useContext } from "react";
@@ -9,22 +9,22 @@ import DivisionPanel from "../layout/DivisionPanel.tsx";
 import BannerPage from "../viewer/BannerPage.tsx";
 import {
   useTournament
-} from "../viewer/hooks.ts";
+} from "../tournament/hooks.ts";
 import { useParticipants, useUpdateParticipant } from "./hooks.ts";
 import { useDeleteParticipant } from "./registration.tsx";
 import { AddCircle } from "@mui/icons-material";
 import { PromptContainer } from "../layout/PromptContainer.tsx";
 
-const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string, banner?: string }) => {
+const ParticipantCard = ({ name, banner, ...props }: CardProps & { name: string, banner?: string }) => {
   const theme = useTheme();
 
   return (
     <Card key={name} sx={{
       minHeight: 200, borderRadius: 1,
-      maxHeight: "300px",
-      background: theme.palette.primary.dark
+      background: theme.palette.primary.dark,
+      maxWidth: 400
     }} {...props}>
-      <Link to={`/teams/${name}`}>
+      <Link to={`/teams/${encodeURIComponent(name)}`}>
         <CardActionArea sx={{
           height: "100%",
           display: "flex",
@@ -43,12 +43,12 @@ const ParticipantCard = ({ name, banner, ...props }: CardProps & { name?: string
 }
 
 function TeamsPage() {
-  const { data: tournament } =
+  const { data: tournament, isLoading: isTournamentLoading } =
     useTournament("current");
 
   const division = useContext(DivisionContext);
 
-  const { data: participants, status } = useParticipants(
+  const { data: participants, status, isLoading } = useParticipants(
     tournament?.id, {
     division: division?.id
   }
@@ -64,32 +64,21 @@ function TeamsPage() {
           {from && new Date(from) <= new Date() ? <Box sx={{ minHeight: "600px", width: "100%" }}>
             <Box sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, 250px)",
+              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
               gap: 2,
               justifyContent: "center",
-              pt: 2,
+              p:2 
             }}>
-              <Card sx={{
-                minHeight: 200, borderRadius: 3,
-                maxHeight: "300px",
-                background: theme.palette.secondary.main
-              }}>
-                <Link to="/tournament/register">
-                  <CardActionArea sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <CardContent>
-                      <IconButton>
-                        <AddCircle fontSize={"large"}></AddCircle>
-                      </IconButton>
-                    </CardContent>
-                  </CardActionArea>
-                </Link>
-              </Card>
-              {participants?.map(p => <ParticipantCard name={p?.name} banner={p?.bannerUrl}></ParticipantCard>)}
+
+              {isLoading ? <>
+                {Array.from({ length: 20 }, (_, i) => <Skeleton variant="rounded" key={i} sx={{ width: "100%", height: "200px" }}></Skeleton>)}
+              </> : null}
+              {participants?.map(p => <ParticipantCard name={p.name} banner={p?.bannerUrl}></ParticipantCard>)}
             </Box>
           </Box> :
-            <PromptContainer>
-              <Typography>Registration hasn't begun yet.</Typography>
-            </PromptContainer>
+            <PromptContainer sx={{minHeight: "60vh"}}>
+              <Typography>{isTournamentLoading ? "" : "Registration hasn't begun yet"}</Typography>
+            </PromptContainer> 
           }
         </DivisionPanel>
       </Stack>
@@ -101,7 +90,7 @@ function TeamsPage() {
 //               }) 
 
 function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
-  const {data: tournament} = useTournament("current");
+  const { data: tournament } = useTournament("current");
 
   const unregisterTeam = useDeleteParticipant();
   const updateParticipant = useUpdateParticipant();
@@ -113,7 +102,7 @@ function ParticipantsTable({ participants }: { participants: TParticipant[] }) {
       width: 200,
       renderCell: (params) => {
         return (
-          <Link to={`/teams/${params.row.name}`}>{params.row.name}</Link>
+          <Link to={`/teams/${encodeURIComponent(params.row.name)}`}>{params.row.name}</Link>
         )
       },
     },

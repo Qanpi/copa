@@ -8,6 +8,10 @@ import {
 
 const ParticipantSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     tournament: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: collections.tournaments.id,

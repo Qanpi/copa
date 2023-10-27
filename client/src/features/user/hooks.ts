@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { TUser } from "@backend/models/user.ts";
 import { useTeam, useUpdateTeam } from "../team/hooks";
 import { QueryKeyObject, queryKeyFactory } from "../types";
+import { appInsights } from "../..";
 
 export const userKeys = queryKeyFactory<TUser & { teamId?: string }>("users");
 
@@ -13,6 +14,9 @@ export const useAuth = () => {
       const res = await axios.get("/me");
       return res.data as TUser;
     },
+    onSuccess(data) {
+      appInsights.setAuthenticatedUserContext(data.id, undefined, true);
+    }
   });
 };
 

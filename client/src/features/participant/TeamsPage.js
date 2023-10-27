@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import { useTournament } from "../viewer/hooks";
+import { useTournament } from "../tournament/hooks";
 import { useParticipants } from "./hooks";
 import { useDeleteParticipant } from "./registration";
 import { NotEnoughParticipantsAlert } from "./ParticipantsTable";
@@ -22,7 +22,7 @@ export function TeamsPage() {
       width: 200,
       //is encoding fine?
       renderCell: (params) => (
-        <Link to={`/teams/${params.row.name}`}>{params.value}</Link>
+        <Link to={`/teams/${encodeURIComponent(params.row.name)}`}>{params.value}</Link>
       ),
     },
     {

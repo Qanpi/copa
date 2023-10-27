@@ -10,7 +10,7 @@ import MyTextField from "../inputs/myTextField.tsx";
 import { teamValidationSchema } from "../team/CreateTeam.tsx";
 import { useTeam, useUpdateTeam } from "../team/hooks.ts";
 import { useAuth } from "../user/hooks.ts";
-import { divisionKeys, useDivisions, useTournament } from "../viewer/hooks.ts";
+import { divisionKeys, useDivisions, useTournament } from "../tournament/hooks.ts";
 import { participantKeys, useParticipants } from "./hooks.ts";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
 import { GoogleSignInButton } from "../user/userpanel.tsx";
@@ -72,11 +72,9 @@ function RegistrationPage() {
 
   if (!participant) return (
     <BannerPage title={`Register`}>
-      <OutlinedContainer maxWidth="sm">
-        <PromptContainer>
-          {getActivePrompt()}
-        </PromptContainer>
-      </OutlinedContainer>
+      <PromptContainer maxWidth="sm" sx={{pt: 5}}>
+        {getActivePrompt()}
+      </PromptContainer>
     </BannerPage>
   );
 
@@ -124,53 +122,53 @@ function RegistrationForm() {
   const [feedback, setFeedback] = useState<TFeedback>({});
 
   return (
-      <Formik
-        initialValues={{
-          ...team,
-          division: "",
-        }}
-        validationSchema={Yup.object({
-          ...teamValidationSchema,
-          division: Yup.string().required(),
-        })}
-        onSubmit={(values) => {
-          updateTeam.mutate(values, {
-            onSuccess: (team) => {
-              const selected = divisions.find(
-                (d) => d.name === values.division
-              );
+    <Formik
+      initialValues={{
+        ...team,
+        division: "",
+      }}
+      validationSchema={Yup.object({
+        ...teamValidationSchema,
+        division: Yup.string().required(),
+      })}
+      onSubmit={(values) => {
+        updateTeam.mutate(values, {
+          onSuccess: (team) => {
+            const selected = divisions.find(
+              (d) => d.name === values.division
+            );
 
-              //TODO: error handling
-              registerParticipant.mutate({
-                division: selected.id,
-                team: team.id,
-                name: team.name,
-                phoneNumber: team.phoneNumber,
-              });
-            },
-          });
-        }}
-      >
-        <Form>
-          <Typography variant="h6" sx={{ mb: 2 }} color="primary">Please verify the information below</Typography>
-          <Stack direction="column" spacing={1}>
-            <Tooltip enterTouchDelay={0} title="Changing the name is not supported as of now." arrow>
-              <MyTextField name="name" label="Team name" disabled></MyTextField>
-            </Tooltip>
-            <MyTextField label="Phone number" name="phoneNumber"></MyTextField>
-          </Stack>
-          <Stack direction="row" sx={{ width: "100%", mt: 5 }} display={"flex"} justifyContent={"space-between"} alignItems="center">
-            <MySelect label="Division" name="division" sx={{ mr: 3, flexGrow: 1 }}>
-              {divisions?.map((d) => (
-                <MenuItem value={d.name} key={d.id}>
-                  {d.name}
-                </MenuItem>
-              ))}
-            </MySelect>
-            <Button type="submit" variant='contained' sx={{ height: "100%" }}>Register</Button>
-          </Stack>
-        </Form>
-      </Formik>
+            //TODO: error handling
+            registerParticipant.mutate({
+              division: selected.id,
+              team: team.id,
+              name: team.name,
+              phoneNumber: team.phoneNumber,
+            });
+          },
+        });
+      }}
+    >
+      <Form>
+        <Typography variant="h6" sx={{ mb: 2 }}>Please verify the information below</Typography>
+        <Stack direction="column" spacing={1}>
+          <Tooltip enterTouchDelay={0} title="Changing the name is not supported as of now." arrow>
+            <MyTextField name="name" label="Team name" disabled></MyTextField>
+          </Tooltip>
+          <MyTextField label="Phone number" name="phoneNumber"></MyTextField>
+        </Stack>
+        <Stack direction="row" sx={{ width: "100%", mt: 5 }} display={"flex"} justifyContent={"space-between"} alignItems="center">
+          <MySelect label="Division" name="division" sx={{ mr: 3, flexGrow: 1 }}>
+            {divisions?.map((d) => (
+              <MenuItem value={d.name} key={d.id}>
+                {d.name}
+              </MenuItem>
+            ))}
+          </MySelect>
+          <Button type="submit" variant='contained' sx={{ height: "100%" }}>Register</Button>
+        </Stack>
+      </Form>
+    </Formik>
   );
 }
 

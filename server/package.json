@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "",
   "main": "bin/www.ts",
   "type": "module",
@@ -74,6 +74,7 @@
     "@types/jest": "^29.5.6",
     "@types/lodash-es": "^4.17.10",
     "@types/mongoose-unique-validator": "^1.0.8",
+    "@types/node": "^20.8.9",
     "@types/passport": "^1.0.14",
     "@types/passport-google-oauth20": "^2.0.13",
     "@types/passport-local": "^1.0.37",

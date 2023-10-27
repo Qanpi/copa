@@ -29,11 +29,11 @@ function UserPanel() {
         <Avatar src={user.avatar} variant="rounded" sx={{width: "48px", height: "48px"}}></Avatar>
         {minified ? null : <Typography>{user.name}</Typography>}
       </Stack>
-    } triangleRight="22%">
+    } triangleRight="40px">
       <Link to={`/users/${user.id}`}>
         <MenuItem>Profile</MenuItem>
       </Link>
-      <Link to={user.team ? `/teams/${user.team.name}` : "/team/none"}>
+      <Link to={user.team?.name ? `/teams/${encodeURIComponent(user.team.name)}` : "/team/none"}>
         <MenuItem>My team</MenuItem>
       </Link>
       <MenuItem onClick={_ => logout.mutate()}>Sign out</MenuItem>

@@ -6,11 +6,12 @@ import { DateRange, Range, RangeKeyDict } from "react-date-range";
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { useMatches, useUpdateMatch } from '../match/hooks';
-import { useTournament } from '../viewer/hooks';
+import { useTournament } from '../tournament/hooks';
 import { groupBy } from "lodash-es"
 import { useParticipants } from '../participant/hooks';
 import MatchesTimeline from '../match/MatchesTimeline';
 import { MatchesTable } from '../match/MatchesTable';
+import AdminOnlyPage from './AdminOnlyBanner';
 
 const useMatchScheduler = () => {
   const { data: tournament } = useTournament("current");
@@ -67,13 +68,15 @@ const Scheduler = () => {
   });
 
 
-  return <Container maxWidth="xl" sx={{ pt: 5 }}>
-    <Stack direction="column" spacing={3}>
-      <Typography variant="h2">Scheduler</Typography>
-      <MatchesTimeline></MatchesTimeline>
-      <MatchesTable matches={matches}></MatchesTable>
-    </Stack>
-  </Container>
+  return <AdminOnlyPage>
+    <Container maxWidth="xl" sx={{ pt: 5 }}>
+      <Stack direction="column" spacing={3}>
+        <Typography variant="h2">Scheduler</Typography>
+        <MatchesTimeline></MatchesTimeline>
+        <MatchesTable matches={matches}></MatchesTable>
+      </Stack>
+    </Container>
+  </AdminOnlyPage>
 }
 
 const AutoScheduler = () => {

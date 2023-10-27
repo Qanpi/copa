@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { useDivisions, useTournament } from "../viewer/hooks.ts";
+import { useDivisions, useTournament } from "../tournament/hooks.ts";
 import { useMatches } from "../match/hooks.ts";
 import NumberCard from "./NumberCard.tsx";
 import { Status } from "brackets-model";
@@ -14,6 +14,7 @@ import { groupBy } from "lodash";
 import { DivisionContext } from "../../index.tsx";
 import { useStages } from "../stage/hooks.ts";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
+import AdminOnlyPage from "./AdminOnlyBanner.tsx";
 
 function Bracket({ next, prev }) {
   const { data: tournament } = useTournament("current");

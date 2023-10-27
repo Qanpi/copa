@@ -5,7 +5,11 @@ import Team from "./team.js";
 
 const UserSchema = new mongoose.Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: true,
+    },
+    nickname: String,
     googleId: {
       type: String,
       select: false
@@ -17,7 +21,10 @@ const UserSchema = new mongoose.Schema(
         ref: collections.teams.id,
         get: (v?: Types.ObjectId) => v?.toString()
       },
-      name: String,
+      name: {
+        type: String,
+        // get: (name: string) => encodeURIComponent(name),
+      },
     },
     role: {
       type: String,
