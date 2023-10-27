@@ -5,10 +5,17 @@ import Markdown from "react-markdown";
 import packageJson from "../../../package.json"
 
 const markdown = `
-Here's what's new: 
-- added this element
-- also added this
-- and made this feature you can use [here](google.com)
+- added notifications pane
+- added tournament rules page
+- added ability to change user name (real and display names)
+- doubled word limit of a team's 'about' section
+- integrated a service for easier feedback/bug reports 
+- added this changelog
+- minor bug fixes
+    - pita/ruskea can keep their name as is :)
+- reworked joining a team to be more intuitive/provide better feedback
+- fixed layout issues (esp. on mobile)
+- setup telemetry and [more](https://github.com/Qanpi/copa/releases/tag/v0.2.0)...
 `
 const latest = packageJson.version;
 
@@ -36,6 +43,7 @@ function ChangeLog({ children }: { children: ReactNode }) {
                     <Close></Close>
                 </IconButton>
                 <DialogContent>
+                    <Typography>Here's what's new:</Typography>
                     <Markdown>{markdown}</Markdown>
                 </DialogContent>
             </Dialog >
