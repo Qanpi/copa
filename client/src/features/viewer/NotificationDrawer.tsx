@@ -10,6 +10,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup"
 import { queryKeyFactory } from "../types";
 import dayjs from "dayjs";
+import { useAuth } from "../user/hooks";
 
 const notificationKeys = queryKeyFactory<TNotification>("notifications");
 
@@ -38,7 +39,7 @@ function NotificationDrawer() {
             unseenCount++;
             return { ...n, seen: false };
         }
-        return {...n, seen: true};
+        return { ...n, seen: true };
     }
     );
 
@@ -100,6 +101,9 @@ function NotificationDrawer() {
         if (!b) localStorage.setItem("lastOpenedNotifications", dayjs().toISOString());
     }
 
+    const { data: auth } = useAuth();
+    const isAdmin = auth?.role === "admin";
+
     return (
         <>
             <IconButton onClick={() => handleToggleNotifications(!open)}>
@@ -117,7 +121,6 @@ function NotificationDrawer() {
                     sx: {
                         background: theme.palette.primary.dark,
                         width: "min(85vw, 500px)",
-                        pt: 2
                     }
                 }}
             >
@@ -160,31 +163,32 @@ function NotificationDrawer() {
                                 </ListItem>
                             </Form>}
                     </Formik> :
-                        <ListItem>
+                        (isAdmin ? <ListItem>
                             <Paper>
                                 <Button onClick={() => setOpenNewPreview(true)}>
                                     <NotificationAdd sx={{ mr: 1 }}></NotificationAdd>
                                     Create new
                                 </Button>
                             </Paper>
-                        </ListItem>
+                        </ListItem> : null)
                     }
                     {classifiedNotifications?.map((n, i) => {
                         return (
-                            <ListItem sx={{opacity: (n.seen ? 0.85 : 1) }}>
-                                <Alert severity={n.severity} sx={{ width: "100%",  }}>
+                            <ListItem sx={{ opacity: (n.seen ? 0.85 : 1) }}>
+                                <Alert severity={n.severity} sx={{ width: "100%", "& .MuiAlert-message": { width: "100%", pb: 0 } }}
+                                >
                                     <AlertTitle>{n.title}</AlertTitle>
                                     {n.body}
-                                    <Typography sx={{ position: "absolute", bottom: 15, right: 25 }} textAlign="right" variant="body2" color="GrayText">{dayjs(n.createdAt).format("DD.MM")}</Typography>
+                                    <Typography textAlign="right" variant="body2" color="GrayText">{dayjs(n.createdAt).format("HH:MM, DD/MM")}</Typography>
+                                    {isAdmin ? <IconButton size="small" sx={{ position: "absolute", top: 5, right: 15 }} onClick={() => handleDeleteNotification(n._id)}>
+                                        <CloseOutlined fontSize="small"></CloseOutlined>
+                                    </IconButton> : null}
                                 </Alert>
-                                <IconButton sx={{ position: "absolute", top: 5, right: 15 }} onClick={() => handleDeleteNotification(n._id)}>
-                                    <CloseOutlined></CloseOutlined>
-                                </IconButton>
                             </ListItem>
                         )
                     })}
-                </List>
-            </SwipeableDrawer>
+                </List >
+            </SwipeableDrawer >
         </>
     )
 }
