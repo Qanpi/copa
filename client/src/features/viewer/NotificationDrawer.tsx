@@ -187,6 +187,7 @@ function NotificationDrawer() {
                             </ListItem>
                         )
                     })}
+                    {classifiedNotifications?.length === 0 ? <Typography textAlign="center" sx={{mt: 2}}>No notifications yet.</Typography> : null}
                 </List >
             </SwipeableDrawer >
         </>
