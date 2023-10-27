@@ -237,7 +237,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
 
     if (isParticipating) return <Alert>
       <AlertTitle>Congratulations!</AlertTitle>
-      Your team is registered for <Link to="/" style={{ textDecoration: "underline" }}>{tournament?.name || ""}</Link>!
+      {team?.name || ""} is registered for <Link to="/" style={{ textDecoration: "underline" }}>{tournament?.name || ""}</Link>!
     </Alert>
     else if (isManager && tournament?.registration?.isOpen) return <Alert severity={"info"}>
       <AlertTitle>Register!</AlertTitle>
