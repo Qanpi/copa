@@ -23,7 +23,8 @@ const NotificationSchema = new mongoose.Schema({
     enum: ["success", "error", "warning", "info"]
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  id: true
 })
 
 export type TNotification = InferSchemaType<typeof NotificationSchema>;

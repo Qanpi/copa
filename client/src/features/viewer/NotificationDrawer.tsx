@@ -1,5 +1,5 @@
-import { ErrorOutline, InfoOutlined, NotificationAdd, Notifications, TaskAltOutlined, WarningAmberOutlined } from "@mui/icons-material";
-import { Alert, AlertProps, AlertTitle, Badge, Box, Button, Drawer, IconButton, InputBase, List, ListItem, ListItemText, MenuItem, Select, Stack, SwipeableDrawer, Typography, useTheme } from "@mui/material";
+import { CloseOutlined, ErrorOutline, InfoOutlined, NotificationAdd, Notifications, TaskAltOutlined, WarningAmberOutlined } from "@mui/icons-material";
+import { Alert, AlertProps, AlertTitle, Badge, Box, Button, Drawer, IconButton, InputBase, List, ListItem, ListItemText, MenuItem, Paper, Select, Stack, SwipeableDrawer, Typography, useTheme } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import MyTextField from "../inputs/myTextField";
 import { Formik, Form } from "formik";
 import * as Yup from "yup"
 import { queryKeyFactory } from "../types";
+import dayjs from "dayjs";
 
 const notificationKeys = queryKeyFactory<TNotification>("notifications");
 
@@ -35,13 +36,34 @@ function NotificationDrawer() {
             const res = await axios.post(`/api/tournaments/${tournament.id}/notifications`, values);
         },
         async onMutate(variables: TNotification) {
-           await queryClient.cancelQueries() 
+            await queryClient.cancelQueries()
 
-           const previous = queryClient.getQueryData(notificationKeys.all);
+            const previous = queryClient.getQueryData(notificationKeys.all);
 
-           queryClient.setQueryData(notificationKeys.all, (old: TNotification[] | undefined) => [variables, ...(old || [])]);
+            queryClient.setQueryData(notificationKeys.all, (old: TNotification[] | undefined) => [variables, ...(old || [])]);
 
-           return {previous};
+            return { previous };
+        },
+        onError(err, variables, context) {
+            queryClient.setQueryData(notificationKeys.all, context?.previous);
+        },
+        onSettled() {
+            queryClient.invalidateQueries(notificationKeys.all);
+        }
+    })
+
+    const deleteNotification = useMutation({
+        mutationFn: async (id: string) => {
+            const res = await axios.delete(`/api/tournaments/${tournament.id}/notifications/${id}`);
+        },
+        async onMutate(id) {
+            await queryClient.cancelQueries();
+
+            const previous = queryClient.getQueryData(notificationKeys.all);
+
+            queryClient.setQueryData(notificationKeys.all, (old: TNotification[] | undefined) => old?.filter(n => n._id !== id));
+
+            return { previous }
         },
         onError(err, variables, context) {
             queryClient.setQueryData(notificationKeys.all, context?.previous);
@@ -52,6 +74,15 @@ function NotificationDrawer() {
     })
 
     const theme = useTheme();
+
+    const handleSubmitNotification = (values: TNotification) => {
+        createNotification.mutate(values);
+        setOpenNewPreview(false);
+    }
+
+    const handleDeleteNotification = (id: string) => {
+        deleteNotification.mutate(id);
+    }
 
     return (
         <>
@@ -64,6 +95,7 @@ function NotificationDrawer() {
             <SwipeableDrawer
                 open={open}
                 anchor="left"
+                onOpen={() => setOpen(true)}
                 onClose={() => setOpen(false)}
                 PaperProps={{
                     sx: {
@@ -73,12 +105,6 @@ function NotificationDrawer() {
                     }
                 }}
             >
-                <Stack direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
-                    <Typography variant="h4">Notifications</Typography>
-                    <IconButton onClick={() => setOpenNewPreview(b => !b)}>
-                        <NotificationAdd></NotificationAdd>
-                    </IconButton>
-                </Stack>
                 <List dense>
                     {openNewPreview ? <Formik validationSchema={Yup.object({
                         title: Yup.string().required(),
@@ -87,13 +113,13 @@ function NotificationDrawer() {
                         title: "",
                         body: "",
                         severity: "info"
-                    }} onSubmit={(values) => createNotification.mutate(values)}>
+                    }} onSubmit={handleSubmitNotification}>
                         {({ values, setFieldValue }) =>
                             <Form>
-                                <ListItem sx={{mb: 2}}>
+                                <ListItem sx={{ mb: 2 }}>
                                     <Stack direction="column" spacing={1} sx={{ width: "100%" }}>
                                         <Stack direction="row" spacing={1} sx={{ width: "100%" }}>
-                                            <Select sx={{pl: 1}} input={<InputBase></InputBase>} value={values.severity} onChange={(event) => setFieldValue("severity", event.target.value)}>
+                                            <Select sx={{ pl: 1 }} input={<InputBase></InputBase>} value={values.severity} onChange={(event) => setFieldValue("severity", event.target.value)}>
                                                 <IconButton value="info">
                                                     <InfoOutlined color="info"></InfoOutlined>
                                                 </IconButton>
@@ -117,14 +143,28 @@ function NotificationDrawer() {
                                     </Stack>
                                 </ListItem>
                             </Form>}
-                    </Formik> : null}
+                    </Formik> :
+                        <ListItem>
+                            <Paper>
+                                <Button onClick={() => setOpenNewPreview(true)}>
+                                    <NotificationAdd sx={{ mr: 1 }}></NotificationAdd>
+                                    Create new
+                                </Button>
+                            </Paper>
+                        </ListItem>
+                    }
                     {notifications?.map((n, i) => {
+                        console.log(n)
                         return (
                             <ListItem>
-                                <Alert severity={n.severity} sx={{width: "100%"}}>
+                                <Alert severity={n.severity} sx={{ width: "100%" }}>
                                     <AlertTitle>{n.title}</AlertTitle>
                                     {n.body}
+                                    <Typography sx={{position: "absolute", bottom: 15, right: 25}} textAlign="right" variant="body2" color="GrayText">{dayjs(n.createdAt).format("DD.MM")}</Typography>
                                 </Alert>
+                                <IconButton sx={{ position: "absolute", top: 5, right: 15 }} onClick={() => handleDeleteNotification(n._id)}>
+                                    <CloseOutlined></CloseOutlined>
+                                </IconButton>
                             </ListItem>
                         )
                     })}
