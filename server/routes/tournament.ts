@@ -6,6 +6,7 @@ import * as matches from "../controllers/matchesController.js";
 import * as participants from "../controllers/participationsController.js";
 import * as rounds from "../controllers/roundsController.js";
 import * as stages from "../controllers/stagesController.js";
+import * as notifications from "../controllers/notificationsController.js";
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { reportValidationErrors } from "../middleware/validation.js";
 
@@ -18,6 +19,12 @@ router.get("/participants/:id", participants.getOne)
 router.post("/participants", isAuthMiddleware, body("team").isMongoId(), body("division").isMongoId(), reportValidationErrors, participants.createOne);
 router.delete("/participants/:id", isAuthMiddleware, participants.deleteOne);
 router.patch("/participants/:id", isAuthMiddleware, participants.updateOne);
+
+//NOTIFICATIONS
+router.get("/notifications", notifications.getMany);
+router.post("/notifications", notifications.createOne);
+router.delete("/notifications/:notificationId", isAuthorizedMiddleware, notifications.removeOne);
+router.patch("/notifications/:notificationId", isAuthorizedMiddleware, notifications.updateOne);
 
 //DIVISIONS //TODO: legacy, deprecated, since subdocs (?)
 // router.get("/divisions", divisions.readMany);
