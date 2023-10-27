@@ -46,6 +46,33 @@ import RulesPage from "./features/viewer/RulesPage.tsx";
 import { YbugProvider, useYbugApi } from "ybug-react";
 import { useEffect } from "react";
 
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
+import { createBrowserHistory } from "history";
+
+const browserHistory = createBrowserHistory();
+var reactPlugin = new ReactPlugin();
+// *** Add the Click Analytics plug-in. ***
+/* var clickPluginInstance = new ClickAnalyticsPlugin();
+   var clickPluginConfig = {
+     autoCapture: true
+}; */
+var appInsights = new ApplicationInsights({
+    config: {
+        connectionString: 'InstrumentationKey=e6dc6203-56ea-4ab5-bdda-8de5c443971d;IngestionEndpoint=https://northeurope-2.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/',
+        // *** If you're adding the Click Analytics plug-in, delete the next line. ***
+        extensions: [reactPlugin],
+     // *** Add the Click Analytics plug-in. ***
+     // extensions: [reactPlugin, clickPluginInstance],
+        extensionConfig: {
+          [reactPlugin.identifier]: { history: browserHistory }
+       // *** Add the Click Analytics plug-in. ***
+       // [clickPluginInstance.identifier]: clickPluginConfig
+        }
+    }
+});
+appInsights.loadAppInsights();
+
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
 export const DivisionDispatchContext = React.createContext<React.Dispatch<number> | null>(null);
