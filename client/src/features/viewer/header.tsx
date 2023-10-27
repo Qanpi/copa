@@ -222,7 +222,7 @@ function Header() {
           <Box component="img" src={logo} sx={{ position: "absolute", top: "-54%", left: -30, height: "220px", width: "220px" }}>
           </Box>
         </Link>
-        <Typography onClick={() => toggleChangelog(true)} sx={{ position: "absolute", bottom: "10px", right: "25px", textAlign: "right" }} color={theme.palette.warning.main}>v{packageJson.version}</Typography>
+        <Typography onClick={() => toggleChangelog(true)} sx={{ position: "absolute", bottom: "10px", right: "25px", textAlign: "right" }} color={theme.palette.secondary.dark}>v{packageJson.version}</Typography>
       </Box>
     </Box >
   )
