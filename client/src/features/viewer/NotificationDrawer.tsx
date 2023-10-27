@@ -106,7 +106,7 @@ function NotificationDrawer() {
 
     return (
         <>
-            <IconButton sx={{mr: -1}} onClick={() => handleToggleNotifications(!open)}>
+            <IconButton sx={{mr: {xs: -1, md: 1}}} onClick={() => handleToggleNotifications(!open)}>
                 <Badge color="primary" badgeContent={unseenCount || 0}>
                     <Notifications></Notifications>
                 </Badge>
