@@ -22,17 +22,7 @@ const MyNumberInput = ({ name, label, ...props }: InputProps & { name: string, l
     )
 }
 
-const RulesTextField = styled(MyTextField)({
-    "& .MuiOutlinedInput-root": {
-        "& fieldset": { border: 0 },
-        color: "white !important",
-    },
-    "& .MuiInputBase-input": { "&.Mui-disabled": {
-            color: "white !important",
-            "-webkit-text-fill-color": "white"
-        }
-    }
-})
+
 
 function RulesPage() {
     const { data: user } = useAuth();
@@ -45,6 +35,19 @@ function RulesPage() {
         updateDivision.mutate(values);
     }
 
+    const RulesTextField = styled(MyTextField)({
+        "& .MuiOutlinedInput-root": {
+            "& fieldset": { border: (isAdmin ? undefined : 0) },
+            color: "white !important",
+        },
+        "& .MuiInputBase-input": {
+            "&.Mui-disabled": {
+                color: "white !important",
+                "-webkit-text-fill-color": "white"
+            }
+        }
+    })
+
     if (!division) return;
 
     return (
@@ -55,7 +58,7 @@ function RulesPage() {
                     {({ values }) => <Form>
                         <PromptContainer sx={{ p: 2, pt: 2 }}>
                             <Stack direction={{ xs: "column-reverse", md: "row" }} spacing={5} sx={{ width: "100%", justifyContent: "center" }}>
-                                <RulesTextField disabled={!isAdmin} multiline minRows={5} name="rules" placeholder="Eh... rules are meant to be broken anyways i guess." sx={{ width: "100%" }}>
+                                <RulesTextField disabled={!isAdmin} multiline minRows={5} name="rules" sx={{ width: "100%" }}>
                                 </RulesTextField>
 
                                 <Stack spacing={2} sx={{ width: "150px" }}>
