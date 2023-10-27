@@ -75,14 +75,14 @@ export const DropdownMenu = ({ anchor, children, triangleRight }: { anchor: Reac
               sx={
                 {
                   position: "absolute",
-                  top: -5,
+                  top: -7,
                   right: triangleRight,
                   width: 0,
                   height: 0,
                   zIndex: 50,
-                  borderLeft: "15px solid transparent",
-                  borderRight: "15px solid transparent",
-                  borderBottom: `15px solid ${theme.palette.primary.main}`,
+                  borderLeft: "7px solid transparent",
+                  borderRight: "7px solid transparent",
+                  borderBottom: `7px solid ${theme.palette.primary.main}`,
                 }
               }
             > </Box>
