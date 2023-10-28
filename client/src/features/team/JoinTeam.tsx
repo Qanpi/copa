@@ -37,7 +37,8 @@ function JoinTeamPage() {
     },
     onSuccess: (user) => {
       queryClient.invalidateQueries(userKeys.id("me"));
-      navigate(`/teams/${encodeURIComponent(user.team!.name)}`);
+      queryClient.invalidateQueries(userKeys.list({teamId: user.team!.id}));
+      navigate(`/teams/${encodeURIComponent(user.team!.name!)}`);
     },
     meta: {
       errorMessage: "This link is invalid/expired."
@@ -51,7 +52,6 @@ function JoinTeamPage() {
     if (!name || !token || !user || !team) return;
 
     if (!user?.team) joinTeam.mutate({ id: team.id, token });
-    else if (user.team.id === name) return navigate(`/teams/${encodeURIComponent(user.team.name!)}`);
   }
 
   if (isAuthLoading || isTeamLoading) return <LoadingBackdrop open={true}></LoadingBackdrop>;
@@ -66,10 +66,10 @@ function JoinTeamPage() {
   if (!team) return <NotFoundPage></NotFoundPage>;
 
   return <PromptContainer>
-    {user.team && user.team.name === name ? (
+    {user.team !== undefined ? (
       <LeaveTeamDialog
         onLeave={handleJoinTeam}
-        onStay={() => navigate(`/teams/${encodeURIComponent(user.team!.name)}`)}
+        onStay={() => navigate(`/teams/${encodeURIComponent(user.team!.name!)}`)}
       ></LeaveTeamDialog>) : null}
     <Stack direction="column" alignItems="center" spacing={5}>
       <Box sx={{ width: "50vw", aspectRatio: 1, position: "relative" }}>
