@@ -31,7 +31,7 @@ const ParticipantCard = ({ name, banner, ...props }: CardProps & { name: string,
           alignItems: "start",
           flexDirection: "column"
         }}>
-          <CardMedia image={banner} sx={{ height: "100%", width: "100%" }}>
+          <CardMedia src={banner} sx={{ height: "100%", width: "100%" }}>
           </CardMedia>
           <CardContent>
             <Typography>{name}</Typography>
@@ -73,7 +73,7 @@ function TeamsPage() {
               {isLoading ? <>
                 {Array.from({ length: 20 }, (_, i) => <Skeleton variant="rounded" key={i} sx={{ width: "100%", height: "200px" }}></Skeleton>)}
               </> : null}
-              {participants?.map(p => <ParticipantCard name={p.name} banner={p?.bannerUrl}></ParticipantCard>)}
+              {participants?.map(p => <ParticipantCard name={p.name} banner={p.bannerUrl}></ParticipantCard>)}
             </Box>
           </Box> :
             <PromptContainer sx={{minHeight: "60vh"}}>
