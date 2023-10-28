@@ -31,11 +31,11 @@ function NotificationDrawer() {
         enabled: Boolean(tournament?.id)
     })
 
-    const lastSeen = dayjs(localStorage.getItem("lastOpenedNotifications"));
+    const lastSeen = localStorage.getItem("lastOpenedNotifications");
 
     let unseenCount = 0;
     const classifiedNotifications = notifications?.map(n => {
-        if (dayjs(n.createdAt) > lastSeen) {
+        if (dayjs(n.createdAt) > (lastSeen ? dayjs(lastSeen) : 0)) {
             unseenCount++;
             return { ...n, seen: false };
         }
