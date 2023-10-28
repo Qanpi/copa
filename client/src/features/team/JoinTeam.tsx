@@ -65,14 +65,14 @@ function JoinTeamPage() {
 
   if (!team) return <NotFoundPage></NotFoundPage>;
 
-  return <PromptContainer>
+  return <PromptContainer sx={{pt: 5}}>
     {user.team !== undefined ? (
       <LeaveTeamDialog
         onLeave={handleJoinTeam}
         onStay={() => navigate(`/teams/${encodeURIComponent(user.team!.name!)}`)}
       ></LeaveTeamDialog>) : null}
     <Stack direction="column" alignItems="center" spacing={5}>
-      <Box sx={{ width: "50vw", aspectRatio: 1, position: "relative" }}>
+      <Box sx={{ width: "min(500px, 50vw)", aspectRatio: 1, position: "relative" }}>
         <Box sx={{ objectFit: "contain", width: "100%", height: "100%" }} component="img" src={team.bannerUrl}></Box>
         <Box sx={{position: "absolute", bottom: -3}}>
           <Typography variant="h2">{team.name}</Typography>
