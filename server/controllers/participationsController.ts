@@ -15,9 +15,9 @@ export const getMany = expressAsyncHandler(async (req, res) => {
 
   let participants;
   if (isAdmin(req.user)) {
-    participants = await Participant.find(filter).select("+phoneNumber");
+    participants = await Participant.find(filter).select("+phoneNumber").populate("team");
   } else {
-    participants = await Participant.find(filter);
+    participants = await Participant.find(filter).populate("team");
   }
 
   res.send(participants);

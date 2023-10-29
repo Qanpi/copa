@@ -24,7 +24,7 @@ const ParticipantSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: collections.teams.id,
     },
-    bannerUrl: String,
+    bannerUrl: String, //deprecated
     //TODO: make this more secure
     phoneNumber: {
       type: String,

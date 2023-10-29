@@ -9,6 +9,7 @@ import { ObjectId } from "mongodb";
 import { TParticipant } from "@backend/models/participant";
 import { divisionKeys, tournamentKeys, useTournament } from "../tournament/hooks";
 import { queryKeyFactory } from "../types";
+import { TTeam } from "@backend/models/team";
 
 export const participantKeys = queryKeyFactory<TParticipant>("participants");
 
@@ -26,11 +27,11 @@ export const useParticipant = (participantId: string) => {
   });
 };
 
-export const useParticipants = (tournamentId?: string, query?: Partial<TParticipant>): UseQueryResult<TParticipant[]> => {
+export const useParticipants = (tournamentId?: string, query?: Partial<TParticipant>) => {
   return useQuery({
     queryKey: participantKeys.list(query),
 
-    queryFn: async (): Promise<TParticipant[]> => {
+    queryFn: async () => {
       let url = `/api/${tournamentKeys.all}/${tournamentId}/${participantKeys.all}`;
 
       if (query) {
@@ -39,7 +40,7 @@ export const useParticipants = (tournamentId?: string, query?: Partial<TParticip
       }
 
       const res = await axios.get(url);
-      return res.data as TParticipant[];
+      return res.data as (TParticipant & {team: TTeam})[];
     },
 
     enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)
