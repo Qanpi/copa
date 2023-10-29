@@ -56,7 +56,6 @@ function TeamsPage() {
 
   const theme = useTheme();
   const from = tournament?.registration?.from;
-  console.log(participants);
 
   return (
     <BannerPage title={`Participants`}>
