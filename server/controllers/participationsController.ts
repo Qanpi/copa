@@ -83,6 +83,14 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
   throw new StatusError("User is neither team manager nor admin.", 403);
 });
 
+export const deleteAll = expressAsyncHandler(async (req, res) => {
+  await Participant.deleteMany({
+    tournament: req.params.id
+  });
+
+  res.status(204).send({});
+})
+
 export const updateOne = expressAsyncHandler(async (req, res) => {
   const participant = await Participant.findById(req.params.id);
 

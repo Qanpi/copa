@@ -20,7 +20,7 @@ describe("Teams management logic", function () {
     await auth2.post(`/login/tests`)
       .send({ username: "user2", password: "user2" })
 
-    const user3 = await auth3.post(`/login/tests`)
+    await auth3.post(`/login/tests`)
       .send({ username: "user3", password: "user3" })
   })
 

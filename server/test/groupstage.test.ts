@@ -101,7 +101,9 @@ describe("Group stage", function () {
         })
 
         it("should block moving to bracket because of undrawn teams", async () => {
+            await admin.patch(`/api/tournaments/${tournamentId}`).send({
 
+            });
         })
     })
 

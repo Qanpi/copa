@@ -8,7 +8,6 @@ import { TDivision } from "../models/division.js";
 const admin = request.agent(app);
 const auth = request.agent(app);
 const auth2 = request.agent(app);
-const viewer = request.agent(app);
 
 let teamId: string;
 let tournamentId: string;
@@ -29,9 +28,7 @@ describe("Registration stage", () => {
       username: "user2",
       password: "user2",
     });
-  });
 
-  beforeEach(async () => {
     const { body: tournament } = await admin.post("/api/tournaments").send({
       divisions: ["Div 1", "Div 2", "Div 3"], //length must be at least 3
     });
@@ -256,7 +253,7 @@ describe("Registration stage", () => {
   })
 
   afterEach(async () => {
-    await admin.delete("/");
+    await admin.delete(`/api/tournaments/${tournamentId}/participants`);
   });
 
   afterAll(async () => {
