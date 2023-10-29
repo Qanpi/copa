@@ -1,3 +1,6 @@
+import {ApplicationInsights} from "@microsoft/applicationinsights-web";
+import {ReactPlugin} from "@microsoft/applicationinsights-react-js"
+
 import { TDivision } from "@backend/models/division.ts";
 import { LoadingBackdrop } from "./features/layout/LoadingBackdrop.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -46,9 +49,6 @@ import RulesPage from "./features/viewer/RulesPage.tsx";
 import { YbugProvider, useYbugApi } from "ybug-react";
 import { useEffect } from "react";
 
-import {ApplicationInsights} from "@microsoft/applicationinsights-web";
-import {ReactPlugin} from "@microsoft/applicationinsights-react-js"
-
 const reactPlugin = new ReactPlugin();
 
 export const appInsights = new ApplicationInsights({
@@ -59,7 +59,7 @@ export const appInsights = new ApplicationInsights({
     }
 });
 appInsights.loadAppInsights();
-appInsights.trackPageView();
+// appInsights.trackPageView();
 
 //allow users to change between divisions in view
 export const DivisionContext = React.createContext<TDivision | null>(null);
