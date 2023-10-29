@@ -94,19 +94,19 @@ TeamSchema.pre("findOneAndDelete", async function () {
     await m.save();
   }
 
-  const participants = await Participant.find({
-    team: id
+  const tournament = await Tournament.getLatest();
+  const participant = await Participant.findOne({
+    team: id,
+    tournament: tournament.id
   });
 
-  const tournament = await Tournament.getLatest();
+  if (!participant) return;
 
-  for (const p of participants) {
-    await p.updateOne({
-      name: "[deleted]"
-    })
-
+  if (tournament?.registration?.isOpen) {
+    await participant.deleteOne();
+  } else {
     const matches1 = await Match.find({
-      "opponent1.id": p.id,
+      "opponent1.id": participant.id,
       status: {
         $lt: Status.Completed
       }
@@ -120,7 +120,7 @@ TeamSchema.pre("findOneAndDelete", async function () {
     }
 
     const matches2 = await Match.find({
-      "opponent2.id": p.id,
+      "opponent2.id": participant.id,
       status: {
         $lt: Status.Completed
       }
@@ -132,6 +132,10 @@ TeamSchema.pre("findOneAndDelete", async function () {
         "opponent2.forfeit": true,
       })
     }
+
+    await participant.updateOne({
+      name: "[deleted]"
+    })
   }
 })
 
