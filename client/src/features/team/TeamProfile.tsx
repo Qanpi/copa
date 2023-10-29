@@ -109,7 +109,7 @@ function TeamProfilePage() {
                   </Box>
                   <Stack spacing={-1} direction="column" sx={{ ml: (isLoading || team.bannerUrl || editMode ? { xs: "35vw", md: "320px" } : "5vw") }}>
                     <Typography variant="h5">THIS IS</Typography>
-                    <Typography variant="h1" sx={{wordWrap: "anywhere"}} fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
+                    <Typography variant="h1" sx={{ wordWrap: "anywhere" }} fontWeight={800}>{team?.name || <Skeleton sx={{ width: "4em" }}></Skeleton>}</Typography>
                     <Typography variant="subtitle2" sx={{ ml: "auto", alignSelf: "end" }}>Est. {team ? dayjs(team?.createdAt).format("YYYY") : ""}</Typography>
                   </Stack>
                 </GradientTitle>
@@ -239,7 +239,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
       <AlertTitle>Congratulations!</AlertTitle>
       {team?.name || ""} is registered for <Link to="/" style={{ textDecoration: "underline" }}>{tournament?.name || ""}</Link>!
     </Alert>
-    else if (isManager && tournament?.registration?.isOpen) return <Alert severity={"info"}>
+    else if (tournament?.registration?.isOpen) return <Alert severity={"info"}>
       <AlertTitle>Register!</AlertTitle>
       Don't miss your chance to <Link style={{ textDecoration: "underline" }} to="/tournament/register">register</Link> for {tournament.name}!
     </Alert>
@@ -251,8 +251,7 @@ const ProfileTab = ({ team, editMode }: { team?: TTeam, editMode: boolean }) => 
   return (
     <Stack direction="column" spacing={4}>
       {isInitialLoading ? null : getRegistrationPrompt()}
-      {/* <Skeleton variant="rectangular" sx={{ width: "100%", height: "20px" }}></Skeleton>} */}
-      <AboutSection open={team?.about !== "" || editMode} name="about" edit={editMode}></AboutSection>
+      <AboutSection open={!!team?.about || editMode} name="about" edit={editMode}></AboutSection>
 
       {
         members && members.length > 0 ? <OutlinedContainer>
