@@ -214,7 +214,7 @@ describe("Teams management logic", function () {
       const res2 = await auth3.post(`/api/teams/${teamId}/join`)
         .send({ token: invite.token });
 
-      expect(res2.status).toEqual(500);
+      expect(res2.status).toEqual(403);
     })
 
     it("should reject invite link for member", async function () {

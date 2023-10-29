@@ -21,7 +21,7 @@ const TeamSchema = new mongoose.Schema(
     bannerUrl: String,
     phoneNumber: String,
 
-    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v: Types.ObjectId) => v.toString() },
+    manager: { type: mongoose.SchemaTypes.ObjectId, ref: collections.users.id, get: (v: Types.ObjectId) => v.toString(), unique: true },
 
     invite: {
       token: {

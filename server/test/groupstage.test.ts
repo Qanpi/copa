@@ -2,6 +2,7 @@ import request from "supertest"
 import app from "../app.js"
 import { ObjectId } from "mongodb"
 import { shuffle } from "lodash-es"
+import { Stage } from "brackets-model"
 
 const admin = request.agent(app)
 const auth = request.agent(app)
@@ -42,77 +43,72 @@ describe("Group stage", function () {
     })
 
     it("should get all registered participants", async () => {
-        const {body: participants} = await auth.get(`/api/tournaments/${tournamentId}/participants`);
+        const { body: participants } = await auth.get(`/api/tournaments/${tournamentId}/participants`);
 
         expect(participants).toHaveLength(nParticipants);
     })
 
-    it("should create group stage from draw", async () => {
-        const {body: participants} = await auth.get(`/api/tournaments/${tournamentId}/participants`);
-        const shuffled = shuffle(participants) //simulate the drawing wheel
+    describe("Creating group stage", () => {
+        let stage: Stage;
 
-        await admin.post(`/api/tournaments/${tournamentId}/stages`)
-        .send({
-            name: "group stage",
-            type: "round_robin",
-            tournamentId: divisionId,
-            settings: {
-                groupCount,
-            },
-            shuffled
+        beforeEach(async () => {
+            const { body: participants } = await auth.get(`/api/tournaments/${tournamentId}/participants`);
+            const shuffled = shuffle(participants) //simulate the drawing wheel
+
+            const res = await admin.post(`/api/tournaments/${tournamentId}/stages`)
+                .send({
+                    name: "group stage",
+                    type: "round_robin",
+                    tournamentId: divisionId,
+                    settings: {
+                        groupCount,
+                    },
+                    shuffled
+                })
+
+            stage = res.body;
         })
 
-        await auth.get(`/api`)
+        it("should create group stage from draw", async () => {
+            const { body: stages } = await auth.get(`/api/tournaments/${tournamentId}/stages`);
+            expect(stages.length).toEqual(1);
+        })
+
+        it("should prevent duplicate group stage", async () => {
+            const { body: participants } = await auth.get(`/api/tournaments/${tournamentId}/participants`);
+            const shuffled = shuffle(participants) //simulate the drawing wheel
+
+            const res = await admin.post(`/api/tournaments/${tournamentId}/stages`)
+                .send({
+                    name: "group stage 2",
+                    type: "round_robin",
+                    tournamentId: divisionId,
+                    settings: {
+                        groupCount,
+                    },
+                    shuffled
+                })
+
+            expect(res.status).toEqual(500);
+        })
+
+        it("should reset group stage for a division", async () => {
+            const res = await admin.delete(`/api/tournaments/${tournamentId}/stages/${stage.id}`);
+            expect(res.status).toEqual(204);
+
+            const { body: check } = await admin.get(`/api/tournaments/${tournamentId}/stages`);
+            expect(check.length).toEqual(0);
+        })
+
+        it("should block moving to bracket because of undrawn teams", async () => {
+
+        })
     })
 
-    it.todo("should prevent duplicate group stage", async () => {
-        const {body: participants} = await auth.get(`/api/tournaments/${tournamentId}/participants`);
-        const shuffled = shuffle(participants) //simulate the drawing wheel
 
-        await admin.post(`/api/tournaments/${tournamentId}/stages`)
-        .send({
-            name: "group stage",
-            type: "round_robin",
-            tournamentId: divisionId,
-            settings: {
-                groupCount,
-            },
-            shuffled
-        })
+    it.todo("should block moving to bracket because of incomplete matches")
 
-        const res = await admin.post(`/api/tournaments/${tournamentId}/stages`)
-        .send({
-            name: "group stage 2",
-            type: "round_robin",
-            tournamentId: divisionId,
-            settings: {
-                groupCount,
-            },
-            shuffled
-        })
+    it.todo("should forfeit all matches if team is unregistered")
 
-        expect(res.status).toEqual(500);
-    })
-
-    it("should reset group stage for a division", async () => {
-        const {body: participants} = await auth.get(`/api/tournaments/${tournamentId}/participants`);
-        const shuffled = shuffle(participants) //simulate the drawing wheel
-
-        const res = await admin.post(`/api/tournaments/${tournamentId}/stages`)
-        .send({
-            name: "group stage 2",
-            type: "round_robin",
-            tournamentId: divisionId,
-            settings: {
-                groupCount,
-            },
-            shuffled
-        })
-        
-        expe
-    })
-
-    it.todo("should block because of undrawn teams")
-
-    it.todo("should block because of incomplete matches")
+    it.todo("should forfeit all matches if team is deleted")
 })
