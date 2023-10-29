@@ -40,7 +40,7 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
   const { data: tournament } = useTournament("current");
 
   return (
-    <PromptContainer sx={{justifyContent: "center"}}>
+    <PromptContainer sx={{ justifyContent: "center" }}>
       <Box component="img" src={brush} sx={{
         position: "absolute",
         width: "95vw",
@@ -137,7 +137,13 @@ function HomePage() {
         </>
       );
 
-      else return <>Registration ended {dayjs().to(tournament.registration.to)} THe tournament will begin soon.</>
+      return (
+        <CopaBanner>
+          <Typography variant="body1" noWrap>
+            {`Sorry, registration closed ${dayjs().to(tournament.registration.to)}. The tournament will begin soon.`}
+          </Typography>
+        </CopaBanner >
+      )
 
     default:
       return (
