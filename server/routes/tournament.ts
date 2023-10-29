@@ -19,6 +19,7 @@ router.get("/participants/:id", participants.getOne)
 router.post("/participants", isAuthMiddleware, body("team").isMongoId(), body("division").isMongoId(), reportValidationErrors, participants.createOne);
 router.delete("/participants/:id", isAuthMiddleware, participants.deleteOne);
 router.patch("/participants/:id", isAuthMiddleware, participants.updateOne);
+router.delete("/participants", isAuthorizedMiddleware, participants.deleteAll)
 
 //NOTIFICATIONS
 router.get("/notifications", notifications.getMany);
@@ -30,6 +31,7 @@ router.patch("/notifications/:notificationId", isAuthorizedMiddleware, notificat
 // router.get("/divisions", divisions.readMany);
 // router.post("/divisions", divisions.createOne);
 router.put("/divisions/:divisionId", isAuthorizedMiddleware, divisions.updateOne);
+router.delete("/divisions/:divisionId", isAuthorizedMiddleware, divisions.deleteOne)
 
 //STAGES
 router.post("/stages/", isAuthorizedMiddleware, stages.createStage);

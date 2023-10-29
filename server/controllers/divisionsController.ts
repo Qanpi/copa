@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import Division, { TDivision } from "../models/division.js";
 import Tournament from "../models/tournament.js";
 import { Types } from "mongoose";
+import { bracketsManager } from "../services/bracketsManager.js";
 
 export const createOne = expressAsyncHandler(async (req, res) => {
   const tournament = await Tournament.findById(req.params.id);
@@ -28,4 +29,9 @@ export const updateOne = expressAsyncHandler(async (req, res) => {
 
   await tournament?.save();
   res.send(tournament);
+})
+
+export const deleteOne = expressAsyncHandler(async (req, res) => {
+  await bracketsManager.delete.tournament(req.params.divisionId);
+  res.status(204).send({});
 })

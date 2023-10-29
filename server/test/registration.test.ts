@@ -8,7 +8,6 @@ import { TDivision } from "../models/division.js";
 const admin = request.agent(app);
 const auth = request.agent(app);
 const auth2 = request.agent(app);
-const viewer = request.agent(app);
 
 let teamId: string;
 let tournamentId: string;
@@ -29,16 +28,9 @@ describe("Registration stage", () => {
       username: "user2",
       password: "user2",
     });
-  });
 
-  beforeEach(async () => {
     const { body: tournament } = await admin.post("/api/tournaments").send({
       divisions: ["Div 1", "Div 2", "Div 3"], //length must be at least 3
-    });
-
-    await admin.patch(`/api/tournaments/${tournament.id}`).send({
-      "registration.from": dayjs().subtract(1, "day").toDate(),
-      "registration.to": dayjs().add(1, "day").toDate(),
     });
 
     tournamentId = tournament.id;
@@ -56,6 +48,13 @@ describe("Registration stage", () => {
 
     teamId = resTeam.body.id;
   });
+
+  beforeEach(async () => {
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration.from": dayjs().subtract(1, "day").toDate(),
+      "registration.to": dayjs().add(1, "day").toDate(),
+    });
+  })
 
   it("should reject registration if not manager", async () => {
     //manually insert member
@@ -255,11 +254,42 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(201);
   })
 
+  it("should reject deregistering late", async () => {
+    const { body: reg } = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[0],
+      });
+
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration.to": dayjs().subtract(1, "minute").toDate(),
+    });
+
+    const res = await auth.delete(`/api/tournaments/${tournamentId}/participants/${reg.id}`);
+    expect(res.status).toEqual(400);
+  })
+
+  it("should delete participant if team is removed during registration", async () => {
+    await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[1],
+      });
+
+    await auth.delete(`/api/teams/${teamId}`);
+
+    const { body: participants } = await admin.get(`/api/tournaments/${tournamentId}/participants`);
+    expect(participants.length).toEqual(0)
+  })
+
   afterEach(async () => {
-    await admin.delete("/");
+    await admin.delete(`/api/tournaments/${tournamentId}/participants`);
   });
 
   afterAll(async () => {
+    await admin.delete(`/`);
     await disconnectMongoose();
   });
 });

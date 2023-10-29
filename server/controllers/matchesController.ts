@@ -8,7 +8,7 @@ import expressAsyncHandler from "express-async-handler";
 
 export const getMany = async (req: Request, res: Response) => {
   //FIXME: refactor this better
-  const { scheduled, start, state, ...rest } = req.query;
+  const { scheduled, start, stageIds, ...rest } = req.query;
 
   const filter: any = {
     ...rest,
@@ -25,13 +25,9 @@ export const getMany = async (req: Request, res: Response) => {
     }
   }
 
-  if (state) {
-    //FIXME: needs to be handled better
-    const stages = await Stage.find({
-      type: state === "Groups" ? "round_robin" : "single_elimination",
-    });
+  if (stageIds) {
     filter["stage_id"] = {
-      $in: stages.map(s => s.id),
+      $in: stageIds,
     }
   }
 

@@ -20,7 +20,7 @@ describe("Teams management logic", function () {
     await auth2.post(`/login/tests`)
       .send({ username: "user2", password: "user2" })
 
-    const user3 = await auth3.post(`/login/tests`)
+    await auth3.post(`/login/tests`)
       .send({ username: "user3", password: "user3" })
   })
 
@@ -75,7 +75,7 @@ describe("Teams management logic", function () {
     expect(team1.status).toEqual(201);
 
     const team2 = await admin.post("/api/teams").send({ name: "Tinpot", manager: new ObjectId() })
-    expect(team2.status).toEqual(500);
+    expect(team2.status).toEqual(409);
   })
 
   it("should not allow two teams with the same manager", async function () {
@@ -85,7 +85,7 @@ describe("Teams management logic", function () {
     expect(team1.status).toEqual(201);
 
     const team2 = await admin.post("/api/teams").send({ name: "Tinpot 2", manager: managerId })
-    expect(team2.status).toEqual(500);
+    expect(team2.status).toEqual(409);
   })
 
   it("should remove manager from team", async function () {
@@ -214,7 +214,7 @@ describe("Teams management logic", function () {
       const res2 = await auth3.post(`/api/teams/${teamId}/join`)
         .send({ token: invite.token });
 
-      expect(res2.status).toEqual(500);
+      expect(res2.status).toEqual(403);
     })
 
     it("should reject invite link for member", async function () {
