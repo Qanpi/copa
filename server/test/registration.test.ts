@@ -33,11 +33,6 @@ describe("Registration stage", () => {
       divisions: ["Div 1", "Div 2", "Div 3"], //length must be at least 3
     });
 
-    await admin.patch(`/api/tournaments/${tournament.id}`).send({
-      "registration.from": dayjs().subtract(1, "day").toDate(),
-      "registration.to": dayjs().add(1, "day").toDate(),
-    });
-
     tournamentId = tournament.id;
     divisionIds = tournament.divisions.map((d: TDivision) => d.id);
 
@@ -53,6 +48,13 @@ describe("Registration stage", () => {
 
     teamId = resTeam.body.id;
   });
+
+  beforeEach(async () => {
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration.from": dayjs().subtract(1, "day").toDate(),
+      "registration.to": dayjs().add(1, "day").toDate(),
+    });
+  })
 
   it("should reject registration if not manager", async () => {
     //manually insert member
@@ -253,7 +255,7 @@ describe("Registration stage", () => {
   })
 
   it("should reject deregistering late", async () => {
-    const {body: reg} = await auth
+    const { body: reg } = await auth
       .post(`/api/tournaments/${tournamentId}/participants`)
       .send({
         team: teamId,
@@ -266,6 +268,20 @@ describe("Registration stage", () => {
 
     const res = await auth.delete(`/api/tournaments/${tournamentId}/participants/${reg.id}`);
     expect(res.status).toEqual(400);
+  })
+
+  it("should delete participant if team is removed during registration", async () => {
+    await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[1],
+      });
+
+    await auth.delete(`/api/teams/${teamId}`);
+
+    const { body: participants } = await admin.get(`/api/tournaments/${tournamentId}/participants`);
+    expect(participants.length).toEqual(0)
   })
 
   afterEach(async () => {

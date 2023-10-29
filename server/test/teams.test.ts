@@ -289,13 +289,6 @@ describe("Teams management logic", function () {
     expect(res.status).toEqual(204);
   })
 
-  it("should forfeit all matches if team is deleted in the middle of a tournament", async () => {
-    const { body: manager } = await auth.get("/me");
-    const { body: team } = await auth.post("/api/teams").send({ name: "Tinpot", manager: manager.id });
-
-    
-  })
-
   afterEach(async function () {
     return await admin.delete("/");
   })
