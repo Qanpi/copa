@@ -24,7 +24,7 @@ app.get('/x-forwarded-for', (request, response) => response.send(request.headers
 
 
 //only log in dev because azure provides transaction logs by default
-if (app.get("env") === "development") {
+if (app.get("env") !== "production") {
   app.use(logger("dev"));
 }
 

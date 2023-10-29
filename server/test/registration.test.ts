@@ -252,11 +252,28 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(201);
   })
 
+  it("should reject deregistering late", async () => {
+    const {body: reg} = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[0],
+      });
+
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration.to": dayjs().subtract(1, "minute").toDate(),
+    });
+
+    const res = await auth.delete(`/api/tournaments/${tournamentId}/participants/${reg.id}`);
+    expect(res.status).toEqual(400);
+  })
+
   afterEach(async () => {
     await admin.delete(`/api/tournaments/${tournamentId}/participants`);
   });
 
   afterAll(async () => {
+    await admin.delete(`/`);
     await disconnectMongoose();
   });
 });

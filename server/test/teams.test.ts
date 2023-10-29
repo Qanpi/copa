@@ -75,7 +75,7 @@ describe("Teams management logic", function () {
     expect(team1.status).toEqual(201);
 
     const team2 = await admin.post("/api/teams").send({ name: "Tinpot", manager: new ObjectId() })
-    expect(team2.status).toEqual(500);
+    expect(team2.status).toEqual(409);
   })
 
   it("should not allow two teams with the same manager", async function () {
@@ -85,7 +85,7 @@ describe("Teams management logic", function () {
     expect(team1.status).toEqual(201);
 
     const team2 = await admin.post("/api/teams").send({ name: "Tinpot 2", manager: managerId })
-    expect(team2.status).toEqual(500);
+    expect(team2.status).toEqual(409);
   })
 
   it("should remove manager from team", async function () {
@@ -287,6 +287,13 @@ describe("Teams management logic", function () {
 
     const res = await admin.delete(`/api/teams/${team.id}/users/${manager.id}`);
     expect(res.status).toEqual(204);
+  })
+
+  it("should forfeit all matches if team is deleted in the middle of a tournament", async () => {
+    const { body: manager } = await auth.get("/me");
+    const { body: team } = await auth.post("/api/teams").send({ name: "Tinpot", manager: manager.id });
+
+    
   })
 
   afterEach(async function () {

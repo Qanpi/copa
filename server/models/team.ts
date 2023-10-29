@@ -3,6 +3,10 @@ import { collections } from "../configs/db.config.js";
 import User from "./user.js";
 import mongooseUniqueValidator from "mongoose-unique-validator";
 import { NotUniqueError } from "../controllers/teamsController.js";
+import Participant from "./participant.js";
+import Match from "./match.js";
+import Tournament from "./tournament.js";
+import { Status } from "brackets-model";
 
 const TeamSchema = new mongoose.Schema(
   {
@@ -13,7 +17,7 @@ const TeamSchema = new mongoose.Schema(
       required: true,
       //TODO: do i even need the below? how would an attack vector look?
       set: encodeURIComponent,
-      get:decodeURIComponent,
+      get: decodeURIComponent,
     },
     about: {
       type: String,
@@ -71,7 +75,7 @@ const TeamSchema = new mongoose.Schema(
   }
 );
 
-TeamSchema.plugin(mongooseUniqueValidator, {type: "mongoose-unique-validator"});
+TeamSchema.plugin(mongooseUniqueValidator, { type: "mongoose-unique-validator" });
 
 TeamSchema.pre("save", async function () {
   if (this.isNew) {
@@ -82,11 +86,52 @@ TeamSchema.pre("save", async function () {
 });
 
 TeamSchema.pre("findOneAndDelete", async function () {
-  const members = await User.find({ "team.id": this.getFilter()._id });
+  const id = this.getFilter()._id;
+  const members = await User.find({ "team.id": id });
 
   for (const m of members) {
     m.team = undefined;
     await m.save();
+  }
+
+  const participants = await Participant.find({
+    team: id
+  });
+
+  const tournament = await Tournament.getLatest();
+
+  for (const p of participants) {
+    await p.updateOne({
+      name: "[deleted]"
+    })
+
+    const matches1 = await Match.find({
+      "opponent1.id": p.id,
+      status: {
+        $lt: Status.Completed
+      }
+    })
+
+    for (const m of matches1) {
+      await m.updateOne({
+        "opponent1.name": "[deleted]",
+        "opponent1.forfeit": true,
+      })
+    }
+
+    const matches2 = await Match.find({
+      "opponent2.id": p.id,
+      status: {
+        $lt: Status.Completed
+      }
+    })
+
+    for (const m of matches2) {
+      await m.updateOne({
+        "opponent2.name": "[deleted]",
+        "opponent2.forfeit": true,
+      })
+    }
   }
 })
 

@@ -73,6 +73,11 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
   if (!team || !participant)
     throw new Error("Invalid team or participant");
 
+  const tournament = await Tournament.findById(participant.tournament);
+  if (!tournament?.registration || !tournament.registration.isOpen) {
+    throw new StatusError("Registration is not in session.", 400);
+  }
+
   if (isManagerOrAdmin(req.user, team.manager)) {
     await participant.deleteOne();
     res.status(204).send({});

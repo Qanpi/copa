@@ -1,14 +1,14 @@
 import express from "express";
 
-import { body, param, query } from "express-validator";
+import { rateLimit } from "express-rate-limit";
+import { body, param } from "express-validator";
 import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
-import * as participants from "../controllers/participationsController.js";
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { reportValidationErrors } from "../middleware/validation.js";
+import { TournamentStatesValues } from "../models/tournament.js";
 import tournamentRouter from "./tournament.js";
-import { rateLimit } from "express-rate-limit"
 
 const router = express.Router();
 
@@ -42,6 +42,8 @@ router.post(
 );
 router.patch("/tournaments/:id",
   isAuthorizedMiddleware,
+  body("state").optional().isString().isIn(TournamentStatesValues),
+  reportValidationErrors,
   tournaments.updateOne);
 router.delete("/tournaments/:id", isAuthorizedMiddleware,
   tournaments.deleteOne);
