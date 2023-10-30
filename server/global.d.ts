@@ -1,4 +1,6 @@
-export {};
+import { MongoMemoryServer } from "mongodb-memory-server";
+
+export { };
 
 declare global {
     namespace Express {
@@ -8,5 +10,9 @@ declare global {
             team?: string,
             role?: string
         }
+    }
+
+    module globalThis {
+        var __MONGOD__: MongoMemoryServer;
     }
 }

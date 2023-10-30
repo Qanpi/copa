@@ -1,20 +1,17 @@
-import { connectMongoose } from "./services/mongo.js";
-import createError from "http-errors";
-import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
+import "dotenv/config.js";
+import express, { NextFunction, Request, Response } from "express";
 import logger from "morgan";
-import { fileURLToPath } from "url";
 import path from "path";
-import "dotenv/config.js"
+import { fileURLToPath } from "url";
 
+import cookieSession from "cookie-session";
+import expressAsyncHandler from "express-async-handler";
+import passport from "passport";
 import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
-import cookieSession from "cookie-session";
-import passport from "passport";
 import { debugHTTP } from "./services/debuggers.js";
-import expressAsyncHandler from "express-async-handler";
 
-connectMongoose();
 const app = express();
 
 //configure rate limiter with azure load balance

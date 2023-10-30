@@ -4,6 +4,8 @@ import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 import { disconnectMongoose } from "../services/mongo.js";
 import { TDivision } from "../models/division.js";
+import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
@@ -14,7 +16,15 @@ let tournamentId: string;
 let divisionIds: string[];
 
 describe("Registration stage", () => {
+
   beforeAll(async () => {
+    const mongod = await MongoMemoryServer.create();
+    // const uri = globalThis.__MONGOD__.getUri();
+    await mongoose
+      .connect(mongod.getUri(), {
+        ignoreUndefined: true,
+      })
+
     await admin
       .post("/login/tests")
       .send({ username: "admin", password: "admin" });
@@ -289,7 +299,6 @@ describe("Registration stage", () => {
   });
 
   afterAll(async () => {
-    await admin.delete(`/`);
-    await disconnectMongoose();
+    await mongoose.disconnect();
   });
 });

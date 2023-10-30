@@ -10,6 +10,7 @@ config();
 import app from "../app.js"
 import { debugHTTP } from "../services/debuggers.js";
 import http from "http"
+import { connectMongoose } from "../services/mongo.js";
 
 /**
  * Get port from environment and store in Express.
@@ -22,6 +23,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 
+await connectMongoose();
 const server = http.createServer(app);
 
 /**
