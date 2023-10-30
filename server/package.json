@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node bin/www.js",
-    "build": "tsc",
+    "build": "set CI=''&& tsc",
     "build:dev": "tsc --noEmit",
     "test": "set NODE_ENV=test&&set DEBUG=app:*&& jest",
     "db": "start \"\" \"C:\\Program Files\\Azure Cosmos DB Emulator\\Microsoft.Azure.Cosmos.Emulator.exe\" /EnableMongoDbEndpoint=4.0",

@@ -3,6 +3,7 @@ import app from "../app.js";
 import { disconnectMongoose } from "../services/mongo.js";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
@@ -11,13 +12,16 @@ const auth3 = request.agent(app);
 const viewer = request.agent(app);
 
 describe("Teams management logic", function () {
-  beforeEach(async function () {
-    const uri = globalThis.__MONGOD__.getUri();
+  beforeAll(async () => {
+    const mongod = await MongoMemoryServer.create();
 
     await mongoose
-      .connect(uri, {
+      .connect(mongod.getUri(), {
         ignoreUndefined: true,
       })
+  })
+
+  beforeEach(async function () {
 
     await admin.post("/login/tests")
       .send({ username: "admin", password: "admin" });

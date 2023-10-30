@@ -4,6 +4,7 @@ import { disconnectMongoose } from "../services/mongo.js";
 import e from "express";
 import { TDivision } from "../models/division.js";
 import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
@@ -11,10 +12,10 @@ const viewer = request.agent(app);
 
 describe("Kickstart tournament", () => {
     beforeAll(async () => {
-        const uri = globalThis.__MONGOD__.getUri();
+        const mongod = await MongoMemoryServer.create();
 
         await mongoose
-            .connect(uri, {
+            .connect(mongod.getUri(), {
                 ignoreUndefined: true,
             })
 
