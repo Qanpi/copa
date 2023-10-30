@@ -299,7 +299,6 @@ describe("Registration stage", () => {
   });
 
   afterAll(async () => {
-    await admin.delete(`/`);
     await mongoose.disconnect();
   });
 });
