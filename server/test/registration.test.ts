@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 import { disconnectMongoose } from "../services/mongo.js";
 import { TDivision } from "../models/division.js";
+import mongoose from "mongoose";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
@@ -15,6 +16,13 @@ let divisionIds: string[];
 
 describe("Registration stage", () => {
   beforeAll(async () => {
+    const uri = globalThis.__MONGOD__.getUri();
+
+    await mongoose
+      .connect(uri, {
+        ignoreUndefined: true,
+      })
+
     await admin
       .post("/login/tests")
       .send({ username: "admin", password: "admin" });
@@ -290,6 +298,6 @@ describe("Registration stage", () => {
 
   afterAll(async () => {
     await admin.delete(`/`);
-    await disconnectMongoose();
+    await mongoose.disconnect();
   });
 });

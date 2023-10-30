@@ -3,6 +3,7 @@ import request from "supertest";
 import { disconnectMongoose } from "../services/mongo.js";
 import e from "express";
 import { TDivision } from "../models/division.js";
+import mongoose from "mongoose";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
@@ -10,6 +11,13 @@ const viewer = request.agent(app);
 
 describe("Kickstart tournament", () => {
     beforeAll(async () => {
+        const uri = globalThis.__MONGOD__.getUri();
+
+        await mongoose
+            .connect(uri, {
+                ignoreUndefined: true,
+            })
+
         await admin.post("/login/tests")
             .send({ username: "admin", password: "admin" });
 
@@ -83,6 +91,6 @@ describe("Kickstart tournament", () => {
     })
 
     afterAll(async () => {
-        await disconnectMongoose();
+        await mongoose.disconnect();
     })
 })

@@ -2,6 +2,7 @@ import request from "supertest";
 import app from "../app.js";
 import { disconnectMongoose } from "../services/mongo.js";
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
@@ -11,6 +12,13 @@ const viewer = request.agent(app);
 
 describe("Teams management logic", function () {
   beforeEach(async function () {
+    const uri = globalThis.__MONGOD__.getUri();
+
+    await mongoose
+      .connect(uri, {
+        ignoreUndefined: true,
+      })
+
     await admin.post("/login/tests")
       .send({ username: "admin", password: "admin" });
 
@@ -294,6 +302,6 @@ describe("Teams management logic", function () {
   })
 
   afterAll(async function () {
-    return await disconnectMongoose();
+    await mongoose.disconnect();
   })
 })

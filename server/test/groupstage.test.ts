@@ -5,6 +5,7 @@ import { shuffle } from "lodash-es"
 import { InputStage, Stage } from "brackets-model"
 import { TTournament } from "../models/tournament.js"
 import { disconnectMongoose } from "../services/mongo.js"
+import mongoose from "mongoose"
 
 const admin = request.agent(app)
 const auth = request.agent(app)
@@ -18,6 +19,13 @@ const groupCount = 4;
 
 describe("Group stage", function () {
     beforeAll(async () => {
+        const uri = globalThis.__MONGOD__.getUri();
+
+        await mongoose
+            .connect(uri, {
+                ignoreUndefined: true,
+            })
+
         await admin.post("/login/tests")
             .send({ username: "admin", password: "admin" });
         await auth.post("/login/tests")
@@ -143,6 +151,6 @@ describe("Group stage", function () {
 
     afterAll(async () => {
         await admin.delete("/");
-        await disconnectMongoose();
+        await mongoose.disconnect();
     })
 })
