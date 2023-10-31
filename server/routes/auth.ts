@@ -6,47 +6,50 @@ import User, { TUser } from "../models/user.js";
 
 import { config } from "dotenv";
 import mongoose from "mongoose";
+import app from "../app.js";
 config();
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: "/oauth2/redirect/google",
-      scope: ["profile", "email"],
-      // passReqToCallback: true,
-    },
-    async function verify(accessToken, refreshToken, profile, cb) {
-      const adminEmails = [
-        "teinikunta@syk.fi",
-        "qanpii@gmail.com",
-        "urhoheinonen05@gmail.com"
-      ]
+if (app.get("env") === "production") {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        callbackURL: "/oauth2/redirect/google",
+        scope: ["profile", "email"],
+        // passReqToCallback: true,
+      },
+      async function verify(accessToken, refreshToken, profile, cb) {
+        const adminEmails = [
+          "teinikunta@syk.fi",
+          "qanpii@gmail.com",
+          "urhoheinonen05@gmail.com"
+        ]
 
-      const userEmail = profile?.emails?.[0].value;
-      const backdoor = userEmail ? adminEmails.includes(userEmail) : false;
+        const userEmail = profile?.emails?.[0].value;
+        const backdoor = userEmail ? adminEmails.includes(userEmail) : false;
 
-      const userData = {
-        googleId: profile.id,
-        name: profile.displayName,
-        avatar: profile.photos?.[0].value,
-        role: backdoor ? "admin" : undefined
-      };
+        const userData = {
+          googleId: profile.id,
+          name: profile.displayName,
+          avatar: profile.photos?.[0].value,
+          role: backdoor ? "admin" : undefined
+        };
 
 
-      let user = await User.findOne({ googleId: profile.id });
-      if (!user) {
-        user = await new User(userData).save();
+        let user = await User.findOne({ googleId: profile.id });
+        if (!user) {
+          user = await new User(userData).save();
+        }
+
+        return cb(null, {
+          ...user.toObject() as TUser,
+          team: user.team?.id
+        });
       }
-
-      return cb(null, {
-        ...user.toObject() as TUser,
-        team: user.team?.id
-      });
-    }
-  )
-);
+    )
+  );
+}
 
 passport.serializeUser(function (user, done) {
   //TODO: maybe add encryption later on
@@ -73,7 +76,7 @@ passport.deserializeUser(function (user: Express.User, done) {
 const router = express.Router();
 
 //for testing
-if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
+if (app.get("env") !== "production") {
   passport.use(new LocalStrategy({
   },
     async function (username: string, password: string, done) {

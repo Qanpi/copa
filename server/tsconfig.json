@@ -1,4 +1,19 @@
 {
+  "ts-node": {
+    "files": true,
+    "esm": true,
+    "compilerOptions": {
+      "module": "NodeNext",
+      "allowSyntheticDefaultImports": true,
+      "paths": {
+        "@frontend/*": [
+          "../client/*"
+        ]
+      },
+      "esModuleInterop": true,
+      "listFiles": true
+    },
+  },
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "module": "NodeNext",
@@ -10,6 +25,6 @@
     },
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
-    "strict": true, 
+    "strict": true,
   },
 }
