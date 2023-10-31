@@ -27,12 +27,12 @@ if (app.get("env") !== "production") {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser(process.env.GOOGLE_CLIENT_SECRET));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(
   cookieSession({
     name: "session",
-    secret: process.env.GOOGLE_CLIENT_SECRET,
+    secret: process.env.COOKIE_SECRET,
     maxAge: 24 * 60 * 60 * 1000 * 30, // 1 month
   })
 );
