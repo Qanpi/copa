@@ -9,11 +9,13 @@ import { DivisionContext } from "../../index.tsx";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
-import { participantKeys } from "../participant/hooks.ts";
+import { TParticipantPopulated, participantKeys } from "../participant/hooks.ts";
 import { useCreateStage, useDeleteStage, useStages } from "../stage/hooks.ts";
 import { useTournament } from "../tournament/hooks.ts";
 import AdminOnlyPage from "./AdminOnlyBanner.tsx";
 import "./fortuneWheel.css";
+import useSound from "use-sound"
+import tadaPolka from "./tadapolka.mp3"
 
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
@@ -43,7 +45,7 @@ function DrawPage() {
     queryKey: [participantKeys.all],
     queryFn: async () => {
       const res = await axios.get(`/api/tournaments/${tournament?.id}/participants?division=${division?.id}`);
-      return res.data as TParticipant[];
+      return res.data as TParticipantPopulated[];
     },
     enabled: Boolean(tournament) && Boolean(division?.id),
     staleTime: Infinity
@@ -149,72 +151,78 @@ function DrawPage() {
 
 
   return (
-    <Stack sx={{ overflow: "hidden", pt: 5 }} direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
-      <LoadingBackdrop open={createGroupStage.isLoading}></LoadingBackdrop>
-      <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}></Backdrop>
+    <AdminOnlyPage>
 
-      <FeedbackSnackbar severity={snackbarSeverity} onClose={() => setSnackbarSeverity(undefined)}
-        success="Group stage created successfully">
-      </FeedbackSnackbar>
+      <Stack direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
+        <LoadingBackdrop open={createGroupStage.isLoading}></LoadingBackdrop>
+        <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}></Backdrop>
 
-      <Dialog open={resetDialog}>
-        <DialogTitle>Would you like to reset the draw?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            The draw for the "{division.name}" division has already been made. Resetting it will delete all matches in the division up to this point.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleDialogResponse(true)} variant="outlined">Yes</Button>
-          <Button autoFocus onClick={() => handleDialogResponse(false)} variant="contained">No</Button>
-        </DialogActions>
-      </Dialog>
+        <FeedbackSnackbar severity={snackbarSeverity} onClose={() => setSnackbarSeverity(undefined)}
+          success="Group stage created successfully">
+        </FeedbackSnackbar>
 
-      {!groupStage ? <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel> : null}
+        <Dialog open={resetDialog}>
+          <DialogTitle>Would you like to reset the draw?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              The draw for the "{division.name}" division has already been made. Resetting it will delete all matches in the division up to this point.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => handleDialogResponse(true)} variant="outlined">Yes</Button>
+            <Button autoFocus onClick={() => handleDialogResponse(false)} variant="contained">No</Button>
+          </DialogActions>
+        </Dialog>
 
-      <Container maxWidth="md">
-        <DivisionPanel>
-          <Container>
-            <InputLabel>Number of groups</InputLabel>
+        {!groupStage ?
+          <Box sx={{ height: "85vmin", aspectRatio: 1, position: "relative", maxWidth: "85vmin", justifyContent: "center", alignItems: "center", display: "flex" }}>
+            <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+          </Box> : null}
 
-            <Slider
-              value={groupCount}
-              onChange={(e, v) => {
-                if (!Array.isArray(v))
-                  setGroupCount(v);
-              }}
-              min={1}
-              max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
-              step={1}
-              marks
-              valueLabelDisplay="on"
-            ></Slider>
-          </Container>
+        <Container maxWidth="md">
+          <DivisionPanel>
+            <Container>
+              <InputLabel>Number of groups</InputLabel>
 
-          <Box display="grid" gap="10px"
-            gridTemplateColumns={"repeat(auto-fill, 250px)"}
-            justifyContent={"center"}
-          >
-            {groups}
-          </Box>
+              <Slider
+                value={groupCount}
+                onChange={(e, v) => {
+                  if (!Array.isArray(v))
+                    setGroupCount(v);
+                }}
+                min={1}
+                max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
+                step={1}
+                marks
+                valueLabelDisplay="on"
+              ></Slider>
+            </Container>
+
+            <Box display="grid" gap="10px"
+              gridTemplateColumns={"repeat(auto-fill, 250px)"}
+              justifyContent={"center"}
+            >
+              {groups}
+            </Box>
 
 
 
-          <Box justifyContent={"center"} display="flex" gap={1}>
+            <Box justifyContent={"center"} display="flex" gap={1}>
 
 
-            <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
-            <Button onClick={handleSkipWheel} variant="outlined" sx={{ mr: 3 }}>
-              Skip
-            </Button>
+              <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
+              <Button onClick={handleSkipWheel} variant="outlined" sx={{ mr: 3 }}>
+                Skip
+              </Button>
 
-            <Button onClick={handleConfirmSeeding} variant="contained">
-              Confirm
-            </Button>
-          </Box>
-        </DivisionPanel>
-      </Container>
-    </Stack >
+              <Button onClick={handleConfirmSeeding} variant="contained">
+                Confirm
+              </Button>
+            </Box>
+          </DivisionPanel>
+        </Container>
+      </Stack >
+    </AdminOnlyPage>
   )
 }
 
@@ -242,22 +250,39 @@ function GroupTable({ name, participants }: { name: string, participants: TParti
   )
 }
 
-function FortuneWheel({ participants, onSelected }: { participants: TParticipant[], onSelected: (option: TParticipant) => void }) {
+function FortuneWheel({ participants, onSelected }: { participants: TParticipantPopulated[], onSelected: (option: TParticipantPopulated) => void }) {
   const [mustSpin, setMustSpin] = useState(false);
+  const [play, { stop }] = useSound(tadaPolka, {
+    interrupt: true
+  });
 
   const randomN = Math.floor(Math.random() * participants.length);
 
-  const wheelOptions = participants?.map((p) => {
-    const l = 10;
+  const theme = useTheme();
+  const wheelOptions = participants?.map((p, i) => {
+    const l = 17;
     const trimmed =
       p.name?.length > l ? p.name?.substring(0, l - 3) + "..." : p.name;
-    return { option: trimmed, ...p };
+
+    const color = i % 2 === 0 ? theme.palette.primary.light : theme.palette.primary.main;
+
+    return {
+      option: trimmed,
+      style: {
+        backgroundColor: color
+      },
+      image: {
+        uri: p.team.bannerUrl
+      },
+      ...p
+    };
   });
 
   const isWheelVisible = participants?.length !== 0;
 
   const handleSpinOver = () => {
     setMustSpin(false);
+    stop();
 
     const chosen = wheelOptions[randomN];
     onSelected(chosen);
@@ -266,29 +291,28 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
   const handleSpin = () => {
     if (!isWheelVisible || mustSpin) return;
 
+    play();
     setMustSpin(true);
   };
-
-  const theme = useTheme();
 
   if (!isWheelVisible) return;
 
   return (
-    <AdminOnlyPage>
-      <Box sx={{ height: "85vmin", width: "85vmin", position: "relative", minWidth: "85vmin" }}>
-        <Wheel
-          data={wheelOptions}
-          prizeNumber={randomN}
-          mustStartSpinning={mustSpin}
-          onStopSpinning={handleSpinOver}
-        ></Wheel>
+    <>
+      <Wheel
+        data={wheelOptions}
+        prizeNumber={randomN}
+        mustStartSpinning={mustSpin}
+        onStopSpinning={handleSpinOver}
+        fontSize={16}
+        spinDuration={0.9}
+      ></Wheel>
 
-        {/* position is calculated so that it's in the center and on top of the wheel */}
-        <Button onClick={handleSpin} sx={{ position: "absolute", height: "10%", width: "10%", bottom: "45%", left: "45%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
-          Spin
-        </Button>
-      </Box >
-    </AdminOnlyPage>
+      {/* position is calculated so that it's in the center and on top of the wheel */}
+      {!mustSpin ? <Button onClick={handleSpin} sx={{ position: "absolute", height: "15%", width: "15%", bottom: "42.5%", left: "42.5%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
+        Spin
+      </Button> : null}
+    </>
   );
 }
 

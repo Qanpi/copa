@@ -235,6 +235,7 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(500);
   });
 
+  //FIXME: something is wrong with this test, should fail ?
   it("should reject registration if no deadline", async () => {
     await admin.patch(`/api/tournaments/${tournamentId}`).send({
       "registration": {}

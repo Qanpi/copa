@@ -53,7 +53,7 @@ router.use("/tournaments/:id", tournamentRouter);
 //TEAMS
 router.get("/teams", teams.getMultiple);
 router.get("/teams/:id/participations", param("id").isMongoId(), reportValidationErrors, teams.getParticipations);
-router.post("/teams", isAuthMiddleware, body("manager").isMongoId(), body("name").trim().isString().notEmpty().not().equals("[deleted]"), reportValidationErrors, teams.createOne);
+router.post("/teams", isAuthMiddleware, body("manager").isMongoId(), body("name").trim().isString().isLength({max: 30}).notEmpty().not().equals("[deleted]"), body("phoneNumber").isString(), reportValidationErrors, teams.createOne);
 router.patch("/teams/:id", isAuthMiddleware, teams.updateOne);
 router.get("/teams/:id", teams.getById);
 router.get("/teams/:teamId/users", teams.getUsersInTeam);
