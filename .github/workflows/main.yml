@@ -28,6 +28,7 @@ jobs:
           node-version: '18.x'
 
       - name: npm install and build client
+        if: ${{ !env.ACT }}
         working-directory: client 
         run: |
           npm install
