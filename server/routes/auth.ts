@@ -8,47 +8,45 @@ import { config } from "dotenv";
 import mongoose from "mongoose";
 config();
 
-if (process.env.NODE_ENV === "production") {
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        callbackURL: "/oauth2/redirect/google",
-        scope: ["profile", "email"],
-        // passReqToCallback: true,
-      },
-      async function verify(accessToken, refreshToken, profile, cb) {
-        const adminEmails = [
-          "teinikunta@syk.fi",
-          "qanpii@gmail.com",
-          "urhoheinonen05@gmail.com"
-        ]
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      callbackURL: "/oauth2/redirect/google",
+      scope: ["profile", "email"],
+      // passReqToCallback: true,
+    },
+    async function verify(accessToken, refreshToken, profile, cb) {
+      const adminEmails = [
+        "teinikunta@syk.fi",
+        "qanpii@gmail.com",
+        "urhoheinonen05@gmail.com"
+      ]
 
-        const userEmail = profile?.emails?.[0].value;
-        const backdoor = userEmail ? adminEmails.includes(userEmail) : false;
+      const userEmail = profile?.emails?.[0].value;
+      const backdoor = userEmail ? adminEmails.includes(userEmail) : false;
 
-        const userData = {
-          googleId: profile.id,
-          name: profile.displayName,
-          avatar: profile.photos?.[0].value,
-          role: backdoor ? "admin" : undefined
-        };
+      const userData = {
+        googleId: profile.id,
+        name: profile.displayName,
+        avatar: profile.photos?.[0].value,
+        role: backdoor ? "admin" : undefined
+      };
 
 
-        let user = await User.findOne({ googleId: profile.id });
-        if (!user) {
-          user = await new User(userData).save();
-        }
-
-        return cb(null, {
-          ...user.toObject() as TUser,
-          team: user.team?.id
-        });
+      let user = await User.findOne({ googleId: profile.id });
+      if (!user) {
+        user = await new User(userData).save();
       }
-    )
-  );
-}
+
+      return cb(null, {
+        ...user.toObject() as TUser,
+        team: user.team?.id
+      });
+    }
+  )
+);
 
 passport.serializeUser(function (user, done) {
   //TODO: maybe add encryption later on

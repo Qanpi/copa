@@ -8,7 +8,7 @@
     "start": "node bin/www.js",
     "build": "tsc",
     "build:dev": "tsc --noEmit",
-    "test": "set NODE_OPTIONS=--experimental-vm-modules&&set NODE_ENV=test&&set DEBUG=app:*&& jest",
+    "test": "set NODE_OPTIONS=--experimental-vm-modules&&set NODE_ENV=test&&set DEBUG=app:*&& jest test/*.ts",
     "db": "start \"\" \"C:\\Program Files\\Azure Cosmos DB Emulator\\Microsoft.Azure.Cosmos.Emulator.exe\" /EnableMongoDbEndpoint=4.0",
     "server": "set NODE_ENV=development&&set DEBUG=app:*&&npm run db && nodemon bin/www.ts --config nodemon.json",
     "client": "cd ../client && npm start",
