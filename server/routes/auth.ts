@@ -6,10 +6,9 @@ import User, { TUser } from "../models/user.js";
 
 import { config } from "dotenv";
 import mongoose from "mongoose";
-import app from "../app.js";
 config();
 
-if (app.get("env") === "production") {
+if (process.env.NODE_ENV === "production") {
   passport.use(
     new GoogleStrategy(
       {
@@ -76,7 +75,7 @@ passport.deserializeUser(function (user: Express.User, done) {
 const router = express.Router();
 
 //for testing
-if (app.get("env") !== "production") {
+if (process.env.NODE_ENV !== "production") {
   passport.use(new LocalStrategy({
   },
     async function (username: string, password: string, done) {
