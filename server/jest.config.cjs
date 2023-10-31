@@ -15,6 +15,7 @@ module.exports = {
       {
         useESM: true,
         diagnostics: false,
+        isolatedModules: true,
       },
     ],
   },
