@@ -16,6 +16,8 @@ import AdminOnlyPage from "./AdminOnlyBanner.tsx";
 import "./fortuneWheel.css";
 import useSound from "use-sound"
 import tadaPolka from "./tadapolka.mp3"
+import { ImageProps, WheelData } from "react-custom-roulette/dist/components/Wheel/types";
+import { Label } from "@mui/icons-material";
 
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
@@ -58,6 +60,8 @@ function DrawPage() {
       refetch();
     }
   }, [division]);
+
+  const [spinDuration, setSpinDuration] = useState(100);
 
   const [groupCount, setGroupCount] = useState(4);
   const [seeding, setSeeding] = useState([] as TParticipant[]);
@@ -176,7 +180,7 @@ function DrawPage() {
 
         {!groupStage ?
           <Box sx={{ height: "85vmin", aspectRatio: 1, position: "relative", maxWidth: "85vmin", justifyContent: "center", alignItems: "center", display: "flex" }}>
-            <FortuneWheel participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
+            <FortuneWheel duration={1 / spinDuration * 94} participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
           </Box> : null}
 
         <Container maxWidth="md">
@@ -209,9 +213,20 @@ function DrawPage() {
 
             <Box justifyContent={"center"} display="flex" gap={1}>
 
+                <InputLabel>Wheel speed: </InputLabel>
+              <Slider
+                value={spinDuration}
+                onChange={(e, v) => {
+                  if (!Array.isArray(v))
+                    setSpinDuration(v);
+                }}
+                min={50}
+                max={200}
+                valueLabelDisplay
+              ></Slider>
 
               <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
-              <Button onClick={handleSkipWheel} variant="outlined" sx={{ mr: 3 }}>
+              <Button onClick={handleSkipWheel} variant="outlined">
                 Skip
               </Button>
 
@@ -250,10 +265,11 @@ function GroupTable({ name, participants }: { name: string, participants: TParti
   )
 }
 
-function FortuneWheel({ participants, onSelected }: { participants: TParticipantPopulated[], onSelected: (option: TParticipantPopulated) => void }) {
+function FortuneWheel({ participants, onSelected, duration }: { participants: TParticipantPopulated[], onSelected: (option: TParticipantPopulated) => void, duration: number}) {
   const [mustSpin, setMustSpin] = useState(false);
   const [play, { stop }] = useSound(tadaPolka, {
-    interrupt: true
+    interrupt: true,
+    playbackRate: Math.max(0.94 / duration, 0.8)
   });
 
   const randomN = Math.floor(Math.random() * participants.length);
@@ -266,16 +282,20 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
 
     const color = i % 2 === 0 ? theme.palette.primary.light : theme.palette.primary.main;
 
+    console.log(p.team.bannerUrl);
     return {
       option: trimmed,
       style: {
         backgroundColor: color
       },
-      image: {
-        uri: p.team.bannerUrl
-      },
+      image: p.team.bannerUrl ? {
+        uri: p.team.bannerUrl,
+        landscape: true,
+        sizeMultiplier: 0.7,
+        offsetX: -100
+      } : undefined,
       ...p
-    };
+    } as WheelData;
   });
 
   const isWheelVisible = participants?.length !== 0;
@@ -305,7 +325,9 @@ function FortuneWheel({ participants, onSelected }: { participants: TParticipant
         mustStartSpinning={mustSpin}
         onStopSpinning={handleSpinOver}
         fontSize={16}
-        spinDuration={0.9}
+        spinDuration={duration}
+        radiusLineWidth={1}
+        outerBorderWidth={2}
       ></Wheel>
 
       {/* position is calculated so that it's in the center and on top of the wheel */}
