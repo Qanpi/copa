@@ -1,41 +1,24 @@
-import { AlertProps, Backdrop, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { TParticipant } from "@backend/models/participant.ts";
+import { AlertProps, Backdrop, Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Paper, Slider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { shuffle } from "lodash-es";
 import { useContext, useEffect, useState } from "react";
 import { Wheel } from "react-custom-roulette/";
-import { useTournament } from "../tournament/hooks.ts";
-import { participantKeys, useParticipants } from "../participant/hooks.ts";
-import { groupBy, shuffle } from "lodash-es";
-import Group from "../group/Group.js";
-import { DataGrid } from "@mui/x-data-grid";
-import GroupStageStructure from "./GroupStage.js";
-import { useDeleteStage, useStageData } from "../stage/hooks.ts";
-import { divideGroups } from "./GroupStageStructure.tsx";
-import { useCreateStage } from "../stage/hooks.ts";
-import DivisionPanel from "../layout/DivisionPanel.tsx";
 import { DivisionContext } from "../../index.tsx";
-import { useGroupStageData, useStages } from "../stage/hooks.ts";
-import "./fortuneWheel.css"
-import { TParticipant } from "@backend/models/participant.ts";
-import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
+import DivisionPanel from "../layout/DivisionPanel.tsx";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
+import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
+import { participantKeys } from "../participant/hooks.ts";
+import { useCreateStage, useDeleteStage, useStages } from "../stage/hooks.ts";
+import { useTournament } from "../tournament/hooks.ts";
 import AdminOnlyPage from "./AdminOnlyBanner.tsx";
+import "./fortuneWheel.css";
 
-const useGroup = (id) => {
-  const { data: tournament } = useTournament("current");
-
-  return tournament?.groups.find((g) => g.id === id);
-};
-
-const useGroups = () => {
-  const { data: tournament } = useTournament("current");
-
-  return tournament?.groups;
-};
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
 
-function arrangeGroups(participants, groups) {
+function arrangeGroups(participants: number, groups: number) {
   const base = Math.floor(participants / groups);
 
   const groupings: number[] = new Array(groups).fill(base);
@@ -60,7 +43,7 @@ function DrawPage() {
     queryKey: [participantKeys.all],
     queryFn: async () => {
       const res = await axios.get(`/api/tournaments/${tournament?.id}/participants?division=${division?.id}`);
-      return res.data;
+      return res.data as TParticipant[];
     },
     enabled: Boolean(tournament) && Boolean(division?.id),
     staleTime: Infinity
@@ -75,7 +58,7 @@ function DrawPage() {
   }, [division]);
 
   const [groupCount, setGroupCount] = useState(4);
-  const [seeding, setSeeding] = useState([]);
+  const [seeding, setSeeding] = useState([] as TParticipant[]);
 
   const [resetDialog, setResetDialog] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertProps["severity"]>();
@@ -92,6 +75,8 @@ function DrawPage() {
   if (!stages || participantsStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
+
+  if (!division) return;
 
   const groupSizes = arrangeGroups(participants.length, groupCount);
 
@@ -122,7 +107,7 @@ function DrawPage() {
     setSeeding([]);
   };
 
-  const handleWheelSelected = (option) => {
+  const handleWheelSelected = (option: TParticipant) => {
     setSeeding([...seeding, option]);
   }
 
@@ -194,8 +179,9 @@ function DrawPage() {
 
             <Slider
               value={groupCount}
-              onChange={(e, v: number) => {
-                setGroupCount(v);
+              onChange={(e, v) => {
+                if (!Array.isArray(v))
+                  setGroupCount(v);
               }}
               min={1}
               max={Math.min(participants.length, 6)} //FIXME: brackets-viewer appers unable to handle >6 groups 
@@ -256,7 +242,7 @@ function GroupTable({ name, participants }: { name: string, participants: TParti
   )
 }
 
-function FortuneWheel({ participants, onSelected }: { participants: TParticipant[] }) {
+function FortuneWheel({ participants, onSelected }: { participants: TParticipant[], onSelected: (option: TParticipant) => void }) {
   const [mustSpin, setMustSpin] = useState(false);
 
   const randomN = Math.floor(Math.random() * participants.length);
