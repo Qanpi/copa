@@ -1,7 +1,7 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   preset: 'ts-jest',
-  preset: '@shelf/jest-mongodb',
+  // preset: '@shelf/jest-mongodb',
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
@@ -15,6 +15,7 @@ module.exports = {
       {
         useESM: true,
         diagnostics: false,
+        isolatedModules: true,
       },
     ],
   },

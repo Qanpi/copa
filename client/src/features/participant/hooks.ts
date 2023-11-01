@@ -27,6 +27,8 @@ export const useParticipant = (participantId: string) => {
   });
 };
 
+export type TParticipantPopulated = TParticipant & {team: TTeam};
+
 export const useParticipants = (tournamentId?: string, query?: Partial<TParticipant>) => {
   return useQuery({
     queryKey: participantKeys.list(query),
@@ -40,7 +42,7 @@ export const useParticipants = (tournamentId?: string, query?: Partial<TParticip
       }
 
       const res = await axios.get(url);
-      return res.data as (TParticipant & {team: TTeam})[];
+      return res.data as TParticipantPopulated[];
     },
 
     enabled: Boolean(tournamentId) && (query ? Object.values(query).every(v => v) : true)

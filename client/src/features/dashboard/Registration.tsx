@@ -114,10 +114,10 @@ function RegistrationStage({ next, prev }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => handleDialogClose(true)}>Yes</Button>
           <Button autoFocus onClick={() => handleDialogClose(false)}>
             No
           </Button>
-          <Button onClick={() => handleDialogClose(true)}>Yes</Button>
         </DialogActions>
       </Dialog>
 

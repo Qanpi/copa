@@ -11,6 +11,7 @@ import { MongoMemoryServer } from "mongodb-memory-server"
 const admin = request.agent(app)
 const auth = request.agent(app)
 
+let mongod: MongoMemoryServer;
 let tournamentId: string;
 let divisionId: string;
 let stageId: string;
@@ -20,7 +21,7 @@ const groupCount = 4;
 
 describe("Group stage", function () {
     beforeAll(async () => {
-        const mongod = await MongoMemoryServer.create();
+        mongod = await MongoMemoryServer.create();
 
         await mongoose
             .connect(mongod.getUri(), {
@@ -153,5 +154,6 @@ describe("Group stage", function () {
     afterAll(async () => {
         await admin.delete("/");
         await mongoose.disconnect();
+        await mongod.stop();
     })
 })

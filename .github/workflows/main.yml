@@ -10,6 +10,9 @@ on:
   workflow_dispatch:
 
 env: 
+  NODE_OPTIONS: --experimental-vm-modules
+  NODE_ENV: test
+  COOKIE_SECRET: testsecret
   CI: false
   AZURE_WEBAPP_NAME: copadekuutio 
   AZURE_WEBAPP_PACKAGE_PATH: server
@@ -28,6 +31,7 @@ jobs:
           node-version: '18.x'
 
       - name: npm install and build client
+        if: ${{ !env.ACT }}
         working-directory: client 
         run: |
           npm install

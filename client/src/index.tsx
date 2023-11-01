@@ -136,7 +136,8 @@ function App() {
       YbugContext.init({
         feedback: {
           name: auth.name
-        }
+        },
+        user: auth
       })
     }
   }, [auth, YbugContext])
