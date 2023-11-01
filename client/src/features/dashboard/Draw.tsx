@@ -176,15 +176,11 @@ function DrawPage() {
 
     drake.cancel(true);
   })
-  console.log(seeding)
 
   const getContainersMap = () => {
     if (!participantsRef.current) {
       participantsRef.current = new Map();
     }
-
-    const arr = Array.from(participantsRef.current.values());
-    drake.containers = arr;
 
     return participantsRef.current;
   }
@@ -211,9 +207,13 @@ function DrawPage() {
           const map = getContainersMap();
           if (node) {
             map.set(i, node);
+
           } else {
             map.delete(i);
           }
+
+          const arr = Array.from(map.values());
+          drake.containers = arr;
         }
       } key={i} index={i} participants={group}></GroupTable>
     )
@@ -367,7 +367,6 @@ function FortuneWheel({ participants, onSelected, onSkip }: { participants: TPar
     const color = i % 2 === 0 ? theme.palette.primary.light : theme.palette.primary.main;
 
     const banner = p.team.bannerUrl;
-    console.log(banner)
     const valid = banner?.endsWith(".png") || banner?.endsWith(".jpg") || banner?.endsWith(".jpeg");
 
     const image = valid ? {
