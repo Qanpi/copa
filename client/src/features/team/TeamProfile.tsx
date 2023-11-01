@@ -113,7 +113,6 @@ function TeamProfilePage() {
                     <Typography variant="subtitle2" sx={{ ml: "auto", alignSelf: "end" }}>Est. {team ? dayjs(team?.createdAt).format("YYYY") : ""}</Typography>
                   </Stack>
                 </GradientTitle>
-                {JSON.stringify(errors)}
                 <TabBar teamId={team.id} selected={selectedTab} onChange={handleChangeSelectedTab}></TabBar>
                 <Container maxWidth="md" sx={{ p: 5, position: "relative", height: "100%" }}>
                   {selectedTab === 0 ? <ProfileTab team={team} editMode={editMode}></ProfileTab> : null}

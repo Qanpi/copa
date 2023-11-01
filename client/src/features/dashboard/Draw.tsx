@@ -163,10 +163,10 @@ function DrawPage() {
     setSeeding(seeding.map((s, i) => {
       if (i === targetIndex && i === sourceIndex) return s;
 
-      if (i === targetIndex)  {
-        return [...s, participant]; 
-      } 
-      
+      if (i === targetIndex) {
+        return [...s, participant];
+      }
+
       if (i === sourceIndex) {
         return s.filter(p => p.id !== participant.id);
       }
@@ -366,17 +366,23 @@ function FortuneWheel({ participants, onSelected, onSkip }: { participants: TPar
 
     const color = i % 2 === 0 ? theme.palette.primary.light : theme.palette.primary.main;
 
+    const banner = p.team.bannerUrl;
+    console.log(banner)
+    const valid = banner?.endsWith(".png") || banner?.endsWith(".jpg") || banner?.endsWith(".jpeg");
+
+    const image = valid ? {
+      uri: p.team.bannerUrl,
+      // landscape: true,
+      sizeMultiplier: 0.6,
+      offsetY: 250
+    } : undefined;
+
     return {
       option: trimmed,
       style: {
         backgroundColor: color
       },
-      image: p.team.bannerUrl ? {
-        uri: p.team.bannerUrl,
-        landscape: true,
-        sizeMultiplier: 0.7,
-        offsetX: -100
-      } : undefined,
+      image,
       ...p
     } as WheelData;
   });
