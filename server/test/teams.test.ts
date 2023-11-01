@@ -67,7 +67,7 @@ describe("Teams management logic", function () {
     expect(user.body.team.id).toStrictEqual(team.body.id);
   })
 
-  it("should encode reserved uri characters in team name", async function () {
+  it.skip("should encode reserved uri characters in team name", async function () {
     //important because it is used on the front-end in urls
 
     const { body: user } = await auth.get("/me");

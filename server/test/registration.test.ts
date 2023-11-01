@@ -51,6 +51,7 @@ describe("Registration stage", () => {
     const resTeam = await auth.post("/api/teams").send({
       name: "Tinpot",
       manager: manager.id,
+      phoneNumber: "123456789"
     });
 
     await auth.get("/me"); //necessary to update req.user object
