@@ -92,8 +92,6 @@ function DrawPage() {
   if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
 
   if (!division) return;
-  const groupSizes = arrangeGroups(participants.length, groupCount);
-
 
   const handleConfirmSeeding = () => {
     createGroupStage.mutate({
@@ -115,7 +113,16 @@ function DrawPage() {
   const groupless = participants?.filter(p => !seeding.flat().some(s => s.id === p.id));
 
   const handleSkipWheel = () => {
+    const groupSizes = arrangeGroups(participants.length, groupCount);
 
+    let participantIndex = 0;
+    setSeeding(seeding.map((s, i) => {
+      const copy = s.slice()
+      while (copy.length < groupSizes[i]) {
+        copy.push(groupless[participantIndex++]);
+      }
+      return copy;
+    }))
   };
 
   const handleResetSeeding = () => {
@@ -412,10 +419,10 @@ function FortuneWheel({ participants, onSelected, onSkip }: { participants: TPar
         {!mustSpin ? <Button onClick={handleSpin} sx={{ position: "absolute", height: "15%", width: "15%", bottom: "42.5%", left: "42.5%", zIndex: 5, borderRadius: "100%", minHeight: "50px", minWidth: "50px" }} variant="contained" color="secondary">
           Spin
         </Button> : null}
-        {/* <Button disabled={mustSpin} sx={{ position: "absolute", bottom: 10, right: 0, boxShadow: "none" }} onClick={handleSkip} variant="outlined">
+        <Button disabled={mustSpin} sx={{ position: "absolute", bottom: 10, right: 0, boxShadow: "none" }} onClick={handleSkip} variant="outlined">
           Skip
           <FastForward></FastForward>
-        </Button> */}
+        </Button>
       </Box>
       <Box>
         <InputLabel>Wheel speed: </InputLabel>
