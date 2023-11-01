@@ -6,7 +6,10 @@ import packageJson from "../../../package.json"
 
 const markdown = `
 - updated drawing wheel to be cooler
+    - control speed
+    - manual drag and drop
 - setup ci with tests 
+- and more...
 `
 const latest = packageJson.version;
 
