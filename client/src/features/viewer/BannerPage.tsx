@@ -9,7 +9,7 @@ function BannerPage({title, header, sx, children, ...props }: {title?: string, h
             <GradientTitle>
                 {title ? <Typography variant="h2">{title}</Typography> : header} 
             </GradientTitle>
-            <Container>
+            <Container sx={sx}>
                 {children}
             </Container >
         </Box>

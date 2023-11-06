@@ -6,6 +6,7 @@ import _ from "lodash";
 import { useParticipants } from "../participant/hooks";
 import { tournamentKeys, useTournament } from "../tournament/hooks";
 import { QueryKeyFactory, queryKeyFactory } from "../types";
+import { useDebouncedCallback } from "use-debounce";
 
 const matchKeys = queryKeyFactory("matches");
 
@@ -14,20 +15,37 @@ export const useUpdateMatch = () => {
   const { data: tournament } = useTournament("current");
   const queryClient = useQueryClient();
 
+  const debounced = useDebouncedCallback(
+      async (values: Partial<TMatch>) => {
+        const res = await axios.patch(`/api/${tournamentKeys.all[0]}/${tournament.id}/matches/${values.id}`, values);
+        return res;
+      },
+      200
+  )
+
+  const invalidate = useDebouncedCallback(
+    (data: TMatch) => {
+      queryClient.invalidateQueries(matchKeys.lists)
+      queryClient.invalidateQueries(matchKeys.id(data.id));
+    },
+    500
+  )
+
   return useMutation({
     mutationFn: async (values: Partial<TMatch>) => {
-      const res = await axios.patch(`/api/${tournamentKeys.all[0]}/${tournament.id}/matches/${values.id}`, values);
-      return res.data;
+      const res = await debounced(values);
+      return res?.data as TMatch;
     },
     onSettled(data) {
-      queryClient.invalidateQueries(matchKeys.lists)
-    },
-    onError(err, values) {
-      queryClient.invalidateQueries(matchKeys.id(values.id));
+      if (data) invalidate(data);
     },
     async onMutate(data) {
       await queryClient.cancelQueries(matchKeys.all); //to not overwrite optimistic update
       queryClient.setQueriesData(matchKeys.id(data.id), data);
+
+      queryClient.setQueriesData(matchKeys.list({scheduled: "true"}), (old) => {
+        return old?.map(m => m.id === data.id ? {...m, ...data} : m);
+      })
     }
   });
 };

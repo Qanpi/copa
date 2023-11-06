@@ -5,17 +5,11 @@ import Markdown from "react-markdown";
 import packageJson from "../../../package.json"
 
 const markdown = `
-- added notifications pane
-- added tournament rules page
-- added ability to change user name (real and display names)
-- doubled word limit of a team's 'about' section
-- integrated a service for easier feedback/bug reports 
-- added this changelog
-- minor bug fixes
-    - pita/ruskea can keep their name as is :)
-- reworked joining a team to be more intuitive/provide better feedback
-- fixed layout issues (esp. on mobile)
-- setup telemetry and [more](https://github.com/Qanpi/copa/releases/tag/v0.2.0)...
+- updated drawing wheel to be cooler
+    - control speed
+    - manual drag and drop
+- setup ci with tests 
+- and more...
 `
 const latest = packageJson.version;
 

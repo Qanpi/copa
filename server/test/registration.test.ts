@@ -11,6 +11,7 @@ const admin = request.agent(app);
 const auth = request.agent(app);
 const auth2 = request.agent(app);
 
+let mongod: MongoMemoryServer;
 let teamId: string;
 let tournamentId: string;
 let divisionIds: string[];
@@ -18,7 +19,7 @@ let divisionIds: string[];
 describe("Registration stage", () => {
 
   beforeAll(async () => {
-    const mongod = await MongoMemoryServer.create();
+    mongod = await MongoMemoryServer.create();
     // const uri = globalThis.__MONGOD__.getUri();
     await mongoose
       .connect(mongod.getUri(), {
@@ -50,6 +51,7 @@ describe("Registration stage", () => {
     const resTeam = await auth.post("/api/teams").send({
       name: "Tinpot",
       manager: manager.id,
+      phoneNumber: "123456789"
     });
 
     await auth.get("/me"); //necessary to update req.user object
@@ -234,6 +236,7 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(500);
   });
 
+  //FIXME: something is wrong with this test, should fail ?
   it("should reject registration if no deadline", async () => {
     await admin.patch(`/api/tournaments/${tournamentId}`).send({
       "registration": {}
@@ -300,5 +303,6 @@ describe("Registration stage", () => {
 
   afterAll(async () => {
     await mongoose.disconnect();
+    await mongod.stop();
   });
 });

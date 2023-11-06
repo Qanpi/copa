@@ -10,9 +10,11 @@ const admin = request.agent(app);
 const auth = request.agent(app);
 const viewer = request.agent(app);
 
+let mongod: MongoMemoryServer;
+
 describe("Kickstart tournament", () => {
     beforeAll(async () => {
-        const mongod = await MongoMemoryServer.create();
+        mongod = await MongoMemoryServer.create();
 
         await mongoose
             .connect(mongod.getUri(), {
@@ -93,5 +95,6 @@ describe("Kickstart tournament", () => {
 
     afterAll(async () => {
         await mongoose.disconnect();
+        await mongod.stop();
     })
 })

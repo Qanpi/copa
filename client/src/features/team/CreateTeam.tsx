@@ -34,7 +34,7 @@ import { PromptContainer } from "../layout/PromptContainer.tsx";
 import { useState } from "react";
 
 export const teamValidationSchema = {
-  name: Yup.string().max(20).trim().matches(/^[^.]*$/, "Dot ('.') is reserved, sorry.").required(""),
+  name: Yup.string().max(30).trim().matches(/^[^.]*$/, "Dot ('.') is reserved, sorry.").required(""),
   about: Yup.string().max(200).optional(),
   phoneNumber: Yup.string()
     .matches(
@@ -66,7 +66,7 @@ export const TeamBannerInput = ({ name, edit, sx, ...props }: { name: string, ed
               Please provide a link to an image service provider (e.g. imgur) to display a banner on your team page.
             </DialogContentText>
           </Tooltip>
-          <MyTextField autoFocus margin="dense" label="Image link" fullWidth variant="standard" name="bannerUrl"></MyTextField>
+          <MyTextField autoFocus margin="dense" label="Image link" fullWidth variant="standard" name={name}></MyTextField>
           <Typography variant="body2" color="lightgray">Recommended dimensions are 400x400 pixels.</Typography>
         </DialogContent>
         <DialogActions>

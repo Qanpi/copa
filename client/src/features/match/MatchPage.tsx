@@ -16,18 +16,19 @@ import { useDivision, useTournament } from "../tournament/hooks";
 import OutlinedContainer from "../layout/OutlinedContainer";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { PromptContainer } from "../layout/PromptContainer";
+import { useTeam } from "../team/hooks";
 
 
 const TeamBox = ({ match, opponent, sx, ...props }: { opponent: "opponent1" | "opponent2", match: TMatch, } & StackProps) => {
   const opp = match[opponent];
 
-  const participant = useParticipant(opp?.id)
+  const {data: team} = useTeam(opp?.name);
   const updateMatch = useUpdateMatch();
 
-  const theme = useTheme();
 
   const handleChangeScore = (delta: number) => {
-    const newScore = (opp.score || 0) + delta;
+    const newScore = (opp?.score || 0) + delta;
 
     if (newScore < 0) return;
 
@@ -55,11 +56,11 @@ const TeamBox = ({ match, opponent, sx, ...props }: { opponent: "opponent1" | "o
           <Typography fontSize={"30vmin"} fontWeight={800} sx={{ mb: -5, mt: -5, ml: 10, mr: 10 }}>
             {opp?.score}
           </Typography>
-          {isAdmin ? <Button size="small" disabled={opp.score <= 0} variant="contained" color="primary" sx={{ width: "100%", }} onClick={() => handleChangeScore(-1)}>
+          {isAdmin ? <Button size="small" disabled={opp?.score <= 0} variant="contained" color="primary" sx={{ width: "100%", }} onClick={() => handleChangeScore(-1)}>
             <KeyboardArrowDown></KeyboardArrowDown>
           </Button> : null}
         </Stack>
-        : <Box sx={{ objectFit: "contain", width: "100%", height: "100%" }} component="img" src={participant?.bannerUrl}></Box>
+        : <Box sx={{ objectFit: "contain", width: "100%", height: "100%" }} component="img" src={team?.bannerUrl}></Box>
       }
       <Typography variant="h5">{opp?.name || "BYE"}</Typography>
     </Stack >
@@ -102,15 +103,11 @@ const MatchDisplay = ({ match }: { match: TMatch }) => {
     return (
       <Stack direction="row" sx={{ p: 2, borderRadius: 2, background: theme.palette.secondary.main, display: "flex", alignItems: "center", justifyContent: "center", minWidth: "300px" }}>
         <Stack direction="column" alignItems={"center"}>
-          <Typography variant="subtitle2">
+          <Typography variant="subtitle1">
             {match.start ? dayjs(match.start).format("DD.MM") : "Coming soon"}
           </Typography>
-          <Typography variant="h1" sx={{ fontWeight: 800, m: -1 }}>
+          <Typography variant="h1" sx={{ fontWeight: 800, mb: 1, mt: -1 }}>
             {match.start ? dayjs(match.start).format("HH:mm") : "-- : --"}
-          </Typography>
-
-          <Typography variant="subtitle2" sx={{ mt: 1 }}>
-            {match.location ? "Indoor hall" : "Stay tuned"}
           </Typography>
         </Stack>
       </Stack>
@@ -224,7 +221,7 @@ function MatchPage() {
           <Button onClick={() => setDurationPrompt(false)}>Cancel</Button>
         </DialogActions>
       </Dialog> */}
-      <OutlinedContainer maxWidth="lg" sx={{ p: 5 }}>
+      <PromptContainer>
         {/* <Stack direction={{ xs: "row", md: "column" }} spacing={5}> */}
         <Stack direction={{ xs: "column", md: "row" }} sx={{ display: "flex", justifyContent: "center", alignItems: "center", position: "relative", p: 5 }} spacing={20}>
           {/* //FIXME: default image */}
@@ -239,7 +236,7 @@ function MatchPage() {
         {/* <MatchProgress match={match}></MatchProgress> */}
         {/* </Stack> */}
 
-      </OutlinedContainer>
+      </PromptContainer>
 
       <SpeedDial icon={<SpeedDialIcon></SpeedDialIcon>} ariaLabel="Match Speed Dial" sx={{ position: "absolute", bottom: 16, right: 16 }}>
         <SpeedDialAction tooltipTitle="Begin match" icon={<Timer></Timer>} onClick={handleBeginMatch}></SpeedDialAction>

@@ -97,7 +97,7 @@ function TeamProfilePage() {
   return (
     <Formik enableReinitialize validationSchema={Yup.object(teamValidationSchema)} initialValues={team || {} as TTeam} onSubmit={handleSubmit}>
       {
-        ({ values: team, dirty, submitForm, resetForm }) => {
+        ({ values: team, dirty, submitForm, resetForm, errors }) => {
           return (
             <Form>
               <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>
