@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import { useMatches, useUpdateMatch } from "./hooks.ts";
 import { DataGrid, DataGridProps, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { useDivisions, useTournament } from "../tournament/hooks.ts";
+import { useDivision, useDivisions, useTournament } from "../tournament/hooks.ts";
 import { useParticipants } from "../participant/hooks.ts";
 import { notStrictEqual } from "assert";
 import { TMatch } from "@backend/models/match.ts";
@@ -11,12 +11,15 @@ import { useRounds } from "../round/hooks.ts";
 import dayjs from "dayjs";
 import { Launch } from "@mui/icons-material";
 import { useNavigate } from "react-router";
+import { useContext } from "react";
+import { DivisionContext } from "../../index.tsx";
+import { DaySeriesModel } from "@fullcalendar/core/internal";
 
 export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { matches?: TMatch[] }) => {
   const { data: tournament } = useTournament("current");
   const { data: participants } = useParticipants(tournament?.id);
-  // const { data: matches } = useMatches(tournament?.id);
 
+  const division = useContext(DivisionContext);
   const { data: divisions } = useDivisions(tournament?.id);
   const { data: groups } = useGroups(tournament?.id);
   const { data: rounds } = useRounds(tournament?.id);
@@ -125,8 +128,6 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
     //auto-set end date if start was updated
     let end;
     if (newRow.start) {
-      const stage = stages?.find((g) => g.id === newRow.stage_id?.toString())
-      const division = divisions.find(d => d.id === stage?.division);
       const duration = division?.settings?.matchLength;
 
       if (!duration) throw new Error("Failed to set end date for match.")
@@ -135,6 +136,7 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
 
     updateMatch.mutate({
       ...newRow,
+      start: dayjs(newRow.start).hour(12).toDate(),
       end
     });
 
