@@ -28,7 +28,7 @@ function GroupStagePage() {
     return <BannerPage title={"Groups"}>
         <DivisionPanel>
             {!isLoading ?
-                (!stageData ? <Box
+                (stageData ? <Box
                     sx={{ maxWidth: "100vw" }}
                     ref={bracketsRef}
                     className="brackets-viewer"
