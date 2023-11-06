@@ -47,22 +47,22 @@ export const MatchesTable = (props: Partial<DataGridProps>) => {
         return value ? new Date(value) : undefined;
       },
     },
-    // {
-    //   field: "time",
-    //   headerName: "Time (24h)",
-    //   valueGetter(p) {
-    //     return p.row.start ? dayjs(p.row.start).format('HH:mm') : undefined;
-    //   }
-    // },
-    // {
-    //   field: "duration",
-    //   headerName: "Duration (min)",
-    //   type: "number",
-    //   valueGetter(p) {
-    //     if (!p.row?.end || !p.row?.start) return;
-    //     return dayjs(p.row.end).diff(p.row.start, "minutes");
-    //   }
-    // },
+    {
+      field: "time",
+      headerName: "Time (24h)",
+      valueGetter(p) {
+        return p.row.start ? dayjs(p.row.start).format('HH:mm') : undefined;
+      }
+    },
+    {
+      field: "duration",
+      headerName: "Duration (min)",
+      type: "number",
+      valueGetter(p) {
+        if (!p.row?.end || !p.row?.start) return;
+        return dayjs(p.row.end).diff(p.row.start, "minutes");
+      }
+    },
     // {
     //   field: "scheduled",
     //   headerName: "Scheduled",
