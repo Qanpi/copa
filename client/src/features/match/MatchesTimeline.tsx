@@ -69,15 +69,15 @@ function MatchesTimeline() {
 
     return (
         <Box>
-            <Select label="Group by"></Select>
+            {/* <Select label="Group by"></Select> */}
             <Timeline items={items}
                 groups={groups}
                 dragSnap={1 * 60 * 1000}
                 defaultTimeStart={dayjs().subtract(12, "hour").toDate()}
                 defaultTimeEnd={dayjs().add(12, "hour").toDate()}
                 onItemDrag={handleItemDrag}
-                canResize="right"
-                useResizeHandle
+                // canResize="right"
+                // useResizeHandle
                 moveResizeValidator={(action, item, time, resizeEdge) => {
                     if (action === "resize") {
                         const duration = dayjs(time).diff(item.start_time, "minutes");

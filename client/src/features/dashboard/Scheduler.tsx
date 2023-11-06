@@ -12,6 +12,8 @@ import { useParticipants } from '../participant/hooks';
 import MatchesTimeline from '../match/MatchesTimeline';
 import { MatchesTable } from '../match/MatchesTable';
 import AdminOnlyPage from './AdminOnlyBanner';
+import DivisionPanel from '../layout/DivisionPanel';
+import BannerPage from '../viewer/BannerPage';
 
 const useMatchScheduler = () => {
   const { data: tournament } = useTournament("current");
@@ -63,19 +65,13 @@ const useMatchScheduler = () => {
 };
 
 const Scheduler = () => {
-  const { data: tournament } = useTournament("current");
-  const { data: matches } = useMatches(tournament?.id, {
-  });
-
-
   return <AdminOnlyPage>
-    <Container maxWidth="xl" sx={{ pt: 5 }}>
-      <Stack direction="column" spacing={3}>
-        <Typography variant="h2">Scheduler</Typography>
-        <MatchesTimeline></MatchesTimeline>
-        <MatchesTable matches={matches}></MatchesTable>
-      </Stack>
-    </Container>
+    <BannerPage sx={{minWidth: "1600px"}} title="Scheduler">
+        <Stack direction="column" spacing={3} sx={{minWidth: "1600px"}}>
+          <MatchesTimeline></MatchesTimeline>
+          <MatchesTable></MatchesTable>
+        </Stack>
+    </BannerPage>
   </AdminOnlyPage>
 }
 

@@ -15,9 +15,10 @@ import { useContext } from "react";
 import { DivisionContext } from "../../index.tsx";
 import { DaySeriesModel } from "@fullcalendar/core/internal";
 
-export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { matches?: TMatch[] }) => {
+export const MatchesTable = (props: Partial<DataGridProps>) => {
   const { data: tournament } = useTournament("current");
   const { data: participants } = useParticipants(tournament?.id);
+  const { data: matches } = useMatches(tournament?.id);
 
   const division = useContext(DivisionContext);
   const { data: divisions } = useDivisions(tournament?.id);
@@ -29,14 +30,14 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
 
   const navigate = useNavigate();
   const cols: GridColDef[] = [
-    {
-      field: "actions",
-      type: "actions",
-      getActions: (p) => [
-        <GridActionsCellItem icon={<Launch></Launch>} label={"Browse"} onClick={() => navigate(`/tournament/matches/${p.row.id}`)}></GridActionsCellItem>,
-        // <GridActionsCellItem></GridActionsCellItem>
-      ]
-    },
+    // {
+    //   field: "actions",
+    //   type: "actions",
+    //   getActions: (p) => [
+    //     <GridActionsCellItem icon={<Launch></Launch>} label={"Browse"} onClick={() => navigate(`/tournament/matches/${p.row.id}`)}></GridActionsCellItem>,
+    //     // <GridActionsCellItem></GridActionsCellItem>
+    //   ]
+    // },
     {
       field: "start",
       headerName: "Date",
@@ -46,25 +47,34 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
         return value ? new Date(value) : undefined;
       },
     },
-    {
-      field: "time",
-      headerName: "Time",
-      valueGetter(p) {
-        return p.row.start ? dayjs(p.row.start).format('HH:mm') : undefined;
-      }
-    },
-    {
-      field: "duration",
-      headerName: "Duration (min)",
-      type: "number",
-      valueGetter(p) {
-        if (!p.row?.end || !p.row?.start) return;
-        return dayjs(p.row.end).diff(p.row.start, "minutes");
-      }
-    },
+    // {
+    //   field: "time",
+    //   headerName: "Time (24h)",
+    //   valueGetter(p) {
+    //     return p.row.start ? dayjs(p.row.start).format('HH:mm') : undefined;
+    //   }
+    // },
+    // {
+    //   field: "duration",
+    //   headerName: "Duration (min)",
+    //   type: "number",
+    //   valueGetter(p) {
+    //     if (!p.row?.end || !p.row?.start) return;
+    //     return dayjs(p.row.end).diff(p.row.start, "minutes");
+    //   }
+    // },
+    // {
+    //   field: "scheduled",
+    //   headerName: "Scheduled",
+    //   type: "boolean",
+    //   valueGetter: ({row}) => {
+    //     return row.start && row.end;
+    //   }
+    // },
     {
       field: "opponent1",
       headerName: "Home",
+      width: 200,
       valueGetter: (p) => {
         if (p.value === null) return "BYE";
 
@@ -75,11 +85,22 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
     {
       field: "opponent2",
       headerName: "Away",
+      width: 200,
       valueGetter: (p) => {
         if (p.value === null) return "BYE";
 
         const participant = participants?.find(part => part.id === p.value.id);
         return participant?.name || "TBD";
+      }
+    },
+    {
+      field: "division",
+      headerName: "Division",
+      valueGetter: (p) => {
+        const stage = stages?.find((g) => g.id === p.row.stage_id)
+
+        const division = divisions?.find(d => d.id === stage?.division);
+        return division?.name;
       }
     },
     {
@@ -102,42 +123,27 @@ export const MatchesTable = ({ matches, ...props }: Partial<DataGridProps> & { m
       field: "verboseStatus",
       headerName: "Status",
     },
-    {
-      field: "stage_id",
-      headerName: "Stage",
-      valueGetter: (p) => {
-        const stage = stages?.find((g) => g.id === p.value)
-        return stage?.name;
-      }
-    },
-    {
-      field: "division",
-      headerName: "Division",
-      valueGetter: (p) => {
-        const stage = stages?.find((g) => g.id === p.row.stage_id)
+    // {
+    //   field: "stage_id",
+    //   headerName: "Stage",
+    //   valueGetter: (p) => {
+    //     const stage = stages?.find((g) => g.id === p.value)
+    //     return stage?.name;
+    //   }
+    // },
 
-        const division = divisions?.find(d => d.id === stage?.division);
-        return division?.name;
-      }
-    }
   ];
 
   if (!matches) return <>LOading</>;
 
   const handleRowUpdate = (newRow: TMatch, og: TMatch) => {
-    //auto-set end date if start was updated
-    let end;
-    if (newRow.start) {
-      const duration = division?.settings?.matchLength;
-
-      if (!duration) throw new Error("Failed to set end date for match.")
-      end = dayjs(newRow.start).add(duration, "seconds").toDate();
-    }
+    const duration = division?.settings?.matchLength;
+    const start = dayjs(newRow.start).hour(12)
 
     updateMatch.mutate({
       ...newRow,
-      start: dayjs(newRow.start).hour(12).toDate(),
-      end
+      start: start.toDate(),
+      end: start.add(duration, "seconds").toDate()
     });
 
     return newRow;
