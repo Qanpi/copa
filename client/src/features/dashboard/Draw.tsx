@@ -100,7 +100,7 @@ function DrawPage() {
       tournamentId: division.id,
       settings: {
         groupCount,
-        seedOrdering: ["natural"]
+        seedOrdering: ["groups.effort_balanced"]
       },
       seeding: seeding.flat()
     }, {

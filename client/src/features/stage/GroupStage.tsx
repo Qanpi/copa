@@ -8,7 +8,7 @@ import { useGroupStageData, useStages } from "./hooks";
 import DivisionPanel from "../layout/DivisionPanel";
 import { useStageData } from "./hooks";
 import { useBracketsViewer } from "./hooks";
-import { Container, Typography } from "@mui/material";
+import { Box, Container, Skeleton, Typography } from "@mui/material";
 import BannerPage from "../viewer/BannerPage";
 import "ts-brackets-viewer/dist/style.css"
 import { PromptContainer } from "../layout/PromptContainer";
@@ -21,21 +21,26 @@ function GroupStagePage() {
         type: "round_robin",
         division: division?.id
     })
-    const { data: stageData } = useStageData(stages?.[0]?.id);
+    const { data: stageData, isLoading } = useStageData(stages?.[0]?.id);
 
     const bracketsRef = useBracketsViewer(stageData, "#group-stage");
 
     return <BannerPage title={"Groups"}>
         <DivisionPanel>
-            {stageData ?
-                <div
+            {!isLoading ?
+                (!stageData ? <Box
+                    sx={{ maxWidth: "100vw" }}
                     ref={bracketsRef}
                     className="brackets-viewer"
                     id="group-stage"
-                ></div>
-                : <PromptContainer>
-                    <Typography>Groups will appear here once we get there.</Typography>
-                </PromptContainer>}
+                ></Box> :
+                    <Typography>
+                        Groups will appear here once we get there.
+                    </Typography>
+                )
+                :
+                <Skeleton variant="rounded" height="80vh"></Skeleton>
+            }
         </DivisionPanel>
     </BannerPage>
 }
