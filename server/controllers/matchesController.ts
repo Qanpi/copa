@@ -48,7 +48,9 @@ export const deleteMany = async (req: Request, res: Response) => {
 export const updateOne = async (req: Request, res: Response) => {
   //TODO: if statement
   await bracketsManager.update.match({ ...req.body, id: req.params.matchId });
-  const updated = await Match.findById(req.params.matchId);
+  //FIXME: patch double updates
+  //currently done because otherwise status wouldn't update from running to ready
+  const updated = await Match.findByIdAndUpdate(req.params.matchId, req.body);
 
   res.send(updated);
 };

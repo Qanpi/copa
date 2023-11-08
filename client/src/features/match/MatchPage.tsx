@@ -18,12 +18,14 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { PromptContainer } from "../layout/PromptContainer";
 import { useTeam } from "../team/hooks";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc)
 
 
 const TeamBox = ({ match, opponent, sx, ...props }: { opponent: "opponent1" | "opponent2", match: TMatch, } & StackProps) => {
   const opp = match[opponent];
 
-  const {data: team} = useTeam(opp?.name);
+  const { data: team } = useTeam(opp?.name);
   const updateMatch = useUpdateMatch();
 
 
@@ -68,25 +70,33 @@ const TeamBox = ({ match, opponent, sx, ...props }: { opponent: "opponent1" | "o
   )
 }
 
-const MatchDisplay = ({ match }: { match: TMatch }) => {
+const MatchDisplay = ({ matchId }: { matchId: string }) => {
   const theme = useTheme();
+  const { data: match } = useMatch(matchId);
 
   const getExpiryTimestamp = () => {
-    const duration = dayjs(match.end).diff(match.start, "seconds");
+    const end = dayjs().add(match.duration, "seconds");
+    const remaining = end.subtract(match.elapsed, "seconds");
 
-    return dayjs().add(duration, "seconds").toDate();
+    return remaining.toDate();
   }
 
+  const [completeMatchDialog, showCompleteMatchDialog] = useState(false);
   const { minutes, seconds, start, pause, resume, restart, isRunning, totalSeconds } = useTimer({
     expiryTimestamp: getExpiryTimestamp(),
-    onExpire: () => console.log("epxciring"),
+    onExpire: () => showCompleteMatchDialog(true),
     autoStart: false,
   });
 
+  const updateMatch = useUpdateMatch();
   useEffect(() => {
     const updateFrequency = 5;
 
-    if (isRunning && seconds % updateFrequency === 0) {
+    if (isRunning && totalSeconds % updateFrequency === 0) {
+      updateMatch.mutate({
+        id: match.id,
+        elapsed: match.duration - totalSeconds
+      })
     }
 
   }, [seconds])
@@ -96,7 +106,21 @@ const MatchDisplay = ({ match }: { match: TMatch }) => {
     else resume();
   }
 
+  const handleCompleteMatch = () => {
+    updateMatch.mutate({
+      id: match.id,
+      // ...match,
+      // opponent1: {
+      //   ...match.opponent1,
+      // },
+      // opponent2: {
+      //   ...match.opponent2,
+      // },
+      status: Status.Completed
+    })
+  }
 
+  if (!match) return <>loading..</>
   if (!match.status) return <Typography>Couldn't determine the status of the match.</Typography>
 
   if (match.status <= Status.Ready) {
@@ -113,43 +137,56 @@ const MatchDisplay = ({ match }: { match: TMatch }) => {
       </Stack>
     );
   } else if (match.status === Status.Running) {
-    return <Box sx={{ p: 2, borderRadius: 0, opacity: isRunning ? 1 : 0.5, background: theme.palette.secondary.main, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "300px" }}
-      onClick={handleTimerClick}>
-      <Typography variant="h6" sx={{ mb: -1 }}>Time remaining</Typography>
-      <Stack direction="row" alignItems={"center"} justifyContent="center" >
+    return (
+      <>
+        <Dialog open={completeMatchDialog}>
+          <DialogTitle>
+            Complete match?
+          </DialogTitle>
+          <DialogActions>
+            <Button onClick={handleCompleteMatch}>Yes</Button>
+            <Button onClick={() => showCompleteMatchDialog(false)}>No</Button>
+          </DialogActions>
+        </Dialog>
+        <Box sx={{ p: 2, borderRadius: 0, opacity: isRunning ? 1 : 0.5, background: theme.palette.secondary.main, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "300px" }}
+          onClick={handleTimerClick}>
+          <Typography variant="h6" sx={{ mb: -1 }}>Time remaining</Typography>
+          <Stack direction="row" alignItems={"center"} justifyContent="center" >
 
-        <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h1" sx={{ fontWeight: 800 }}>
-            {`${minutes.toString().padStart(2, '0')}`}
-          </Typography>
+            <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="h1" sx={{ fontWeight: 800 }}>
+                {`${minutes.toString().padStart(2, '0')}`}
+              </Typography>
 
-          <Typography variant="subtitle2" sx={{ mt: -2 }}>min</Typography>
-        </Stack>
+              <Typography variant="subtitle2" sx={{ mt: -2 }}>min</Typography>
+            </Stack>
 
-        <Typography variant="h1" sx={{ fontWeight: 800, mb: "0.2em" }}>:</Typography>
+            <Typography variant="h1" sx={{ fontWeight: 800, mb: "0.2em" }}>:</Typography>
 
-        <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h1" sx={{ fontWeight: 800 }}>
-            {`${seconds.toString().padStart(2, '0')}`}
-          </Typography>
-          <Typography variant="subtitle2" sx={{ mt: -2 }}>sec</Typography>
-        </Stack>
+            <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="h1" sx={{ fontWeight: 800 }}>
+                {`${seconds.toString().padStart(2, '0')}`}
+              </Typography>
+              <Typography variant="subtitle2" sx={{ mt: -2 }}>sec</Typography>
+            </Stack>
 
-      </Stack>
-      <Typography variant="subtitle1" sx={{ mt: 1 }}>
-        {!isRunning ? "[Tap to resume countdown]" : "[Tap to pause]"}
-      </Typography>
-    </Box >
+          </Stack>
+        </Box >
+      </>
+    )
   } else {
     return <>Match completed page</>
   }
 }
 
-const MatchProgress = ({ match }: { match: TMatch }) => {
-  if (!match.status || match.status < Status.Running) return null;
+const MatchProgress = ({ matchId }: { matchId: string }) => {
+  const { data: match } = useMatch(matchId);
 
+  if (!match?.status || match.status < Status.Running) return null;
+
+  const progress = match.remaining / match.duration * 100;
   return (
-    <LinearProgress variant="determinate" value={10} sx={{ transform: "scaleX(-1)", height: 5, width: "80vmin" }}></LinearProgress>
+    <LinearProgress variant="determinate" value={progress} sx={{ transform: "scaleX(-1)", height: 5, width: "80vmin" }}></LinearProgress>
   )
 }
 
@@ -160,12 +197,9 @@ function MatchPage() {
   const { data: user } = useAuth();
   const isAdmin = user?.role === "admin";
 
-  const updateMatch = useUpdateMatch();
+  const updateMatch = useUpdateMatch({ debounce: false });
   const handleBeginMatch = () => {
     if (!match) return;
-
-    const start = match.start || dayjs().toDate();
-    const end = match.end || dayjs().add(360, "seconds").toDate();
 
     updateMatch.mutate({
       ...match,
@@ -177,8 +211,6 @@ function MatchPage() {
         ...match.opponent2,
         score: 0
       },
-      start,
-      end,
       status: Status.Running
     })
   }
@@ -188,13 +220,12 @@ function MatchPage() {
   const resetMatch = useMutation({
     mutationFn: async (values: Partial<TMatch>) => {
       //FIXME: wack af
-      await axios.delete(`/api/tournaments/${tournament?.id}/matches/${values.id}`);
+      await axios.delete(`/api/tournaments/${tournament?.id}/matches/${values.id}/results`);
       await axios.patch(`/api/tournaments/${tournament?.id}/matches/${values.id}`, {
-        start: null,
-        end: null,
+        elapsed: 0,
         status: Status.Ready //FIXME: assumption
       });
-    }
+    },
   })
 
   const handleResetMatch = () => {
@@ -224,16 +255,15 @@ function MatchPage() {
       <PromptContainer>
         {/* <Stack direction={{ xs: "row", md: "column" }} spacing={5}> */}
         <Stack direction={{ xs: "column", md: "row" }} sx={{ display: "flex", justifyContent: "center", alignItems: "center", position: "relative", p: 5 }} spacing={20}>
-          {/* //FIXME: default image */}
           <TeamBox match={match} opponent={"opponent1"} direction={{ xs: "column-reverse", md: "column" }}></TeamBox>
           <TeamBox match={match} opponent="opponent2" ></TeamBox>
 
           <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) ", m: "0 !important" }}>
-            <MatchDisplay match={match}></MatchDisplay>
+            <MatchDisplay matchId={match.id}></MatchDisplay>
           </Box>
         </Stack>
 
-        {/* <MatchProgress match={match}></MatchProgress> */}
+        <MatchProgress matchId={match.id}></MatchProgress>
         {/* </Stack> */}
 
       </PromptContainer>
