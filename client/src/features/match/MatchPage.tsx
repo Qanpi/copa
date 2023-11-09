@@ -51,7 +51,7 @@ const Score = ({ matchId, opponent }: { matchId: string, opponent: "opponent1" |
         <KeyboardArrowUp></KeyboardArrowUp>
       </IconButton> : null}
       <Typography variant="h1" fontWeight={800}>
-        {opp?.score}
+        {opp?.score || 0}
       </Typography>
       {isScoreEditable ? <IconButton size="small" disabled={(opp?.score || 0) <= 0} onClick={() => handleChangeScore(-1)}>
         <KeyboardArrowDown></KeyboardArrowDown>
