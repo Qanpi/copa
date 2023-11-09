@@ -1,7 +1,7 @@
 import { TMatch } from "@backend/models/match";
 import { TParticipant } from "@backend/models/participant";
-import { AddCircle, KeyboardArrowDown, KeyboardArrowUp, PlayArrow, PlusOne, RemoveCircle, RestartAlt, Save, Timer } from "@mui/icons-material";
-import { Button, Box, BoxProps, Container, IconButton, LinearProgress, Stack, StackProps, Typography, useTheme, SpeedDial, SpeedDialAction, SpeedDialIcon, Dialog, DialogTitle, DialogContent, Input, DialogActions } from "@mui/material";
+import { AddCircle, KeyboardArrowDown, KeyboardArrowUp, Pause, PlayArrow, PlusOne, RemoveCircle, RestartAlt, Save, Timer } from "@mui/icons-material";
+import { Button, Box, BoxProps, Container, IconButton, LinearProgress, Stack, StackProps, Typography, useTheme, SpeedDial, SpeedDialAction, SpeedDialIcon, Dialog, DialogTitle, DialogContent, Input, DialogActions, useMediaQuery } from "@mui/material";
 import { Status } from "brackets-model";
 import dayjs, { Dayjs } from "dayjs";
 import { Form, Formik, useFormikContext } from "formik";
@@ -94,7 +94,7 @@ const MatchDisplay = ({ matchId }: { matchId: string }) => {
     case Status.Running:
     case Status.Completed:
       return (
-        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+        <Stack direction="row" spacing={"10%"} sx={{ alignItems: "center", justifyContent: "center" }}>
           <Score matchId={match.id} opponent="opponent1"></Score>
           <Typography variant="h1" fontWeight={800} sx={{ mb: "10% !important" }}>|</Typography>
           <Score matchId={match.id} opponent="opponent2"></Score>
@@ -116,6 +116,11 @@ const MatchProgress = ({ matchId, onTimerExpire }: { matchId: string, onTimerExp
     return remaining.toDate();
   }
 
+  const {data: auth} = useAuth();
+  const isAdmin = auth?.role === "admin";
+
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
+
   const { minutes, seconds, start, pause, resume, restart, isRunning, totalSeconds } = useTimer({
     expiryTimestamp: getExpiryTimestamp(),
     onExpire: onTimerExpire,
@@ -126,7 +131,7 @@ const MatchProgress = ({ matchId, onTimerExpire }: { matchId: string, onTimerExp
   useEffect(() => {
     const updateFrequency = 5;
 
-    if (isRunning && totalSeconds % updateFrequency === 0) {
+    if (isAdmin && isRunning && totalSeconds % updateFrequency === 0) {
       updateMatch.mutate({
         id: match.id,
         elapsed: match.duration - totalSeconds
@@ -140,38 +145,43 @@ const MatchProgress = ({ matchId, onTimerExpire }: { matchId: string, onTimerExp
     else resume();
   }
 
-
-  if (!match?.status || match.status < Status.Running) return null;
+  if (!match?.status || match.status !== Status.Running) return null;
 
   const progress = match.elapsed / match.duration * 100;
+
   return (
-    <>
-      <IconButton>
-        <PlayArrow onClick={handleTimerToggle}></PlayArrow>
-      </IconButton>
-      <Typography variant="h6" sx={{ mb: -1 }}>Time remaining</Typography>
-      <Stack direction="row" alignItems={"center"} justifyContent="center" >
+    <Stack spacing={2}>
+      <Stack direction="row" spacing={2} alignItems="center">
+        {isAdmin ? <Box>
+          <IconButton >
+            {!isRunning ? <PlayArrow onClick={handleTimerToggle}></PlayArrow> :
+              <Pause onClick={handleTimerToggle}></Pause>}
+          </IconButton>
+        </Box> : null}
+        {/* <Typography variant="h6" sx={{ mb: -1 }}>Time remaining</Typography> */}
+        <Stack direction="row" alignItems={"center"} justifyContent="center" >
+          <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="h2" sx={{ fontWeight: 800 }}>
+              {`${minutes.toString().padStart(2, '0')}`}
+            </Typography>
 
-        <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h1" sx={{ fontWeight: 800 }}>
-            {`${minutes.toString().padStart(2, '0')}`}
-          </Typography>
+            <Typography variant="subtitle2" sx={{ mt: -1 }}>min</Typography>
+          </Stack>
 
-          <Typography variant="subtitle2" sx={{ mt: -2 }}>min</Typography>
+          <Typography variant="h2" sx={{ fontWeight: 800, mb: "0.4em" }}>:</Typography>
+
+          <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="h2" sx={{ fontWeight: 800 }}>
+              {`${seconds.toString().padStart(2, '0')}`}
+            </Typography>
+            <Typography variant="subtitle2" sx={{ mt: -1 }}>sec</Typography>
+          </Stack>
         </Stack>
-
-        <Typography variant="h1" sx={{ fontWeight: 800, mb: "0.2em" }}>:</Typography>
-
-        <Stack direction="column" sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h1" sx={{ fontWeight: 800 }}>
-            {`${seconds.toString().padStart(2, '0')}`}
-          </Typography>
-          <Typography variant="subtitle2" sx={{ mt: -2 }}>sec</Typography>
-        </Stack>
-
       </Stack>
-      <LinearProgress variant="determinate" value={progress} sx={{ height: 5, width: "80vmin" }}></LinearProgress>
-    </>
+      {!isMobile ? <Box sx={{ width: "80vmax" }}>
+        <LinearProgress variant="determinate" color="primary" value={progress} ></LinearProgress>
+      </Box> : null}
+    </Stack>
   )
 }
 
@@ -202,15 +212,21 @@ function MatchPage() {
 
   const [completeMatchDialog, showCompleteMatchDialog] = useState(false);
   const handleCompleteMatch = () => {
+    const draw = match.opponent1.score === match.opponent2.score;
+    const opp1Result = draw ? "draw" : (match?.opponent1.score > match?.opponent2.score ? "win" : "loss");
+    const opp2Result = draw ? "draw" : (match?.opponent2.score > match?.opponent1.score ? "win" : "loss");
+
     updateMatch.mutate({
       id: match.id,
-      // ...match,
-      // opponent1: {
-      //   ...match.opponent1,
-      // },
-      // opponent2: {
-      //   ...match.opponent2,
-      // },
+      ...match,
+      opponent1: {
+        ...match.opponent1,
+        result: opp1Result
+      },
+      opponent2: {
+        ...match.opponent2,
+        result: opp2Result,
+      },
       status: Status.Completed
     })
     showCompleteMatchDialog(false);
@@ -267,26 +283,25 @@ function MatchPage() {
         </DialogActions>
       </Dialog>
       <PromptContainer>
-        {/* <Stack direction={{ xs: "row", md: "column" }} spacing={5}> */}
-        <Stack direction={{ xs: "column", md: "row" }} sx={{ display: "flex", justifyContent: "center", alignItems: "center", position: "relative", p: 5 }} spacing={20}>
-          <TeamBox opp={match.opponent1} direction={{ xs: "column-reverse", md: "column" }}></TeamBox>
-          <TeamBox opp={match.opponent2} ></TeamBox>
+        <Stack direction={{ xs: "column-reverse", md: "column" }} alignItems={"center"} spacing={1}>
+          <Stack direction={{ xs: "column", md: "row" }} sx={{ display: "flex", justifyContent: "center", alignItems: "center", position: "relative" }} spacing={20}>
+            <TeamBox opp={match.opponent1} direction={{ xs: "column-reverse", md: "column" }}></TeamBox>
+            <TeamBox opp={match.opponent2} ></TeamBox>
 
-          <Box sx={{ p: 2, pl: 5, pr: 5, borderRadius: 2, background: theme.palette.secondary.main, display: "flex", alignItems: "center", justifyContent: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) ", m: "0 !important", width: "min(40vmin, 250px)" }}>
-            <MatchDisplay matchId={match.id} onTimerExpire={() => showCompleteMatchDialog(true)}></MatchDisplay>
-          </Box>
+            <Box sx={{ pl: 2, pr: 2, borderRadius: 2, background: theme.palette.secondary.main, display: "flex", alignItems: "center", justifyContent: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) ", m: "0 !important", width: "min(40vmin, 250px)", minHeight: "100px" }}>
+              <MatchDisplay matchId={match.id}></MatchDisplay>
+            </Box>
+          </Stack>
+
+          <MatchProgress matchId={match.id} onTimerExpire={() => showCompleteMatchDialog(true)}></MatchProgress>
         </Stack>
-
-        <MatchProgress matchId={match.id}></MatchProgress>
-        {/* </Stack> */}
-
       </PromptContainer >
 
-      <SpeedDial icon={<SpeedDialIcon></SpeedDialIcon>} ariaLabel="Match Speed Dial" sx={{ position: "absolute", bottom: 16, right: 16 }}>
+      {isAdmin ? <SpeedDial icon={<SpeedDialIcon></SpeedDialIcon>} ariaLabel="Match Speed Dial" sx={{ position: "absolute", bottom: 16, right: 16 }}>
         <SpeedDialAction tooltipTitle="Begin match" icon={<Timer></Timer>} onClick={handleBeginMatch}></SpeedDialAction>
         <SpeedDialAction tooltipTitle="Reset" icon={<RestartAlt></RestartAlt>} onClick={handleResetMatch}></SpeedDialAction>
         <SpeedDialAction tooltipTitle="Complete" icon={<Save></Save>} onClick={() => showCompleteMatchDialog(true)}></SpeedDialAction>
-      </SpeedDial>
+      </SpeedDial> : null}
     </>
   )
 
