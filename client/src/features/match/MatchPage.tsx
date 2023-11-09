@@ -43,16 +43,17 @@ const Score = ({ matchId, opponent }: { matchId: string, opponent: "opponent1" |
 
   const { data: user } = useAuth();
   const isAdmin = user?.role === "admin";
+  const isScoreEditable = isAdmin && match.status === Status.Running;
 
   return (
-    <Stack direction="column" spacing={-2} sx={{ alignItems: "center", display: "flex"}}>
-      {isAdmin ? <IconButton size="small" onClick={() => handleChangeScore(1)}>
+    <Stack direction="column" spacing={-2} sx={{ alignItems: "center", display: "flex" }}>
+      {isScoreEditable ? <IconButton size="small" onClick={() => handleChangeScore(1)}>
         <KeyboardArrowUp></KeyboardArrowUp>
       </IconButton> : null}
       <Typography variant="h1" fontWeight={800}>
         {opp?.score}
       </Typography>
-      {isAdmin ? <IconButton size="small" disabled={(opp?.score || 0) <= 0} onClick={() => handleChangeScore(-1)}>
+      {isScoreEditable ? <IconButton size="small" disabled={(opp?.score || 0) <= 0} onClick={() => handleChangeScore(-1)}>
         <KeyboardArrowDown></KeyboardArrowDown>
       </IconButton> : null}
     </Stack>
@@ -77,31 +78,32 @@ const MatchDisplay = ({ matchId }: { matchId: string }) => {
 
 
   if (!match) return <>loading..</>
-  if (!match.status) return <Typography>Couldn't determine the status of the match.</Typography>
+  switch (match.status) {
+    case Status.Waiting:
+    case Status.Ready:
+      return (
+        <Stack direction="column" alignItems={"center"}>
+          <Typography variant="subtitle1">
+            {match.start ? dayjs(match.start).format("DD.MM") : "Coming soon"}
+          </Typography>
+          <Typography variant="h1" sx={{ fontWeight: 800, mb: 1, mt: -1 }}>
+            {match.start ? dayjs(match.start).format("HH:mm") : "-- : --"}
+          </Typography>
+        </Stack>
+      );
+    case Status.Running:
+    case Status.Completed:
+      return (
+        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+          <Score matchId={match.id} opponent="opponent1"></Score>
+          <Typography variant="h1" fontWeight={800} sx={{ mb: "10% !important" }}>|</Typography>
+          <Score matchId={match.id} opponent="opponent2"></Score>
+        </Stack>
+      )
 
-  if (match.status <= Status.Ready) {
-    return (
-      <Stack direction="column" alignItems={"center"}>
-        <Typography variant="subtitle1">
-          {match.start ? dayjs(match.start).format("DD.MM") : "Coming soon"}
-        </Typography>
-        <Typography variant="h1" sx={{ fontWeight: 800, mb: 1, mt: -1 }}>
-          {match.start ? dayjs(match.start).format("HH:mm") : "-- : --"}
-        </Typography>
-      </Stack>
-    );
-  } else if (match.status === Status.Running) {
-    return (
-      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-        <Score matchId={match.id} opponent="opponent1"></Score>
-        <Typography variant="h1" fontWeight={800} sx={{ mb: "10%" }}>:</Typography>
-        <Score matchId={match.id} opponent="opponent2"></Score>
-      </Stack>
-    )
-  } else {
-    return <>Match completed page</>
+    default:
+      return <Typography>Couldn't determine the status of the match.</Typography>
   }
-
 }
 
 const MatchProgress = ({ matchId, onTimerExpire }: { matchId: string, onTimerExpire: () => void }) => {
