@@ -50,7 +50,7 @@ export const updateOne = async (req: Request, res: Response) => {
   await bracketsManager.update.match({ ...req.body, id: req.params.matchId });
   //FIXME: patch double updates
   //currently done because otherwise status wouldn't update from running to ready
-  const updated = await Match.findByIdAndUpdate(req.params.matchId, {status: req.body.status});
+  const updated = await Match.findByIdAndUpdate(req.params.matchId, req.body);
 
   res.send(updated);
 };

@@ -61,13 +61,14 @@ const Score = ({ matchId, opponent }: { matchId: string, opponent: "opponent1" |
 }
 
 const TeamBox = ({ opp, sx, ...props }: { opp: TMatch["opponent1"], } & StackProps) => {
-  const { data: team } = useTeam(opp?.name);
+  const {data: participant} = useParticipant(opp?.id);
+  const { data: team } = useTeam(participant?.name); //FIXME: should realy be querying by id
 
   return (
     // <Stack direction={"row"} display="flex" justifyContent={"center"} alignItems="center" spacing={2}>
     <Stack direction="column" display="flex" alignItems="center" sx={{ width: "40vmin", height: "50vmin", }}  {...props} spacing={1}>
       <Box sx={{ objectFit: "contain", width: "100%", height: "100%" }} component="img" src={team?.bannerUrl}></Box>
-      <Typography variant="h5">{opp?.name || "BYE"}</Typography>
+      <Typography variant="h5">{team?.name || "BYE"}</Typography>
     </Stack >
     // </Stack>
   )
@@ -254,6 +255,7 @@ function MatchPage() {
 
   if (status === "loading") return <div>Loading...</div>;
   if (!match?.status) return <>Loading</>
+  console.log(match)
 
   return (
     <>
