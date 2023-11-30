@@ -13,7 +13,7 @@
     "server": "set NODE_ENV=development&&set DEBUG=app:*&&npm run db && nodemon bin/www.ts --config nodemon.json",
     "client": "cd ../client && npm start",
     "dev": "npm-run-all --parallel server client",
-    "newman": "newman run https://api.postman.com/collections/29609830-1607a99b-864d-4e2e-b779-31781f41738b?access_key=PMAT-01HBNF0GYSR4VMF5V8W0CZ5EE3"
+    "newman": "env-cmd cross-env-shell newman run $POSTMAN_API_KEY"
   },
   "keywords": [],
   "author": "",
@@ -35,7 +35,7 @@
     "applicationinsights": "^2.9.0",
     "babel": "^6.23.0",
     "brackets-json-db": "^1.0.2",
-    "brackets-manager": "^1.6.3",
+    "brackets-manager": "github:Qanpi/brackets-manager.js",
     "brackets-model": "^1.5.0",
     "brackets-mongo-db": "^2.0.0",
     "cookie-parser": "~1.4.4",
@@ -90,6 +90,7 @@
     "mongodb-memory-server": "^9.0.1",
     "nodemon": "^3.0.1",
     "npm-run-all": "^4.1.5",
+    "patch-package": "^8.0.0",
     "supertest": "^6.3.3",
     "typescript": "^5.2.2",
     "webpack-dev-server": "^4.15.1"

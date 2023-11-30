@@ -3,6 +3,8 @@ import {
   Button,
   Card,
   CardContent,
+  MenuItem,
+  Select,
   Slider,
   Typography
 } from "@mui/material";
@@ -30,13 +32,16 @@ import { InMemoryDatabase } from "brackets-memory-db";
 import { Seeding } from "brackets-model";
 import { RoundNameInfo } from "ts-brackets-viewer";
 import { groupBy, flatten, create } from "lodash-es";
-import { isSeedingWithIds } from "brackets-manager/dist/helpers";
 import { useGroupedParticipants } from "./Draw.tsx";
 import { useMatches } from "../match/hooks.ts";
-import { useCreateStage, useStages, useStandings } from "../stage/hooks.ts";
+import { useCreateStage, useDeleteStage, useStages, useStandings } from "../stage/hooks.ts";
 import { DivisionContext } from "../../index.tsx";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import AdminOnlyPage from "./AdminOnlyBanner.tsx";
+import { PromptContainer } from "../layout/PromptContainer.tsx";
+import BannerPage from "../viewer/BannerPage.tsx";
+import { SeedOrdering } from "brackets-model"
+import MySelect from "../inputs/mySelect.tsx";
 
 const storage = new InMemoryDatabase();
 const manager = new BracketsManager(storage);
@@ -105,7 +110,7 @@ const finalRoundNames = (roundInfo: RoundNameInfo) => {
 };
 
 
-const useMockBracketsViewer = (seeding, bracketSize) => {
+const useMockBracketsViewer = (stageData, bracketSize) => {
   const ref = useRef(null);
   const mockTournamentId = 0;
   const bracketsViewer = new BracketsViewer();
@@ -113,15 +118,9 @@ const useMockBracketsViewer = (seeding, bracketSize) => {
   useEffect(() => {
     const render = async () => {
       await manager.create.stage({
-        name: "Preview Bracket",
-        tournamentId: mockTournamentId,
-        type: "single_elimination",
-        seeding,
-        settings: {
-          size: helpers.getNearestPowerOfTwo(bracketSize),
-          seedOrdering: ["inner_outer"],
-          balanceByes: true,
-        }
+        ...stageData,
+        name: "Preview",
+        tournamentId: mockTournamentId
       });
 
       const mockBracket = await manager.get.tournamentData(mockTournamentId);
@@ -141,13 +140,13 @@ const useMockBracketsViewer = (seeding, bracketSize) => {
     }
 
     const local = ref.current;
-    if (local && seeding && seeding.length !== 0) render();
+    if (local && stageData) render();
 
     return () => {
       if (local) local.innerHTML = "";
       manager.delete.tournament(mockTournamentId);
     };
-  }, [seeding, bracketSize, ref]);
+  }, [stageData, bracketSize, ref]);
 
   return ref;
 }
@@ -168,6 +167,11 @@ function BracketStructure() {
 
   const groupCount = groupStage?.settings.groupCount;
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
+
+  type PatchedSeedOrdering = SeedOrdering | "copa";
+  const bracketOrderings: PatchedSeedOrdering[] = ["natural", "reverse", "half_shift", "reverse_half_shift", "pair_flip", "inner_outer", "copa"];
+  const [seedOrdering, setSeedOrdering] = useState<PatchedSeedOrdering>("inner_outer");
+
   const bracketSize = groupCount * teamsBreakingPerGroup;
 
   const { data: standings, status: standingsStatus } = useStandings(groupStage?.id);
@@ -176,7 +180,19 @@ function BracketStructure() {
   const breaking = standingParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
   const seeding = breaking?.flat();
 
-  const bracketsRef = useMockBracketsViewer(seeding, bracketSize);
+  const stageData = seeding && division ? {
+    name: division.name + " bracket",
+    tournamentId: division.id,
+    type: "single_elimination",
+    seeding,
+    settings: {
+      // size: helpers.getNearestPowerOfTwo(bracketSize),
+      seedOrdering: [seedOrdering],
+      balanceByes: true,
+    }
+  } : undefined;
+
+  const bracketsRef = useMockBracketsViewer(stageData, bracketSize);
 
   const handleSliderChange = async (_e, value) => {
     setTeamsBreakingPerGroup(value);
@@ -185,17 +201,7 @@ function BracketStructure() {
   const createBracket = useCreateStage();
 
   const handleSaveBracket = () => {
-    createBracket.mutate({
-      name: division.name + " bracket",
-      tournamentId: division.id,
-      type: "single_elimination",
-      seeding,
-      settings: {
-        size: helpers.getNearestPowerOfTwo(bracketSize),
-        seedOrdering: ["inner_outer"],
-        balanceByes: true,
-      }
-    })
+    if (stageData) createBracket.mutate(stageData)
   }
 
   const { data: brackets } = useStages(tournament?.id, {
@@ -204,38 +210,58 @@ function BracketStructure() {
   })
   const bracket = brackets?.[0];
 
+  const deleteStage = useDeleteStage();
+  const handleRemoveBracket = () => {
+    if (bracket?.id) deleteStage.mutate(bracket.id);
+  }
+
   if (participantsStatus !== "success" || stageStatus !== "success") return <>Loading</>;
 
   return (
     <AdminOnlyPage>
-      <DivisionPanel>
+      <BannerPage title="Bracket structure">
 
-        {bracket ? <>Bracket already exists</> :
-          <>
-            <div>
-              <Typography>Teams breaking from each group</Typography>
-              <Slider
-                value={teamsBreakingPerGroup}
-                onChange={handleSliderChange}
-                min={1}
-                max={Math.ceil(participants.length / groupCount)}
-                step={1}
-                marks
-                valueLabelDisplay="on"
-              ></Slider>
-            </div>
+        <DivisionPanel>
 
-            <div
-              ref={bracketsRef}
-              className="brackets-viewer"
-              id="mock-bracket"
-            ></div>
-            <Button type="submit" onClick={handleSaveBracket}>
-              Lock in
-            </ Button>
-          </>
-        }
-      </DivisionPanel>
+          {bracket ? <>
+          <Typography>
+            Bracket already exists.
+          </Typography>
+          <Button onClick={handleRemoveBracket}>
+            Delete bracket.
+          </Button>
+          </> :
+            <>
+              <div>
+                <Typography>Teams breaking from each group</Typography>
+                <Slider
+                  value={teamsBreakingPerGroup}
+                  onChange={handleSliderChange}
+                  min={1}
+                  max={Math.ceil(participants.length / groupCount)}
+                  step={1}
+                  marks
+                  valueLabelDisplay="on"
+                ></Slider>
+                <Select value={seedOrdering} onChange={(e) => setSeedOrdering(e.target.value)}>
+                  {bracketOrderings.map(o => {
+                    return <MenuItem key={o} value={o}>{o}</MenuItem>
+                  })}
+                </Select>
+              </div>
+
+              <div
+                ref={bracketsRef}
+                className="brackets-viewer"
+                id="mock-bracket"
+              ></div>
+              <Button type="submit" onClick={handleSaveBracket}>
+                Lock in
+              </ Button>
+            </>
+          }
+        </DivisionPanel>
+      </BannerPage>
     </AdminOnlyPage>
   );
 }

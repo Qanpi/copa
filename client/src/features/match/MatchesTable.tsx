@@ -94,6 +94,16 @@ export const MatchesTable = (props: Partial<DataGridProps>) => {
       }
     },
     {
+      field: "stage_id",
+      headerName: "Stage",
+      valueGetter: (p) => {
+        const stage = stages?.find((g) => g.id === p.value)
+        return stage?.name;
+      },
+      width: 200
+    },
+
+    {
       field: "division",
       headerName: "Division",
       valueGetter: (p) => {
@@ -123,14 +133,6 @@ export const MatchesTable = (props: Partial<DataGridProps>) => {
       field: "verboseStatus",
       headerName: "Status",
     },
-    // {
-    //   field: "stage_id",
-    //   headerName: "Stage",
-    //   valueGetter: (p) => {
-    //     const stage = stages?.find((g) => g.id === p.value)
-    //     return stage?.name;
-    //   }
-    // },
 
   ];
 

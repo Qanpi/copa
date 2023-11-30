@@ -68,7 +68,7 @@ function DrawPage() {
   const [currentGroupId, setCurrentGroupId] = useState(0);
 
   const getEmptySeeding = (groups: number) => {
-    return Array.from({ length: groups }, () => []);
+    return Array.from({ length: groups }, () => [] as TParticipant[]);
   }
   const [seeding, setSeeding] = useState(() => getEmptySeeding(groupCount));
   const flatSeeding = seeding.flat();
@@ -154,6 +154,8 @@ function DrawPage() {
     const participantId = el.getAttribute("data-participant-index");
     const participant = flatSeeding.find(p => p.id === participantId);
 
+    if (!participant) return;
+
     // const combined = inGroupIndex * groupCount + groupIndex;
 
     // const temp = seeding.map(p => p.id === participantId ? null : p);
@@ -184,23 +186,8 @@ function DrawPage() {
 
     return participantsRef.current;
   }
+
   const groupTables = seeding.map((group, i) => {
-
-    // //generate empty placeholder of size equals number of participants in group
-    // const placeholder = new Array(n);
-
-    // let k = 0; //participant number in the group
-
-    // //go through all participants in the current seeding
-    // //if their index (j) matches the index of the group, replace the placeholder with them
-    // //increment k to the positoin of next participant
-    // for (let j = 0; j < seeding.length; j++) {
-    //   if (j % groupCount === i) {
-    //     placeholder[k] = seeding[j];
-    //     k++;
-    //   }
-    // }
-
     return (
       <GroupTable ref={
         (node) => {
