@@ -34,7 +34,7 @@
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.4.0",
     "babel": "^6.23.0",
-    "brackets-manager": "github:Qanpi/brackets-manager.js",
+    "brackets-manager": "^1.6.3",
     "brackets-memory-db": "^1.0.4",
     "brackets-model": "^1.5.0",
     "brackets-mongo-db": "^2.0.1",
@@ -67,8 +67,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "",
-    "eject": "react-scripts eject",
-    "postinstall": "patch-package"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
