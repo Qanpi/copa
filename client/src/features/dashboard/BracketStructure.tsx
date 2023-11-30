@@ -3,6 +3,8 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
+  FormControlLabel,
   MenuItem,
   Select,
   Slider,
@@ -106,7 +108,6 @@ const finalRoundNames = (roundInfo: RoundNameInfo) => {
     }
   }
 
-  return `Round ${roundInfo.roundNumber}`;
 };
 
 
@@ -167,6 +168,7 @@ function BracketStructure() {
 
   const groupCount = groupStage?.settings.groupCount;
   const [teamsBreakingPerGroup, setTeamsBreakingPerGroup] = useState(2);
+  const [consolationFinal, toggleConsolationFinal] = useState(true);
 
   type PatchedSeedOrdering = SeedOrdering | "copa";
   const bracketOrderings: PatchedSeedOrdering[] = ["natural", "reverse", "half_shift", "reverse_half_shift", "pair_flip", "inner_outer", "copa"];
@@ -186,7 +188,7 @@ function BracketStructure() {
     type: "single_elimination",
     seeding,
     settings: {
-      // size: helpers.getNearestPowerOfTwo(bracketSize),
+      consolationFinal,
       seedOrdering: [seedOrdering],
       balanceByes: true,
     }
@@ -224,12 +226,12 @@ function BracketStructure() {
         <DivisionPanel>
 
           {bracket ? <>
-          <Typography>
-            Bracket already exists.
-          </Typography>
-          <Button onClick={handleRemoveBracket}>
-            Delete bracket.
-          </Button>
+            <Typography>
+              Bracket already exists.
+            </Typography>
+            <Button onClick={handleRemoveBracket}>
+              Delete bracket.
+            </Button>
           </> :
             <>
               <div>
@@ -248,6 +250,9 @@ function BracketStructure() {
                     return <MenuItem key={o} value={o}>{o}</MenuItem>
                   })}
                 </Select>
+                <FormControlLabel control={
+                  <Checkbox checked={consolationFinal} onChange={() => toggleConsolationFinal(!consolationFinal)}></Checkbox>
+                } label="Bronze match"/>
               </div>
 
               <div
