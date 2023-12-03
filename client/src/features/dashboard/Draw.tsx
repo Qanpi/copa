@@ -41,17 +41,17 @@ function arrangeGroups(participants: number, groups: number) {
 
 function DrawPage() {
   const { data: tournament } = useTournament("current");
-
   const division = useContext(DivisionContext);
 
   const { data: participants, status: participantsStatus, refetch } = useQuery({
-    queryKey: [participantKeys.all],
+    queryKey: participantKeys.list({ division: division?.id }),
     queryFn: async () => {
-      const res = await axios.get(`/api/tournaments/${tournament?.id}/participants?division=${division?.id}`);
+      if (!tournament || !division) throw new Error("Invalid tournament or division.");
+
+      const res = await axios.get(`/api/tournaments/${tournament.id}/participants?division=${division.id}`);
       return res.data as TParticipantPopulated[];
     },
     enabled: Boolean(tournament) && Boolean(division?.id),
-    staleTime: Infinity
   });
 
   //TODO: better way to do this?
@@ -64,13 +64,13 @@ function DrawPage() {
 
 
   const [groupCount, setGroupCount] = useState(4);
-
-  const [currentGroupId, setCurrentGroupId] = useState(0);
+  const nextGroupId = useRef(0);
 
   const getEmptySeeding = (groups: number) => {
     return Array.from({ length: groups }, () => [] as TParticipant[]);
   }
   const [seeding, setSeeding] = useState(() => getEmptySeeding(groupCount));
+
   const flatSeeding = seeding.flat();
 
   const participantsRef = useRef();
@@ -90,8 +90,9 @@ function DrawPage() {
   if (!stages || participantsStatus !== "success") return <LoadingBackdrop open={true}></LoadingBackdrop>
 
   if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
-
   if (!division) return;
+
+  const groupless = participants?.filter(p => !flatSeeding.some(s => s.id === p.id));
 
   const handleConfirmSeeding = () => {
     createGroupStage.mutate({
@@ -102,15 +103,13 @@ function DrawPage() {
         groupCount,
         seedOrdering: ["groups.effort_balanced"]
       },
-      seeding: seeding.flat()
+      seeding: flatSeeding
     }, {
       onSuccess: () => {
         setSnackbarSeverity("success");
       }
     });
   };
-
-  const groupless = participants?.filter(p => !seeding.flat().some(s => s.id === p.id));
 
   const handleSkipWheel = () => {
     const groupSizes = arrangeGroups(participants.length, groupCount);
@@ -126,20 +125,18 @@ function DrawPage() {
   };
 
   const handleResetSeeding = () => {
-    setCurrentGroupId(0);
+    nextGroupId.current = 0;
     setSeeding(getEmptySeeding(groupCount));
   };
 
   const handleWheelSelected = (option: TParticipant) => {
-    setSeeding(seeding.map((g, i) => {
-      if (i === currentGroupId) {
-        if (Array.isArray(g)) {
-          return [...g, option];
-        } else return [option];
-      } else return g;
+    setSeeding(seeding.map((group, i) => {
+      if (i === nextGroupId.current) {
+        return [...group, option];
+      } else return group;
     }));
 
-    setCurrentGroupId((currentGroupId + 1) % groupCount)
+    nextGroupId.current = ((nextGroupId.current + 1) % groupCount)
   }
 
   //TODO: maybe assign group id to participants or somewhow query participants by group
@@ -149,19 +146,12 @@ function DrawPage() {
   drake.on("drop", (el, target, source, sibling) => {
     const targetIndex = parseInt(target.getAttribute("data-group-index") || "0");
     const sourceIndex = parseInt(source.getAttribute("data-group-index") || "0");
-    // const inGroupIndex = parseInt(sibling?.getAttribute("data-ingroup-index") || "0");
 
     const participantId = el.getAttribute("data-participant-index");
     const participant = flatSeeding.find(p => p.id === participantId);
 
     if (!participant) return;
 
-    // const combined = inGroupIndex * groupCount + groupIndex;
-
-    // const temp = seeding.map(p => p.id === participantId ? null : p);
-    // const inserted = [...temp.slice(0, combined), seeding[participantIndex], ...temp.slice(combined)];
-
-    // setSeeding(inserted.filter(p => p !== null));
     setSeeding(seeding.map((s, i) => {
       if (i === targetIndex && i === sourceIndex) return s;
 
@@ -217,11 +207,10 @@ function DrawPage() {
     setResetDialog(false);
   }
 
-  const isWheelVisible = groupless?.length !== 0;
+  const isWheelVisible = !groupStage && groupless && groupless.length !== 0;
 
   return (
     <AdminOnlyPage>
-
       <Stack direction={{ xs: "column", xl: "row" }} alignItems={"center"} justifyContent="center" spacing={3}>
         <LoadingBackdrop open={createGroupStage.isLoading}></LoadingBackdrop>
         <Backdrop open={!!groupStage} sx={{ zIndex: 10 }} onClick={handlePotentialReset}></Backdrop>
@@ -243,8 +232,11 @@ function DrawPage() {
           </DialogActions>
         </Dialog>
 
-        {!groupStage && isWheelVisible ?
-          <Box sx={{ height: "85vmin", aspectRatio: 1, position: "relative", maxWidth: "85vmin", justifyContent: "center", alignItems: "center", display: "flex" }}>
+        {isWheelVisible ?
+          <Box sx={{
+            height: "85vmin", aspectRatio: 1, position: "relative",
+            maxWidth: "85vmin", justifyContent: "center", alignItems: "center", display: "flex"
+          }}>
             <FortuneWheel onSkip={handleSkipWheel} participants={groupless} onSelected={handleWheelSelected}></FortuneWheel>
           </Box> : null}
 
@@ -252,7 +244,6 @@ function DrawPage() {
           <DivisionPanel>
             <Container>
               <InputLabel>Number of groups</InputLabel>
-
               <Slider
                 value={groupCount}
                 disabled={seeding.flat().length > 0}
@@ -277,14 +268,8 @@ function DrawPage() {
               {groupTables}
             </Box>
 
-
-
             <Box justifyContent={"center"} display="flex" gap={1}>
-
-
-
               <Button onClick={handleResetSeeding} variant="outlined" color="secondary">Reset</Button>
-
               <Button onClick={handleConfirmSeeding} variant="contained">
                 Confirm
               </Button>
@@ -297,15 +282,6 @@ function DrawPage() {
 }
 
 const GroupTable = forwardRef(function GroupTable({ index, participants }: { index: number, participants: TParticipant[] }, ref) {
-  // const dragContainer = useRef();
-
-  // useEffect(() => {
-  //   const el = dragContainer.current;
-  //   if (el) { 
-  //     Dragula([el]);
-  //   }
-  // }, [dragContainer])
-
   const name = `${alphabet[index]}`
 
   return (
@@ -333,23 +309,28 @@ const GroupTable = forwardRef(function GroupTable({ index, participants }: { ind
   )
 });
 
-function FortuneWheel({ participants, onSelected, onSkip }: { participants: TParticipantPopulated[], onSelected: (option: TParticipantPopulated) => void, onSkip: () => void }) {
+type FortuneWheelProps = {
+  participants: TParticipantPopulated[],
+  onSelected: (option: TParticipantPopulated) => void,
+  onSkip: () => void
+};
+
+function FortuneWheel({ participants, onSelected, onSkip }: FortuneWheelProps) {
   const [mustSpin, setMustSpin] = useState(false);
   const [speed, setSpeed] = useState(100);
   const spinDuration = 1 / speed * 94;
 
-  const [play, { stop }] = useSound(tadaPolka, {
+  const [playPolka, { stop: stopPolka }] = useSound(tadaPolka, {
     interrupt: true,
     playbackRate: Math.max(0.94 / spinDuration, 0.8) //cut-off past certain slowness
   });
 
-  const randomN = Math.floor(Math.random() * participants.length);
 
   const theme = useTheme();
   const wheelOptions = participants?.map((p, i) => {
-    const l = 17;
+    const MAX_LENGTH = 17;
     const trimmed =
-      p.name?.length > l ? p.name?.substring(0, l - 3) + "..." : p.name;
+      p.name?.length > MAX_LENGTH ? p.name?.substring(0, MAX_LENGTH - 3) + "..." : p.name;
 
     const color = i % 2 === 0 ? theme.palette.primary.light : theme.palette.primary.main;
 
@@ -373,19 +354,21 @@ function FortuneWheel({ participants, onSelected, onSkip }: { participants: TPar
     } as WheelData;
   });
 
+  //id of the drawn participant
+  const randomN = Math.floor(Math.random() * participants.length);
 
   const handleSpinOver = () => {
     setMustSpin(false);
-    stop();
+    stopPolka();
 
     const chosen = wheelOptions[randomN];
-    onSelected(chosen);
+    onSelected(chosen as TParticipantPopulated);
   };
 
   const handleSpin = () => {
     if (mustSpin) return;
 
-    play();
+    playPolka();
     setMustSpin(true);
   };
 
