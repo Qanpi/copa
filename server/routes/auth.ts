@@ -16,7 +16,6 @@ if (process.env.NODE_ENV !== "test") {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         callbackURL: "/oauth2/redirect/google",
         scope: ["profile", "email"],
-        // passReqToCallback: true,
       },
       async function verify(accessToken, refreshToken, profile, cb) {
         const adminEmails = [

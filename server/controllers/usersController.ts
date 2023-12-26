@@ -38,10 +38,10 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
 export const getOneById = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
-  if (!user?.preferences?.publicProfile && !isLoggedInAsUser(req.user, req.params.id) && !isAdmin(req.user)) {
-    res.send("private");
+  if (user?.preferences?.publicProfile || isLoggedInAsUser(req.user, req.params.id) || isAdmin(req.user)) {
+    res.send(user);
     return;
   }
 
-  res.send(user);
+  res.send("private");
 });

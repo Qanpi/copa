@@ -81,6 +81,7 @@ describe("Teams management logic", function () {
     expect(check2).toHaveLength(1);
   })
 
+  it.todo("should not allow '.' inside name (url safety)")
 
   it("should not allow identical names", async function () {
     const team1 = await admin.post("/api/teams").send({ name: "Tinpot", manager: new ObjectId() })

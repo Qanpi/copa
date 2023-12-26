@@ -54,7 +54,6 @@ import { useParticipants } from "../participant/hooks.ts";
 dayjs.extend(relativeTime);
 
 function TeamProfilePage() {
-  //FIXME: think about encoding and decoding practices
   const { name } = useParams();
   const { data: team, status: teamStatus, isLoading } = useTeam(name);
 
@@ -67,6 +66,7 @@ function TeamProfilePage() {
 
   const updateTeam = useUpdateTeam();
   const [editMode, setEditMode] = useState(false);
+
   const handleEditClick = useCallback(
     () => {
       setSelectedTab(0);
@@ -89,8 +89,6 @@ function TeamProfilePage() {
   const handleCancelEdit = () => {
     setEditMode(false);
   }
-
-  const { data: tournament } = useTournament("current");
 
   if (!isLoading && !team) return <NotFoundPage></NotFoundPage>
 

@@ -32,11 +32,11 @@ export const createOne = expressAsyncHandler(async (req, res, next) => {
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
 
-    const first = Object.values(err.errors)[0];
-    if (isNotUniqueError(first)) {
-      const message = first.path === "name" ? `A team by the name '${first.value}' already exists.` : first.message;
-      throw new StatusError(message, 409);
-    }
+      const first = Object.values(err.errors)[0];
+      if (isNotUniqueError(first)) {
+        const message = first.path === "name" ? `A team by the name '${first.value}' already exists.` : first.message;
+        throw new StatusError(message, 409);
+      }
     }
     throw err;
   }
@@ -165,6 +165,7 @@ export const generateInviteToken = expressAsyncHandler(async (req, res) => {
   if (!isManagerOrAdmin(req.user, team.manager))
     throw new StatusError("Neither manager nor in team.", 403);
 
+  //generate secret to verify valid invite token
   const random = crypto.randomBytes(16);
   const encoded = random.toString("base64url");
 

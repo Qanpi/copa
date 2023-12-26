@@ -89,7 +89,7 @@ function QueryProvider() {
             default:
               setFeedback({
                 severity: "error",
-                message: mutation.meta.errorMessage || error.message
+                message: mutation.meta?.errorMessage || error.message
               })
           }
         } else {
