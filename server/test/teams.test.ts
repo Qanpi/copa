@@ -116,7 +116,7 @@ describe("Teams management logic", function () {
     expect(updatedTeam.manager).toBe(undefined)
   })
 
-  it("should reject if user already in a team", async function () {
+  it("should reject if user is already in a team", async function () {
     let { body: user } = await auth.get("/me");
 
     const res = await auth.post("/api/teams").send({ name: "Tinpot", manager: user.id });
