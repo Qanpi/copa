@@ -31,7 +31,7 @@ import {
 } from "../tournament/hooks.ts";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
-import AdminAlert from "../layout/AdminAlert.tsx";
+import AdminAlertStack from "../layout/AdminAlert.tsx";
 import { FeedbackSnackbar } from "../layout/FeedbackSnackbar.tsx";
 
 function RegistrationStage({ next, prev }) {
@@ -123,13 +123,13 @@ function RegistrationStage({ next, prev }) {
 
       <Stack spacing={5}>
         {notEnoughParticipants ? (
-          <AdminAlert title="Error: Not enough participants">
+          <AdminAlertStack title="Error: Not enough participants">
             <Typography variant="body1">
               There must be at least 2 registered participant(s) in the '
               {notEnoughParticipants.division}' division before proceeding to
               the next stage.
             </Typography>
-          </AdminAlert>
+          </AdminAlertStack>
         ) : null}
 
         <RegistrationPane></RegistrationPane>

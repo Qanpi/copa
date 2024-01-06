@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { bracketsManager } from "../services/bracketsManager.js";
 import Stage from "../models/stage.js";
 import expressAsyncHandler from "express-async-handler";
+import { StatusError } from "../middleware/auth.js";
 
 export const getMany = async (req: Request, res: Response) => {
   //FIXME: refactor this better
@@ -46,14 +47,18 @@ export const deleteMany = async (req: Request, res: Response) => {
 };
 
 export const updateOne = async (req: Request, res: Response) => {
-  //TODO: if statement
-  await bracketsManager.update.match({ ...req.body, id: req.params.matchId });
-  //FIXME: patch double updates
-  //currently done because otherwise status wouldn't update from running to ready
   const updated = await Match.findByIdAndUpdate(req.params.matchId, req.body);
-
   res.send(updated);
 };
+
+//separate endpoint because bracketsManager overwrites the entire opponent subobject
+export const updateOpponentResults = expressAsyncHandler(async (req, res) => {
+  const matchId = req.params.matchId;
+  const opponent = req.params.opponent;
+
+  await bracketsManager.update.match({ [opponent]: req.body, id: matchId });
+  res.send({});
+})
 
 export const resetResults = expressAsyncHandler(async (req, res) => {
   await bracketsManager.reset.matchResults(req.params.matchId);
