@@ -1,5 +1,6 @@
 ## copa what? 
 In one sentence, Copa is a web app with intent to revolutionize hosting, participating and gambling in our school's soccer tournaments. 
+![front page](https://github.com/Qanpi/copa/assets/61239034/dd82f4c4-e950-4f99-9afe-cd16a04b4af6)
 
 ## copa why? 
 A few years back, Eero Koskenvesa (SYK alumn) hosted the first niche, futsal-like tournament, where teams of four battled it out in six minute matches. Copa de Kuutio has since captured the hearts of many in our school (myself included), and typically sees nearly all 600 high school students coming together in a jubilant ceremony.
@@ -14,6 +15,7 @@ This application would not exist without the unwavering support of the community
 
 ### People
 Jarmo Hurri - CS teacher, thank you for keeping me sane through seemingly endless bugs 
+
 L21i - my class, thank you for helping beta-test Copa to resolve many of the seemingly endless bugs
 
 ### Packages
@@ -21,4 +23,5 @@ L21i - my class, thank you for helping beta-test Copa to resolve many of the see
 * react-query
 * material UI
 * passport-js
+
 and many more acknowledged in package.json...
