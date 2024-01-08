@@ -31,7 +31,7 @@ import { BracketsViewer } from "ts-brackets-viewer";
 
 import { BracketsManager, helpers } from "brackets-manager";
 import { InMemoryDatabase } from "brackets-memory-db";
-import { Seeding } from "brackets-model";
+import { Seeding, InputStage } from "brackets-model";
 import { RoundNameInfo } from "ts-brackets-viewer";
 import { groupBy, flatten, create } from "lodash-es";
 import { useGroupedParticipants } from "./Draw.tsx";
@@ -182,6 +182,7 @@ function BracketStructure() {
   const breaking = standingParticipants?.map(group => group.slice(0, teamsBreakingPerGroup));
   const seeding = breaking?.flat();
 
+  const size = helpers.getNearestPowerOfTwo(seeding?.length || 0);
   const stageData = seeding && division ? {
     name: division.name + " bracket",
     tournamentId: division.id,
@@ -191,8 +192,9 @@ function BracketStructure() {
       consolationFinal,
       seedOrdering: [seedOrdering],
       balanceByes: true,
+      size
     }
-  } : undefined;
+  } as InputStage : undefined;
 
   const bracketsRef = useMockBracketsViewer(stageData, bracketSize);
 

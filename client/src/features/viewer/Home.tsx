@@ -159,7 +159,7 @@ function HomePage() {
 
                 display="flex" justifyContent="center" alignItems="center" minHeight="100%"
               >
-                <Typography>Imagine an instagram feed here.</Typography>
+                <Typography>No instagram content to display.</Typography>
               </Box>
             </Box>
           </Stack >

@@ -19,7 +19,7 @@ import { useStages } from "../stage/hooks.ts";
 import { useDivisions, useTournament } from "../tournament/hooks.ts";
 import DivisionPanel from "../layout/DivisionPanel.tsx";
 import NumberCard from "./NumberCard.tsx";
-import AdminAlert from "../layout/AdminAlert.tsx";
+import AdminAlertStack from "../layout/AdminAlert.tsx";
 
 function GroupStage({ next, prev }) {
   const { data: tournament } = useTournament("current");
@@ -43,17 +43,27 @@ function GroupStage({ next, prev }) {
   const scheduledMatches = matches?.filter((m) => !!m.start);
   const completedMatches = matches?.filter((m) => m.status >= Status.Completed);
 
-  const [incompleteMatchesAlert, setIncompleteMatchesAlert] = useState(false);
-  const [noGroupStageAlert, setNoGroupStageAlert] = useState(false);
+  type AdminError = {
+    title: String,
+    overridable?: Boolean,
+    body?: String,
+  }
+  const [adminErrors, setAdminErrors] = useState<AdminError[]>([]);
+  const hasErrors = adminErrors.length > 0;
+  const overrideErrors = hasErrors && adminErrors.every(e => e.overridable);
 
   const handleClickNext = () => {
+    //override errors
+    if (overrideErrors) next();
+
     for (const division of divisions) {
       const stage = stages.find((s) => s.division === division.id);
 
       if (!stage) {
-        return setNoGroupStageAlert({
-          division: division.name,
-        });
+        return setAdminErrors([{
+          title: `No group stage for the '${division.name}' division.`,
+          body: "Please draw teams using the wheel before proceeding to the bracket."
+        }]);
       }
 
       const matches = matchesByStage[stage.id];
@@ -62,11 +72,12 @@ function GroupStage({ next, prev }) {
       );
 
       if (!matches || matches.length - completedMatches.length !== 0) {
-        return setIncompleteMatchesAlert({
-          division: division.name,
-        });
+        return setAdminErrors([{
+          title: `Incomplete matches in the group stage of the '${division.name}' division.`,
+        }]);
       }
     }
+
     next();
   };
 
@@ -75,26 +86,19 @@ function GroupStage({ next, prev }) {
   };
 
   return (
-    <Container maxWidth="md">
-      {noGroupStageAlert ? (
-        <AdminAlert title={`No group stage for the '${noGroupStageAlert.division}' name`}>
-          <Typography>
-            Please first draw teams using the wheel before proceeding to the
-            bracket.
-          </Typography>
-        </AdminAlert>
-      ) : null
-      }
-      {
-        incompleteMatchesAlert ? (
-          <AdminAlert title={`Error: incomplete matches in the group stage of the '${incompleteMatchesAlert.division}' division.`}>
-              <Typography>
-                Can't proceed before all the matches in the group stage are
-                complete. I you already know the results, enter them manually here.
-              </Typography>
-          </AdminAlert>
-        ) : null
-      }
+    <Container maxWidth="lg">
+      <AdminAlertStack>
+        {adminErrors.map(e => {
+          return <Alert severity="error">
+            <AlertTitle>
+              {e.title}
+            </AlertTitle>
+            <Typography>
+              {e.body}
+            </Typography>
+          </Alert>;
+        })}
+      </AdminAlertStack>
 
       <DivisionPanel>
         <Stack direction={{ xs: "column", md: "row" }} spacing={2} display="flex" justifyContent="center">
@@ -138,14 +142,20 @@ function GroupStage({ next, prev }) {
                 <Button variant="contained" color="secondary">Draw groups</Button>
               </Link>
             </Stack>
-          )}
-        </Stack>
+          )
+          }
+        </Stack >
         {groupStage ? <Link to="/tournament/scheduler">
-          <Button fullWidth variant="contained" color="secondary">
+          < Button fullWidth variant="contained" color="secondary" >
             Schedule matches
-          </Button>
-        </Link> : null}
-      </DivisionPanel>
+          </Button >
+        </Link > : null}
+      </DivisionPanel >
+
+      {overrideErrors ? <Alert severity="info" sx={{mb: 1, mt: 3}}>
+        <AlertTitle>Press 'next' again to override errors.</AlertTitle>
+        <Typography>ONLY if you know what you're doing!</Typography>
+      </Alert> : null}
       <Button onClick={handleClickPrev}>Previous</Button>
       <Button onClick={handleClickNext}>Next</Button>
     </Container >

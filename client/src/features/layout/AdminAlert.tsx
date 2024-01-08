@@ -1,17 +1,15 @@
-import { ThemeProvider, Alert, AlertTitle, Typography, AlertProps } from "@mui/material";
+import { ThemeProvider, Alert, AlertTitle, Typography, AlertProps, BoxProps, Box, StackProps, Stack } from "@mui/material";
 import { lightTheme } from "../../themes";
+import React, { Children } from "react";
 
-function AdminAlert({ title, children, ...props }: AlertProps) {
+function AdminAlertStack({ children, sx, ...props }: StackProps) {
     return (
         <ThemeProvider theme={lightTheme}>
-            <Alert severity="error" sx={{ mb: 5 }} {...props}>
-                <AlertTitle>
-                    {title}
-                </AlertTitle>
+            <Stack sx={{ mb: 5 , ...sx}} spacing={1} {...props}>
                 {children}
-            </Alert>
-        </ThemeProvider>
+            </Stack>
+        </ThemeProvider >
     )
 }
 
-export default AdminAlert;
+export default AdminAlertStack;
