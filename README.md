@@ -15,9 +15,9 @@ Copa is the product of a year (and counting) of work, combining both front- and 
 This application would not exist without the unwavering support of the community, and the shoulders of open-source giants upon which Copa resides.
 
 ### People
-Jarmo Hurri - CS teacher, thank you for keeping me sane through seemingly endless bugs 
-
-L21i - my class, thank you for helping beta-test Copa to resolve many of the seemingly endless bugs
+* Urho Heinonen - student council representative; thank you for helping with Finnish translations and outreach
+* Jarmo Hurri - CS teacher; thank you for keeping me sane through seemingly endless bugs 
+* L21i - my class; thank you for helping beta-test Copa to resolve many of the seemingly endless bugs
 
 ### Packages
 * brackets-manager
