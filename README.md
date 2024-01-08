@@ -1,24 +1,24 @@
-# copa
-A revolutionary way to host, participate and gamble in Copa de Kuutio tournaments.
+## copa what? 
+In one sentence, Copa is a web app with intent to revolutionize hosting, participating and gambling in our school's soccer tournaments. 
 
-## Copa what? 
+## copa why? 
+A few years back, Eero Koskenvesa (SYK alumn) hosted the first niche, futsal-like tournament, where teams of four battled it out in six minute matches. Copa de Kuutio has since captured the hearts of many in our school (myself included), and typically sees nearly all 600 high school students coming together in a jubilant ceremony.
 
-## Copa why? 
+At the same time, these tournaments were organized through spreadsheets posted on Instagram, requiring a lot of manual labor to both plan and follow. The mission of the Copa web app is to simplify this process, simultaneously introducing new features and preserving tournament history. 
 
-## Copa how? 
-
-## A wiki for this wiki
+## copa how? 
+Copa is the product of a year (and counting) of work, combining both front- and back-end technology to produce a single-page application (SPA). It is built on top of the MERN stack, which is a fusion of MongoDB, Express, React and Node. In addition, the application is currently hosted on Azure. For in-depth technical information and guidance on contributing, refer to the wiki. 
 
 ## Acknowledgements
+This application would not exist without the unwavering support of the community, and the shoulders of open-source giants upon which Copa resides.
+
 ### People
-Jarmo Hurri
-L21i 
+Jarmo Hurri - CS teacher, thank you for keeping me sane through seemingly endless bugs 
+L21i - my class, thank you for helping beta-test Copa to resolve many of the seemingly endless bugs
 
 ### Packages
-In many ways, this application stands on the shoulders of open-source giants. 
 * brackets-manager
 * react-query
-* react-calendar-timeline
 * material UI
 * passport-js
-and more acknowledge in package.json...
+and many more acknowledged in package.json...
