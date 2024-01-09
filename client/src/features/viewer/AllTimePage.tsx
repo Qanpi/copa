@@ -48,6 +48,7 @@ const WinnerTimelineItem = ({ teamName, tournamentId, picture }: TWinnerTimeline
                     <Typography variant="h3" fontWeight={600}>{tournament.name}</Typography>
                     <Typography variant="h6" color="primary">{dayjs(tournament.start).year()}</Typography>
                 </Stack>
+                {/* TODO: allow dangerously set html */}
                 <Typography>{tournament.summary}</Typography>
             </TimelineOppositeContent>
             <TimelineSeparator>

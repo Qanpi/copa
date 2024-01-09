@@ -43,7 +43,8 @@ function CompleteTournament({ next, prev }) {
         }
     })
 
-    const updateTournament = useUpdateTournament("current");
+    const {data: tournament} = useTournament("current")
+    const updateTournament = useUpdateTournament(tournament.id);
 
     type AlltimeEntry = {
         summary?: string,
