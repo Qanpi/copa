@@ -87,3 +87,4 @@ export const getTournamentDataById = expressAsyncHandler(async (req, res) => {
   const data = await bracketsManager.get.tournamentData(req.params.id);
   res.send(data);
 });
+

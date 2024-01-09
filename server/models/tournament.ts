@@ -35,6 +35,8 @@ export type TNotification = InferSchemaType<typeof NotificationSchema>;
 const TournamentSchema = new mongoose.Schema(
   {
     name: String,
+    summary: String,
+    images: [String],
     idx: Number,
     organizer: {
       name: String,

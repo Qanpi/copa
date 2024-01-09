@@ -25,8 +25,7 @@ export const uploadImage = expressAsyncHandler(async (req, res) => {
     const { fileName, caption, fileType } = extractMetadata(req.headers);
 
     const imageUrl = await uploadImageToBlob(fileName, req);
-    const tournament = Tournament.findByIdAndUpdate(req.params.id, {
-        summary: req.body.summary,
-        images: [imageUrl],
-    })
+    res.send({
+        address: imageUrl
+    });
 });

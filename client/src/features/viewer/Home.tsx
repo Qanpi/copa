@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Stack, CircularProgress, useTheme, Button } from "@mui/material";
+import { Box, Typography, Container, Stack, CircularProgress, useTheme, Button, BoxProps } from "@mui/material";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
@@ -36,7 +36,7 @@ function WinnersTribute() {
 
 }
 
-function CopaBanner({ children }: { children: React.ReactNode }) {
+function CopaBanner({ children, sx }: BoxProps) {
   const { data: tournament } = useTournament("current");
 
   return (
@@ -55,7 +55,8 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
         justifyContent: "center",
         width: "80vw",
         height: "80vw",
-        minHeight: "400px"
+        minHeight: "400px",
+        ...sx
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "15vw!important" }} noWrap>
@@ -96,7 +97,23 @@ function HomePage() {
       </Container>
 
     case "Complete":
-      return <WinnersTribute></WinnersTribute>
+      return <Container sx={{display: "flex", direction:"row", alignItems: "center"}}>
+        <CopaBanner sx={{height: "100%"}}>
+          <Typography color="primary" fontSize={"7vw"} fontWeight={1000} sx={{
+            background: "var(--copa-pink)",
+            letterSpacing: "1vw",
+            paddingLeft: "1vw",
+            pt: 0,
+            pb: 0,
+            maxWidth: "45vw",
+            marginTop: "-0.3em",
+            lineHeight: "65%"
+          }}>WRAPPED</Typography>
+          <ArrowDropDown fontSize="large" sx={{ mt: 3 }}></ArrowDropDown>
+        </CopaBanner>
+
+        <Typography>test</Typography>
+      </Container>
     case "Registration":
       if (!tournament.registration?.from)
         return <CopaBanner>

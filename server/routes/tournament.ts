@@ -7,8 +7,10 @@ import * as participants from "../controllers/participationsController.js";
 import * as rounds from "../controllers/roundsController.js";
 import * as stages from "../controllers/stagesController.js";
 import * as notifications from "../controllers/notificationsController.js";
+import * as alltime from "../controllers/mediaController.js"
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { reportValidationErrors } from "../middleware/validation.js";
+import Tournament from "../models/tournament.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -67,6 +69,5 @@ router.get("/groups", groups.getMany);
 
 //ROUNDS
 router.get("/rounds", rounds.getMany);
-
 
 export default router;

@@ -5,10 +5,12 @@ import { body, param } from "express-validator";
 import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
+import * as media from "../controllers/mediaController.js"
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { reportValidationErrors } from "../middleware/validation.js";
 import { TournamentStatesValues } from "../models/tournament.js";
 import tournamentRouter from "./tournament.js";
+
 
 const router = express.Router();
 
@@ -24,6 +26,8 @@ if (process.env.NODE_ENV !== "development") {
 
   router.use(apiLimiter);
 }
+
+router.post("/upload", isAuthMiddleware, media.uploadImage)
 
 //TOURNAMENT
 router.get("/tournaments", tournaments.getMultiple);
