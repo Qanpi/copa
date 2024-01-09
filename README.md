@@ -17,6 +17,7 @@ And for organizers:
 - [x] draw teams into groups using a fortune wheel
 - [x] customize the bracket structure
 - [x] schedule and run matches with an in-built timer
+- [ ] explore all teams and matches between them in a graph-like (nodes for teams, edges for matches) map
 - [ ] crown the winner and immortalize memories with pictures [still ironing out]
 
 ## copa why? 
