@@ -14,7 +14,7 @@ try {
     debugDB("Connected to Azure Blob Storage container.");
 } catch (error) {
     debugError("Couldn't connect to Azure Blob storage container.");
-    //error not thrown because storage is not critical to app running
+    //error not thrown because blob storage is not critical to app running
 }
 
 export default containerClient;
