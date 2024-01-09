@@ -55,8 +55,8 @@ const WinnerTimelineItem = ({ teamName, tournamentId, picture }: TWinnerTimeline
                 <TimelineDot sx={{}} />
             </TimelineSeparator>
             <TimelineContent sx={{ display: "flex", alignItems: "end", justifyContent: "right", pr: 4 }}>
-                <Box sx={{ position: "relative", width: "30vw", maxWidth: "500px" }}>
-                    <img alt="team celebrating" width="100%" src="https://i.imgur.com/h1kcv2z.png"></img>
+                <Box sx={{ position: "relative", width: "30vw", maxWidth: "500px"}}
+                    component="img" src="https://i.imgur.com/h1kcv2z.png">
                 </Box>
             </TimelineContent>
         </TimelineItem>
@@ -66,7 +66,7 @@ const WinnerTimelineItem = ({ teamName, tournamentId, picture }: TWinnerTimeline
 function HallOfFame() {
     //FIXME: hard-coded for now
     const { data: tournament } = useTournament("current")
-    const {data: team} = useTeam("multi-byte 50 799");
+    const { data: team } = useTeam("PiPo IF");
     // const { data: team } = useTeam("bluetooth 56 591");
 
     if (!team || !tournament) return <>Loading</>; //handle error case

@@ -193,7 +193,7 @@ function HomePage() {
               <TimelineConnector></TimelineConnector>
             </TimelineSeparator>
             <TimelineContent sx={{ height: "500px", display: "flex", alignItems: "center", justifyContent: "end" }}>
-              ...and crowned the winners.
+              ...and crowned the champions.
             </TimelineContent>
           </TimelineItem>
 
