@@ -19,10 +19,6 @@ import { useMutation } from "@tanstack/react-query";
 import { TTournament } from "@backend/models/tournament";
 
 function CompleteTournament({ next, prev }) {
-    useEffect(() => {
-
-    }, [])
-
     const [images, setImages] = useState([] as ImageListType);
 
     const handleImageUpload = (images: ImageListType) => {
@@ -57,6 +53,7 @@ function CompleteTournament({ next, prev }) {
         console.log(values)
         const img = values.images[0]?.file;
 
+        //i don't like this conditional async stuff
         let name;
         if (img) {
             const res = await uploadImage.mutateAsync({
