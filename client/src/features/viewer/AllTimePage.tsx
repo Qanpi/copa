@@ -45,17 +45,17 @@ const WinnerTimelineItem = ({ teamName, tournamentId, picture }: TWinnerTimeline
             </Box>
             <TimelineOppositeContent sx={{ pl: 4 }}>
                 <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: -1, md: 2 }} alignItems={"baseline"}>
-                    <Typography variant="h2">{tournament.name}</Typography>
-                    <Typography variant="h5" color="primary">{dayjs(tournament.start).year()}</Typography>
+                    <Typography variant="h3" fontWeight={600}>{tournament.name}</Typography>
+                    <Typography variant="h6" color="primary">{dayjs(tournament.start).year()}</Typography>
                 </Stack>
-                <Typography>{tournament.summary} "some text"</Typography>
+                <Typography>{tournament.summary}</Typography>
             </TimelineOppositeContent>
             <TimelineSeparator>
                 {/* don't hardcode color */}
                 <TimelineDot sx={{}} />
             </TimelineSeparator>
             <TimelineContent sx={{ display: "flex", alignItems: "end", justifyContent: "right", pr: 4 }}>
-                <Box sx={{ position: "relative", width: "30vw" }}>
+                <Box sx={{ position: "relative", width: "30vw", maxWidth: "500px" }}>
                     <img alt="team celebrating" width="100%" src="https://i.imgur.com/h1kcv2z.png"></img>
                 </Box>
             </TimelineContent>
@@ -66,10 +66,10 @@ const WinnerTimelineItem = ({ teamName, tournamentId, picture }: TWinnerTimeline
 function HallOfFame() {
     //FIXME: hard-coded for now
     const { data: tournament } = useTournament("current")
-    const {data: team} = useTeam("PiPo IF");
+    const {data: team} = useTeam("multi-byte 50 799");
     // const { data: team } = useTeam("bluetooth 56 591");
 
-    if (!team || !tournament) return <>Error</>; //handle error case
+    if (!team || !tournament) return <>Loading</>; //handle error case
 
     return <BannerPage title="Hall Of Fame">
         <Timeline position="left" sx={{ position: "relative" }}>

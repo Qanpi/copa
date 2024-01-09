@@ -8,6 +8,7 @@ import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";
 import brush from "./brush.png";
+import brush2 from "./brush2.png"
 import { LoadingBackdrop } from "../layout/LoadingBackdrop";
 import { ArrowDropDown, } from "@mui/icons-material";
 import { PromptContainer } from "../layout/PromptContainer";
@@ -144,7 +145,7 @@ function HomePage() {
 
 
           <Box sx={{ m: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Stack direction={{xs: "column", sm: "row"}} spacing={2} color={"var(--copa-purple)"}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} color={"var(--copa-purple)"}>
               <NumberCard number={758}>users</NumberCard>
               <NumberCard number={16}>teams</NumberCard>
               <NumberCard number={28}>matches</NumberCard>
@@ -162,17 +163,28 @@ function HomePage() {
             </TimelineContent>
           </TimelineItem>
 
-          <ImageList variant="masonry" cols={2} gap={8} sx={{ width: "60%", m: 5 }}>
-            <ImageListItem>
-              <img alt="indoor hall" src={copaVI1}></img>
-            </ImageListItem>
-            <ImageListItem >
-              <img alt="indoor hall" src={copaVI2}></img>
-            </ImageListItem>
-            <ImageListItem sx={{ pt: "30%" }}>
-              <img alt="indoor hall" src={copaVI3}></img>
-            </ImageListItem>
-          </ImageList>
+          <Box position="relative" sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            <Box src={brush2} component="img" sx={{
+              position: "absolute",
+              width: "100%",
+              filter: "blur(0.5px"
+            }}></Box>
+            <ImageList variant="masonry" cols={2} gap={8} sx={{ width: "70%", m: 5, minWidth: "300px" }}>
+              <ImageListItem>
+                <img alt="indoor hall" src={copaVI1}></img>
+              </ImageListItem>
+              <ImageListItem >
+                <img alt="indoor hall" src={copaVI2}></img>
+              </ImageListItem>
+              <ImageListItem sx={{ pt: "30%" }}>
+                <img alt="indoor hall" src={copaVI3}></img>
+              </ImageListItem>
+            </ImageList>
+          </Box>
 
           <TimelineItem>
             <TimelineSeparator>
@@ -186,8 +198,10 @@ function HomePage() {
           </TimelineItem>
 
           <Confetti numberOfPieces={50} width={width} height={height}></Confetti>
-          <Stack justifyContent={"center"} alignItems="center" sx={{ m: 5,  width:"60%" }} gap={2}>
-            <Box component="img" alt="indoor hall" src={winner} width="100%"></Box>
+          <Stack justifyContent={"center"} alignItems="center" sx={{ m: 5, width: "60%" }} gap={2}>
+            <Box component="img" alt="indoor hall" src={winner} width="100%" sx={{
+              boxShadow: "0 0 100px 10px var(--copa-aqua)",
+            }}></Box>
             <Typography variant="h4">Congratulations to <Link color="primary" to="/teams/PiPo%20IF">PiPo IF</Link>!</Typography>
           </Stack>
         </Timeline>
