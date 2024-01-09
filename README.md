@@ -8,7 +8,8 @@ Here is some of what Copa brings to the table for participants:
 - [x] check the latest tournament updates anywhere you are on mobile
 - [x] view easy-to-understand group stage and play-off standings
 - [x] know when and where each match occurs
-- [x] follow LIVE score updates 
+- [x] follow LIVE score updates
+- [ ] explore all teams and matches between them in a graph-like (nodes for teams, edges for matches) map
 - [ ] gamble (not real money!) on match outcomes [still in development]
 
 And for organizers:
