@@ -2,7 +2,6 @@ import request from "supertest";
 import app from "../app.js";
 import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
-import { disconnectMongoose } from "../services/mongo.js";
 import { TDivision } from "../models/division.js";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";

@@ -1,7 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import { IncomingHttpHeaders } from "http";
 import containerClient from "../services/blob.js";
-import Tournament from "../models/tournament.js";
 import internal from "stream";
 
 //copy pasted from https://www.mongodb.com/developer/products/atlas/media-management-integrating-nodejs-azure-blob-storage-mongodb/#downloading-your-packages

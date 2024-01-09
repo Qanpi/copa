@@ -1,7 +1,5 @@
 import app from "../app.js";
 import request from "supertest";
-import { disconnectMongoose } from "../services/mongo.js";
-import e from "express";
 import { TDivision } from "../models/division.js";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
