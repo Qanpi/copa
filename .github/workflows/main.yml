@@ -13,6 +13,7 @@ env:
   NODE_OPTIONS: --experimental-vm-modules
   NODE_ENV: test
   COOKIE_SECRET: testsecret
+  AZURE_BLOB_CONNECTION_STRING: teststring
   CI: false
   AZURE_WEBAPP_NAME: copadekuutio 
   AZURE_WEBAPP_PACKAGE_PATH: server
