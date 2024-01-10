@@ -18,7 +18,7 @@ And for organizers:
 - [x] draw teams into groups using a fortune wheel
 - [x] customize the bracket structure
 - [x] schedule and run matches with an in-built timer
-- [ ] crown the winner and immortalize memories with pictures [still ironing out]
+- [x] crown the winner and immortalize memories with pictures 
 
 ## copa why? 
 A few years back, Eero Koskenvesa (SYK alumn) hosted the first niche, futsal-like tournament, where teams of four battled it out in six minute matches. Copa de Kuutio has since captured the hearts of many in our school (myself included), and typically sees nearly all 600 high school students coming together in a jubilant ceremony.
