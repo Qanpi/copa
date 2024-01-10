@@ -29,7 +29,7 @@ At the same time, these tournaments were organized through spreadsheets posted o
 Copa is the product of a year (and counting) of work, combining both front- and back-end technology to produce a single-page application (SPA). It is built on top of the MERN stack, which is a fusion of MongoDB, Express, React and Node. In addition, the application is currently hosted on Azure. For in-depth technical information and guidance on contributing, refer to the wiki. 
 
 ## copa statement
-At Copa, we take privacy and consent very seriously. You can find a disclaimer of what data is collected here. In addition, almost all features are opt-in, meaning that you have to consent to publicize your profile, your real name is only visible to the organizer, and so on. Again, the application acts as an _opportunity_ to deeper engage with the tournament, _not a mandate_. 
+At Copa, we take privacy and consent very seriously. You can find a disclaimer of what data is collected [here](). In addition, almost all features are opt-in, meaning that you have to consent to publicize your profile, your real name is only visible to the organizer, and so on. Again, the application acts as an _opportunity_ to deeper engage with the tournament, _not a mandate_. 
 
 # Acknowledgements
 This application would not exist without the unwavering support of the community, and the shoulders of open-source giants upon which Copa resides.
