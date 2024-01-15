@@ -23,7 +23,7 @@ And for organizers:
 ## copa why? 
 A few years back, Eero Koskenvesa (SYK alumn) hosted the first niche, futsal-like tournament, where teams of four battled it out in six minute matches. Copa de Kuutio has since captured the hearts of many in our school (myself included), and typically sees nearly all 600 high school students coming together in a jubilant ceremony.
 
-At the same time, these tournaments were organized through spreadsheets posted on Instagram, requiring a lot of manual labor to both plan and follow. The mission of the Copa web app is to simplify this process, simultaneously introducing new features and preserving tournament history, _while maintaining the Copa spirit and low-barrier to entry_. 
+At the same time, these tournaments were organized through spreadsheets posted on Instagram, requiring a lot of manual labor to both plan and follow. The mission of the Copa web app is to simplify this process, simultaneously introducing new features and preserving tournament history, _while maintaining the Copa spirit and a low barrier to entry_. 
 
 ## copa how? 
 Copa is the product of a year (and counting) of work, combining both front- and back-end technology to produce a single-page application (SPA). It is built on top of the MERN stack, which is a fusion of MongoDB, Express, React and Node. In addition, the application is currently hosted on Azure. For in-depth technical information and guidance on contributing, refer to [the wiki](https://github.com/Qanpi/copa/wiki). 
