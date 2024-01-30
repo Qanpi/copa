@@ -35,7 +35,8 @@ function arrangeGroups(participants: number, groups: number) {
     remainder--;
   }
 
-  return groupings;
+  //returns an array of the numbers of participants for each group, e.g. [3, 3, 2]
+  return groupings; 
 }
 
 
@@ -46,6 +47,7 @@ function DrawPage() {
   const { data: participants, status: participantsStatus, refetch } = useQuery({
     queryKey: participantKeys.list({ division: division?.id }),
     queryFn: async () => {
+      //pre-requisite API requests must've succeeded
       if (!tournament || !division) throw new Error("Invalid tournament or division.");
 
       const res = await axios.get(`/api/tournaments/${tournament.id}/participants?division=${division.id}`);
@@ -63,10 +65,11 @@ function DrawPage() {
   }, [division]);
 
 
-  const [groupCount, setGroupCount] = useState(4);
-  const nextGroupId = useRef(0);
+  const [groupCount, setGroupCount] = useState(4); //default number of groups
+  const nextGroupId = useRef(0); //add first participant to 0th group, then increment
 
   const getEmptySeeding = (groups: number) => {
+    //create empty 2D array of groups : participants
     return Array.from({ length: groups }, () => [] as TParticipant[]);
   }
   const [seeding, setSeeding] = useState(() => getEmptySeeding(groupCount));
@@ -92,6 +95,7 @@ function DrawPage() {
   if (tournament?.state !== "Groups") return <>Tournament is not in the gorup stage.</>
   if (!division) return;
 
+  //filtering out all the participants who have been already assigned to a group
   const groupless = participants?.filter(p => !flatSeeding.some(s => s.id === p.id));
 
   const handleConfirmSeeding = () => {
@@ -111,31 +115,36 @@ function DrawPage() {
     });
   };
 
+  //partition all participants into groups, in one go
   const handleSkipWheel = () => {
+    //get sizes for each of the groups
     const groupSizes = arrangeGroups(participants.length, groupCount);
 
     let participantIndex = 0;
     setSeeding(seeding.map((s, i) => {
-      const copy = s.slice()
-      while (copy.length < groupSizes[i]) {
-        copy.push(groupless[participantIndex++]);
+      const groupCopy = s.slice();
+      while (groupCopy.length < groupSizes[i]) {
+        groupCopy.push(groupless[participantIndex++]);
       }
-      return copy;
+      return groupCopy;
     }))
   };
 
+  //empty all the progress
   const handleResetSeeding = () => {
     nextGroupId.current = 0;
     setSeeding(getEmptySeeding(groupCount));
   };
 
   const handleWheelSelected = (option: TParticipant) => {
+    //append selected/drawn team
     setSeeding(seeding.map((group, i) => {
       if (i === nextGroupId.current) {
         return [...group, option];
       } else return group;
     }));
 
+    //increment nextGroupId and wrap around the number of teams for next selection
     nextGroupId.current = ((nextGroupId.current + 1) % groupCount)
   }
 
@@ -144,9 +153,12 @@ function DrawPage() {
 
   const drake = Dragula([]);
   drake.on("drop", (el, target, source, sibling) => {
+    //the group to which the team is being dropped to
     const targetIndex = parseInt(target.getAttribute("data-group-index") || "0");
+    //the group from which the team is dragged
     const sourceIndex = parseInt(source.getAttribute("data-group-index") || "0");
 
+    //participant mongoID
     const participantId = el.getAttribute("data-participant-index");
     const participant = flatSeeding.find(p => p.id === participantId);
 
@@ -155,10 +167,12 @@ function DrawPage() {
     setSeeding(seeding.map((s, i) => {
       if (i === targetIndex && i === sourceIndex) return s;
 
+      //add to target group
       if (i === targetIndex) {
         return [...s, participant];
       }
 
+      //remove from source group
       if (i === sourceIndex) {
         return s.filter(p => p.id !== participant.id);
       }
@@ -166,6 +180,7 @@ function DrawPage() {
       return s;
     }))
 
+    //prevent default HTML event
     drake.cancel(true);
   })
 
@@ -317,12 +332,14 @@ type FortuneWheelProps = {
 
 function FortuneWheel({ participants, onSelected, onSkip }: FortuneWheelProps) {
   const [mustSpin, setMustSpin] = useState(false);
-  const [speed, setSpeed] = useState(100);
-  const spinDuration = 1 / speed * 94;
+  const [speed, setSpeed] = useState(100); //ranges from 50 to 200
+
+  const matchMusicConstant = 94; //94 is experimentally determined to best match the music
+  const spinDuration = 1 / speed * matchMusicConstant; 
 
   const [playPolka, { stop: stopPolka }] = useSound(tadaPolka, {
     interrupt: true,
-    playbackRate: Math.max(0.94 / spinDuration, 0.8) //cut-off past certain slowness
+    playbackRate: Math.max(speed / 100, 0.8) //cut-off past certain slowness
   });
 
 
@@ -354,25 +371,28 @@ function FortuneWheel({ participants, onSelected, onSkip }: FortuneWheelProps) {
     } as WheelData;
   });
 
-  //id of the drawn participant
+  //id of the randomly drawn participant
   const randomN = Math.floor(Math.random() * participants.length);
 
   const handleSpinOver = () => {
-    setMustSpin(false);
-    stopPolka();
+    setMustSpin(false); //wheel
+    stopPolka(); //music
 
     const chosen = wheelOptions[randomN];
-    onSelected(chosen as TParticipantPopulated);
+    //fire a onSelected event which will be handled by a higher-level component
+    onSelected(chosen as TParticipantPopulated); 
   };
 
   const handleSpin = () => {
+    //if already spinning
     if (mustSpin) return;
 
-    playPolka();
-    setMustSpin(true);
+    playPolka(); //music
+    setMustSpin(true); //wheel
   };
 
   const handleSkip = () => {
+    //fire a onSkip event which will be handled by a higher-level component
     if (!mustSpin) onSkip();
   }
 

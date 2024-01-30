@@ -12,26 +12,31 @@ if (process.env.NODE_ENV !== "test") {
   passport.use(
     new GoogleStrategy(
       {
+        //clientId and Secret are taken from the Google Developer Console
+        //they are kept secret as environment variables
         clientID: process.env.GOOGLE_CLIENT_ID!,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         callbackURL: "/oauth2/redirect/google",
         scope: ["profile", "email"],
       },
+
       async function verify(accessToken, refreshToken, profile, cb) {
         const adminEmails = [
           "teinikunta@syk.fi",
           "qanpii@gmail.com",
-          "urhoheinonen05@gmail.com"
         ]
 
         const userEmail = profile?.emails?.[0].value;
-        const backdoor = userEmail ? adminEmails.includes(userEmail) : false;
+        const isAdmin = userEmail && adminEmails.includes(userEmail);
 
+        //populate data from Google profile
         const userData = {
           googleId: profile.id,
           name: profile.displayName,
           avatar: profile.photos?.[0].value,
-          role: backdoor ? "admin" : undefined
+          //there is only role right now: admin, but for future extensibility
+          //this field will allow to add roles like 'referee' with special privileges
+          role: isAdmin ? "admin" : undefined
         };
 
 

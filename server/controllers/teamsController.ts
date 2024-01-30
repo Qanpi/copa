@@ -21,8 +21,9 @@ function isNotUniqueError(err: any): err is NotUniqueError {
 
 export const createOne = expressAsyncHandler(async (req, res, next) => {
   if (req.user?.team)
-    throw new StatusError("Already in a team.", 403)
+    throw new StatusError("User already in a team.", 403)
 
+  //a user (not admin) tries to create a team they aren't manager of
   if (!isManagerOrAdmin(req.user, req.body.manager))
     throw new StatusError("Neither manager nor admin.", 403)
 
@@ -30,10 +31,12 @@ export const createOne = expressAsyncHandler(async (req, res, next) => {
     const team = await Team.create(req.body);
     res.status(201).send(team);
   } catch (err) {
-    if (err instanceof mongoose.Error.ValidationError) {
 
+    //database error on non-unique team name
+    if (err instanceof mongoose.Error.ValidationError) {
       const first = Object.values(err.errors)[0];
-      if (isNotUniqueError(first)) {
+
+      if (isNotUniqueError(first)) { //type coercion
         const message = first.path === "name" ? `A team by the name '${first.value}' already exists.` : first.message;
         throw new StatusError(message, 409);
       }

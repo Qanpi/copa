@@ -38,10 +38,12 @@ export const deleteOne = expressAsyncHandler(async (req, res) => {
 export const getOneById = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
+  //profile is public to anyone || requesting user == requested user's profile || admin
   if (user?.preferences?.publicProfile || isLoggedInAsUser(req.user, req.params.id) || isAdmin(req.user)) {
     res.send(user);
     return;
   }
 
+  //by default, all user profiles are hidden for privacy
   res.send("private");
 });

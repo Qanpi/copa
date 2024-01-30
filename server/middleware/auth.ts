@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { isAdmin } from "./validation.js";
 
+//check that the user is registered
 export const isAuthMiddleware = expressAsyncHandler(async (req, res, next) => {
     if (req.isUnauthenticated()) {
         throw new StatusError("Invalid credentials.", 401);
@@ -8,8 +9,9 @@ export const isAuthMiddleware = expressAsyncHandler(async (req, res, next) => {
    next(); 
 }) 
 
+//ensure the user has admin privileges
 export const isAuthorizedMiddleware = expressAsyncHandler(async (req, res, next) => {
-    //code duplication with above, but i didn't wanna hack a solution togetehr
+    //code duplication with above, but alternative is hacky
     if (req.isUnauthenticated()) {
         throw new StatusError("Invalid credentials.", 401);
     }
