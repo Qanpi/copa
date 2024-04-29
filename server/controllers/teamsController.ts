@@ -170,13 +170,13 @@ export const generateInviteToken = expressAsyncHandler(async (req, res) => {
 
   //generate secret to verify valid invite token
   const random = crypto.randomBytes(16);
-  const encoded = random.toString("base64url");
+  const encoded = random.toString("base64url"); //encode for URL safety
 
   team.invite = {
     token: encoded,
-    expiresAt: dayjs().add(1, "day").toDate()
+    expiresAt: dayjs().add(1, "day").toDate() //link will expire one day from now
   }
-  await team.save();
+  await team.save(); //save to DB
 
   res.send(team.invite);
 })
