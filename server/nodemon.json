@@ -1,4 +1,7 @@
     {
         "delay": 1000,
-        "ignore": ["test/"]
+        "ignore": ["test/"],
+        "execMap": {
+            "ts": "npx tsx"
+        }
     }

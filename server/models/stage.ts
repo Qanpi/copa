@@ -8,7 +8,6 @@ const StageSchema = new mongoose.Schema({
     tournament: SchemaTypes.ObjectId,
     name: {
         type: String,
-        unique: true,
     }
 }, {
     id: true

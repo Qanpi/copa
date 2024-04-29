@@ -41,7 +41,8 @@ function DashboardPage() {
       case "Bracket":
         return <Bracket next={nextSection} prev={prevSection} ></Bracket>;
       case "Complete":
-        return <CompleteTournament next={nextSection} prev={prevSection}></CompleteTournament>
+        return <CreateTournamentPage></CreateTournamentPage>
+        // return <CompleteTournament next={nextSection} prev={prevSection}></CompleteTournament>
       default:
         return <Typography>Unknown tournament state.</Typography>;
     }
