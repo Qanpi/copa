@@ -1,3 +1,7 @@
 .react-calendar-timeline .rct-dateHeader {
     color: black
 }
+
+.rct-item-handler.rct-item-handler-right.rct-item-handler-resize-right::after {
+    content: "▶"
+}

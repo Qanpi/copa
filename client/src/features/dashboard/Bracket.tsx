@@ -73,11 +73,10 @@ function Bracket({ next, prev }) {
       {noBracketAlert ? (
         <Alert severity="error">
           <AlertTitle>
-            No group stage for the '{noBracketAlert.division}' name
+            No bracket for the '{noBracketAlert.division}' name
           </AlertTitle>
           <Typography>
-            Please first draw teams using the wheel before proceeding to the
-            bracket.
+            Please create the structure of the bracket before proceeding.
           </Typography>
         </Alert>
       ) : null}
@@ -88,8 +87,8 @@ function Bracket({ next, prev }) {
             {incompleteMatchesAlert.division}' division.
           </AlertTitle>
           <Typography>
-            Can't proceed before all the matches in the group stage are
-            complete. I you already know the results, enter them manually here.
+            Can't proceed before all the matches in the bracket are
+            complete. If you already know the results, enter them manually here.
           </Typography>
         </Alert>
       ) : null}
@@ -105,6 +104,9 @@ function Bracket({ next, prev }) {
             <NumberCard number={`${completedMatches?.length}/${matches?.length}`}>
               matches complete
             </NumberCard>
+            <Link to="/tournament/scheduler">
+              <Button>Schedule matches</Button>
+            </Link>
           </>
         )}
       </DivisionPanel>

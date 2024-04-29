@@ -1,3 +1,8 @@
+canvas {
+  inset: unset !important;
+  bottom: 0 !important;
+}
+
 /* .title-wrapper {
   text-align: center;
 }

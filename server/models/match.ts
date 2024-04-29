@@ -46,7 +46,7 @@ const MatchSchema = new mongoose.Schema(
     location: String,
     start: { type: Date },
     end: { type: Date }, //TODO: validate end exists if start exists
-    duration: { type: Number, default: 6 }, //in minutes  //FIXME: deprecated
+    // duration: { type: Number, default: 6 }, //in minutes  //FIXME: deprecated
     elapsed: { type: Number, default: 0 } //in seconds
   },
   {
@@ -57,6 +57,17 @@ const MatchSchema = new mongoose.Schema(
           return Status[this.status];
         },
       },
+      duration: {
+        get(this: any) {
+          if (!this.start || !this.end) return undefined;
+          return dayjs(this.end).diff(this.start, "seconds")
+        }
+      },
+      remaining: {
+        get(this: any) {
+          return this.duration - this.elapsed;
+        }
+      }
     },
 
     id: true,

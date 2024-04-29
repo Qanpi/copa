@@ -17,6 +17,7 @@ import CreateTournamentPage from "./CreateTournament.tsx";
 import GradientTitle from "../viewer/gradientTitle.tsx";
 import AdminOnlyPage from "./AdminOnlyBanner.tsx";
 import { LoadingBackdrop } from "../layout/LoadingBackdrop.tsx";
+import CompleteTournament from "./CompleteTournament.tsx";
 
 function DashboardPage() {
   const { data: tournament, isLoading } = useTournament("current");
@@ -40,7 +41,7 @@ function DashboardPage() {
       case "Bracket":
         return <Bracket next={nextSection} prev={prevSection} ></Bracket>;
       case "Complete":
-        return <>COngrats! You've completed {tournament.name}</>
+        return <CompleteTournament next={nextSection} prev={prevSection}></CompleteTournament>
       default:
         return <Typography>Unknown tournament state.</Typography>;
     }

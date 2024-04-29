@@ -10,7 +10,11 @@ on:
   workflow_dispatch:
 
 env: 
-  CI: ""
+  NODE_OPTIONS: --experimental-vm-modules
+  NODE_ENV: test
+  COOKIE_SECRET: testsecret
+  AZURE_BLOB_CONNECTION_STRING: teststring
+  CI: false
   AZURE_WEBAPP_NAME: copadekuutio 
   AZURE_WEBAPP_PACKAGE_PATH: server
   AZURE_WEBAPP_SLOT_NAME: development
@@ -28,18 +32,19 @@ jobs:
           node-version: '18.x'
 
       - name: npm install and build client
+        if: ${{ !env.ACT }}
         working-directory: client 
         run: |
           npm install
           npm run build --if-present
-          # npm run test --if-present
+          npm run test --if-present
 
       - name: npm install and build server
         working-directory: server
         run: |
           npm install
           npm run build --if-present
-          # npm run test --if-present
+          npm run test --if-present
 
       - name: move client build to server
         run: mv client/build server
@@ -49,6 +54,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: '${{ env.AZURE_WEBAPP_NAME }}'
-          slot-name: '${{ env.AZURE_WEBAPP_SLOT_NAME }}'
+          # slot-name: '${{ env.AZURE_WEBAPP_SLOT_NAME }}'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

@@ -1,20 +1,17 @@
-import { connectMongoose } from "./services/mongo.js";
-import createError from "http-errors";
-import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
+import "dotenv/config.js";
+import express, { NextFunction, Request, Response } from "express";
 import logger from "morgan";
-import { fileURLToPath } from "url";
 import path from "path";
-import "dotenv/config.js"
+import { fileURLToPath } from "url";
 
+import cookieSession from "cookie-session";
+import expressAsyncHandler from "express-async-handler";
+import passport from "passport";
 import apiRouter from "./routes/api.js";
 import authRouter from "./routes/auth.js";
-import cookieSession from "cookie-session";
-import passport from "passport";
 import { debugHTTP } from "./services/debuggers.js";
-import expressAsyncHandler from "express-async-handler";
 
-connectMongoose();
 const app = express();
 
 //configure rate limiter with azure load balance
@@ -24,18 +21,18 @@ app.get('/x-forwarded-for', (request, response) => response.send(request.headers
 
 
 //only log in dev because azure provides transaction logs by default
-if (app.get("env") === "development") {
+if (app.get("env") !== "production") {
   app.use(logger("dev"));
 }
 
-app.use(express.json());
+app.use(express.json({limit: "10mb"}));
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser(process.env["GOOGLE_CLIENT_SECRET"]));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(
   cookieSession({
     name: "session",
-    secret: process.env["GOOGLE_CLIENT_SECRET"],
+    secret: process.env.COOKIE_SECRET,
     maxAge: 24 * 60 * 60 * 1000 * 30, // 1 month
   })
 );

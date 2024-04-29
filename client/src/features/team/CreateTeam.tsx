@@ -15,6 +15,7 @@ import {
   TextareaAutosize,
   TextField,
   Backdrop,
+  BoxProps,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -34,7 +35,8 @@ import { PromptContainer } from "../layout/PromptContainer.tsx";
 import { useState } from "react";
 
 export const teamValidationSchema = {
-  name: Yup.string().max(20).trim().matches(/^[^.]*$/, "Dot ('.') is reserved, sorry.").required(""),
+  name: Yup.string().max(30).trim()
+    .matches(/^[^.]*$/, "Dot ('.') is reserved, sorry.").required(""),
   about: Yup.string().max(200).optional(),
   phoneNumber: Yup.string()
     .matches(
@@ -42,15 +44,11 @@ export const teamValidationSchema = {
       "unrecognized format"
     )
     .required(""),
-  instagramUrl: Yup.string()
-    .url()
-    .matches(/https:\/\/www\.instagram\.com\/\S+\/?/)
-    .optional(), //TODO: maybe be even stricter than \S
   banner: Yup.string().optional(),
-  picture: Yup.string().optional(),
 };
 
-export const TeamBannerInput = ({ name, edit, sx, ...props }: { name: string, edit: boolean } & BoxProps) => {
+type TeamBannerInputProps = { name: string, edit: boolean } & BoxProps
+export const TeamBannerInput = ({ name, edit, sx, ...props }: TeamBannerInputProps) => {
   const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext();
 
@@ -66,7 +64,7 @@ export const TeamBannerInput = ({ name, edit, sx, ...props }: { name: string, ed
               Please provide a link to an image service provider (e.g. imgur) to display a banner on your team page.
             </DialogContentText>
           </Tooltip>
-          <MyTextField autoFocus margin="dense" label="Image link" fullWidth variant="standard" name="bannerUrl"></MyTextField>
+          <MyTextField autoFocus margin="dense" label="Image link" fullWidth variant="standard" name={name}></MyTextField>
           <Typography variant="body2" color="lightgray">Recommended dimensions are 400x400 pixels.</Typography>
         </DialogContent>
         <DialogActions>
@@ -77,11 +75,10 @@ export const TeamBannerInput = ({ name, edit, sx, ...props }: { name: string, ed
 
       <Box sx={{ maxWidth: "400px", maxHeight: "400px", display: "flex", alignItems: "center", ...sx }} {...props}>
         {field.value ?
-          <Box sx={{ position: "relative"}}>
+          <Box sx={{ position: "relative" }}>
             <Box sx={{ objectFit: "contain", width: "100%", height: "100%" }} component="img" src={field.value}></Box>
             <Backdrop open={edit} sx={{ position: "absolute" }} onClick={() => showBannerDialog(true)}>
               <CardActionArea sx={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {/* <MyFileInput name="banner" sx={{ opacity: 1, position: "absolute" }}></MyFileInput> */}
                 <ChangeCircle fontSize="large"></ChangeCircle>
               </CardActionArea>
             </Backdrop>

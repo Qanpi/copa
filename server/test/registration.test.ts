@@ -2,20 +2,29 @@ import request from "supertest";
 import app from "../app.js";
 import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
-import { disconnectMongoose } from "../services/mongo.js";
 import { TDivision } from "../models/division.js";
+import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
 const auth2 = request.agent(app);
-const viewer = request.agent(app);
 
+let mongod: MongoMemoryServer;
 let teamId: string;
 let tournamentId: string;
 let divisionIds: string[];
 
 describe("Registration stage", () => {
+
   beforeAll(async () => {
+    mongod = await MongoMemoryServer.create();
+    // const uri = globalThis.__MONGOD__.getUri();
+    await mongoose
+      .connect(mongod.getUri(), {
+        ignoreUndefined: true,
+      })
+
     await admin
       .post("/login/tests")
       .send({ username: "admin", password: "admin" });
@@ -29,16 +38,9 @@ describe("Registration stage", () => {
       username: "user2",
       password: "user2",
     });
-  });
 
-  beforeEach(async () => {
     const { body: tournament } = await admin.post("/api/tournaments").send({
       divisions: ["Div 1", "Div 2", "Div 3"], //length must be at least 3
-    });
-
-    await admin.patch(`/api/tournaments/${tournament.id}`).send({
-      "registration.from": dayjs().subtract(1, "day").toDate(),
-      "registration.to": dayjs().add(1, "day").toDate(),
     });
 
     tournamentId = tournament.id;
@@ -48,6 +50,7 @@ describe("Registration stage", () => {
     const resTeam = await auth.post("/api/teams").send({
       name: "Tinpot",
       manager: manager.id,
+      phoneNumber: "123456789"
     });
 
     await auth.get("/me"); //necessary to update req.user object
@@ -56,6 +59,13 @@ describe("Registration stage", () => {
 
     teamId = resTeam.body.id;
   });
+
+  beforeEach(async () => {
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration.from": dayjs().subtract(1, "day").toDate(),
+      "registration.to": dayjs().add(1, "day").toDate(),
+    });
+  })
 
   it("should reject registration if not manager", async () => {
     //manually insert member
@@ -225,6 +235,7 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(500);
   });
 
+  //FIXME: something is wrong with this test, should fail ?
   it("should reject registration if no deadline", async () => {
     await admin.patch(`/api/tournaments/${tournamentId}`).send({
       "registration": {}
@@ -255,11 +266,42 @@ describe("Registration stage", () => {
     expect(res.status).toEqual(201);
   })
 
+  it("should reject deregistering late", async () => {
+    const { body: reg } = await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[0],
+      });
+
+    await admin.patch(`/api/tournaments/${tournamentId}`).send({
+      "registration.to": dayjs().subtract(1, "minute").toDate(),
+    });
+
+    const res = await auth.delete(`/api/tournaments/${tournamentId}/participants/${reg.id}`);
+    expect(res.status).toEqual(400);
+  })
+
+  it("should delete participant if team is removed during registration", async () => {
+    await auth
+      .post(`/api/tournaments/${tournamentId}/participants`)
+      .send({
+        team: teamId,
+        division: divisionIds[1],
+      });
+
+    await auth.delete(`/api/teams/${teamId}`);
+
+    const { body: participants } = await admin.get(`/api/tournaments/${tournamentId}/participants`);
+    expect(participants.length).toEqual(0)
+  })
+
   afterEach(async () => {
-    await admin.delete("/");
+    await admin.delete(`/api/tournaments/${tournamentId}/participants`);
   });
 
   afterAll(async () => {
-    await disconnectMongoose();
+    await mongoose.disconnect();
+    await mongod.stop();
   });
 });

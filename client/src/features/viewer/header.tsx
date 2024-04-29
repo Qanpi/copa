@@ -1,4 +1,4 @@
-import { BugReport, Menu as MenuIcon } from "@mui/icons-material";
+import { BugReport, GitHub, Menu as MenuIcon } from "@mui/icons-material";
 import {
   Box,
   ClickAwayListener,
@@ -125,10 +125,15 @@ function Header() {
       {isAdmin ?
         <MenuItem>Dashboard</MenuItem> : null}
     </Link>,
-    <Link to="/about">
-      <MenuItem>About</MenuItem>
+    <Link to="/hall-of-fame">
+      <MenuItem>Hall of Fame</MenuItem>
     </Link>,
-
+    <Link to="https://github.com/Qanpi/copa">
+      <MenuItem>
+        <GitHub sx={{mr: 1}}></GitHub>
+        About
+      </MenuItem>
+    </Link>,
   ]
 
   const tournamentHeader = (
@@ -175,14 +180,14 @@ function Header() {
             <DropdownMenu anchor={tournamentHeader}>
               {tournamentSublinks}
             </DropdownMenu>
-            <DropdownMenu anchor={<Typography noWrap>All-time</Typography>}>
-              {/* <Link to="/teams">
+            {/* <DropdownMenu anchor={<Typography noWrap>All-time</Typography>}>
+              <Link to="/teams">
                 <AllTeams></AllTeams>
-              </Link> */}
+              </Link>
               <Link to="/hall-of-fame">
                 <MenuItem>Hall of Fame</MenuItem>
               </Link>
-            </DropdownMenu>
+            </DropdownMenu> */}
 
             {links.slice((isAdmin ? 1 : 2))}
           </Stack>

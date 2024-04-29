@@ -5,10 +5,11 @@ import { Request, Response } from "express";
 import { bracketsManager } from "../services/bracketsManager.js";
 import Stage from "../models/stage.js";
 import expressAsyncHandler from "express-async-handler";
+import { StatusError } from "../middleware/auth.js";
 
 export const getMany = async (req: Request, res: Response) => {
   //FIXME: refactor this better
-  const { scheduled, start, state, ...rest } = req.query;
+  const { scheduled, start, stageIds, ...rest } = req.query;
 
   const filter: any = {
     ...rest,
@@ -25,13 +26,9 @@ export const getMany = async (req: Request, res: Response) => {
     }
   }
 
-  if (state) {
-    //FIXME: needs to be handled better
-    const stages = await Stage.find({
-      type: state === "Groups" ? "round_robin" : "single_elimination",
-    });
+  if (stageIds) {
     filter["stage_id"] = {
-      $in: stages.map(s => s.id),
+      $in: stageIds,
     }
   }
 
@@ -50,12 +47,18 @@ export const deleteMany = async (req: Request, res: Response) => {
 };
 
 export const updateOne = async (req: Request, res: Response) => {
-  //TODO: if statement
-  await bracketsManager.update.match({ ...req.body, id: req.params.matchId });
-  const updated = await Match.findById(req.params.matchId);
-
+  const updated = await Match.findByIdAndUpdate(req.params.matchId, req.body);
   res.send(updated);
 };
+
+//separate endpoint because bracketsManager overwrites the entire opponent subobject
+export const updateOpponentResults = expressAsyncHandler(async (req, res) => {
+  const matchId = req.params.matchId;
+  const opponent = req.params.opponent;
+
+  await bracketsManager.update.match({ [opponent]: req.body, id: matchId });
+  res.send({});
+})
 
 export const resetResults = expressAsyncHandler(async (req, res) => {
   await bracketsManager.reset.matchResults(req.params.matchId);

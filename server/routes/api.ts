@@ -1,14 +1,16 @@
 import express from "express";
 
-import { body, param, query } from "express-validator";
+import { rateLimit } from "express-rate-limit";
+import { body, param } from "express-validator";
 import * as teams from "../controllers/teamsController.js";
 import * as tournaments from "../controllers/tournamentsController.js";
 import * as users from "../controllers/usersController.js";
-import * as participants from "../controllers/participationsController.js";
+import * as media from "../controllers/mediaController.js"
 import { isAuthMiddleware, isAuthorizedMiddleware } from "../middleware/auth.js";
 import { reportValidationErrors } from "../middleware/validation.js";
+import { TournamentStatesValues } from "../models/tournament.js";
 import tournamentRouter from "./tournament.js";
-import { rateLimit } from "express-rate-limit"
+
 
 const router = express.Router();
 
@@ -24,6 +26,8 @@ if (process.env.NODE_ENV !== "development") {
 
   router.use(apiLimiter);
 }
+
+router.post("/upload", isAuthMiddleware, media.uploadImage)
 
 //TOURNAMENT
 router.get("/tournaments", tournaments.getMultiple);
@@ -42,6 +46,8 @@ router.post(
 );
 router.patch("/tournaments/:id",
   isAuthorizedMiddleware,
+  body("state").optional().isString().isIn(TournamentStatesValues),
+  reportValidationErrors,
   tournaments.updateOne);
 router.delete("/tournaments/:id", isAuthorizedMiddleware,
   tournaments.deleteOne);
@@ -51,7 +57,13 @@ router.use("/tournaments/:id", tournamentRouter);
 //TEAMS
 router.get("/teams", teams.getMultiple);
 router.get("/teams/:id/participations", param("id").isMongoId(), reportValidationErrors, teams.getParticipations);
-router.post("/teams", isAuthMiddleware, body("manager").isMongoId(), body("name").trim().isString().notEmpty(), reportValidationErrors, teams.createOne);
+router.post("/teams", isAuthMiddleware,
+  body("manager").isMongoId(),
+  body("name").trim().isString().isLength({ max: 30 }).notEmpty().not().contains(".").not().equals("[deleted]"),
+  body("phoneNumber").isString().optional(),
+  body("about").isString().optional().isLength({max: 200}),
+  reportValidationErrors,
+  teams.createOne);
 router.patch("/teams/:id", isAuthMiddleware, teams.updateOne);
 router.get("/teams/:id", teams.getById);
 router.get("/teams/:teamId/users", teams.getUsersInTeam);
@@ -64,7 +76,7 @@ router.post("/teams/:id/join", isAuthMiddleware, body("token").isBase64({ urlSaf
 //USERS
 router.get("/users", isAuthorizedMiddleware, users.getMultiple);
 router.get("/users/:id", users.getOneById);
-router.patch("/users/:id",  isAuthMiddleware, body("name").trim().isString().notEmpty(), body("nickname").trim().isString(), reportValidationErrors, users.updateOne);
+router.patch("/users/:id", isAuthMiddleware, body("name").trim().isString().notEmpty(), body("nickname").trim().isString(), reportValidationErrors, users.updateOne);
 router.post("/users", isAuthorizedMiddleware, users.createOne);
 router.delete("/users/:id", isAuthMiddleware, users.deleteOne);
 

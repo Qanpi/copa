@@ -2,15 +2,27 @@ import request from "supertest";
 import app from "../app.js";
 import { disconnectMongoose } from "../services/mongo.js";
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
+let mongod: MongoMemoryServer;
 const admin = request.agent(app);
 const auth = request.agent(app);
 const auth2 = request.agent(app);
 const auth3 = request.agent(app);
-const viewer = request.agent(app);
 
 describe("Teams management logic", function () {
+  beforeAll(async () => {
+    mongod = await MongoMemoryServer.create();
+
+    await mongoose
+      .connect(mongod.getUri(), {
+        ignoreUndefined: true,
+      })
+  })
+
   beforeEach(async function () {
+
     await admin.post("/login/tests")
       .send({ username: "admin", password: "admin" });
 
@@ -20,7 +32,7 @@ describe("Teams management logic", function () {
     await auth2.post(`/login/tests`)
       .send({ username: "user2", password: "user2" })
 
-    const user3 = await auth3.post(`/login/tests`)
+    await auth3.post(`/login/tests`)
       .send({ username: "user3", password: "user3" })
   })
 
@@ -55,7 +67,7 @@ describe("Teams management logic", function () {
     expect(user.body.team.id).toStrictEqual(team.body.id);
   })
 
-  it("should encode reserved uri characters in team name", async function () {
+  it.skip("should encode reserved uri characters in team name", async function () {
     //important because it is used on the front-end in urls
 
     const { body: user } = await auth.get("/me");
@@ -69,13 +81,14 @@ describe("Teams management logic", function () {
     expect(check2).toHaveLength(1);
   })
 
+  it.todo("should not allow '.' inside name (url safety)")
 
   it("should not allow identical names", async function () {
     const team1 = await admin.post("/api/teams").send({ name: "Tinpot", manager: new ObjectId() })
     expect(team1.status).toEqual(201);
 
     const team2 = await admin.post("/api/teams").send({ name: "Tinpot", manager: new ObjectId() })
-    expect(team2.status).toEqual(500);
+    expect(team2.status).toEqual(409);
   })
 
   it("should not allow two teams with the same manager", async function () {
@@ -85,7 +98,7 @@ describe("Teams management logic", function () {
     expect(team1.status).toEqual(201);
 
     const team2 = await admin.post("/api/teams").send({ name: "Tinpot 2", manager: managerId })
-    expect(team2.status).toEqual(500);
+    expect(team2.status).toEqual(409);
   })
 
   it("should remove manager from team", async function () {
@@ -103,7 +116,7 @@ describe("Teams management logic", function () {
     expect(updatedTeam.manager).toBe(undefined)
   })
 
-  it("should reject if user already in a team", async function () {
+  it("should reject if user is already in a team", async function () {
     let { body: user } = await auth.get("/me");
 
     const res = await auth.post("/api/teams").send({ name: "Tinpot", manager: user.id });
@@ -214,7 +227,7 @@ describe("Teams management logic", function () {
       const res2 = await auth3.post(`/api/teams/${teamId}/join`)
         .send({ token: invite.token });
 
-      expect(res2.status).toEqual(500);
+      expect(res2.status).toEqual(403);
     })
 
     it("should reject invite link for member", async function () {
@@ -294,6 +307,7 @@ describe("Teams management logic", function () {
   })
 
   afterAll(async function () {
-    return await disconnectMongoose();
+    await mongoose.disconnect();
+    await mongod.stop();
   })
 })

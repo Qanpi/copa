@@ -15,7 +15,7 @@ export const useAuth = () => {
       return res.data as TUser;
     },
     onSuccess(data) {
-      appInsights.setAuthenticatedUserContext(data.id, undefined, true);
+      appInsights.setAuthenticatedUserContext(data.id, data.team?.name, true);
     }
   });
 };

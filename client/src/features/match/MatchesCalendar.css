@@ -1,3 +1,7 @@
 .fc-timegrid-slot {
     height: 3em !important; 
 }
+
+.fc-list-day-cushion.fc-cell-shaded {
+    color: black
+}

@@ -15,6 +15,8 @@ enum TournamentStates {
   Complete
 }
 
+export const TournamentStatesValues = Object.values(TournamentStates).filter(v => (typeof v === "string"));
+
 const NotificationSchema = new mongoose.Schema({
   title: String,
   body: String,
@@ -33,6 +35,8 @@ export type TNotification = InferSchemaType<typeof NotificationSchema>;
 const TournamentSchema = new mongoose.Schema(
   {
     name: String,
+    summary: String,
+    images: [String],
     idx: Number,
     organizer: {
       name: String,
@@ -44,7 +48,7 @@ const TournamentSchema = new mongoose.Schema(
     },
     state: {
       type: String,
-      enum: Object.values(TournamentStates).filter(v => (typeof v === "string")),
+      enum: TournamentStatesValues,
       default: "Registration",
     },
     notifications: [NotificationSchema],

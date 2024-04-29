@@ -6,28 +6,46 @@ import _ from "lodash";
 import { useParticipants } from "../participant/hooks";
 import { tournamentKeys, useTournament } from "../tournament/hooks";
 import { QueryKeyFactory, queryKeyFactory } from "../types";
+import { useDebouncedCallback } from "use-debounce";
 
 const matchKeys = queryKeyFactory("matches");
 
-export const useUpdateMatch = () => {
+export const useUpdateMatch = ({ debounce=true }: { debounce?: boolean }={}) => {
   //TODO: think abt this: currently only works with current tournament
   const { data: tournament } = useTournament("current");
   const queryClient = useQueryClient();
 
+  const updateMatch = useDebouncedCallback(
+    async (values: Partial<TMatch>) => {
+      const res = await axios.patch(`/api/${tournamentKeys.all[0]}/${tournament.id}/matches/${values.id}`, values);
+      return res;
+    },
+    (debounce ? 200 : 0)
+  )
+
+  const invalidate = useDebouncedCallback(
+    (data: Partial<TMatch>) => {
+      queryClient.invalidateQueries(matchKeys.lists)
+      queryClient.invalidateQueries(matchKeys.id(data.id));
+    },
+    (debounce ? 500 : 0)
+  )
+
   return useMutation({
     mutationFn: async (values: Partial<TMatch>) => {
-      const res = await axios.patch(`/api/${tournamentKeys.all[0]}/${tournament.id}/matches/${values.id}`, values);
-      return res.data;
+      const res = await updateMatch(values);
+      return res?.data as TMatch;
     },
-    onSettled(data) {
-      queryClient.invalidateQueries(matchKeys.lists)
-    },
-    onError(err, values) {
-      queryClient.invalidateQueries(matchKeys.id(values.id));
+    onSettled(data, error, variables) {
+      invalidate(variables);
     },
     async onMutate(data) {
       await queryClient.cancelQueries(matchKeys.all); //to not overwrite optimistic update
-      queryClient.setQueriesData(matchKeys.id(data.id), data);
+      queryClient.setQueriesData(matchKeys.id(data.id), old => ({ ...old, ...data }));
+
+      queryClient.setQueriesData(matchKeys.list({ scheduled: "true" }), (old) => {
+        return old?.map(m => m.id === data.id ? { ...m, ...data } : m);
+      })
     }
   });
 };

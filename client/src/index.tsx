@@ -89,7 +89,7 @@ function QueryProvider() {
             default:
               setFeedback({
                 severity: "error",
-                message: mutation.meta.errorMessage || error.message
+                message: mutation.meta?.errorMessage || error.message
               })
           }
         } else {
@@ -136,7 +136,8 @@ function App() {
       YbugContext.init({
         feedback: {
           name: auth.name
-        }
+        },
+        user: auth
       })
     }
   }, [auth, YbugContext])

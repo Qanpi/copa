@@ -1,15 +1,24 @@
 import app from "../app.js";
 import request from "supertest";
-import { disconnectMongoose } from "../services/mongo.js";
-import e from "express";
 import { TDivision } from "../models/division.js";
+import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const admin = request.agent(app);
 const auth = request.agent(app);
 const viewer = request.agent(app);
 
+let mongod: MongoMemoryServer;
+
 describe("Kickstart tournament", () => {
     beforeAll(async () => {
+        mongod = await MongoMemoryServer.create();
+
+        await mongoose
+            .connect(mongod.getUri(), {
+                ignoreUndefined: true,
+            })
+
         await admin.post("/login/tests")
             .send({ username: "admin", password: "admin" });
 
@@ -83,6 +92,7 @@ describe("Kickstart tournament", () => {
     })
 
     afterAll(async () => {
-        await disconnectMongoose();
+        await mongoose.disconnect();
+        await mongod.stop();
     })
 })

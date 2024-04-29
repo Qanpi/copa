@@ -28,10 +28,10 @@ export const useUpdateTeam = () => {
 
 export const useTeam = (name?: string) => {
   return useQuery({
-    queryKey: teamKeys.id(name),
+    queryKey: teamKeys.id(name!),
     queryFn: async () => {
-      const response = await axios.get(`/api/teams/?name=${encodeURIComponent(name)}`);
-      return response.data[0] as TTeam || null; //FIXME: assuming the response is array; maybe do this validation on server?
+      const response = await axios.get(`/api/teams/?name=${encodeURIComponent(name!)}`);
+      return response.data[0] as TTeam || null; //assumed to be array of length 1 since names are unique
     },
     enabled: Boolean(name),
   });

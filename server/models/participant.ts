@@ -44,7 +44,7 @@ ParticipantSchema.virtual("createdAt").get(function () {
 
 
 export type TParticipant = InferSchemaType<typeof ParticipantSchema> &
-  TBracketsParticipant & {id: string, division: string};
+  TBracketsParticipant & {id: string, division: string, tournament_id: string};
 
 const Participant = BracketsParticipant.discriminator<TParticipant>(
   "Participant",

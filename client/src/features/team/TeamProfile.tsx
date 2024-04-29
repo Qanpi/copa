@@ -54,7 +54,6 @@ import { useParticipants } from "../participant/hooks.ts";
 dayjs.extend(relativeTime);
 
 function TeamProfilePage() {
-  //FIXME: think about encoding and decoding practices
   const { name } = useParams();
   const { data: team, status: teamStatus, isLoading } = useTeam(name);
 
@@ -67,6 +66,7 @@ function TeamProfilePage() {
 
   const updateTeam = useUpdateTeam();
   const [editMode, setEditMode] = useState(false);
+
   const handleEditClick = useCallback(
     () => {
       setSelectedTab(0);
@@ -90,14 +90,12 @@ function TeamProfilePage() {
     setEditMode(false);
   }
 
-  const { data: tournament } = useTournament("current");
-
   if (!isLoading && !team) return <NotFoundPage></NotFoundPage>
 
   return (
     <Formik enableReinitialize validationSchema={Yup.object(teamValidationSchema)} initialValues={team || {} as TTeam} onSubmit={handleSubmit}>
       {
-        ({ values: team, dirty, submitForm, resetForm }) => {
+        ({ values: team, dirty, submitForm, resetForm, errors }) => {
           return (
             <Form>
               <FeedbackSnackbar feedback={feedback} onClose={() => setFeedback({})}></FeedbackSnackbar>

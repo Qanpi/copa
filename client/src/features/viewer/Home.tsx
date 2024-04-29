@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Stack, CircularProgress, useTheme, Button } from "@mui/material";
+import { Box, Typography, Container, Stack, CircularProgress, useTheme, Button, BoxProps, ImageListItem, ImageList } from "@mui/material";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useStandings } from "../stage/hooks";
@@ -8,9 +8,28 @@ import MatchesCalendar from "../match/MatchesCalendar";
 import "./Home.css";
 import { FinalStandingsItem } from "brackets-manager";
 import brush from "./brush.png";
+import brush2 from "./brush2.png"
 import { LoadingBackdrop } from "../layout/LoadingBackdrop";
-import { ArrowDropDown } from "@mui/icons-material";
+import { ArrowDropDown, } from "@mui/icons-material";
 import { PromptContainer } from "../layout/PromptContainer";
+import NumberCard from "../dashboard/NumberCard";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import Timeline from "@mui/lab/Timeline";
+import TimelineDot from "@mui/lab/TimelineDot";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import useWindowSize from 'react-use/lib/useWindowSize'
+import Confetti from 'react-confetti';
+import "./Home.css"
+
+//COPA VI images (temp)
+import copaVI1 from "./copaVI/20231201_125753.jpg"
+import copaVI2 from "./copaVI/judges.png"
+import copaVI3 from "./copaVI/draw_people.png"
+
+import winner from "./copaVI/winners.png"
 
 function WinnerPane({ stageId }: { stageId: string }) {
   //FIXME: needs to show all winners across divisions
@@ -36,11 +55,11 @@ function WinnersTribute() {
 
 }
 
-function CopaBanner({ children }: { children: React.ReactNode }) {
+function CopaBanner({ children, sx }: BoxProps) {
   const { data: tournament } = useTournament("current");
 
   return (
-    <PromptContainer sx={{justifyContent: "center"}}>
+    <PromptContainer sx={{ justifyContent: "center", pt: 0, pb: 0, minHeight: "none", mt: 3 }}>
       <Box component="img" src={brush} sx={{
         position: "absolute",
         width: "95vw",
@@ -54,8 +73,9 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
         alignItems: "center",
         justifyContent: "center",
         width: "80vw",
-        height: "80vw",
-        minHeight: "400px"
+        height: "42vw",
+        maxHeight: "600px",
+        ...sx
       }}>
         <Stack direction="row" alignItems={"center"} width="100%" spacing={0} justifyContent={"center"}>
           <Typography variant="h1" fontWeight={800} sx={{ fontSize: "15vw!important" }} noWrap>
@@ -79,6 +99,7 @@ function CopaBanner({ children }: { children: React.ReactNode }) {
 
 function HomePage() {
   const { data: tournament, status } = useTournament("current");
+  const { width, height } = useWindowSize()
 
   if (status !== "success") {
     return <LoadingBackdrop open={true} sx={{ zIndex: 20 }}></LoadingBackdrop>
@@ -96,7 +117,95 @@ function HomePage() {
       </Container>
 
     case "Complete":
-      return <WinnersTribute></WinnersTribute>
+      return <Stack sx={{ alignItems: "center" }} height={"100vh"}>
+        <CopaBanner >
+          <Typography color="primary" fontSize={"7vw"} fontWeight={1000} sx={{
+            background: "var(--copa-pink)",
+            letterSpacing: "1vw",
+            paddingLeft: "1vw",
+            pt: 0,
+            pb: 0,
+            maxWidth: "45vw",
+            marginTop: "-0.3em",
+            lineHeight: "65%"
+          }}>WRAPPED</Typography>
+        </CopaBanner>
+
+        <Timeline sx={{ mt: "-5vw", display: "flex", alignItems: "center", position: "relative" }} position="alternate-reverse">
+          <TimelineItem>
+            <TimelineSeparator>
+              <TimelineConnector></TimelineConnector>
+              <TimelineDot></TimelineDot>
+              <TimelineConnector></TimelineConnector>
+            </TimelineSeparator>
+            <TimelineContent sx={{ height: "150px", display: "flex", alignItems: "center", justifyContent: "end" }}>
+              What a journey! Over the period of Copa VI, we've amassed...
+            </TimelineContent>
+          </TimelineItem>
+
+
+          <Box sx={{ m: 5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} color={"var(--copa-purple)"}>
+              <NumberCard number={758}>users</NumberCard>
+              <NumberCard number={16}>teams</NumberCard>
+              <NumberCard number={28}>matches</NumberCard>
+            </Stack>
+          </Box>
+
+          <TimelineItem>
+            <TimelineSeparator>
+              <TimelineConnector></TimelineConnector>
+              <TimelineDot></TimelineDot>
+              <TimelineConnector></TimelineConnector>
+            </TimelineSeparator>
+            <TimelineContent sx={{ height: "500px", display: "flex", alignItems: "center", justifyContent: "start" }}>
+              ...made countless memories...
+            </TimelineContent>
+          </TimelineItem>
+
+          <Box position="relative" sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            <Box src={brush2} component="img" sx={{
+              position: "absolute",
+              width: "100%",
+              filter: "blur(0.5px"
+            }}></Box>
+            <ImageList variant="masonry" cols={2} gap={8} sx={{ width: "70%", m: 5, minWidth: "300px" }}>
+              <ImageListItem>
+                <img alt="indoor hall" src={copaVI1}></img>
+              </ImageListItem>
+              <ImageListItem >
+                <img alt="indoor hall" src={copaVI2}></img>
+              </ImageListItem>
+              <ImageListItem sx={{ pt: "30%" }}>
+                <img alt="indoor hall" src={copaVI3}></img>
+              </ImageListItem>
+            </ImageList>
+          </Box>
+
+          <TimelineItem>
+            <TimelineSeparator>
+              <TimelineConnector></TimelineConnector>
+              <TimelineDot></TimelineDot>
+              <TimelineConnector></TimelineConnector>
+            </TimelineSeparator>
+            <TimelineContent sx={{ height: "500px", display: "flex", alignItems: "center", justifyContent: "end" }}>
+              ...and crowned the champions.
+            </TimelineContent>
+          </TimelineItem>
+
+          <Confetti numberOfPieces={50} width={width} height={height}></Confetti>
+          <Stack justifyContent={"center"} alignItems="center" sx={{ m: 5, width: "60%" }} gap={2}>
+            <Box component="img" alt="indoor hall" src={winner} width="100%" sx={{
+              boxShadow: "0 0 100px 10px var(--copa-aqua)",
+            }}></Box>
+            <Typography variant="h4">Congratulations to <Link color="primary" to="/teams/PiPo%20IF">PiPo IF</Link>!</Typography>
+          </Stack>
+        </Timeline>
+      </Stack>
     case "Registration":
       if (!tournament.registration?.from)
         return <CopaBanner>
@@ -137,7 +246,13 @@ function HomePage() {
         </>
       );
 
-      else return <>Registration ended {dayjs().to(tournament.registration.to)} THe tournament will begin soon.</>
+      return (
+        <CopaBanner>
+          <Typography variant="body1" noWrap>
+            {`Sorry, registration closed ${dayjs().to(tournament.registration.to)}. The tournament will begin soon.`}
+          </Typography>
+        </CopaBanner >
+      )
 
     default:
       return (
@@ -153,7 +268,7 @@ function HomePage() {
 
                 display="flex" justifyContent="center" alignItems="center" minHeight="100%"
               >
-                <Typography>Imagine an instagram feed here.</Typography>
+                <Typography>No instagram content to display.</Typography>
               </Box>
             </Box>
           </Stack >
