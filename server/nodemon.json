@@ -2,6 +2,6 @@
         "delay": 1000,
         "ignore": ["test/"],
         "execMap": {
-            "ts": "npx tsx"
+            "ts": "npx ts-node"
         }
     }
