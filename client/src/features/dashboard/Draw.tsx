@@ -98,14 +98,30 @@ function DrawPage() {
   //filtering out all the participants who have been already assigned to a group
   const groupless = participants?.filter(p => !flatSeeding.some(s => s.id === p.id));
 
+  //get sizes for each of the groups
+  const groupSizes = arrangeGroups(participants.length, groupCount);
+
   const handleConfirmSeeding = () => {
+    //create 2D number array for manual seeding 
+    //e.g. for 11 participants: [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11]]
+    const defaultOrdering = [];
+
+    //TODO: rework the function output to already produce this structure of 2D array
+    let k = 0;
+    for (const size of groupSizes) {
+      defaultOrdering.push(Array.from({length: size}, (_, i) => k + i + 1));
+      k += size;
+    }
+    console.log(defaultOrdering);
+
     createGroupStage.mutate({
       name: division.name + " group stage",
       type: "round_robin",
       tournamentId: division.id,
       settings: {
         groupCount,
-        seedOrdering: ["groups.effort_balanced"]
+        // seedOrdering: ["groups.effort_balanced"]
+        manualOrdering: defaultOrdering
       },
       seeding: flatSeeding
     }, {
@@ -117,9 +133,6 @@ function DrawPage() {
 
   //partition all participants into groups, in one go
   const handleSkipWheel = () => {
-    //get sizes for each of the groups
-    const groupSizes = arrangeGroups(participants.length, groupCount);
-
     let participantIndex = 0;
     setSeeding(seeding.map((s, i) => {
       const groupCopy = s.slice();
